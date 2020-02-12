@@ -1,5 +1,4 @@
 import { Component, ElementRef, AfterViewInit } from '@angular/core';
-import { uEvents } from './models/event';
 
 @Component({
   selector: 'app-script-loader',

@@ -1,5 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
-import { uEvents } from './models/event';
+import {  uEvents } from "@protocol-shared/event";
 
 @Component({
   selector: 'app-root',
