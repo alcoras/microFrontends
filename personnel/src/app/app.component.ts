@@ -1,5 +1,8 @@
 import { Component, ElementRef } from '@angular/core';
-import {  uEvents } from "@protocol-shared/event";
+import { uEvents } from "@protocol-shared/models/event";
+
+import { EventProxyLibService } from "event-proxy-lib";
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -7,20 +10,28 @@ import {  uEvents } from "@protocol-shared/event";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  obs:Observable<string>;
+
   title = 'personnel';
   mainChannelEl: HTMLElement;
 
-  constructor(private el: ElementRef)
+  constructor(
+    private eProxyService: EventProxyLibService,
+    private el: ElementRef)
   {
+
+    this.obs = eProxyService.logThis();
+
     console.log('INIT PERSONNEL');
     this.mainChannelEl = document.querySelector('main-channel');
   }
 
   ngAfterViewInit()
   {
-    this.mainChannelEl.addEventListener(
-      uEvents.PerssonelButtonPressed.eventID.toString(),
-      this.onClick.bind(this));
+    // this.mainChannelEl.addEventListener(
+    //   uEvents.PerssonelButtonPressed.EventId.toString(),
+    //   this.onClick.bind(this));
   }
 
   onClick(event)

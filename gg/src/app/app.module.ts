@@ -15,7 +15,7 @@ import { ScriptLoaderComponent } from './script-loader/script-loader.component';
   ],
   providers: [],
   bootstrap: [],
-  entryComponents: [AppComponent]
+  entryComponents: [AppComponent, ScriptLoaderComponent]
 })
 
 export class AppModule
@@ -27,7 +27,9 @@ export class AppModule
     const { injector } = this;
 
     const ngCustomElement = createCustomElement(AppComponent, { injector });
+    const ngCustomElement2 = createCustomElement(ScriptLoaderComponent, { injector });
 
     customElements.define('main-channel', ngCustomElement);
+    customElements.define('script-loader', ngCustomElement2);
   }
 }

@@ -1,4 +1,5 @@
 import { Component, ElementRef, AfterViewInit } from '@angular/core';
+import { uEvents, uParts, uEventTemplate } from "@protocol-shared/event";
 
 @Component({
   selector: 'app-script-loader',
@@ -6,26 +7,57 @@ import { Component, ElementRef, AfterViewInit } from '@angular/core';
 })
 export class ScriptLoaderComponent implements AfterViewInit
 {
+  traceId = 1;
+  title = "script-loader"
   mainChannelEl: HTMLElement;
 
   constructor(private el: ElementRef)
   {
-    console.log('INIT Script Loader');
     this.mainChannelEl = document.querySelector('main-channel');
+    this.sendInitEvent();
+  }
+
+  sendInitEvent()
+  {
+    let initEventId = uEvents.InitEvent.EventId;
+
+    const ev = new uEventTemplate(
+      initEventId,
+      this.traceId++,
+      uParts.ScriptLoader);
+
+    const domEvent = new CustomEvent(
+      initEventId.toString(),
+      {
+        detail:
+        {
+          ev,
+          "part": this.title
+        },
+        bubbles: true
+      });
+
+    this.mainChannelEl.dispatchEvent(domEvent);
   }
 
   ngAfterViewInit(): void
   {
-    this.mainChannelEl.addEventListener(, this.attemptLoadScript.bind(this));
+    this.mainChannelEl.addEventListener(
+      uEvents.RequestToLoadScript.EventId.toString(),
+      this.attemptLoadScript.bind(this));
   }
 
-  attemptLoadScript( event )
+  async attemptLoadScript( event )
   {
+    console.log("loading");
     // check for event param, addr of script...
-    this.loadScript( event['detail'][''] )
+    event['detail']['urls'].forEach(async url => {
+      await this.loadScript( url );
+    });
+
   }
 
-  loadScript(scriptUrl:string) : Promise<any>
+  async loadScript(scriptUrl:string) : Promise<any>
   {
     let scripts = Array
       .from( document.querySelectorAll('script') )
@@ -41,6 +73,29 @@ export class ScriptLoaderComponent implements AfterViewInit
         document.body.appendChild(scriptElement);
       });
     }
+  }
+
+  eventLoadDone()
+  {
+    let initEventId = uEvents.LoadedScript.EventId;
+
+    const ev = new uEventTemplate(
+      initEventId,
+      this.traceId++,
+      uParts.ScriptLoader);
+
+    const domEvent = new CustomEvent(
+      initEventId.toString(),
+      {
+        detail:
+        {
+          ev,
+          "part": this.title
+        },
+        bubbles: true
+      });
+
+    this.mainChannelEl.dispatchEvent(domEvent);
   }
 
 }

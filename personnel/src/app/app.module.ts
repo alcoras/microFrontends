@@ -4,6 +4,7 @@ import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
 import { MagicComponent } from './magic/magic.component';
+import { EventProxyLibModule } from "event-proxy-lib";
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { MagicComponent } from './magic/magic.component';
     MagicComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    EventProxyLibModule
   ],
   providers: [],
   bootstrap: [],

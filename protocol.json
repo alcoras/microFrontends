@@ -53,6 +53,11 @@
         "srcID": "any",
         "destID": 1004,
         "comment": "request to load a specific script into DOM"
+      },
+      "2000": {
+        "comment": "subscription event id",
+        "srcID": "any",
+        "destID": "2000"
       }
     }
   }

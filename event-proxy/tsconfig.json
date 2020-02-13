@@ -19,8 +19,13 @@
       "dom"
     ],
     "paths": {
-      "@event-proxy/*":[ "../event-proxy/*" ],
-      "@protocol-shared/*":["../models/*"]
+      "@angular/*":["node_modules/@angular/*"],
+      "event-proxy-lib": [
+        "dist/event-proxy-lib"
+      ],
+      "event-proxy-lib/*": [
+        "dist/event-proxy-lib/*"
+      ]
     }
   }
 }

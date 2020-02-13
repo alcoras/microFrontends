@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Renderer2, HostListener } from '@angular/core';
+import { Component, ElementRef, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,20 +6,35 @@ import { AfterViewInit, Component, ElementRef, Renderer2, HostListener } from '@
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent
+{
+  traceId = 1;
+  mainChannelEl: HTMLElement;
   title = 'gg';
 
   constructor(
     public el: ElementRef,
     public renderer: Renderer2)
     {
-      console.log('INIT');
+      console.log('INIT main-channel');
+      this.mainChannelEl = document.querySelector('main-channel');
+      this.subToAll();
     }
 
-  /*@HostListener('event_1', ['$event.target'])
-  onEvent_1(event)
+  subToAll()
   {
-    console.log('main-channel: event_1\n');
-    //console.log(event);
-  }*/
+    for (let i = 1000; i < 1004; i++)
+    {
+
+      this.mainChannelEl.addEventListener(
+        i.toString(),
+        this.log.bind(this));
+    }
+  }
+
+  log(event)
+  {
+    event['detail']['AggregateId'] = this.traceId++;
+    console.log(event);
+  }
 }

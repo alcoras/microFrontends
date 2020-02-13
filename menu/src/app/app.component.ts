@@ -1,5 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
-import { uEventTemplate, uEvents } from "@protocol-shared/event";
+import { uEventTemplate, uEvents, uParts } from "@protocol-shared/event";
 
 @Component({
   selector: 'app-root',
@@ -8,28 +8,75 @@ import { uEventTemplate, uEvents } from "@protocol-shared/event";
 })
 export class AppComponent {
 
-  traceId = 0;
+  traceId = 1;
 
   mainChannelEl: HTMLElement;
   constructor(private el: ElementRef)
   {
-    console.log('INIT MENU');
     this.mainChannelEl = document.querySelector('main-channel');
+
+    this.sendInitEvent();
+  }
+
+  sendInitEvent()
+  {
+    let initEventId = uEvents.InitEvent.EventId;
+
+    const ev = new uEventTemplate(
+      initEventId,
+      this.traceId++,
+      uParts.Menu);
+
+    const domEvent = new CustomEvent(
+      initEventId.toString(),
+      {
+        detail:
+        {
+          ev,
+          "part": this.title
+        },
+        bubbles: true
+      });
+
+    this.mainChannelEl.dispatchEvent(domEvent);
   }
 
   title = 'menu';
   i = 0;
 
+  async sendRequestLoadScript()
+  {
+    let eventId = uEvents.RequestToLoadScript.EventId;
+
+    const ev = new uEventTemplate(
+      eventId,
+      this.traceId++,
+      uParts.Menu);
+
+    const domEvent = new CustomEvent(
+      eventId.toString(),
+      {
+        detail:
+        {
+          ev,
+          urls:
+          ["http://127.0.0.1:3004/main.js" ]
+        },
+        bubbles: true
+      });
+
+    this.mainChannelEl.dispatchEvent(domEvent);
+  }
+
   menuClick(evt, eventName:number)
   {
+    //
     //document.getElementById("occupations").innerHTML = "<team-occupations-2></team-occupations-2>";
 
     const ev = new uEventTemplate(
       eventName,
       this.traceId++,
-      0,
-      uEvents.PerssonelButtonPressed.srcID,
-      uEvents.PerssonelButtonPressed.destID);
+      uParts.Menu);
 
     const domEvent = new CustomEvent(
       eventName.toString(),
@@ -43,13 +90,17 @@ export class AppComponent {
 
     this.mainChannelEl.dispatchEvent(domEvent);
 
-    switch(eventName)
-    {
-      case uEvents.PerssonelButtonPressed.eventID:
-        this.openTab(evt, "personnel");
-        break;
-    }
-    console.log('menu: Dispatched event', domEvent);
+    // switch(eventName)
+    // {
+    //   case uEvents.PerssonelButtonPressed.EventId:
+    //     this.openTab(evt, "personnel");
+    //     break;
+    //   case uEvents.OccupationButtonPressed.EventId:
+    //     this.openTab(evt, "occupations");
+    //     break;
+    // }
+
+    this.sendRequestLoadScript();
   }
 
   openTab(evt, tabName: string)

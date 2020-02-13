@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "ng_serve": "serve -l tcp://127.0.0.1:3001 dist/gg",
-    "ng_build": "ng build --source-map=false --output-hashing none --single-bundle --watch",
+    "ng_build": "ng build --output-hashing none --single-bundle --watch",
     "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
   },
   "private": true,
