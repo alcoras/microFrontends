@@ -5,7 +5,22 @@ class uEvent
   ) {}
 }
 
-export class uEventTemplate
+export interface IEvent
+{
+    EventId: number;
+    SourceEventUniqueId: number;
+    SourceId: number;
+    AggregateId?: number;
+    SourceName?: number;
+    EventLevel?: number;
+    UserID?: number; 
+    SessionID?: string;
+    ParentID?: number;
+    ProtocolVersion?: string;
+    Comment?: string;
+}
+
+export class uEventTemplate implements IEvent
 {
   constructor(
     public EventId: number,
@@ -37,4 +52,6 @@ export class uEvents
   static OccupationButtonPressed:uEvent = new uEvent(1002);
   static RequestToLoadScript:uEvent = new uEvent(1003);
   static LoadedScript:uEvent = new uEvent(1004);
+
+  static SubscribeToEvent:uEvent = new uEvent(2002);
 }

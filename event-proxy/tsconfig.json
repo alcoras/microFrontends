@@ -25,7 +25,9 @@
       ],
       "event-proxy-lib/*": [
         "dist/event-proxy-lib/*"
-      ]
+      ],
+      "@protocol-shared/":["../shared"],
+      "@protocol-shared/*":["../shared/*"]
     }
   }
 }
