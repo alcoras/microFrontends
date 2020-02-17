@@ -39,6 +39,16 @@ export class EventProxyLibService
     )
   }
 
+  testing_getLastEvent()
+  {
+    return this.httpClient
+    .get(this.apiGatewayURL + "/events.json")
+    .pipe
+    (
+      catchError(this.handleErrors<any>('testing_getLastEvent', ""))
+    )
+  }
+
   handleErrors<T>(op ='operation', result?: T)
   {
     return (error:any):Observable<T> =>

@@ -17,6 +17,30 @@ describe('EventProxyLibService', () =>
     expect(service).toBeTruthy();
   });
 
+
+  it("should testing_getLastEvent and return same element", async (done) =>
+  {
+    const service: EventProxyLibService = TestBed.get(EventProxyLibService);
+
+    let eID = 1202, trackID = 2, srcID = 3;
+    var event:IEvent =
+    {
+      EventId: eID,
+      SourceEventUniqueId: trackID,
+      SourceId: srcID,
+    }
+
+    service.dispatchEvent(event).subscribe
+    (
+      result => { expect(result).toEqual(event); done(); }
+    )
+
+    service.testing_getLastEvent().subscribe
+    (
+      result => { expect(result).toEqual(event); done(); }
+    )
+  });
+
   it("should dispatchEvent and return same element", async (done) =>
   {
     const service: EventProxyLibService = TestBed.get(EventProxyLibService);
@@ -48,6 +72,29 @@ describe('EventProxyLibService', () =>
     }
 
     service.dispatchEvent(event).subscribe
+    (
+      result => { expect(result).toEqual(event); done(); }
+    )
+  });
+
+  it("should subscribe to event and then GET it back", async (done) =>
+  {
+    const service: EventProxyLibService = TestBed.get(EventProxyLibService);
+
+    var event:IEventSubscibeToEvent =
+    {
+      EventId: uEvents.SubscribeToEvent.EventId,
+      SourceEventUniqueId: 0,
+      SourceId: uParts.Personnel,
+      SubscribeToEventId: uEvents.PerssonelButtonPressed.EventId
+    }
+
+    service.dispatchEvent(event).subscribe
+    (
+      result => { expect(result).toEqual(event); done(); }
+    )
+
+    service.testing_getLastEvent().subscribe
     (
       result => { expect(result).toEqual(event); done(); }
     )
