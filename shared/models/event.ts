@@ -1,16 +1,16 @@
 export class uEvent
 {
-    public EventId: number;
-    public SourceEventUniqueId: number;
-    public SourceId: number;
-    public AggregateId: number;
-    public SourceName: number;
-    public EventLevel: number;
-    public UserID: number; 
-    public SessionID: string;
-    public ParentID: number;
-    public ProtocolVersion: string;
-    public Comment: string;
+    public EventId: number = 0;
+    public SourceEventUniqueId: number = 0;
+    public SourceId: number = 0;
+    public AggregateId: number = 0;
+    public SourceName: number = 0;
+    public EventLevel: number = 0;
+    public UserID: number = 0; 
+    public SessionID: string = "";
+    public ParentID: number = 0;
+    public ProtocolVersion: string = "";
+    public Comment: string = "";
 }
 
 export class uParts

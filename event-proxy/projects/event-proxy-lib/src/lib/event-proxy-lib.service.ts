@@ -40,17 +40,6 @@ export class EventProxyLibService
     )
   }
 
-  async testing_getLastEventLoop()
-  {
-    setInterval( () =>
-    {
-      this.testing_getLastEvent().subscribe
-      (
-        (response) => {  }
-      )
-    }, 1000);
-  }
-
   testing_run()
   {
 
