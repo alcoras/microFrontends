@@ -1,7 +1,11 @@
-import { IEvent } from '../models/event';
+import { uEventsIds, uEvent } from '../models/event';
 
-export interface IEventSubscibeToEvent extends IEvent
+export class EventSubscibeToEvent extends uEvent
 {
-  // which event we're subscribing to
-  SubscribeToEventId: number
+  EventId = uEventsIds.SubscribeToEvent;
+
+  constructor(public SubscribeToEventId: number) 
+  {
+    super();
+  }
 }

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { IEvent } from "@protocol-shared/models/event";
+import { uEvent } from "@protocol-shared/models/event";
 import { InlineWorker } from './inline-worker';
 
 @Injectable({
@@ -23,12 +23,12 @@ export class EventProxyLibService
     this.apiGatewayURL = newURL;
   }
 
-  dispatchEvent(event: IEvent)
+  dispatchEvent(event: uEvent)
   {
     const headers = new HttpHeaders({"Content-Type":"application/json"});
 
     return this.httpClient
-    .put<IEvent>
+    .put<uEvent>
     (
       this.apiGatewayURL + "/events.json",
       event,
