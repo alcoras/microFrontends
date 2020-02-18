@@ -128,4 +128,18 @@ describe('EventProxyLibService', () =>
 
   });
 
+  fit("testing web worker", () =>
+  {
+    const service: EventProxyLibService = TestBed.get(EventProxyLibService);
+
+    service.testing_run();
+  });
+
+  it("testing_getLastEventLoop", () =>
+  {
+    const service: EventProxyLibService = TestBed.get(EventProxyLibService);
+
+    service.testing_getLastEventLoop();
+  });
+
 });
