@@ -2,9 +2,9 @@ export class uEvent
 {
     public EventId: number = 0;
     public SourceEventUniqueId: number = 0;
-    public SourceId: number = 0;
+    public SourceId: string = "";
     public AggregateId: number = 0;
-    public SourceName: number = 0;
+    public SourceName: string = "";
     public EventLevel: number = 0;
     public UserID: number = 0; 
     public SessionID: string = "";
