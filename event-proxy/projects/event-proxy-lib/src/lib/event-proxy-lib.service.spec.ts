@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
 import { EventProxyLibService } from './event-proxy-lib.service';
-import { HttpClientModule, HttpResponse } from '@angular/common/http';
+import { HttpClientModule, HttpResponse, HttpEvent } from '@angular/common/http';
 import { uEvent, uParts, uEventsIds } from '@protocol-shared/models/event';
-import { EventSubscibeToEvent } from '@protocol-shared/events/EventSubscibeToEvent';
+import { EventSubscibeToEvent } from "@protocol-shared/events/EventSubscibeToEvent";
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -12,6 +12,8 @@ function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
+//TODO: test with angular tests too (httpTestModule, to test requests)
+//TODO: reset server for each test
 describe('EventProxyLibService', () =>
 {
   let tEvent = new uEvent();
@@ -22,94 +24,145 @@ describe('EventProxyLibService', () =>
     () =>
     {
       TestBed.configureTestingModule({
+        providers: [EventProxyLibService],
         imports:[HttpClientModule]
       });
 
       let eID = getRandomInt(100), trackID = getRandomInt(3), srcID = getRandomInt(50);
       tEvent.EventId = eID;
       tEvent.SourceEventUniqueId = trackID;
-      tEvent.SourceId = srcID;
+      tEvent.SourceId = srcID.toString();
 
       service = TestBed.get(EventProxyLibService);
     }
   );
 
-  it('should be created', () =>
-  {
-    expect(service).toBeTruthy();
-  });
-
   it("should dispatchEvent and return same element", async (done) =>
   {
     service.dispatchEvent(tEvent).subscribe
     (
-      (result) =>
+      (response:HttpResponse<any>) =>
       {
         var expected = JSON.parse(JSON.stringify(tEvent));
-        var actual = JSON.parse(JSON.stringify(result));
+        var actual = JSON.parse(JSON.stringify(response.body));
 
-        expect(actual).toEqual(expected, "failed on dispatchEvent");
-        done();
-      }
-    )
-
-  });
-
-  it("should testing_getLastEvent and return same element", async (done) =>
-  {
-    service.dispatchEvent(tEvent).subscribe
-    (
-      (result) =>
-      {
-        var expected = JSON.parse(JSON.stringify(tEvent));
-        var actual = JSON.parse(JSON.stringify(result));
-
-        expect(actual).toEqual(expected, "failed on dispatchEvent");
-
-      }
-    )
-
-    await delay(1000);
-
-    service.testing_getLastEvent().subscribe
-    (
-      (result) =>
-      {
-        var expected = JSON.parse(JSON.stringify(tEvent))
-        var actual = JSON.parse(JSON.stringify(result))
-
-        expect(actual).toEqual(expected, "failed on testing_getLastEvent");
-
-        done();
-      }
-    )
-  });
-
-  it("should subscribe to event and return same element", async (done) =>
-  {
-    var event = new EventSubscibeToEvent(0);
-
-    event.SourceId = uParts.Personnel;
-    event.SourceEventUniqueId = 0;
-    event.SubscribeToEventId = uEventsIds.PerssonelButtonPressed;
-    event.Comment = "gg";
-
-    service.dispatchEvent(event).subscribe
-    (
-      (result) =>
-      {
-        // TODO: so terrible
-        var expected = JSON.parse(JSON.stringify(event))
-        var actual = JSON.parse(JSON.stringify(result))
+        //console.log(expected, actual)
+        actual.AggregateId = expected.AggregateId;
 
         expect(actual).toEqual(expected);
+        expect(response.status).toEqual(201);
 
         done();
       }
-    )
+    );
+
   });
 
-  it("should dispatchEvent and fail", async (done) =>
+  it("should connect and disconnect with status 204 after X seconds ", async(done)=>
+  {
+    var timeoutMS = 4; // max 5 cuz Jasmine defaults for each task
+    service.getLastEvents(0, 0, timeoutMS).subscribe
+    (
+      (next:HttpResponse<any>) => { expect(next.status).toEqual(204); },
+      () => {},
+      () => { }
+    )
+
+    await delay(timeoutMS*1000);
+
+    done();
+  });
+
+  it("should send subscription event and return it", async (done) =>
+  {
+    //TODO: should check if it was added to sub list in db
+    var subEvent = new EventSubscibeToEvent([[500, 0, 0]], false);
+    subEvent.EventId = uEventsIds.SubscribeToEvent;
+    subEvent.SourceEventUniqueId = getRandomInt(500);
+    subEvent.SourceId = "1000";
+
+    service.dispatchEvent(subEvent).subscribe
+    (
+      (response:HttpResponse<any>) =>
+      {
+        var expected = JSON.parse(JSON.stringify(subEvent));
+        var actual = JSON.parse(JSON.stringify(response.body));
+
+        actual.AggregateId = expected.AggregateId;
+
+        expect(actual).toEqual(expected);
+        expect(response.status).toEqual(201);
+
+      }
+    );
+    done();
+  });
+
+  it("should receive event to subscribed event", async (done) =>
+  {
+    // 1. Fire subscribe event
+    // 2. Fire event with subscribed event id
+    // 3. get subscribed event
+
+    var uniqueId = getRandomInt(500);
+    var waitForEventId = 500;
+
+    var subEvent = new EventSubscibeToEvent([[waitForEventId, 0, 0]], false);
+    subEvent.EventId = uEventsIds.SubscribeToEvent;
+    subEvent.SourceEventUniqueId = uniqueId++;
+    subEvent.SourceId = "1000";
+
+    service.dispatchEvent(subEvent).subscribe
+    (
+      (response:HttpResponse<any>) =>
+      {
+        var expected = JSON.parse(JSON.stringify(subEvent));
+        var actual = JSON.parse(JSON.stringify(response.body));
+
+        actual.AggregateId = expected.AggregateId;
+
+        expect(actual).toEqual(expected);
+        expect(response.status).toEqual(201);
+      }
+    );
+
+    tEvent.EventId = waitForEventId;
+    tEvent.SourceEventUniqueId = uniqueId++;
+
+    service.dispatchEvent(tEvent).subscribe
+    (
+      (response:HttpResponse<any>) =>
+      {
+        var expected = JSON.parse(JSON.stringify(tEvent));
+        var actual = JSON.parse(JSON.stringify(response.body));
+
+        actual.AggregateId = expected.AggregateId;
+
+        expect(actual).toEqual(expected);
+        expect(response.status).toEqual(201);
+      }
+    );
+
+    var timeoutMS = 4; // max 5 cuz Jasmine defaults for each task
+
+    service.getLastEvents(+subEvent.SourceId, 0, timeoutMS).subscribe
+    (
+      (response:HttpResponse<any>) =>
+      {
+        //TODO: should check results
+        //var expected = JSON.parse(JSON.stringify(tEvent));
+        //var actual = JSON.parse(JSON.stringify(response.body));
+
+        expect(response.status).toEqual(200);
+      }
+    )
+
+    done();
+    //await delay(timeoutMS*1000);
+
+  });
+
+  it("#dispatchEvent should fail", async (done) =>
   {
     //spyOn(service, "handleErrors");
 

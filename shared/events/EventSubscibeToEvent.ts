@@ -4,7 +4,9 @@ export class EventSubscibeToEvent extends uEvent
 {
   EventId = uEventsIds.SubscribeToEvent;
 
-  constructor(public SubscribeToEventId: number) 
+  constructor(
+    public IdsTripleList:any[][],
+    public CleanSubscriptionList:boolean = false) 
   {
     super();
   }

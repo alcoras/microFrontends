@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import cors from "cors";
+
 import { eventDB } from "./events";
 
 var db = new eventDB();
@@ -9,26 +11,46 @@ const app: express.Application = express();
 
 var jsonParser = bodyParser.json()
 
+function sleep(ms:number) 
+{
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}   
+
 app.get("/", (req, res) =>
 {
   res.status(200).send(db);
 });
 
-app.get("/newEvents/:srcID/:traceID", (req, res) =>
+app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
 {
   var srcId:string = req.params.srcID;
   var traceId:string = req.params.traceID;
-  
-  var ret = db.source[srcId].getEventsFrom(+traceId);
-  res.status(200).send(ret);
+
+  var timeoutMS = +req.headers['timeout'] * 1000;
+  var sleepTimeMS = 500;
+  var accMS = 0;
+
+  while (accMS < timeoutMS)
+  {
+    var ret = db.getEventsFrom(srcId, +traceId);
+    if (ret)
+      await res.status(200).json(ret);
+    await sleep(sleepTimeMS);
+    accMS += sleepTimeMS;
+  }
+
+  await res.status(204).send();
 });
 
-app.post("/newEvent", jsonParser, (req, res) =>
+app.post("/newEvent", cors(), jsonParser, (req, res) =>
 {
   var e: any = req.body;
-  db.addUniqueEvent(e);
-
-  res.status(200).send(db);
+  if (db.addUniqueEvent(e))
+    res.status(201).send(e);
+  else
+    res.status(400).send(e);
 });
 
 app.post("/reset", (req, res) =>
@@ -37,6 +59,7 @@ app.post("/reset", (req, res) =>
   res.status(200).send(db);
 });
 
+app.use(cors());
 app.use(morgan("combined"));
  
 app.use(bodyParser.json());

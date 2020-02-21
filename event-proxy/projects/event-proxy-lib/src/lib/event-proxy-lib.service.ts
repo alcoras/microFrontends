@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -12,27 +12,40 @@ import { InlineWorker } from './inline-worker';
 export class EventProxyLibService
 {
   result = 0;
-  apiGatewayURL = "https://ng-test1-2a96e.firebaseio.com";
+  //apiGatewayURL = "https://ng-test1-2a96e.firebaseio.com";
+  apiGatewayURL = "http://localhost:3000";
+
+  public apiRequests:{ [id:string] : string } = {}
 
   constructor(
     private httpClient: HttpClient
-  ) { }
+  )
+  {
+    this.setupApiRequests();
+  }
+
+  setupApiRequests()
+  {
+    this.apiRequests["post_new_event"] = "/newEvent";
+    this.apiRequests["get_last_events"] = "/newEvents";
+    this.apiRequests["get_keep-alive-test"] = "/keep-alive-test";
+  }
 
   changeApiGatewayURL(newURL:string)
   {
     this.apiGatewayURL = newURL;
   }
 
-  dispatchEvent(event: uEvent)
+  dispatchEvent(event: any)
   {
     const headers = new HttpHeaders({"Content-Type":"application/json"});
 
     return this.httpClient
-    .put<uEvent>
+    .post
     (
-      this.apiGatewayURL + "/events.json",
+      this.apiGatewayURL + this.apiRequests["post_new_event"],
       event,
-      {headers:headers}
+      {headers:headers, observe: "response"}
     )
     .pipe
     (
@@ -47,7 +60,8 @@ export class EventProxyLibService
       // START OF WORKER THREAD CODE
       console.log('Start worker thread, wait for postMessage: ');
 
-      const calculateCountOfPrimeNumbers = (limit) => {
+      const calculateCountOfPrimeNumbers = (limit) =>
+      {
 
         const isPrime = num => {
           for (let i = 2; i < num; i++) {
@@ -82,7 +96,8 @@ export class EventProxyLibService
 
     worker.postMessage({ limit: 300000 });
 
-    worker.onmessage().subscribe((data) => {
+    worker.onmessage().subscribe((data) =>
+    {
       console.log('Calculation done: ', new Date() + ' ' + data.data);
       this.result = data.data.primeNumbers;
       worker.terminate();
@@ -93,10 +108,15 @@ export class EventProxyLibService
     });
   }
 
-  testing_getLastEvent()
+  getLastEvents(srcId:number, traceId:number = 0, timeout:number = 5)
   {
-    return this.httpClient
-    .get(this.apiGatewayURL + "/events.json")
+    const headers = new HttpHeaders({"timeout": timeout.toString()});
+
+    return this.httpClient.get
+    (
+      this.apiGatewayURL + `/newEvents/${srcId}/${traceId}`,
+      { headers: headers, observe: "response" }
+    )
     .pipe
     (
       catchError(this.handleErrors<any>('testing_getLastEvent', ""))

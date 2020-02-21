@@ -89,6 +89,14 @@ export class eventDB
     public source:{ [id:string] : uSource } = {}
     private sourceList:number[] = [];
 
+    public getEventsFrom(srcId:string, traceId: number): any[]
+    {
+        if (this.source.hasOwnProperty(srcId))
+            return this.source[srcId].getEventsFrom(traceId);
+        else 
+            return;
+    }
+
     public checkForSubs(event:any)
     {
         this.sourceList.forEach(element => 
@@ -100,7 +108,7 @@ export class eventDB
         });
     }
 
-    public addUniqueEvent(event:any)
+    public addUniqueEvent(event:any): boolean
     {
         event.AggregateId = this.aggrId;
         if (!this.source.hasOwnProperty(event.SourceId))
@@ -113,11 +121,18 @@ export class eventDB
         {
             if (event.EventId == uEventsIds.SubscribeToEvent)
             {
-                this.source[event.SourceId].subList.push(event.SubscribeToEventId);
+                event.IdsTripleList.forEach((element: number[]) => 
+                {
+                    this.source[event.SourceId].subList.push(element[0]);
+                });
             }
             this.allEvents[this.aggrId++] = event;
+            this.checkForSubs(event);
+
+            return true;
         }
-        
-        this.checkForSubs(event);
+
+        return false;
     }
 }
+

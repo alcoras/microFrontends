@@ -5,6 +5,7 @@ import { EventProxyLibComponent } from './event-proxy-lib.component';
 
 @NgModule({
   declarations: [EventProxyLibComponent],
+  providers: [],
   imports: [
     CommonModule,
     HttpClientModule
