@@ -76,8 +76,29 @@ export class uSource
                 ret.push(value);
             }
         }
+        if (ret.length>0)
+            return ret;
+        else 
+            return null;
+    }
 
-        return ret;
+    public confirmEvents(list:number[]):number[]
+    {
+        var keysToRemove:number[] = [];
+        for (let key in this.subEvents)
+        {
+            if (list.includes(this.subEvents[key].AggregateId))
+            {
+                keysToRemove.push(+key);
+            }
+        }
+
+        keysToRemove.forEach(element => 
+        {
+            delete this.subEvents[element];
+        });
+
+        return keysToRemove;
     }
 }
 
@@ -88,6 +109,14 @@ export class eventDB
     
     public source:{ [id:string] : uSource } = {}
     private sourceList:number[] = [];
+
+    public confirmEvents(srcId:string, list:number[])
+    {
+        if (this.source.hasOwnProperty(srcId))
+            return this.source[srcId].confirmEvents(list);
+        else 
+            return;
+    }
 
     public getEventsFrom(srcId:string, traceId: number): any[]
     {

@@ -23,6 +23,15 @@ app.get("/", (req, res) =>
   res.status(200).send(db);
 });
 
+app.post("/confirmEvents", cors(), jsonParser, (req, res) =>
+{
+  var obj: any = req.body;
+
+  var ret:number[] = db.confirmEvents(obj.SourceId, obj.ids);
+
+  res.status(200).send(ret);
+})
+
 app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
 {
   var srcId:string = req.params.srcID;

@@ -1,51 +1,84 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpRequest, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, of, Subscription, interval, Observer } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { uEvent } from "@protocol-shared/models/event";
-import { InlineWorker } from './inline-worker';
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventProxyLibService
 {
-  result = 0;
-  //apiGatewayURL = "https://ng-test1-2a96e.firebaseio.com";
-  apiGatewayURL = "http://localhost:3000";
 
-  public apiRequests:{ [id:string] : string } = {}
+  //TODO: make requests customizable (test_local, test_yuk, prod?)
+  public apiGatewayURL = "http://localhost:3000";
+  public apiRequests:{ [id:string] : HttpRequest<any> } = {}
+
+  private recursiveSub(obs:Observer<any>, oldEvent:any)
+  {
+    var newEvent;
+    this.getLastEvents(1000).subscribe
+    (
+      (res:HttpResponse<any>) =>
+      {
+        obs.next(res.body);
+        this.recursiveSub(obs, newEvent);
+
+        // TODO: if after some retries fails short circuit it
+        // should be waiting till that event is taken care of
+      },
+      () => { this.recursiveSub(obs, oldEvent); },
+      () => { this.recursiveSub(obs, oldEvent); }
+    )
+  }
+
+  public qnaWithTheGateway = Observable.create
+  (
+    async (observer: Observer<any>) =>
+    {
+      this.recursiveSub(observer, null);
+    }
+  )
 
   constructor(
     private httpClient: HttpClient
-  )
-  {
-    this.setupApiRequests();
-  }
+  ) {}
 
-  setupApiRequests()
-  {
-    this.apiRequests["post_new_event"] = "/newEvent";
-    this.apiRequests["get_last_events"] = "/newEvents";
-    this.apiRequests["get_keep-alive-test"] = "/keep-alive-test";
-  }
-
-  changeApiGatewayURL(newURL:string)
+  public changeApiGatewayURL(newURL:string)
   {
     this.apiGatewayURL = newURL;
   }
 
-  dispatchEvent(event: any)
+  public confirmEvents(srcId:number, idList:number[])
   {
     const headers = new HttpHeaders({"Content-Type":"application/json"});
 
     return this.httpClient
     .post
     (
-      this.apiGatewayURL + this.apiRequests["post_new_event"],
+      this.apiGatewayURL + "/confirmEvents",
+      { "SourceId": srcId, "ids": idList },
+      { headers:headers, observe: "response" }
+    )
+    .pipe
+    (
+      catchError(this.handleErrors<any>('confirmEvents', ""))
+    )
+  }
+
+  public dispatchEvent(event: any)
+  {
+    const headers = new HttpHeaders({"Content-Type":"application/json"});
+
+    return this.httpClient
+    .post
+    (
+      this.apiGatewayURL + "/newEvent",
       event,
-      {headers:headers, observe: "response"}
+      { headers:headers, observe: "response" }
     )
     .pipe
     (
@@ -53,62 +86,7 @@ export class EventProxyLibService
     )
   }
 
-  testing_run()
-  {
-
-    const worker = new InlineWorker(() => {
-      // START OF WORKER THREAD CODE
-      console.log('Start worker thread, wait for postMessage: ');
-
-      const calculateCountOfPrimeNumbers = (limit) =>
-      {
-
-        const isPrime = num => {
-          for (let i = 2; i < num; i++) {
-            if (num % i === 0) { return false; }
-          }
-          return num > 1;
-        };
-
-        let countPrimeNumbers = 0;
-
-        while (limit >= 0) {
-          if (isPrime(limit)) { countPrimeNumbers += 1; }
-          console.log(countPrimeNumbers);
-          limit--;
-        }
-
-        // this is from DedicatedWorkerGlobalScope ( because of that we have postMessage and onmessage methods )
-        // and it can't see methods of this class
-        // @ts-ignore
-        this.postMessage({
-          primeNumbers: countPrimeNumbers
-        });
-      };
-
-      // @ts-ignore
-      this.onmessage = (evt) => {
-        console.log('Calculation started: ' + new Date());
-        calculateCountOfPrimeNumbers(evt.data.limit);
-      };
-      // END OF WORKER THREAD CODE
-    });
-
-    worker.postMessage({ limit: 300000 });
-
-    worker.onmessage().subscribe((data) =>
-    {
-      console.log('Calculation done: ', new Date() + ' ' + data.data);
-      this.result = data.data.primeNumbers;
-      worker.terminate();
-    });
-
-    worker.onerror().subscribe((data) => {
-      console.log(data);
-    });
-  }
-
-  getLastEvents(srcId:number, traceId:number = 0, timeout:number = 5)
+  public getLastEvents(srcId:number, traceId:number = 0, timeout:number = 5)
   {
     const headers = new HttpHeaders({"timeout": timeout.toString()});
 
@@ -119,11 +97,11 @@ export class EventProxyLibService
     )
     .pipe
     (
-      catchError(this.handleErrors<any>('testing_getLastEvent', ""))
+      catchError(this.handleErrors<any>('getLastEvent', ""))
     )
   }
 
-  handleErrors<T>(op ='operation', result?: T)
+  public handleErrors<T>(op ='operation', result?: T)
   {
     return (error:any):Observable<T> =>
     {

@@ -30,6 +30,7 @@
     "tsc": "tsc",
     "build": "npm-run-all clean tsc",
     "dev:start": "npm-run-all build start",
+    "watch": "nodemon --watch src -e ts,ejs --exec npm run build",
     "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
     "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug backend-mock",
+            "program": "${workspaceFolder}/backend-mock/dist/main.js"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "debug personnel",
