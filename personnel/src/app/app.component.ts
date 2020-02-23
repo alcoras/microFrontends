@@ -1,8 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
-import { uEvents } from "@protocol-shared/models/event";
 
 import { EventProxyLibService } from "event-proxy-lib";
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,42 +10,34 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent {
 
-  obs:Observable<string>;
-
-  title = 'personnel';
-  mainChannelEl: HTMLElement;
+  private subs: Subscription = new Subscription();
+  private obs:Observable<any>;
+  private title = 'personnel';
 
   constructor(
-    private eProxyService: EventProxyLibService,
-    private el: ElementRef)
+    private eProxyService: EventProxyLibService)
   {
+    let sub = eProxyService.qnaWithTheGateway.subscribe
+    (
+      (value:any) => {},
+      (error:any) => {},
+      () => {},
+    )
 
-    this.obs = eProxyService.logThis();
-
-    console.log('INIT PERSONNEL');
-    this.mainChannelEl = document.querySelector('main-channel');
+    this.subs.add(sub);
   }
 
   ngAfterViewInit()
   {
-    // this.mainChannelEl.addEventListener(
-    //   uEvents.PerssonelButtonPressed.EventId.toString(),
-    //   this.onClick.bind(this));
   }
 
   onClick(event)
   {
-    console.log(event);
-    console.log('Personnel: '+ event['type'] );
-
-    var comp:HTMLElement = document.getElementById(event['detail']['comp_name']);
-
-    comp.innerHTML= "<team-personnel-2></team-personnel-2>"
   }
 
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-
+    this.subs.unsubscribe();
   }
 }

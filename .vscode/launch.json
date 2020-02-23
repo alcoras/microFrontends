@@ -7,13 +7,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug backend-mock",
+            "name": "backend-mock",
             "program": "${workspaceFolder}/backend-mock/dist/main.js"
         },
         {
             "type": "chrome",
             "request": "launch",
-            "name": "debug personnel",
+            "name": "personnel",
             "url": "http://localhost:4200",
             "webRoot": "${workspaceFolder}/personnel"
         }

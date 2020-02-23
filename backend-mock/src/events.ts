@@ -82,8 +82,14 @@ export class uSource
             return null;
     }
 
-    public confirmEvents(list:number[]):number[]
+    public confirmEvents(list:number[], reset?:boolean):number[]
     {
+        if (reset)
+        {
+            this.subEvents = {};
+            return [0];
+        }
+
         var keysToRemove:number[] = [];
         for (let key in this.subEvents)
         {
@@ -110,10 +116,10 @@ export class eventDB
     public source:{ [id:string] : uSource } = {}
     private sourceList:number[] = [];
 
-    public confirmEvents(srcId:string, list:number[])
+    public confirmEvents(srcId:string, list?:number[], reset?:boolean)
     {
         if (this.source.hasOwnProperty(srcId))
-            return this.source[srcId].confirmEvents(list);
+            return this.source[srcId].confirmEvents(list, reset);
         else 
             return;
     }

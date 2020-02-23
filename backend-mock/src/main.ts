@@ -29,7 +29,7 @@ app.post("/confirmEvents", cors(), jsonParser, (req, res) =>
 
   var ret:number[] = db.confirmEvents(obj.SourceId, obj.ids);
 
-  res.status(200).send(ret);
+  res.status(202).send(ret);
 })
 
 app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
@@ -45,7 +45,10 @@ app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
   {
     var ret = db.getEventsFrom(srcId, +traceId);
     if (ret)
+    {
+      db.confirmEvents(srcId, null, true);
       await res.status(200).json(ret);
+    }
     await sleep(sleepTimeMS);
     accMS += sleepTimeMS;
   }
