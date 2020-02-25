@@ -4,6 +4,7 @@ import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
 import { ScriptLoaderComponent } from './script-loader/script-loader.component';
+import { EventProxyLibModule } from "event-proxy-lib";
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { ScriptLoaderComponent } from './script-loader/script-loader.component';
   ],
   imports: [
     BrowserModule,
+    EventProxyLibModule
   ],
   providers: [],
   bootstrap: [],

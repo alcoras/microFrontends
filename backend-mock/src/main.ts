@@ -77,6 +77,7 @@ app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var server = app.listen(3000, function () {
+// TODO: make port to be an arugment
+var server = app.listen(8080, function () {
     console.log("app running on port.", server.address());
 });

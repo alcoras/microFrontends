@@ -1,5 +1,13 @@
-import { Component, ElementRef } from '@angular/core';
-import { uEventTemplate, uEvents, uParts } from "@protocol-shared/event";
+import { Component } from '@angular/core';
+import { uEvent, uEventsIds, uParts } from "@protocol-shared/models/event";
+import { EventProxyLibService } from 'event-proxy-lib'
+import { SubscibeToEvent } from "@protocol-shared/events/SubscibeToEvent";
+
+class IncorrectEventName extends Error
+{
+  public name = "IncorrectEventName";
+  public message = "Incorrect event name was passed";
+}
 
 @Component({
   selector: 'app-root',
@@ -8,99 +16,65 @@ import { uEventTemplate, uEvents, uParts } from "@protocol-shared/event";
 })
 export class AppComponent {
 
+  title = 'menu';
   traceId = 1;
 
-  mainChannelEl: HTMLElement;
-  constructor(private el: ElementRef)
-  {
-    this.mainChannelEl = document.querySelector('main-channel');
+  sourceId:number = uParts.Menu;
 
-    this.sendInitEvent();
+  constructor(
+    private eProxyService: EventProxyLibService
+  )
+  {
+    this.eProxyService.startQNA(this.sourceId).subscribe(
+      (value) => { console.log(this.title, value)},
+      (error) => { console.log(this.title, error)},
+      () => {}
+    )
+
+    this.subToLoadedScriptEvent();
   }
 
-  sendInitEvent()
+
+  subToLoadedScriptEvent()
   {
-    let initEventId = uEvents.InitEvent.EventId;
+    let event = new SubscibeToEvent([[uEventsIds.LoadedScript,0,0]]);
+    event.SourceId = this.sourceId.toString();
+    event.SourceEventUniqueId = this.traceId++;
 
-    const ev = new uEventTemplate(
-      initEventId,
-      this.traceId++,
-      uParts.Menu);
-
-    const domEvent = new CustomEvent(
-      initEventId.toString(),
-      {
-        detail:
-        {
-          ev,
-          "part": this.title
-        },
-        bubbles: true
-      });
-
-    this.mainChannelEl.dispatchEvent(domEvent);
-  }
-
-  title = 'menu';
-  i = 0;
-
-  async sendRequestLoadScript()
-  {
-    let eventId = uEvents.RequestToLoadScript.EventId;
-
-    const ev = new uEventTemplate(
-      eventId,
-      this.traceId++,
-      uParts.Menu);
-
-    const domEvent = new CustomEvent(
-      eventId.toString(),
-      {
-        detail:
-        {
-          ev,
-          urls:
-          ["http://127.0.0.1:3004/main.js" ]
-        },
-        bubbles: true
-      });
-
-    this.mainChannelEl.dispatchEvent(domEvent);
+    this.eProxyService.dispatchEvent(event).subscribe(
+      (value:any) => { console.log(value) },
+      (error:any) => { console.log("error", error)},
+      () => {},
+    );
   }
 
   menuClick(evt, eventName:number)
   {
-    //
-    //document.getElementById("occupations").innerHTML = "<team-occupations-2></team-occupations-2>";
+    // create event
+    let event = new uEvent();
+    if (Object.values(uEventsIds).includes(eventName))
+      event.EventId = eventName;
+    else
+      throw new IncorrectEventName();
 
-    const ev = new uEventTemplate(
-      eventName,
-      this.traceId++,
-      uParts.Menu);
+    event.SourceEventUniqueId = this.traceId++;
+    event.SourceId = this.sourceId.toString();
 
-    const domEvent = new CustomEvent(
-      eventName.toString(),
-      {
-        detail:
-        {
-          ev
-        },
-        bubbles: true
-      });
+    this.eProxyService.dispatchEvent(event).subscribe(
+      (value:any) => { console.log(value) },
+      (error:any) => { console.log("error", error)},
+      () => {},
+    )
 
-    this.mainChannelEl.dispatchEvent(domEvent);
-
-    // switch(eventName)
-    // {
-    //   case uEvents.PerssonelButtonPressed.EventId:
-    //     this.openTab(evt, "personnel");
-    //     break;
-    //   case uEvents.OccupationButtonPressed.EventId:
-    //     this.openTab(evt, "occupations");
-    //     break;
-    // }
-
-    this.sendRequestLoadScript();
+    switch(eventName)
+    {
+      case uEventsIds.PerssonelButtonPressed:
+        this.openTab(evt, "personnel");
+        break;
+      case uEventsIds.PerssonelButtonPressed:
+        this.openTab(evt, "occupations");
+        break;
+    }
   }
 
   openTab(evt, tabName: string)

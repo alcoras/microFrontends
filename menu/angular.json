@@ -58,7 +58,7 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "port": 3001,
+            "port": 4200,
             "browserTarget": "menu:build"
           },
           "configurations": {

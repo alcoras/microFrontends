@@ -9,17 +9,23 @@ import { catchError } from 'rxjs/operators';
 })
 export class EventProxyLibService {
 
+  private sourceID = 0;
   // TODO: make requests customizable (test_local, test_yuk, prod?)
-  public apiGatewayURL = 'http://localhost:3000';
+  // TODO: make apigatewayURL passable
+  public apiGatewayURL = 'http://localhost:8080';
   public apiRequests: {[id: string]: HttpRequest<any> } = {};
 
-  public qnaWithTheGateway:Observable<any> = new Observable (
-    (observer: Observer<any>) =>
-    {
-      // TODO: if after some retries fails short circuit it
-      this.recursiveSub(observer, null);
-    }
-  );
+  public startQNA(sourceID:number):Observable<any>
+  {
+    this.sourceID = sourceID;
+
+    return new Observable (
+      (observer: Observer<any>) =>
+      {
+        // TODO: if after some retries fails short circuit it
+        this.recursiveSub(observer, null);
+      })
+  }
 
   private recursiveSub(obs: Observer<any>, count: number) {
 
@@ -27,7 +33,7 @@ export class EventProxyLibService {
       this.recursiveSub(obs, count);
     };
 
-    this.getLastEvents(1000).subscribe
+    this.getLastEvents(this.sourceID).subscribe
     (
       (res: HttpResponse<any>) => {
         if (res.body != null) {
@@ -41,8 +47,8 @@ export class EventProxyLibService {
   }
 
   constructor(
-    private httpClient: HttpClient
-  ) {}
+    private httpClient: HttpClient,
+  ) { }
 
   public changeApiGatewayURL(newURL: string)
   {

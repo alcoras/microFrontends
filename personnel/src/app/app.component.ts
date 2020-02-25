@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { EventProxyLibService } from "event-proxy-lib";
 import { Observable, Subscription } from 'rxjs';
@@ -31,13 +31,13 @@ export class AppComponent {
   {
   }
 
+  // 1.
   onClick(event)
   {
+
   }
 
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.subs.unsubscribe();
   }
 }

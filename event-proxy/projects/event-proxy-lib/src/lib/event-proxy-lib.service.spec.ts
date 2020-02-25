@@ -1,7 +1,7 @@
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { EventSubscibeToEvent } from '@protocol-shared/events/EventSubscibeToEvent';
-import { uEvent, uEventsIds } from '@protocol-shared/models/event';
+import { uEvent, uEventsIds, uParts } from '@protocol-shared/models/event';
 import { EventProxyLibService } from './event-proxy-lib.service';
 
 
@@ -41,8 +41,6 @@ describe('EventProxyLibService', () => {
       const srcId = 1000;
       const list: number[] = [100, 200];
 
-      const data = { 'SourceId': srcId, 'ids': list };
-
       service.confirmEvents(srcId, list).subscribe
       (
         (response: HttpResponse<any>) => {
@@ -59,7 +57,7 @@ describe('EventProxyLibService', () => {
     });
 
     xit('# example on how to subscribe',  async (done) => {
-      service.qnaWithTheGateway.subscribe
+      service.startQNA(uParts.Menu).subscribe
       (
         (value: string) => { console.log('value:', value); },
         (error: string) => { console.log('error:', error); },

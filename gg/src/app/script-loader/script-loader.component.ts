@@ -1,5 +1,7 @@
-import { Component, ElementRef, AfterViewInit } from '@angular/core';
-import { uEvents, uParts, uEventTemplate } from "@protocol-shared/event";
+import { Component, AfterViewInit } from '@angular/core';
+import { EventProxyLibService } from 'event-proxy-lib';
+import { SubscibeToEvent } from '@protocol-shared/events/SubscibeToEvent';
+import { uEventsIds, uParts } from '@protocol-shared/models/event';
 
 @Component({
   selector: 'app-script-loader',
@@ -7,44 +9,49 @@ import { uEvents, uParts, uEventTemplate } from "@protocol-shared/event";
 })
 export class ScriptLoaderComponent implements AfterViewInit
 {
-  traceId = 1;
   title = "script-loader"
-  mainChannelEl: HTMLElement;
+  traceId = 1;
+  sourceId:number = uParts.ScriptLoader;
 
-  constructor(private el: ElementRef)
+  constructor(
+    private eProxyService: EventProxyLibService
+  )
   {
-    this.mainChannelEl = document.querySelector('main-channel');
-    this.sendInitEvent();
+    this.subToLoadedScriptEvent();
+    this.eProxyService.startQNA(this.sourceId).subscribe
+    (
+      (value) => { this.parseNewEvent(value); },
+      (error) => { console.log(this.title, error)},
+      () => {}
+    )
   }
 
-  sendInitEvent()
+  parseNewEvent(event:any)
   {
-    let initEventId = uEvents.InitEvent.EventId;
+    event.forEach(element =>
+    {
+        //TODO: continue here
+    });
+  }
 
-    const ev = new uEventTemplate(
-      initEventId,
-      this.traceId++,
-      uParts.ScriptLoader);
+  subToLoadedScriptEvent()
+  {
+    let event = new SubscibeToEvent([
+      [uEventsIds.RequestToLoadScript,0,0]]);
 
-    const domEvent = new CustomEvent(
-      initEventId.toString(),
-      {
-        detail:
-        {
-          ev,
-          "part": this.title
-        },
-        bubbles: true
-      });
+    event.SourceId = this.sourceId.toString();
+    event.SourceEventUniqueId = this.traceId++;
 
-    this.mainChannelEl.dispatchEvent(domEvent);
+    this.eProxyService.dispatchEvent(event).subscribe(
+      (value:any) => { console.log(value) },
+      (error:any) => { console.log("error", error)},
+      () => {},
+    );
   }
 
   ngAfterViewInit(): void
   {
-    this.mainChannelEl.addEventListener(
-      uEvents.RequestToLoadScript.EventId.toString(),
-      this.attemptLoadScript.bind(this));
+
   }
 
   async attemptLoadScript( event )
@@ -77,25 +84,26 @@ export class ScriptLoaderComponent implements AfterViewInit
 
   eventLoadDone()
   {
-    let initEventId = uEvents.LoadedScript.EventId;
+  //   let initEventId = uEvents.LoadedScript.EventId;
 
-    const ev = new uEventTemplate(
-      initEventId,
-      this.traceId++,
-      uParts.ScriptLoader);
+  //   const ev = new uEventTemplate(
+  //     initEventId,
+  //     this.traceId++,
+  //     uParts.ScriptLoader);
 
-    const domEvent = new CustomEvent(
-      initEventId.toString(),
-      {
-        detail:
-        {
-          ev,
-          "part": this.title
-        },
-        bubbles: true
-      });
+  //   const domEvent = new CustomEvent(
+  //     initEventId.toString(),
+  //     {
+  //       detail:
+  //       {
+  //         ev,
+  //         "part": this.title
+  //       },
+  //       bubbles: true
+  //     });
 
-    this.mainChannelEl.dispatchEvent(domEvent);
+  //   this.mainChannelEl.dispatchEvent(domEvent);
+  //
   }
 
 }

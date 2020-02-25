@@ -14,8 +14,22 @@
             "type": "chrome",
             "request": "launch",
             "name": "personnel",
-            "url": "http://localhost:4200",
+            "url": "http://localhost:3003",
             "webRoot": "${workspaceFolder}/personnel"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "menu",
+            "url": "http://localhost:3002",
+            "webRoot": "${workspaceFolder}/menu"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "gg(shell)",
+            "url": "http://localhost:3001",
+            "webRoot": "${workspaceFolder}/gg"
         }
     ]
 }

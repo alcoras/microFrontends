@@ -1,6 +1,6 @@
 import { uEventsIds, uEvent } from '../models/event';
 
-export class EventSubscibeToEvent extends uEvent
+export class SubscibeToEvent extends uEvent
 {
   EventId = uEventsIds.SubscribeToEvent;
 

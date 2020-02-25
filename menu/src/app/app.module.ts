@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { MaterialModule } from "./meterial-module";
 import { AppComponent } from './app.component';
+import { EventProxyLibModule } from 'event-proxy-lib';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { AppComponent } from './app.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    EventProxyLibModule
   ],
   providers: [],
   bootstrap: [],
