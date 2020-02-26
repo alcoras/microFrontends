@@ -39,9 +39,8 @@ export class EventProxyLibService {
         if (res.body != null) {
           obs.next(res.body);
         }
-        preRecursiveSub(obs, count);
       },
-      () => { preRecursiveSub(obs, count); },
+      () => { /*preRecursiveSub(obs, count);*/ },
       () => { preRecursiveSub(obs, count); }
     );
   }

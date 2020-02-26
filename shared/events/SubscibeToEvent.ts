@@ -7,7 +7,5 @@ export class SubscibeToEvent extends uEvent
   constructor(
     public IdsTripleList:any[][],
     public CleanSubscriptionList:boolean = false) 
-  {
-    super();
-  }
+  { super(); }
 }

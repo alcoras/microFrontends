@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { EventProxyLibService } from "event-proxy-lib";
 import { Observable, Subscription } from 'rxjs';
+import { uParts } from "@protocol-shared/models/event";
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent {
   constructor(
     private eProxyService: EventProxyLibService)
   {
-    let sub = eProxyService.qnaWithTheGateway.subscribe
+    let sub = eProxyService.startQNA(uParts.Personnel).subscribe
     (
       (value:any) => {},
       (error:any) => {},
@@ -25,16 +26,6 @@ export class AppComponent {
     )
 
     this.subs.add(sub);
-  }
-
-  ngAfterViewInit()
-  {
-  }
-
-  // 1.
-  onClick(event)
-  {
-
   }
 
   ngOnDestroy(): void {

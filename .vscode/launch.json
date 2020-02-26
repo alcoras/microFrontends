@@ -13,9 +13,9 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "personnel",
-            "url": "http://localhost:3003",
-            "webRoot": "${workspaceFolder}/personnel"
+            "name": "gg(shell)",
+            "url": "http://localhost:3001",
+            "webRoot": "${workspaceFolder}/gg"
         },
         {
             "type": "chrome",
@@ -27,9 +27,16 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "gg(shell)",
-            "url": "http://localhost:3001",
-            "webRoot": "${workspaceFolder}/gg"
-        }
+            "name": "occupations",
+            "url": "http://localhost:3003",
+            "webRoot": "${workspaceFolder}/occupations"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "personnel",
+            "url": "http://localhost:3004",
+            "webRoot": "${workspaceFolder}/personnel"
+        },
     ]
 }

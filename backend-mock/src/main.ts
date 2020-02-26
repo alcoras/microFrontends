@@ -8,6 +8,7 @@ import { eventDB } from "./events";
 var db = new eventDB();
 
 const app: express.Application = express();
+app.use(morgan("dev"));
 
 var jsonParser = bodyParser.json()
 
@@ -20,7 +21,7 @@ function sleep(ms:number)
 
 app.get("/", (req, res) =>
 {
-  res.status(200).send(db);
+  res.send(db);
 });
 
 app.post("/confirmEvents", cors(), jsonParser, (req, res) =>
@@ -29,7 +30,7 @@ app.post("/confirmEvents", cors(), jsonParser, (req, res) =>
 
   var ret:number[] = db.confirmEvents(obj.SourceId, obj.ids);
 
-  res.status(202).send(ret);
+  res.send(ret);
 })
 
 app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
@@ -47,37 +48,36 @@ app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
     if (ret)
     {
       db.confirmEvents(srcId, null, true);
-      await res.status(200).json(ret);
+      await res.json(ret);
     }
     await sleep(sleepTimeMS);
     accMS += sleepTimeMS;
   }
 
-  await res.status(204).send();
+  await res.end();
 });
 
 app.post("/newEvent", cors(), jsonParser, (req, res) =>
 {
   var e: any = req.body;
   if (db.addUniqueEvent(e))
-    res.status(201).send(e);
+    res.send(e);
   else
-    res.status(400).send(e);
+    res.send(e);
 });
 
 app.post("/reset", (req, res) =>
 {
   db = new eventDB();
-  res.status(200).send(db);
+  res.send(db);
 });
 
 app.use(cors());
-app.use(morgan("combined"));
  
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // TODO: make port to be an arugment
-var server = app.listen(8080, function () {
+var server = app.listen(8080,'0.0.0.0', function () {
     console.log("app running on port.", server.address());
 });

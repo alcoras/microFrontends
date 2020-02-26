@@ -1,6 +1,6 @@
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { EventSubscibeToEvent } from '@protocol-shared/events/EventSubscibeToEvent';
+import { SubscibeToEvent } from '@protocol-shared/events/SubscibeToEvent';
 import { uEvent, uEventsIds, uParts } from '@protocol-shared/models/event';
 import { EventProxyLibService } from './event-proxy-lib.service';
 
@@ -56,16 +56,17 @@ describe('EventProxyLibService', () => {
       );
     });
 
-    xit('# example on how to subscribe',  async (done) => {
-      service.startQNA(uParts.Menu).subscribe
+    fit('# example on how to subscribe',  () => {
+
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 999999;
+      service.startQNA(uParts.FrontendShell).subscribe
       (
         (value: string) => { console.log('value:', value); },
         (error: string) => { console.log('error:', error); },
         () => { console.log('END'); },
       );
 
-      done();
-
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
     });
 
     it('should dispatchEvent and return same element', async (done) => {
@@ -103,7 +104,7 @@ describe('EventProxyLibService', () => {
 
     it('should send subscription event and return it', async (done) => {
       // TODO: should check if it was added to sub list in db
-      const subEvent = new EventSubscibeToEvent([[500, 0, 0]], false);
+      const subEvent = new SubscibeToEvent([[500, 0, 0]], false);
       subEvent.EventId = uEventsIds.SubscribeToEvent;
       subEvent.SourceEventUniqueId = getRandomInt(500);
       subEvent.SourceId = '1000';
@@ -132,7 +133,7 @@ describe('EventProxyLibService', () => {
       let uniqueId = getRandomInt(500);
       const waitForEventId = 500;
 
-      const subEvent = new EventSubscibeToEvent([[waitForEventId, 0, 0]], false);
+      const subEvent = new SubscibeToEvent([[waitForEventId, 0, 0]], false);
       subEvent.EventId = uEventsIds.SubscribeToEvent;
       subEvent.SourceEventUniqueId = uniqueId++;
       subEvent.SourceId = '1000';

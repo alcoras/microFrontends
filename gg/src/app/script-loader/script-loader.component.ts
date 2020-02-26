@@ -1,6 +1,8 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { EventProxyLibService } from 'event-proxy-lib';
-import { SubscibeToEvent } from '@protocol-shared/events/SubscibeToEvent';
+import { SubscibeToEvent,  } from '@protocol-shared/events/SubscibeToEvent';
+import { LoadedScript } from '@protocol-shared/events/LoadedScript';
+import { RequestToLoadScripts } from '@protocol-shared/events/RequestToLoadScript';
 import { uEventsIds, uParts } from '@protocol-shared/models/event';
 
 @Component({
@@ -26,15 +28,34 @@ export class ScriptLoaderComponent implements AfterViewInit
     )
   }
 
-  parseNewEvent(event:any)
+  private parseNewEvent(event:any)
   {
     event.forEach(element =>
     {
-        //TODO: continue here
+        switch(element.EventId)
+        {
+          case uEventsIds.RequestToLoadScript:
+            this.attemptLoadScript(element);
+            break;
+        }
     });
   }
 
-  subToLoadedScriptEvent()
+  private sendEventLoadedScript(eventId:number, url:string)
+  {
+    let event = new LoadedScript(eventId, url);
+
+    event.SourceId = this.sourceId.toString();
+    event.SourceEventUniqueId = this.traceId++;
+
+    this.eProxyService.dispatchEvent(event).subscribe(
+      (value:any) => { console.log(value) },
+      (error:any) => { console.log("error", error)},
+      () => {},
+    );
+  }
+
+  private subToLoadedScriptEvent()
   {
     let event = new SubscibeToEvent([
       [uEventsIds.RequestToLoadScript,0,0]]);
@@ -54,17 +75,14 @@ export class ScriptLoaderComponent implements AfterViewInit
 
   }
 
-  async attemptLoadScript( event )
+  private async attemptLoadScript( event: RequestToLoadScripts )
   {
-    console.log("loading");
-    // check for event param, addr of script...
-    event['detail']['urls'].forEach(async url => {
-      await this.loadScript( url );
+    event.UrlList.forEach(async url => {
+      await this.loadScript( event.requestEventId, url )
     });
-
   }
 
-  async loadScript(scriptUrl:string) : Promise<any>
+  private async loadScript(eventId:number, scriptUrl:string) : Promise<any>
   {
     let scripts = Array
       .from( document.querySelectorAll('script') )
@@ -78,32 +96,9 @@ export class ScriptLoaderComponent implements AfterViewInit
         scriptElement.src = scriptUrl;
         scriptElement.onload = resolve;
         document.body.appendChild(scriptElement);
+
+        this.sendEventLoadedScript(eventId, scriptUrl);
       });
     }
   }
-
-  eventLoadDone()
-  {
-  //   let initEventId = uEvents.LoadedScript.EventId;
-
-  //   const ev = new uEventTemplate(
-  //     initEventId,
-  //     this.traceId++,
-  //     uParts.ScriptLoader);
-
-  //   const domEvent = new CustomEvent(
-  //     initEventId.toString(),
-  //     {
-  //       detail:
-  //       {
-  //         ev,
-  //         "part": this.title
-  //       },
-  //       bubbles: true
-  //     });
-
-  //   this.mainChannelEl.dispatchEvent(domEvent);
-  //
-  }
-
 }
