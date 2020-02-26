@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
 import { uEvent, uEventsIds, uParts } from "@protocol-shared/models/event";
 import { EventProxyLibService } from 'event-proxy-lib'
-// TODO: fix index.d.ts so event classes are loaded from one source
-import { SubscibeToEvent } from "@protocol-shared/events/SubscibeToEvent";
-import { RequestToLoadScripts } from "@protocol-shared/events/RequestToLoadScript";
-import { LoadedScript } from "@protocol-shared/events/LoadedScript";
+import { SubscibeToEvent, RequestToLoadScripts, LoadedScript } from "@protocol-shared/events";
 import { MenuUrlsStatus } from './helpers/Urls';
 
 class IncorrectEventName extends Error

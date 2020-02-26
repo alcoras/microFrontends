@@ -1,8 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { EventProxyLibService } from 'event-proxy-lib';
-import { SubscibeToEvent,  } from '@protocol-shared/events/SubscibeToEvent';
-import { LoadedScript } from '@protocol-shared/events/LoadedScript';
-import { RequestToLoadScripts } from '@protocol-shared/events/RequestToLoadScript';
+import { RequestToLoadScripts, SubscibeToEvent, LoadedScript } from "@protocol-shared/events";
 import { uEventsIds, uParts } from '@protocol-shared/models/event';
 
 @Component({
