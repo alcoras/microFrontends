@@ -1,6 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+
+import { MaterialModule } from "./meterial-module";
 
 import { AppComponent } from './app.component';
 import { MagicComponent } from './magic/magic.component';
@@ -11,7 +15,11 @@ import { MagicComponent } from './magic/magic.component';
     MagicComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
   ],
   providers: [],
   bootstrap: [],
