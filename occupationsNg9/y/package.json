@@ -7,7 +7,10 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "ng_serve": "serve -l tcp://127.0.0.1:3005 dist/y",
+    "ng_build": "ng build --prod --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
+    "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
   },
   "private": true,
   "dependencies": {
@@ -16,6 +19,7 @@
     "@angular/common": "~9.1.0-next.1",
     "@angular/compiler": "~9.1.0-next.1",
     "@angular/core": "~9.1.0-next.1",
+    "@angular/elements": "^9.0.4",
     "@angular/forms": "~9.1.0-next.1",
     "@angular/localize": "^9.0.3",
     "@angular/material": "^9.1.0",

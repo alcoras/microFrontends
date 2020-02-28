@@ -29,6 +29,7 @@ export enum uEventsIds
   OccupationButtonPressed = 1002,
   RequestToLoadScript = 1003,
   LoadedScript = 1004,
+  OccupationNg9ButtonPressed = 1005,
 
   SubscribeToEvent = 2002
 }

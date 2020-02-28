@@ -70,3 +70,22 @@ tr.example-element-row:not(.example-expanded-row):active {
   max-width: 360px;
   text-align: center;
 }
+
+.card-full-width {
+  width: 100%;
+}
+
+.right {
+  float: right;
+  padding: 10px;
+}
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.hand-cursor {
+  cursor: pointer;
+}

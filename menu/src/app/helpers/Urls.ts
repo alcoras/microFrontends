@@ -1,7 +1,8 @@
-export class MenuUrlsStatus
-{
-  public loaded:boolean = false;
+import { UrlScheme } from '@protocol-shared/events';
+
+export class MenuUrlsStatus {
+  public loaded = false;
   public elementToReplaceId: string;
-  public elementToPlace:string;
-  public urls:string[] = []
+  public elementToPlace: string;
+  public urlShemes: UrlScheme[];
 }
