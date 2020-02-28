@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ng_serve": "serve -l tcp://127.0.0.1:3001 dist/gg",
+    "ng_serve": "serve -l tcp://0.0.0.0:3001 dist/gg",
     "ng_build": "ng build --output-hashing none --single-bundle --watch",
     "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
   },
