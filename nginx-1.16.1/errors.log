@@ -115,3 +115,4 @@
 127.0.0.1 - - [28/Feb/2020:19:59:21 +0200] "GET /polyfills.js.map HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
 127.0.0.1 - - [28/Feb/2020:19:59:21 +0200] "GET /main.js.map HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
 127.0.0.1 - - [28/Feb/2020:19:59:44 +0200] "GET /menu HTTP/1.1" 404 782 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36"
+206.81.2.169 - - [28/Feb/2020:20:12:31 +0200] "POST / HTTP/1.0" 502 157 "-" "-"

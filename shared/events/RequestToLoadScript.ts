@@ -1,8 +1,8 @@
 import { uEventsIds, uEvent } from '../models/event';
 
-export class UrlScheme
+export class ResourceSheme
 {
-    public URL:string;
+    public Element:string;
     public Attributes:{[attrName: string]: string } = {}
 
     public setAttribute(attr: string, value: string)
@@ -13,12 +13,11 @@ export class UrlScheme
 
 export class RequestToLoadScripts extends uEvent
 {
-
     EventId = uEventsIds.RequestToLoadScript;
 
     constructor(
         public RequestEventId: number,
-        public UrlSchemes: UrlScheme[]
+        public ResourceSchemes: ResourceSheme[]
     )
     { super(); }
 }

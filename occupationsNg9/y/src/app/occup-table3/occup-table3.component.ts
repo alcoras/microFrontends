@@ -58,8 +58,10 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.exampleDatabase!.getRepoIssues(
-            this.sort.active, this.sort.direction, this.paginator.pageIndex);
+          if (this.exampleDatabase !== undefined) {
+            return this.exampleDatabase.getRepoIssues(
+              this.sort.active, this.sort.direction, this.paginator.pageIndex);
+          }
         }),
         map(data => {
           // Flip flag to show that loading has finished.

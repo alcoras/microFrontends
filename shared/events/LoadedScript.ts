@@ -1,12 +1,13 @@
 import { uEventsIds, uEvent } from '../models/event';
+import { ResourceSheme } from './RequestToLoadScript';
 
-export class LoadedScript extends uEvent
+export class LoadedResource extends uEvent
 {
-    EventId = uEventsIds.LoadedScript;
+    EventId = uEventsIds.LoadedResource;
 
     constructor(
-        public scriptEventId: number,
-        public scriptUrl: string
+        public ResourceEventId: number,
+        public ResourceScheme: ResourceSheme
     )
     { super(); }
 }

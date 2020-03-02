@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { MaterialModule } from './meterial-module';
 import { AppComponent } from './app.component';
-import { EventProxyLibModule } from 'event-proxy-lib';
+import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 
 @NgModule({
   declarations: [

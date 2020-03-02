@@ -7,12 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MagicComponent implements OnInit {
 
+  public counter = 0;
+
   constructor() { }
 
   ngOnInit() {
   }
-
-  public counter : number = 0;
 
   increment(){
     this.counter += 1;

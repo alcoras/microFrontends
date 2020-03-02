@@ -20,14 +20,14 @@
     ],
     "paths": {
       "@angular/*": [ "./node_modules/@angular/*" ] ,
-      "event-proxy-lib": [
-        "../event-proxy/dist/event-proxy-lib"
-      ],
-      "event-proxy-lib/*": [
-        "../event-proxy/dist/event-proxy-lib/*"
-      ],
-      "@protocol-shared/":["../shared"],
-      "@protocol-shared/*":["../shared/*"]
+      "@uf-shared-events/":["../shared/events"],
+      "@uf-shared-events/*":["../shared/events/*"],
+
+      "@uf-shared-models/":["../shared/models"],
+      "@uf-shared-models/*":["../shared/models/*"],
+
+      "@uf-shared-libs/":["../shared/libs/dist"],
+      "@uf-shared-libs/*":["../shared/libs/dist/*"],
     }
   }
 }

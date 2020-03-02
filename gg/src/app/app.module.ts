@@ -4,7 +4,7 @@ import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
 import { ScriptLoaderComponent } from './script-loader/script-loader.component';
-import { EventProxyLibModule } from "event-proxy-lib";
+import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 
 @NgModule({
   declarations: [
@@ -20,12 +20,10 @@ import { EventProxyLibModule } from "event-proxy-lib";
   entryComponents: [AppComponent, ScriptLoaderComponent]
 })
 
-export class AppModule
-{
+export class AppModule {
   constructor(private injector: Injector) {}
 
-  ngDoBootstrap(): void
-  {
+  ngDoBootstrap(): void {
     const { injector } = this;
 
     const ngCustomElement = createCustomElement(AppComponent, { injector });

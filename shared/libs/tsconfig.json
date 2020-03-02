@@ -19,15 +19,21 @@
       "dom"
     ],
     "paths": {
-      "@angular/*":["node_modules/@angular/*"],
+      "@angular/*": [
+        "node_modules/@angular/*"
+      ],
       "event-proxy-lib": [
         "dist/event-proxy-lib"
       ],
       "event-proxy-lib/*": [
         "dist/event-proxy-lib/*"
       ],
-      "@protocol-shared/":["../shared"],
-      "@protocol-shared/*":["../shared/*"]
+      "@protocol-shared/": [
+        "../shared"
+      ],
+      "@protocol-shared/*": [
+        "../shared/*"
+      ]
     }
   }
 }
