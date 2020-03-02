@@ -1,5 +1,5 @@
 import { uEventsIds, uEvent } from '../models/event';
-import { ResourceSheme } from './RequestToLoadScript';
+import { ResourceSheme } from "./helpers/ResourceSheme";
 
 export class LoadedResource extends uEvent
 {

@@ -1,3 +1,4 @@
 export * from "./SubscibeToEvent";
 export * from "./RequestToLoadScript";
-export * from "./LoadedScript";
+export * from "./LoadedResource";
+export * from './helpers/ResourceSheme';

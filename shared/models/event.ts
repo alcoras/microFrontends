@@ -20,7 +20,8 @@ export enum uParts
   Personnel = 1002,
   Occupations = 1003,
   ScriptLoader = 1004,
-  OccupationNg9 = 1005
+  OccupationNg9 = 1005,
+  UFManager = 1006
 }
 
 export enum uEventsIds

@@ -48,13 +48,15 @@ app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
     if (ret)
     {
       db.confirmEvents(srcId, null, true);
-      await res.json(ret);
+      res.json(ret);
+      res.end();
+      return;
     }
     await sleep(sleepTimeMS);
     accMS += sleepTimeMS;
   }
 
-  await res.end();
+  res.status(204).end();
 });
 
 app.post("/newEvent", cors(), jsonParser, (req, res) =>

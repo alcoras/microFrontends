@@ -86,7 +86,6 @@ export class EventProxyLibService {
 
   public getLastEvents(srcId: number, traceId: number = 0, timeout: number = 5) {
     const headers = new HttpHeaders({ timeout: timeout.toString()});
-
     return this.httpClient.get
     (
       this.apiGatewayURL + `/newEvents/${srcId}/${traceId}`,

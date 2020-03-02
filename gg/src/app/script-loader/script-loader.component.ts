@@ -1,20 +1,28 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { RequestToLoadScripts, SubscibeToEvent, LoadedResource, ResourceSheme } from '@uf-shared-events/index';
 import { uEventsIds, uParts } from '@uf-shared-models/event';
+import { MessageService } from '../msg.service';
 
 @Component({
   selector: 'app-script-loader',
-  template: ''
+  template: '',
+  providers: [ EventProxyLibService, EventProxyLibService ]
 })
-export class ScriptLoaderComponent implements AfterViewInit {
+export class ScriptLoaderComponent {
   title = 'script-loader';
   traceId = 1;
   sourceId: number = uParts.ScriptLoader;
 
   constructor(
-    private eProxyService: EventProxyLibService
+    private eProxyService: EventProxyLibService,
+    private msgService: MessageService
   ) {
+    this.preLoadScripts()
+      .then( () => {
+        this.eProxyService.env.loadConfig();
+        this.msgService.preloaded(); } );
+
     this.subToRequestToLoadScript();
     this.eProxyService.startQNA(this.sourceId).subscribe
     (
@@ -22,6 +30,18 @@ export class ScriptLoaderComponent implements AfterViewInit {
       (error) => { console.log(this.title, error); },
       () => {}
     );
+  }
+
+  public async preLoadScripts() {
+    const promises: any[] = [];
+    // TODO: refactor ports add to env
+
+    this.eProxyService.env.loadConfig();
+    const url: string = this.eProxyService.env.url;
+    promises.push(this.loadScript(url + ':3003/scripts/conf.js') );
+
+    // Occupation
+    return Promise.all(promises);
   }
 
   private parseNewEvent(event: any) {
@@ -61,37 +81,24 @@ export class ScriptLoaderComponent implements AfterViewInit {
     );
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   private async attemptLoadScripts(event: RequestToLoadScripts) {
       await this.loadResources(event);
   }
 
-  // private async loadScript(eventId: number, urlScheme: ResourceSheme): Promise<any> {
-  //   const scripts = Array
-  //     .from( document.querySelectorAll('script') )
-  //     .map( src => src.src);
-  //
-  //   if (!scripts.includes(urlScheme.URL)) {
-  //     return new Promise(resolve => {
-  //       const scriptElement = document.createElement('script');
-  //       scriptElement.src = urlScheme.URL;
-  //       scriptElement.onload = resolve;
+  private async loadScript(url: string): Promise<any> {
+    const scripts = Array
+      .from( document.querySelectorAll('script') )
+      .map( src => src.src);
 
-  //       for (const key in urlScheme.Attributes) {
-  //         if (urlScheme.hasOwnProperty(key)) {
-  //           scriptElement.setAttribute(key, urlScheme[key]);
-  //         }
-  //       }
-
-  //       document.body.appendChild(scriptElement);
-
-  //       this.sendEventLoadedScript(eventId, urlScheme.URL);
-  //     });
-  //   }
-  // }
+    if (!scripts.includes(url)) {
+      return new Promise(resolve => {
+        const scriptElement = document.createElement('script');
+        scriptElement.src = url;
+        scriptElement.onload = resolve;
+        document.body.appendChild(scriptElement);
+      });
+    }
+  }
 
   private async loadResources(event: RequestToLoadScripts) {
 
@@ -119,14 +126,14 @@ export class ScriptLoaderComponent implements AfterViewInit {
 
             break;
       }
-
+      // Check if it's not loaded yet
       if ( !resources.includes( scheme.Attributes[attrToCheck] ) ) {
         return new Promise(resolve => {
           el.onload = resolve;
 
           for (const key in scheme.Attributes) {
             if (scheme.Attributes.hasOwnProperty(key)) {
-              el.setAttribute(key, scheme[key]);
+              el.setAttribute(key, scheme.Attributes[key]);
             }
           }
 

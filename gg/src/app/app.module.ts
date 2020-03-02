@@ -3,21 +3,24 @@ import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
-import { ScriptLoaderComponent } from './script-loader/script-loader.component';
 import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
+import { ScriptLoaderComponent } from './script-loader/script-loader.component';
+import { UFManagerComponent } from './uf-manager/uf-manager.component';
+import { MessageService } from './msg.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ScriptLoaderComponent
+    ScriptLoaderComponent,
+    UFManagerComponent
   ],
   imports: [
     BrowserModule,
     EventProxyLibModule
   ],
-  providers: [],
+  providers: [ MessageService ],
   bootstrap: [],
-  entryComponents: [AppComponent, ScriptLoaderComponent]
+  entryComponents: [AppComponent, ScriptLoaderComponent, UFManagerComponent]
 })
 
 export class AppModule {
@@ -26,10 +29,10 @@ export class AppModule {
   ngDoBootstrap(): void {
     const { injector } = this;
 
-    const ngCustomElement = createCustomElement(AppComponent, { injector });
+    const ngCustomElement1 = createCustomElement(UFManagerComponent, { injector });
     const ngCustomElement2 = createCustomElement(ScriptLoaderComponent, { injector });
 
-    customElements.define('main-channel', ngCustomElement);
+    customElements.define('uf-manager', ngCustomElement1);
     customElements.define('script-loader', ngCustomElement2);
   }
 }

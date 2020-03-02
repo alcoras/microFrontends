@@ -1,9 +1,19 @@
 
+// TODO: find a way to import it from @uf-shared..
 // Micro frontend settings
-class UfSettings {
-  events: number[] = [];
-  scripts: string[] = [];
-  styles: string[] = [];
+class ResourceSheme {
+  public Element: string|undefined;
+  public Attributes: {
+      [attrName: string]: string;
+  } = {};
+  public setAttribute(attr: string, value: string) {
+      this.Attributes[attr] = value;
+  }
+}
+
+class UFData {
+  public events: number[] = [];
+  public resources: ResourceSheme[] = [];
 }
 
 export class EnvService {
@@ -17,9 +27,24 @@ export class EnvService {
   public apiGatewayUrl = this.url;
   public apiGatewayPort = 8080;
 
-  public uf: { [id: number]: UfSettings } = {};
+  public uf: { [id: number]: UFData } = {};
 
   constructor() {
+    this.loadConfig();
+  }
+
+  public loadConfig() {
+    const placeHolder = '__env';
+    const ufPH = 'uf';
+    // Create env
+    // Read environment variables from browser window
+    const browserWindow = window || {};
+    const browserWindowEnv = browserWindow[placeHolder] || {};
+
+    if (browserWindowEnv.hasOwnProperty(ufPH)) {
+      this.uf = {...browserWindowEnv[ufPH] };
+    }
+    return browserWindowEnv;
   }
 
 }

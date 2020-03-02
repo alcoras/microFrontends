@@ -22,18 +22,14 @@
       "@angular/*": [
         "node_modules/@angular/*"
       ],
-      "event-proxy-lib": [
-        "dist/event-proxy-lib"
-      ],
-      "event-proxy-lib/*": [
-        "dist/event-proxy-lib/*"
-      ],
-      "@protocol-shared/": [
-        "../shared"
-      ],
-      "@protocol-shared/*": [
-        "../shared/*"
-      ]
+      "@uf-shared-events/":["../events"],
+      "@uf-shared-events/*":["../events/*"],
+
+      "@uf-shared-models/":["../shared/models"],
+      "@uf-shared-models/*":["../shared/models/*"],
+
+      "@uf-shared-libs/":["../shared/libs/dist"],
+      "@uf-shared-libs/*":["../shared/libs/dist/*"],
     }
   }
 }

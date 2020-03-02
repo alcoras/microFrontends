@@ -1,15 +1,5 @@
 import { uEventsIds, uEvent } from '../models/event';
-
-export class ResourceSheme
-{
-    public Element:string;
-    public Attributes:{[attrName: string]: string } = {}
-
-    public setAttribute(attr: string, value: string)
-    {
-        this.Attributes[attr] = value;
-    }
-}
+import { ResourceSheme } from './helpers/ResourceSheme';
 
 export class RequestToLoadScripts extends uEvent
 {
