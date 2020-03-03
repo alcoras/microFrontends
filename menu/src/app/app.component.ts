@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { uEvent, uEventsIds, uParts } from '@uf-shared-models/event';
+import { uEventsIds, uParts } from '@uf-shared-models/event';
+import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 
 class IncorrectEventName extends Error {
@@ -18,6 +19,8 @@ export class AppComponent {
 
   sourceId: number = uParts.Menu;
 
+  placement: { [id: number]: string } = {};
+
   constructor(
     private eProxyService: EventProxyLibService,
   ) {
@@ -26,32 +29,39 @@ export class AppComponent {
       (error) => { console.log(this.title, error); },
       () => {}
     );
+
+    this.preparePlacements();
+  }
+
+  private preparePlacements() {
+    this.placement[uEventsIds.PerssonelButtonPressed] = 'personnel';
+    this.placement[uEventsIds.OccupationButtonPressed] = 'occupations';
+    this.placement[uEventsIds.OccupationNg9ButtonPressed] = 'occupationsNg9';
+  }
+
+  private getElFromID(id: number): string {
+    const elId = this.placement[id];
+
+    if (!elId) {
+      throw new Error('Unsupported ButtonPressed Id');
+    }
+
+    return elId;
   }
 
   menuClick(evt, eventName: number) {
     // create event
     this.eventButtonPressed(eventName);
 
-    switch (eventName) {
-      case uEventsIds.PerssonelButtonPressed:
-        this.openTab(evt, 'personnel');
-        break;
-      case uEventsIds.OccupationButtonPressed:
-        this.openTab(evt, 'occupations');
-        break;
-      case uEventsIds.OccupationNg9ButtonPressed:
-        this.openTab(evt, 'occupationsNg9');
-        break;
-    }
+    const elId = this.getElFromID(eventName);
+
+    this.openTab(evt, elId);
   }
 
   eventButtonPressed(eventName: number) {
-    const event = new uEvent();
-    if (Object.values(uEventsIds).includes(eventName)) {
-      event.EventId = eventName;
-    } else {
-      throw new IncorrectEventName();
-    }
+    const elId = this.getElFromID(eventName);
+
+    const event = new EventButtonPressed(eventName, elId);
 
     event.SourceEventUniqueId = this.traceId++;
     event.SourceId = this.sourceId.toString();

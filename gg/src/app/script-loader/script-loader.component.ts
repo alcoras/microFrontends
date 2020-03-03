@@ -38,9 +38,16 @@ export class ScriptLoaderComponent {
 
     this.eProxyService.env.loadConfig();
     const url: string = this.eProxyService.env.url;
-    promises.push(this.loadScript(url + ':3003/scripts/conf.js') );
 
     // Occupation
+    promises.push(this.loadScript(url + ':3003/scripts/conf.js') );
+
+    // Personnel
+    promises.push(this.loadScript(url + ':3004/scripts/conf.js') );
+
+    // OccupationNg9
+    promises.push(this.loadScript(url + ':3005/scripts/conf.js') );
+
     return Promise.all(promises);
   }
 

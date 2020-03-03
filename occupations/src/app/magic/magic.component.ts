@@ -1,21 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-magic',
+  selector: 'app-team-occcupation',
   templateUrl: './magic.component.html',
-  styleUrls: ['./magic.component.css']
+  styleUrls: ['./magic.component.css'],
 })
-export class MagicComponent implements OnInit {
+export class MagicComponent {
 
-  magic = "";
-  constructor() { }
+  constructor(
 
-  ngOnInit() {
-
-  }
-
-  ngAfterViewInit(): void {
-    this.magic = "gg";
-  }
-
+  ) { }
 }

@@ -7,7 +7,8 @@ import { Component, ElementRef } from '@angular/core';
 })
 export class AppComponent {
 
-  constructor()
-  {}
+  constructor() {
+
+  }
 
 }
