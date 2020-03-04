@@ -1,0 +1,14 @@
+.theme-pad {
+  padding: 0 14px;
+}
+
+.spacer {
+  -webkit-box-flex: 1;
+  flex-grow: 1;
+}
+
+.right {
+  float: right;
+  width: 300px;
+  padding: 10px;
+}

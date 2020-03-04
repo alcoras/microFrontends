@@ -14,18 +14,23 @@ import { HttpClientModule } from '@angular/common/http';
 import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { uParts, uEventsIds } from '@uf-shared-models/event';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NewOccupComponent } from './new-occup/new-occup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     OccupTableComponent,
     OccupTable2Component,
-    OccupTable3Component
+    OccupTable3Component,
+    NewOccupComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     MaterialModule,
     HttpClientModule,
     EventProxyLibModule
@@ -46,11 +51,11 @@ export class AppModule {
     private injector: Injector,
     private eProxyService: EventProxyLibService) {
 
-    this.eProxyService.startQNA(this.sourceId).subscribe(
-      (value) => { this.parseNewEvent(value); },
-      (error) => { console.log(this.title, error); },
-      () => {}
-    );
+    // this.eProxyService.startQNA(this.sourceId).subscribe(
+    //   (value) => { this.parseNewEvent(value); },
+    //   (error) => { console.log(this.title, error); },
+    //   () => {}
+    // );
 
     this.preparePlacements();
   }
