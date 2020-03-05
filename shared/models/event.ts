@@ -28,7 +28,7 @@ export enum uEventsIds
 {
   InitEvent = 1000,
   PerssonelButtonPressed = 1001,
-  OccupationButtonPressed = 1002,
+  InitMenu = 1002,
   RequestToLoadScript = 1003,
   LoadedResource = 1004,
   OccupationNg9ButtonPressed = 1005,

@@ -13,9 +13,9 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "gg(shell)",
+            "name": "shell",
             "url": "http://localhost:3001",
-            "webRoot": "${workspaceFolder}/gg"
+            "webRoot": "${workspaceFolder}/shell"
         },
         {
             "type": "chrome",

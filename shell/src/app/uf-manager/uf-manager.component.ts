@@ -10,6 +10,7 @@ import { MessageService } from '../msg.service';
   providers: [ EventProxyLibService, EventProxyLibService ]
 })
 export class UFManagerComponent {
+
   title = 'uf-manager';
   desc = 'micro frontend manager';
   traceId = 1;
@@ -23,7 +24,7 @@ export class UFManagerComponent {
   ) {
     this.msgService.eventPreloaded.subscribe(
       () => {
-        this.preloadMenuMicroFrontend();
+        this.laodMenu();
         this.subMicroFrontends(); } );
 
     this.eProxyService.startQNA(this.sourceId).subscribe
@@ -36,18 +37,8 @@ export class UFManagerComponent {
     this.subToLoadedResource();
   }
 
-  private preloadMenuMicroFrontend() {
-    const e = new uEvent();
-
-    e.SourceId = this.sourceId.toString();
-    e.SourceEventUniqueId = this.traceId++;
-    e.EventId = uEventsIds.InitMenu;
-
-    this.eProxyService.dispatchEvent(e).subscribe(
-      (value: any) => { console.log(value); },
-      (error: any) => { console.log('error', error); },
-      () => {},
-    );
+  private laodMenu() {
+    throw new Error('Method not implemented.');
   }
 
   private subToLoadedResource() {

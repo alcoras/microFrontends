@@ -3,14 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 3004",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ng_serve": "serve -l tcp://0.0.0.0:3004 dist/personnel",
-    "ng_build": "ng build --output-hashing none --single-bundle --watch",
-    "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
+    "ng_serve": "serve -l tcp://0.0.0.0:3004 dist/personnel-uf",
+    "ng_build": "ng build --prod --commonChunk=false --outputHashing=none --vendorChunk=false --watch"
   },
   "private": true,
   "dependencies": {
