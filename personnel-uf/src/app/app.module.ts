@@ -23,7 +23,7 @@ import { EventButtonPressed } from '@uf-shared-events/index';
     ReactiveFormsModule,
     EventProxyLibModule
   ],
-  providers: [ EventProxyLibService ],
+  providers: [ EventProxyLibService, EventProxyLibService ],
   bootstrap: [],
   entryComponents: [AppComponent, MagicComponent]
 })
@@ -93,10 +93,9 @@ export class AppModule {
   ngDoBootstrap(): void {
     const { injector } = this;
 
-    const ngCustomElement = createCustomElement(AppComponent, { injector });
     const ngCustomElement2 = createCustomElement(MagicComponent, { injector });
 
-    customElements.define('team-personnel', ngCustomElement);
-    customElements.define('team-personnel-2', ngCustomElement2);
+    if (!customElements.get('team-personnel-2')) {
+      customElements.define('team-personnel-2', ngCustomElement2); }
   }
 }

@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ng_serve": "serve -l tcp://0.0.0.0:3002 dist/",
+    "ng_serve": "serve --cors -l tcp://0.0.0.0:3002 dist/",
     "ng_build": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
     "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
   },
@@ -30,13 +30,14 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^9.0.0",
     "@angular-devkit/build-angular": "~0.900.5",
     "@angular/cli": "~9.0.5",
     "@angular/compiler-cli": "~9.0.5",
     "@angular/language-service": "~9.0.5",
-    "@types/node": "^12.11.1",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

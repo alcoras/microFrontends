@@ -11,7 +11,8 @@ class IncorrectEventName extends Error {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [ EventProxyLibService, EventProxyLibService ],
 })
 export class AppComponent {
   title = 'menu';
@@ -24,12 +25,6 @@ export class AppComponent {
   constructor(
     private eProxyService: EventProxyLibService,
   ) {
-    this.eProxyService.startQNA(this.sourceId).subscribe(
-      (value) => { console.log(this.title, value); },
-      (error) => { console.log(this.title, error); },
-      () => {}
-    );
-
     this.preparePlacements();
   }
 

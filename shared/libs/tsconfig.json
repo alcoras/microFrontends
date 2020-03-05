@@ -5,31 +5,25 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
     "lib": [
       "es2018",
       "dom"
     ],
     "paths": {
-      "@angular/*": [
-        "node_modules/@angular/*"
-      ],
-      "@uf-shared-events/":["../events"],
-      "@uf-shared-events/*":["../events/*"],
-
-      "@uf-shared-models/":["../shared/models"],
-      "@uf-shared-models/*":["../shared/models/*"],
-
-      "@uf-shared-libs/":["../shared/libs/dist"],
-      "@uf-shared-libs/*":["../shared/libs/dist/*"],
+      "event-proxy-lib": [
+        "dist/event-proxy-lib/event-proxy-lib",
+        "dist/event-proxy-lib"
+      ]
     }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

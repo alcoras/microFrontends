@@ -27,9 +27,34 @@
   var url = "http://127.0.0.1:3004/";
   uf[srcId] = new UFData();
   uf[srcId].events.push(1001);
+  temp = new ResourceSheme();
+  temp.Element = 'script';
+  temp.Attributes['src'] = url + 'runtime.js';
+  temp.Attributes['type'] = 'module';
+  uf[srcId].resources.push(temp);
+
+  temp = new ResourceSheme();
+  temp.Element = 'script';
+  temp.Attributes['src'] = url + 'polyfills.js';
+  temp.Attributes['type'] = 'module';
+  uf[srcId].resources.push(temp);
+
   var temp = new ResourceSheme();
   temp.Element = 'script';
   temp.Attributes['src'] = url + 'main.js';
+  temp.Attributes['type'] = 'module';
+  uf[srcId].resources.push(temp);
+
+  // temp = new ResourceSheme();
+  // temp.Element = 'link';
+  // temp.Attributes['rel'] = 'stylesheet';
+  // temp.Attributes['href'] = url + 'styles.css';
+  // uf[srcId].resources.push(temp);
+
+  temp = new ResourceSheme();
+  temp.Element = 'script';
+  temp.Attributes['src'] = url + 'styles.js';
+  temp.Attributes['type'] = 'module';
   uf[srcId].resources.push(temp);
 
   window.__env.uf[srcId] = uf[srcId];

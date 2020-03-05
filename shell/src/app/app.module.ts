@@ -30,7 +30,10 @@ export class AppModule {
     const ngCustomElement1 = createCustomElement(UFManagerComponent, { injector });
     const ngCustomElement2 = createCustomElement(ScriptLoaderComponent, { injector });
 
-    customElements.define('uf-manager', ngCustomElement1);
-    customElements.define('script-loader', ngCustomElement2);
+    if (!customElements.get('uf-manager')) {
+      customElements.define('uf-manager', ngCustomElement1); }
+
+    if (!customElements.get('script-loader')) {
+    customElements.define('script-loader', ngCustomElement2); }
   }
 }

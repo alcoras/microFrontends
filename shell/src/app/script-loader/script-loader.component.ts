@@ -7,7 +7,7 @@ import { MessageService } from '../msg.service';
 @Component({
   selector: 'app-script-loader',
   template: '',
-  providers: [ EventProxyLibService, EventProxyLibService ]
+  providers: [ EventProxyLibService ]
 })
 export class ScriptLoaderComponent {
   title = 'script-loader';
@@ -38,7 +38,7 @@ export class ScriptLoaderComponent {
 
     this.eProxyService.env.loadConfig();
     const url: string = this.eProxyService.env.url;
-    // TODO: uf-manager should do this
+    // TODO: uf-manager should do this?
     // Menu
     promises.push(this.loadScript(url + ':3002/scripts/conf.js') );
 

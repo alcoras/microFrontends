@@ -105,6 +105,7 @@ export class AppModule {
 
     const ngCustomElement = createCustomElement(AppComponent, { injector });
 
-    customElements.define('team-occupation-ng9', ngCustomElement);
+    if (!customElements.get('team-occupation-ng9')) {
+      customElements.define('team-occupation-ng9', ngCustomElement); }
   }
 }

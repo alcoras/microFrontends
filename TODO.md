@@ -5,8 +5,9 @@
     6. 2. DONE uf Menu
     6. 3. DONE uf Occupations
     6. 4. DONE uf Personnel
-    6. 5. Test them all together
-4. Menu load (in shell)
+    6. 5. DONE Test them all together
+    6. 6. Does not load second item right after (could be unique id) fix 9. then come back
+4. DONE Menu load (in shell)
 1. Languages
     1. 1. Do a select for language selector in uf Menu
     1. 2. Make a way to refresh (through navigation)

@@ -11,8 +11,10 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": { "path": "./extra-webpack.config.js",
+              "mergeStrategies": { "externals": "replace" } },
             "outputPath": "dist/",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -89,7 +91,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css"
             ],
             "scripts": []

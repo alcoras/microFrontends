@@ -1,6 +1,7 @@
 import { uEvent } from "../models/event";
 import { ButtonIds } from "./helpers/ButtonIds";
 
+// TODO: remove ButtonPressedEventId as field
 export class EventButtonPressed extends uEvent {
     constructor(
         public ButtonPressedEventId: number,

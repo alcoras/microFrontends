@@ -2,7 +2,7 @@
 
   "use strict";
 
-  const srcId = 1002;
+  const srcId = 1001;
   window.__env = window.__env || {};
   window.__env.uf = window.__env.uf || {};
   window.__env.uf[srcId] = window.__env.uf[srcId] || {};
@@ -46,10 +46,16 @@
   uf[srcId].resources.push(temp);
 
   temp = new ResourceSheme();
-  temp.Element = 'link';
-  temp.Attributes['rel'] = 'stylesheet';
-  temp.Attributes['href'] = url + 'styles.css';
+  temp.Element = 'script';
+  temp.Attributes['src'] = url + 'styles.js';
+  temp.Attributes['type'] = 'module';
   uf[srcId].resources.push(temp);
+
+  // temp = new ResourceSheme();
+  // temp.Element = 'link';
+  // temp.Attributes['rel'] = 'stylesheet';
+  // temp.Attributes['href'] = url + 'styles.css';
+  // uf[srcId].resources.push(temp);
 
   temp = new ResourceSheme();
   temp.Element = 'link';

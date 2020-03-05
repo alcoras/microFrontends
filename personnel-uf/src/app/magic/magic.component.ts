@@ -14,11 +14,11 @@ export class MagicComponent implements OnInit {
   ngOnInit() {
   }
 
-  increment(){
+  increment() {
     this.counter += 1;
   }
 
-  decrement(){
+  decrement() {
     this.counter -= 1;
   }
 
