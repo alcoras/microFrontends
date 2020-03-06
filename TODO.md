@@ -1,12 +1,13 @@
 ## Tasks
 
-6. Update everything to ng9
+6. DONE Update everything to ng9
     6. 1. DONE shell
     6. 2. DONE uf Menu
     6. 3. DONE uf Occupations
     6. 4. DONE uf Personnel
     6. 5. DONE Test them all together
-    6. 6. Does not load second item right after (could be unique id) fix 9. then come back
+    6. 6. DONE Does not load second item right after (could be unique id) fix 9. then come back
+    6. 7. DONE Refresh behaves incorrectly (not always launches menu), could be because subbing happens later than event InitMenu fires
 4. DONE Menu load (in shell)
 1. Languages
     1. 1. Do a select for language selector in uf Menu
@@ -18,5 +19,6 @@
     7. 1. Transfer theme selector to uf Menu
     7. 2. Setup global themes which derived from uf Menu
 8. Do element uf (show every angular-material element)
-9. Backend-mock fix unique_id requirment
-10. Menu change tabs to material tabs
+9. DONE Backend-mock fix unique_id requirment
+10. Menu change tabs to material 
+11. Change occupation to occupation-uf

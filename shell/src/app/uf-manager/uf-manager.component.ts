@@ -3,6 +3,7 @@ import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { SubscibeToEvent, RequestToLoadScripts, LoadedResource } from '@uf-shared-events/index';
 import { MessageService } from '../msg.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-uf-manager',
@@ -21,10 +22,14 @@ export class UFManagerComponent {
     private eProxyService: EventProxyLibService,
     private msgService: MessageService
   ) {
+    // check if configs are loaded by script-loader
     this.msgService.eventPreloaded.subscribe(
       () => {
-        this.subMicroFrontends();
-        this.loadMenuUf(); });
+        // wait for micro frontends to sub
+        forkJoin(this.subMicroFrontends()).subscribe(
+          () => { this.preloadMenuMicroFrontend(); }
+        );
+      });
 
     this.eProxyService.startQNA(this.sourceId).subscribe
     (
@@ -36,7 +41,7 @@ export class UFManagerComponent {
     this.subToLoadedResource();
   }
 
-  private loadMenuUf() {
+  private preloadMenuMicroFrontend() {
     const e = new uEvent();
 
     e.SourceId = this.sourceId.toString();
@@ -110,6 +115,8 @@ export class UFManagerComponent {
   }
 
   private subMicroFrontends() {
+    const obs: any[] = [];
+
     this.eProxyService.env.loadConfig();
     const dic = this.eProxyService.env.uf;
     for (const key in dic) {
@@ -127,11 +134,7 @@ export class UFManagerComponent {
         event.SourceId = key;
         event.SourceEventUniqueId = this.traceId++;
 
-        this.eProxyService.dispatchEvent(event).subscribe(
-          (value: any) => { console.log(value); },
-          (error: any) => { console.log('error', error); },
-          () => {},
-        );
+        obs.push(this.eProxyService.dispatchEvent(event));
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(subList);
@@ -139,12 +142,9 @@ export class UFManagerComponent {
         event.SourceId = this.sourceId.toString();
         event.SourceEventUniqueId = this.traceId++;
 
-        this.eProxyService.dispatchEvent(event).subscribe(
-          (value: any) => { console.log(value); },
-          (error: any) => { console.log('error', error); },
-          () => {},
-        );
+        obs.push(this.eProxyService.dispatchEvent(event));
       }
     }
+    return obs;
   }
 }

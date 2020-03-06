@@ -63,9 +63,9 @@ app.post("/newEvent", cors(), jsonParser, (req, res) =>
 {
   var e: any = req.body;
   if (db.addUniqueEvent(e))
-    res.send(e);
+    res.status(201).send(e);
   else
-    res.send(e);
+    res.status(400).send(e);
 });
 
 app.post("/reset", (req, res) =>

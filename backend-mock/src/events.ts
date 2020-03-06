@@ -40,28 +40,34 @@ export class uSource
 
     public subList:number[] = [];
 
+    private id = 1;
+
     public addEvent(event:any): boolean
     {
-        if (!this.trace.hasOwnProperty(event.SourceEventUniqueId))
-        {
-            this.trace[event.SourceEventUniqueId] = event;
+        event.SourceEventUniqueId = this.id;
+        this.trace[this.id++] = event; 
+        // if (!this.trace.hasOwnProperty(event.SourceEventUniqueId))
+        // {
+        //     this.trace[event.SourceEventUniqueId] = event;
 
-            return true;
-        }
+        //     return true;
+        // }
 
-        return false;
+        return true;
     }
 
     public addSubEvent(event: any)
     {
-        if (!this.subEvents.hasOwnProperty(event.SourceEventUniqueId))
-        {
-            this.subEvents[event.SourceEventUniqueId] = event;
+        event.SourceEventUniqueId = this.id;
+        this.subEvents[this.id++] = event;
+        // if (!this.subEvents.hasOwnProperty(event.SourceEventUniqueId))
+        // {
+        //     this.subEvents[event.SourceEventUniqueId] = event;
 
-            return true;
-        }
+        //     return true;
+        // }
 
-        return false;
+        return true;
     }
 
     public getEventsFrom(traceId:number):any[]
