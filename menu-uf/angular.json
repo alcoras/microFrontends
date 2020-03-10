@@ -3,7 +3,15 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "uf-shell": {
+    "menu": {
+      "i18n": {
+        "sourceLocale": "en",
+        "locales": {
+          "lt": "src/locales/messages.lt.xlf",
+          "ru": "src/locales/messages.ru.xlf",
+          "uk": "src/locales/messages.uk.xlf"
+        }
+      },
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -65,18 +73,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "uf-shell:build"
+            "browserTarget": "menu:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "uf-shell:build:production"
+              "browserTarget": "menu:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "uf-shell:build"
+            "browserTarget": "menu:build"
           }
         },
         "test": {
@@ -91,7 +99,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -114,18 +121,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "uf-shell:serve"
+            "devServerTarget": "menu:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "uf-shell:serve:production"
+              "devServerTarget": "menu:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "uf-shell",
+  "defaultProject": "menu",
   "cli": {
     "analytics": false
   }

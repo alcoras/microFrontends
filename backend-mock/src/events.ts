@@ -149,7 +149,7 @@ export class eventDB
         });
     }
 
-    public addUniqueEvent(event:any): boolean
+    public async addUniqueEvent(event:any): Promise<boolean>
     {
         event.AggregateId = this.aggrId;
         if (!this.source.hasOwnProperty(event.SourceId))

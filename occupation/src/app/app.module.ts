@@ -2,18 +2,19 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { OccupTable3Component } from './occup-table3/occup-table3.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { uParts, uEventsIds } from '@uf-shared-models/event';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewOccupComponent } from './new-occup/new-occup.component';
 import { MaterialModule } from './meterial-module';
+
+import { OccupTable3Component } from './occup-table3/occup-table3.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { MaterialModule } from './meterial-module';
     HttpClientModule,
     EventProxyLibModule
   ],
-  providers: [ EventProxyLibService, EventProxyLibService ],
+  providers: [ EventProxyLibService ],
   entryComponents: [AppComponent]
 })
 
@@ -62,6 +63,7 @@ export class AppModule {
 
   private parseNewEvent(event: any) {
     event.forEach(element => {
+        this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
         switch (element.EventId) {
           case uEventsIds.OccupationNg9ButtonPressed:
             this.processButtonPressed(element);

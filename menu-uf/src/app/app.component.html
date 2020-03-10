@@ -1,21 +1,44 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span><a mat-mini-fab (click)="refresh()">FOX</a></span>
+    <div class="spacer"></div>
 
-<div class="container">
+    <mat-form-field>
+      <mat-select [(ngModel)]="selectedTheme" (ngModelChange)="changeTheme()" name="theme">
+        <mat-option *ngFor="let theme of themes" [value]="theme.value">
+          {{theme.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <div class="row">
-        <div class="tab">
-            <button class="tablinks" (click)="menuClick($event, 1001)">Personnel</button>
-            <button class="tablinks" (click)="menuClick($event, 1005)">Occupations</button>
-        </div>
-    </div>
+    <mat-form-field>
+      <mat-select [(ngModel)]="selectedLang" (ngModelChange)="changeLanguage()" name="language">
+        <mat-option *ngFor="let lang of langs" [value]="lang.value">
+          {{lang.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <div id="personnel" class="tabcontent">
-        <h3>Personnel</h3>
-        <p>loading..</p>
-      </div>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-    <div id="occupationsNg9" class="tabcontent">
-        <h3>OccupationsNg9</h3>
-        <p>loading..</p>
-      </div>
+<mat-sidenav-container>
+
+  <nav mat-tab-nav-bar>
+    <a class="tablinks" i18n="menu button personnel@@menu-personnel-button"
+    mat-tab-link (click)="menuClick($event, 1001)">Personnel</a>
+    <a class="tablinks" i18n="menu button occupation@@menu-occupation-button"
+    mat-tab-link (click)="menuClick($event, 1005)">Occupations</a>
+  </nav>
+
+  <div id="personnel" class="tabcontent">
+  <h3>Personnel</h3>
+  <p>loading..</p>
   </div>
 
+  <div id="occupationsNg9" class="tabcontent">
+  <h3>OccupationsNg9</h3>
+  <p>loading..</p>
+  </div>
+
+</mat-sidenav-container>

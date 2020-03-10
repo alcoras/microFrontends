@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { SubscibeToEvent, RequestToLoadScripts, LoadedResource } from '@uf-shared-events/index';
+import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
 import { MessageService } from '../msg.service';
 import { forkJoin } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { LanguageService, ILanguageSettings } from '../lang-service/lang.service';
 
 @Component({
   selector: 'app-uf-manager',
@@ -18,19 +20,13 @@ export class UFManagerComponent {
 
   resources: { [srcId: number]: boolean } = {};
 
+  langConn: LanguageService | null;
+
   constructor(
+    private httpClient: HttpClient,
     private eProxyService: EventProxyLibService,
     private msgService: MessageService
   ) {
-    // check if configs are loaded by script-loader
-    this.msgService.eventPreloaded.subscribe(
-      () => {
-        // wait for micro frontends to sub
-        forkJoin(this.subMicroFrontends()).subscribe(
-          () => { this.preloadMenuMicroFrontend(); }
-        );
-      });
-
     this.eProxyService.startQNA(this.sourceId).subscribe
     (
       (value) => { this.parseNewEvent(value); },
@@ -38,7 +34,32 @@ export class UFManagerComponent {
       () => {}
     );
 
-    this.subToLoadedResource();
+    this.langConn = new LanguageService(this.httpClient);
+    this.loadUserSettings();
+
+    // check if configs are loaded by script-loader
+    this.msgService.eventPreloaded.subscribe(
+      () => {
+        // wait for micro frontends to sub
+        Promise.all([this.subMicroFrontends(), this.subToEvents()]).then(() => {
+          this.preloadMenuMicroFrontend();
+        });
+      });
+  }
+
+  private loadUserSettings() {
+    // TODO: transfer ability to set/load env vars to env library
+    this.langConn.getLang().subscribe(
+      (res: HttpResponse<any>) => {
+        if (res.status === 200) {
+          const lang: ILanguageSettings = res.body;
+          // tslint:disable-next-line: no-string-literal
+          window['__env']['lang'] = lang.lang;
+        }
+      },
+      (error: any) => { console.log('error', error); },
+      () => {},
+    );
   }
 
   private preloadMenuMicroFrontend() {
@@ -48,30 +69,24 @@ export class UFManagerComponent {
     e.SourceEventUniqueId = this.traceId++;
     e.EventId = uEventsIds.InitMenu;
 
-    this.eProxyService.dispatchEvent(e).subscribe(
-      (value: any) => { console.log(value); },
-      (error: any) => { console.log('error', error); },
-      () => {},
-    );
+    this.eProxyService.dispatchEvent(e).toPromise();
   }
 
-  private subToLoadedResource() {
+  private subToEvents() {
     const e = new SubscibeToEvent([
-      [uEventsIds.LoadedResource, 0, 0]]);
+      [uEventsIds.LoadedResource, 0, 0],
+      [uEventsIds.LanguageChange, 0, 0]]);
 
     e.SourceId = this.sourceId.toString();
     e.SourceEventUniqueId = this.traceId++;
 
-    this.eProxyService.dispatchEvent(e).subscribe(
-      (value: any) => { console.log(value); },
-      (error: any) => { console.log('error', error); },
-      () => {},
-    );
+    return this.eProxyService.dispatchEvent(e).toPromise();
   }
 
   private parseNewEvent(event: any) {
-
     event.forEach(element => {
+
+      this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       this.eProxyService.env.loadConfig();
       const dic = this.eProxyService.env.uf;
       // check if event is LoadedResource
@@ -87,6 +102,11 @@ export class UFManagerComponent {
             }
           }
         }
+      }
+
+      if (element.EventId === uEventsIds.LanguageChange) {
+        this.eventChangeLanguage(element);
+        return;
       }
 
       for (const key in dic) {
@@ -114,8 +134,14 @@ export class UFManagerComponent {
     });
   }
 
+  private eventChangeLanguage(element: LanguageChange) {
+    this.langConn.setLang(element.NewLanguage).toPromise().then(
+      () => { window.location.reload(); }
+    );
+  }
+
   private subMicroFrontends() {
-    const obs: any[] = [];
+    const ret: Promise<any>[] = [];
 
     this.eProxyService.env.loadConfig();
     const dic = this.eProxyService.env.uf;
@@ -134,17 +160,16 @@ export class UFManagerComponent {
         event.SourceId = key;
         event.SourceEventUniqueId = this.traceId++;
 
-        obs.push(this.eProxyService.dispatchEvent(event));
+        ret.push(this.eProxyService.dispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(subList);
 
         event.SourceId = this.sourceId.toString();
         event.SourceEventUniqueId = this.traceId++;
-
-        obs.push(this.eProxyService.dispatchEvent(event));
+        ret.push(this.eProxyService.dispatchEvent(event).toPromise());
       }
     }
-    return obs;
+    return Promise.all(ret);
   }
 }

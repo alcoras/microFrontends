@@ -10,7 +10,9 @@
     "e2e": "ng e2e",
     "ng_serve": "serve --cors -l tcp://0.0.0.0:3002 dist/",
     "ng_build": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
-    "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" "
+    "ng_build_lang": "ng build --localize --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
+    "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" ",
+    "ng_con_lang": "concurrently --kill-others \"npm run ng_build_lang\"  \"npm run ng_serve\" "
   },
   "private": true,
   "dependencies": {
@@ -21,10 +23,12 @@
     "@angular/core": "~9.0.5",
     "@angular/elements": "^9.0.5",
     "@angular/forms": "~9.0.5",
+    "@angular/localize": "^9.0.5",
     "@angular/material": "^9.1.1",
     "@angular/platform-browser": "~9.0.5",
     "@angular/platform-browser-dynamic": "~9.0.5",
     "@angular/router": "~9.0.5",
+    "document-register-element": "^1.7.2",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

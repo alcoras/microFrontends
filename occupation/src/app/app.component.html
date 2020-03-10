@@ -2,16 +2,6 @@
   <mat-card-header>
       <mat-icon>work</mat-icon>
       <mat-card-title>Occupations</mat-card-title>
-      <div class="spacer"></div>
-      <mat-form-field>
-        <mat-label>Theme</mat-label>
-        <mat-select [(ngModel)]="selectedTheme" (ngModelChange)="changeTheme()" name="theme">
-          <mat-option *ngFor="let theme of themes" [value]="theme.value">
-            {{theme.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
   </mat-card-header>
 
   <mat-divider></mat-divider>

@@ -24,7 +24,11 @@
       return UFData;
   }());
   var uf = {};
-  var url = "http://127.0.0.1:3002/";
+  const port = '3002';
+  var domain = window.__env['url'] || "http://127.0.0.1";
+  var url = domain + ':' + port + '/';
+  if (!window.__env.one_language)
+    url = url + window.__env.lang + '/';
   uf[srcId] = new UFData();
   uf[srcId].events.push(1002);
   temp = new ResourceSheme();
@@ -64,23 +68,23 @@
   temp.Attributes['href'] = url + 'assets/deeppurple-amber.css';
   uf[srcId].resources.push(temp);
 
-  temp = new ResourceSheme();
-  temp.Element = 'link';
-  temp.Attributes['rel'] = 'stylesheet';
-  temp.Attributes['href'] = url + 'assets/indigo-pink.css';
-  uf[srcId].resources.push(temp);
+  // temp = new ResourceSheme();
+  // temp.Element = 'link';
+  // temp.Attributes['rel'] = 'stylesheet';
+  // temp.Attributes['href'] = url + 'assets/indigo-pink.css';
+  // uf[srcId].resources.push(temp);
 
-  temp = new ResourceSheme();
-  temp.Element = 'link';
-  temp.Attributes['rel'] = 'stylesheet';
-  temp.Attributes['href'] = url + 'assets/pink-bluegrey.css';
-  uf[srcId].resources.push(temp);
+  // temp = new ResourceSheme();
+  // temp.Element = 'link';
+  // temp.Attributes['rel'] = 'stylesheet';
+  // temp.Attributes['href'] = url + 'assets/pink-bluegrey.css';
+  // uf[srcId].resources.push(temp);
 
-  temp = new ResourceSheme();
-  temp.Element = 'link';
-  temp.Attributes['rel'] = 'stylesheet';
-  temp.Attributes['href'] = url + 'assets/purple-green.css';
-  uf[srcId].resources.push(temp);
+  // temp = new ResourceSheme();
+  // temp.Element = 'link';
+  // temp.Attributes['rel'] = 'stylesheet';
+  // temp.Attributes['href'] = url + 'assets/purple-green.css';
+  // uf[srcId].resources.push(temp);
 
   window.__env.uf[srcId] = uf[srcId];
 

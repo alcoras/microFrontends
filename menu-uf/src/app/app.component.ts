@@ -1,18 +1,29 @@
 import { Component } from '@angular/core';
 import { uEventsIds, uParts } from '@uf-shared-models/event';
-import { EventButtonPressed } from '@uf-shared-events/index';
+import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { Router } from '@angular/router';
 
 class IncorrectEventName extends Error {
   public name = 'IncorrectEventName';
   public message = 'Incorrect event name was passed';
 }
 
+interface Theme {
+  value: string;
+  viewValue: string;
+}
+
+interface Language {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [ EventProxyLibService, EventProxyLibService ],
+  providers: [ EventProxyLibService ],
 })
 export class AppComponent {
   title = 'menu';
@@ -22,10 +33,52 @@ export class AppComponent {
 
   placement: { [id: number]: string } = {};
 
+  themes: Theme[];
+  selectedTheme: string;
+
+  langs: Theme[];
+  selectedLang: string;
+
   constructor(
     private eProxyService: EventProxyLibService,
+    private router: Router
   ) {
     this.preparePlacements();
+    // TODO: port should be loaded configurable
+    const url = eProxyService.env.url + ':3002/';
+    this.themes = [
+      {value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber'},
+      {value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink'},
+      {value: url + 'assets/pink-bluegrey.css', viewValue: 'Pink & Blue-grey'},
+      {value: url + 'assets/purple-green.css', viewValue: 'Purple & Green'}
+    ];
+
+    this.langs = [
+      {value: 'en', viewValue: 'EN'},
+      {value: 'uk', viewValue: 'UK'},
+      {value: 'ru', viewValue: 'RU'},
+      {value: 'lt', viewValue: 'LT'},
+    ];
+
+    this.selectedTheme = this.themes[0].value;
+    this.selectedLang = this.eProxyService.env.lang;
+  }
+
+  public changeTheme() {
+    const el = document.getElementById('themeAsset') as HTMLLinkElement;
+    el.href = this.selectedTheme;
+  }
+
+  public changeLanguage() {
+    const e = new LanguageChange(this.selectedLang);
+
+    e.SourceId = this.sourceId.toString();
+
+    this.eProxyService.dispatchEvent(e).subscribe(
+      (value: any) => { },
+      (error: any) => { console.log('error', error); },
+      () => {  },
+    );
   }
 
   private preparePlacements() {

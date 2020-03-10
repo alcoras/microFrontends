@@ -11,6 +11,7 @@ const app: express.Application = express();
 app.use(morgan("dev"));
 
 var jsonParser = bodyParser.json()
+var language = 'en';
 
 function sleep(ms:number) 
 {
@@ -27,7 +28,7 @@ app.get("/", (req, res) =>
 app.post("/confirmEvents", cors(), jsonParser, (req, res) =>
 {
   var obj: any = req.body;
-
+  console.log('confirming events', obj.ids);
   var ret:number[] = db.confirmEvents(obj.SourceId, obj.ids);
 
   res.send(ret);
@@ -47,9 +48,9 @@ app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
     var ret = db.getEventsFrom(srcId, +traceId);
     if (ret)
     {
-      db.confirmEvents(srcId, null, true);
+      //console.log('events for', srcId, ret);
+      //db.confirmEvents(srcId, null, true);
       res.json(ret);
-      res.end();
       return;
     }
     await sleep(sleepTimeMS);
@@ -59,10 +60,10 @@ app.get("/newEvents/:srcID/:traceID", cors(), async (req, res) =>
   res.status(204).end();
 });
 
-app.post("/newEvent", cors(), jsonParser, (req, res) =>
+app.post("/newEvent", cors(), jsonParser, async (req, res) =>
 {
   var e: any = req.body;
-  if (db.addUniqueEvent(e))
+  if (await db.addUniqueEvent(e))
     res.status(201).send(e);
   else
     res.status(400).send(e);

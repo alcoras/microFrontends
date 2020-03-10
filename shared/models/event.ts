@@ -32,6 +32,7 @@ export enum uEventsIds
   RequestToLoadScript = 1003,
   LoadedResource = 1004,
   OccupationNg9ButtonPressed = 1005,
+  LanguageChange = 1006,
 
   SubscribeToEvent = 2002
 }

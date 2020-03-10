@@ -22,7 +22,7 @@
             "request": "launch",
             "name": "menu",
             "url": "http://localhost:3002",
-            "webRoot": "${workspaceFolder}/menu"
+            "webRoot": "${workspaceFolder}/menu-uf"
         },
         {
             "type": "chrome",

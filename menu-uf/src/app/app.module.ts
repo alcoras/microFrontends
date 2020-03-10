@@ -2,11 +2,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { uEventsIds, uParts } from '@uf-shared-models/event';
+import { MaterialModule } from './material-modules';
 
 @NgModule({
   declarations: [
@@ -14,13 +18,14 @@ import { uEventsIds, uParts } from '@uf-shared-models/event';
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    EventProxyLibModule
+    MaterialModule,
+    HttpClientModule,
+    EventProxyLibModule,
   ],
-  providers: [ EventProxyLibService, EventProxyLibService ],
-  bootstrap: [],
   entryComponents: [AppComponent]
 })
 
@@ -34,7 +39,8 @@ export class AppModule {
 
   constructor(
     private injector: Injector,
-    private eProxyService: EventProxyLibService) {
+    private eProxyService: EventProxyLibService
+    ) {
 
     this.eProxyService.startQNA(this.sourceId).subscribe(
       (value) => { this.parseNewEvent(value); },
@@ -47,6 +53,7 @@ export class AppModule {
     event.forEach(element => {
         switch (element.EventId) {
           case uEventsIds.InitMenu:
+            this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
             this.putToElement('menu-team', '<menu-team></menu-team>');
             break;
           default:

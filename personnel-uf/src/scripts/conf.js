@@ -24,7 +24,11 @@
       return UFData;
   }());
   var uf = {};
-  var url = "http://127.0.0.1:3004/";
+  const port = '3004';
+  var domain = window.__env['url'] || "http://127.0.0.1";
+  var url = domain + ':' + port + '/';
+  // if (!window.__env.one_language)
+  //   url = url + window.__env.lang + '/';
   uf[srcId] = new UFData();
   uf[srcId].events.push(1001);
   temp = new ResourceSheme();

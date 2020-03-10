@@ -18,45 +18,49 @@ export class ScriptLoaderComponent {
     private eProxyService: EventProxyLibService,
     private msgService: MessageService
   ) {
-    this.preLoadScripts()
-      .then( () => {
-        this.eProxyService.env.loadConfig();
-        this.msgService.preloaded(); });
-
-    this.subToRequestToLoadScript();
     this.eProxyService.startQNA(this.sourceId).subscribe
     (
       (value) => { this.parseNewEvent(value); },
       (error) => { console.log(this.title, error); },
       () => {}
     );
+
+    Promise.all([this.preLoadScripts(), this.subToRequestToLoadScript()])
+      .then( () => {
+        this.eProxyService.env.loadConfig();
+        this.msgService.preloaded(); });
+
   }
 
-  public async preLoadScripts() {
+  public preLoadScripts(): Promise<any> {
     const promises: any[] = [];
     // TODO: refactor ports add to env
 
     this.eProxyService.env.loadConfig();
     const url: string = this.eProxyService.env.url;
+    const menuPath = ':3002/en/scripts/conf.js';
+    const personnelPath = ':3004/scripts/conf.js';
+    const occupationPath = ':3005/scripts/conf.js';
     // TODO: uf-manager should do this?
     // Menu
-    promises.push(this.loadScript(url + ':3002/scripts/conf.js') );
+    promises.push(this.loadScript(url + menuPath) );
 
     // Personnel
-    promises.push(this.loadScript(url + ':3004/scripts/conf.js') );
+    promises.push(this.loadScript(url + personnelPath) );
 
     // OccupationNg9
-    promises.push(this.loadScript(url + ':3005/scripts/conf.js') );
+    promises.push(this.loadScript(url + occupationPath) );
 
     return Promise.all(promises);
   }
 
   private parseNewEvent(event: any) {
     event.forEach(element => {
-        switch (element.EventId) {
-          case uEventsIds.RequestToLoadScript:
-            this.attemptLoadScripts(element);
-            break;
+      this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      switch (element.EventId) {
+        case uEventsIds.RequestToLoadScript:
+          this.attemptLoadScripts(element);
+          break;
         }
     });
   }
@@ -74,25 +78,21 @@ export class ScriptLoaderComponent {
     );
   }
 
-  private subToRequestToLoadScript() {
+  private subToRequestToLoadScript(): Promise<any> {
     const event = new SubscibeToEvent([
       [uEventsIds.RequestToLoadScript, 0, 0]]);
 
     event.SourceId = this.sourceId.toString();
     event.SourceEventUniqueId = this.traceId++;
 
-    this.eProxyService.dispatchEvent(event).subscribe(
-      (value: any) => { console.log(value); },
-      (error: any) => { console.log('error', error); },
-      () => {},
-    );
+    return this.eProxyService.dispatchEvent(event).toPromise();
   }
 
-  private async attemptLoadScripts(event: RequestToLoadScripts) {
-      await this.loadResources(event);
+  private attemptLoadScripts(event: RequestToLoadScripts) {
+    this.loadResources(event);
   }
 
-  private async loadScript(url: string): Promise<any> {
+  private loadScript(url: string): Promise<any> {
     const scripts = Array
       .from( document.querySelectorAll('script') )
       .map( src => src.src);
@@ -108,7 +108,7 @@ export class ScriptLoaderComponent {
     }
   }
 
-  private async loadResources(event: RequestToLoadScripts) {
+  private loadResources(event: RequestToLoadScripts) {
 
     event.ResourceSchemes.forEach(scheme => {
 

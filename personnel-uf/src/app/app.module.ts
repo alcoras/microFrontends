@@ -56,13 +56,14 @@ export class AppModule {
 
   private parseNewEvent(event: any) {
     event.forEach(element => {
-        switch (element.EventId) {
-          case uEventsIds.PerssonelButtonPressed:
-            this.processButtonPressed(element);
-            break;
-          default:
-            throw new Error('Event not implemented.');
-        }
+      this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      switch (element.EventId) {
+        case uEventsIds.PerssonelButtonPressed:
+          this.processButtonPressed(element);
+          break;
+        default:
+          throw new Error('Event not implemented.');
+      }
     });
   }
 

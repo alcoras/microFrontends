@@ -22,6 +22,7 @@ export class EnvService {
   // be overridden by env.js
 
   // API url
+  public lang = 'en';
   public url = 'http://localhost';
 
   public apiGatewayUrl = this.url;
@@ -36,6 +37,8 @@ export class EnvService {
   public loadConfig() {
     const placeHolder = '__env';
     const ufPH = 'uf';
+    const langH = 'lang';
+    const urlH = 'url';
     // Create env
     // Read environment variables from browser window
     const browserWindow = window || {};
@@ -44,6 +47,14 @@ export class EnvService {
     if (browserWindowEnv.hasOwnProperty(ufPH)) {
       this.uf = {...browserWindowEnv[ufPH] };
     }
+
+    if (browserWindowEnv.hasOwnProperty(langH)) {
+      this.lang = browserWindowEnv[langH];
+    }
+
+    if (browserWindowEnv.hasOwnProperty(urlH)) {
+      this.url = browserWindowEnv[urlH]; }
+
     return browserWindowEnv;
   }
 
