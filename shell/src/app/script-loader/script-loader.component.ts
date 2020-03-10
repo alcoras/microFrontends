@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { RequestToLoadScripts, SubscibeToEvent, LoadedResource, ResourceSheme } from '@uf-shared-events/index';
+import { RequestToLoadScripts, SubscibeToEvent, LoadedResource, ResourceSheme, LanguageChange } from '@uf-shared-events/index';
 import { uEventsIds, uParts } from '@uf-shared-models/event';
 import { MessageService } from '../msg.service';
+import { LanguageService, ILanguageSettings } from '../lang-service/lang.service';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-script-loader',
@@ -13,11 +15,16 @@ export class ScriptLoaderComponent {
   title = 'script-loader';
   traceId = 1;
   sourceId: number = uParts.ScriptLoader;
-
+  langConn: LanguageService | null;
   constructor(
+    private httpClient: HttpClient,
     private eProxyService: EventProxyLibService,
-    private msgService: MessageService
+    private msgService: MessageService,
+
   ) {
+
+    this.langConn = new LanguageService(this.httpClient);
+
     this.eProxyService.startQNA(this.sourceId).subscribe
     (
       (value) => { this.parseNewEvent(value); },
@@ -25,10 +32,22 @@ export class ScriptLoaderComponent {
       () => {}
     );
 
-    Promise.all([this.preLoadScripts(), this.subToRequestToLoadScript()])
-      .then( () => {
-        this.eProxyService.env.loadConfig();
-        this.msgService.preloaded(); });
+    this.langConn.getLang().subscribe(
+      (res: HttpResponse<any>) => {
+        if (res.status === 200) {
+          const lang: ILanguageSettings = res.body;
+          // tslint:disable-next-line: no-string-literal
+          window['__env']['lang'] = lang.lang;
+          this.eProxyService.env.loadConfig();
+
+          Promise.all([this.preLoadScripts(), this.subToEvents()])
+            .then( () => {
+              this.msgService.preloaded(); });
+        }
+      },
+      (error: any) => { console.log('error', error);},
+      () => {},
+    );
 
   }
 
@@ -54,12 +73,21 @@ export class ScriptLoaderComponent {
     return Promise.all(promises);
   }
 
+  private eventChangeLanguage(element: LanguageChange) {
+    this.langConn.setLang(element.NewLanguage).toPromise().then(
+      () => { window.location.reload(); }
+    );
+  }
+
   private parseNewEvent(event: any) {
     event.forEach(element => {
       this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       switch (element.EventId) {
         case uEventsIds.RequestToLoadScript:
           this.attemptLoadScripts(element);
+          break;
+        case uEventsIds.LanguageChange:
+          this.eventChangeLanguage(element);
           break;
         }
     });
@@ -78,9 +106,10 @@ export class ScriptLoaderComponent {
     );
   }
 
-  private subToRequestToLoadScript(): Promise<any> {
+  private subToEvents(): Promise<any> {
     const event = new SubscibeToEvent([
-      [uEventsIds.RequestToLoadScript, 0, 0]]);
+      [uEventsIds.RequestToLoadScript, 0, 0],
+      [uEventsIds.LanguageChange, 0, 0]]);
 
     event.SourceId = this.sourceId.toString();
     event.SourceEventUniqueId = this.traceId++;

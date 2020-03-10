@@ -6,7 +6,7 @@ export interface ILanguageSettings {
 }
 
 export class LanguageService {
-  href = 'http://localhost:3334/language';
+  href = 'http://localhost:3333/language';
   constructor(private httpClient: HttpClient) { }
 
   getLang(): Observable<HttpResponse<any>> {

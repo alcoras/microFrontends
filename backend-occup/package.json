@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "occup": "json-server occup.js --port 3333",
-    "lang": "json-server lang.js --port 3334",
+    "data": "json-server data.js --port 3333",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
