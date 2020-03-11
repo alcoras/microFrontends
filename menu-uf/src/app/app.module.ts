@@ -40,7 +40,7 @@ export class AppModule {
   constructor(
     private injector: Injector,
     private eProxyService: EventProxyLibService
-    ) {
+  ) {
 
     this.eProxyService.startQNA(this.sourceId).subscribe(
       (value) => { this.parseNewEvent(value); },

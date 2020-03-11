@@ -1,5 +1,4 @@
-export class uEvent
-{
+export class uEvent {
   public EventId: number = 0;
   public SourceEventUniqueId: number = 0;
   public SourceId: string = "";
@@ -13,8 +12,7 @@ export class uEvent
   public Comment: string = "";
 }
 
-export enum uParts
-{
+export enum uParts {
   FrontendShell = 1000,
   Menu = 1001,
   Personnel = 1002,
@@ -24,8 +22,7 @@ export enum uParts
   UFManager = 1006
 }
 
-export enum uEventsIds
-{
+export enum uEventsIds {
   InitEvent = 1000,
   PerssonelButtonPressed = 1001,
   InitMenu = 1002,

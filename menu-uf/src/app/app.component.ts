@@ -9,12 +9,7 @@ class IncorrectEventName extends Error {
   public message = 'Incorrect event name was passed';
 }
 
-interface Theme {
-  value: string;
-  viewValue: string;
-}
-
-interface Language {
+interface Selector {
   value: string;
   viewValue: string;
 }
@@ -33,10 +28,10 @@ export class AppComponent {
 
   placement: { [id: number]: string } = {};
 
-  themes: Theme[];
+  themes: Selector[];
   selectedTheme: string;
 
-  langs: Theme[];
+  langs: Selector[];
   selectedLang: string;
 
   constructor(
@@ -44,7 +39,7 @@ export class AppComponent {
     private router: Router
   ) {
     this.preparePlacements();
-    // TODO: port should be loaded configurable
+    // TODO: port should be configurable
     const url = `${eProxyService.env.url}:3002/en/`;
     this.themes = [
       {value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber'},

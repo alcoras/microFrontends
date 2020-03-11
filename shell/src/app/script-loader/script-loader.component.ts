@@ -5,7 +5,14 @@ import { uEventsIds, uParts } from '@uf-shared-models/event';
 import { MessageService } from '../msg.service';
 import { LanguageService, ILanguageSettings } from '../lang-service/lang.service';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Subject } from 'rxjs';
 
+/**
+ * Responsible for loading resources into DOM by appending
+ * script or link elements.
+ * Constructor subscribes to: events, new events from backend, user
+ * settings and preloads configurations for each micro frontend.
+ */
 @Component({
   selector: 'app-script-loader',
   template: '',
@@ -16,13 +23,13 @@ export class ScriptLoaderComponent {
   traceId = 1;
   sourceId: number = uParts.ScriptLoader;
   langConn: LanguageService | null;
+  eventConstructorDone = new Subject();
+
   constructor(
     private httpClient: HttpClient,
     private eProxyService: EventProxyLibService,
     private msgService: MessageService,
-
   ) {
-
     this.langConn = new LanguageService(this.httpClient);
 
     this.eProxyService.startQNA(this.sourceId).subscribe
@@ -32,25 +39,45 @@ export class ScriptLoaderComponent {
       () => {}
     );
 
+    this.eventConstructorDone.subscribe(() => { this.init(); });
+    this.eventConstructorDone.next();
+  }
+
+  /**
+   * Inits script loader component
+   * Gets user settings(language).
+   * Preloads configuration scripts for each micro frontend.
+   * Subscribes to event ScriptLoader is responsible for.
+   * Launches event which lets MicroFrontend Manager (ufM).
+   */
+  private async init() {
     this.langConn.getLang().subscribe(
-      (res: HttpResponse<any>) => {
+      async (res: HttpResponse<any>) => {
         if (res.status === 200) {
           const lang: ILanguageSettings = res.body;
           // tslint:disable-next-line: no-string-literal
           window['__env']['lang'] = lang.lang;
           this.eProxyService.env.loadConfig();
 
-          Promise.all([this.preLoadScripts(), this.subToEvents()])
-            .then( () => {
-              this.msgService.preloaded(); });
+          await this.preLoadScripts();
+          await this.subToEvents();
+          this.msgService.preloaded();
+          // Promise.all([this.preLoadScripts(), this.subToEvents()])
+          //   .then( () => {
+          //     this.msgService.preloaded(); });
         }
       },
-      (error: any) => { console.log('error', error);},
+      (error: any) => { console.log('error', error); },
       () => {},
     );
-
+    return;
   }
 
+
+  /**
+   * Preloads scripts for each micro frontend.
+   * @returns Promise
+   */
   public preLoadScripts(): Promise<any> {
     const promises: any[] = [];
     // TODO: refactor ports add to env
@@ -73,18 +100,28 @@ export class ScriptLoaderComponent {
     return Promise.all(promises);
   }
 
-  private eventChangeLanguage(element: LanguageChange) {
-    this.langConn.setLang(element.NewLanguage).toPromise().then(
+
+  /**
+   * Events change language
+   * @param event Event model for language change event
+   */
+  private eventChangeLanguage(event: LanguageChange) {
+    this.langConn.setLang(event.NewLanguage).toPromise().then(
       () => { window.location.reload(); }
     );
   }
 
+  /**
+   * Parses new events, every new event goes through this function which will determine
+   * its further path
+   * @param event Event array
+   */
   private parseNewEvent(event: any) {
     event.forEach(element => {
       this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       switch (element.EventId) {
         case uEventsIds.RequestToLoadScript:
-          this.attemptLoadScripts(element);
+          this.attemptLoadResource(element);
           break;
         case uEventsIds.LanguageChange:
           this.eventChangeLanguage(element);
@@ -93,6 +130,11 @@ export class ScriptLoaderComponent {
     });
   }
 
+  /**
+   * Sends event loaded script when it loads some resource
+   * @param eventId id for which the resource was loaded after
+   * @param resScheme resource scheme model
+   */
   private sendEventLoadedScript(eventId: number, resScheme: ResourceSheme) {
     const event = new LoadedResource(eventId, resScheme);
 
@@ -106,6 +148,11 @@ export class ScriptLoaderComponent {
     );
   }
 
+
+  /**
+   * Subscribes to events this micro fronted is responsible for
+   * @returns Promise
+   */
   private subToEvents(): Promise<any> {
     const event = new SubscibeToEvent([
       [uEventsIds.RequestToLoadScript, 0, 0],
@@ -117,10 +164,19 @@ export class ScriptLoaderComponent {
     return this.eProxyService.dispatchEvent(event).toPromise();
   }
 
-  private attemptLoadScripts(event: RequestToLoadScripts) {
+  /**
+   * Attempts to load a resource
+   * @param event resource load event model
+   */
+  private attemptLoadResource(event: RequestToLoadScripts) {
     this.loadResources(event);
   }
 
+  /**
+   * Loads script only into DOM
+   * @param url script url
+   * @returns Promise
+   */
   private loadScript(url: string): Promise<any> {
     const scripts = Array
       .from( document.querySelectorAll('script') )
@@ -137,6 +193,10 @@ export class ScriptLoaderComponent {
     }
   }
 
+  /**
+   * Loads resources
+   * @param event resource load event model
+   */
   private loadResources(event: RequestToLoadScripts) {
 
     event.ResourceSchemes.forEach(scheme => {

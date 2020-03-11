@@ -22,6 +22,7 @@
     1. 4. DONE Make backend setup for language 
     1. 5. DONE In uf-manager (shell) load language configs
     1. 6. DONE (only in menu) Create locales in projects
+    1. 7. Translate other micro frontends
 8. Do element uf (show every angular-material element)
 11. Change occupation to occupation-uf
 12. Think about adding all observables into one for logging, debugging, visualising purposes

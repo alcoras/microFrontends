@@ -3,10 +3,12 @@ import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
 import { MessageService } from '../msg.service';
-import { forkJoin } from 'rxjs';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { LanguageService, ILanguageSettings } from '../lang-service/lang.service';
 
+
+/**
+ * Micro Frontend Manager is responsible for presubscribing all micro frontends
+ * to their event which are loaded from JS configuration files statically hold.
+ */
 @Component({
   selector: 'app-uf-manager',
   template: '',
@@ -20,6 +22,12 @@ export class UFManagerComponent {
 
   resources: { [srcId: number]: boolean } = {};
 
+  /**
+   * Start listening to new events and subs to other micro frontend bootstraping
+   * functions
+   * @param eProxyService library service used for communication with backend
+   * @param msgService helper for communication between Script-Loader
+   */
   constructor(
     private eProxyService: EventProxyLibService,
     private msgService: MessageService
@@ -34,15 +42,32 @@ export class UFManagerComponent {
     // check if configs are loaded by script-loader
     this.msgService.eventPreloaded.subscribe(
       () => {
-        // wait for micro frontends to sub
-        Promise.all([
-          this.subMicroFrontends(),
-          this.subToEvents()]).then(() => {
-            this.preloadMenuMicroFrontend();
-        });
+        this.init();
+        // // wait for micro frontends to sub
+        // Promise.all([
+        //   this.subMicroFrontends(),
+        //   this.subToEvents()]).then(() => {
+        //     this.preloadMenuMicroFrontend();
+        // });
       });
   }
 
+  /**
+   * Inits ufmanager component with async functions
+   * @returns null
+   */
+  private async init() {
+    await this.subMicroFrontends();
+    await this.subToEvents();
+    await this.preloadMenuMicroFrontend();
+
+    return;
+  }
+
+  /**
+   * Sends event to backend to init Menu
+   * @returns Promise
+   */
   private preloadMenuMicroFrontend() {
     const e = new uEvent();
 
@@ -50,9 +75,13 @@ export class UFManagerComponent {
     e.SourceEventUniqueId = this.traceId++;
     e.EventId = uEventsIds.InitMenu;
 
-    this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.dispatchEvent(e).toPromise();
   }
 
+  /**
+   * Subs to events which this micro frontend is responsible for
+   * @returns Promise
+   */
   private subToEvents() {
     const e = new SubscibeToEvent([
       [uEventsIds.LoadedResource, 0, 0]]);
@@ -63,6 +92,12 @@ export class UFManagerComponent {
     return this.eProxyService.dispatchEvent(e).toPromise();
   }
 
+  /**
+   * Parses new events, every new event goes through this function which will determine
+   * its further path, also if resource responsible for event is not yet loaded, sends
+   * event with request to load resources for that micro frontend.
+   * @param event Event array
+   */
   private parseNewEvent(event: any) {
     event.forEach(element => {
       this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
@@ -108,9 +143,15 @@ export class UFManagerComponent {
     });
   }
 
+  /**
+   * Subs micro frontends to their events and subs itself to them so it
+   * can load them if they're not yet laoded
+   * @returns Promise
+   */
   private subMicroFrontends() {
     const ret: Promise<any>[] = [];
 
+    this.eProxyService.env.loadConfig();
     const dic = this.eProxyService.env.uf;
     for (const key in dic) {
       // Traverse through all uFrontends

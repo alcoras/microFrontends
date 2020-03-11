@@ -1,5 +1,9 @@
 import { Subject } from 'rxjs';
 
+/**
+ * Message service used for internal communication
+ * between script-loader and microfrontend manager
+ */
 export class MessageService {
   public eventPreloaded = new Subject();
   public eventLanguageLoaded = new Subject();
@@ -11,5 +15,4 @@ export class MessageService {
   public languageLoaded() {
     this.eventLanguageLoaded.next();
   }
-
 }

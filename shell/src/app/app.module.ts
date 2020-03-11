@@ -24,6 +24,10 @@ import { MessageService } from './msg.service';
 export class AppModule {
   constructor(private injector: Injector) {}
 
+
+  /**
+   * do bootstrap for our micro frontends as custom elements
+   */
   ngDoBootstrap(): void {
     const { injector } = this;
 
