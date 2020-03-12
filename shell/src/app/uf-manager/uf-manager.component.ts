@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
+import { SubscibeToEvent, RequestToLoadScripts, LoadedResource } from '@uf-shared-events/index';
 import { MessageService } from '../msg.service';
 
 
@@ -43,12 +43,6 @@ export class UFManagerComponent {
     this.msgService.eventPreloaded.subscribe(
       () => {
         this.init();
-        // // wait for micro frontends to sub
-        // Promise.all([
-        //   this.subMicroFrontends(),
-        //   this.subToEvents()]).then(() => {
-        //     this.preloadMenuMicroFrontend();
-        // });
       });
   }
 

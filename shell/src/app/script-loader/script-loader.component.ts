@@ -62,9 +62,6 @@ export class ScriptLoaderComponent {
           await this.preLoadScripts();
           await this.subToEvents();
           this.msgService.preloaded();
-          // Promise.all([this.preLoadScripts(), this.subToEvents()])
-          //   .then( () => {
-          //     this.msgService.preloaded(); });
         }
       },
       (error: any) => { console.log('error', error); },
@@ -79,7 +76,7 @@ export class ScriptLoaderComponent {
    * @returns Promise
    */
   public preLoadScripts(): Promise<any> {
-    const promises: any[] = [];
+    let promises: any[] = [];
     // TODO: refactor ports add to env
 
     this.eProxyService.env.loadConfig();

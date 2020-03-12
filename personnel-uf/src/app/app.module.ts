@@ -67,10 +67,12 @@ export class AppModule {
     });
   }
 
-  private processButtonPressed(element: EventButtonPressed) {
-    switch (element.EventId) {
+  private processButtonPressed(event: EventButtonPressed) {
+    switch (event.EventId) {
       case uEventsIds.PerssonelButtonPressed:
-        this.putToElement(element.UniqueElementId, this.getElFromID(element.EventId));
+        if (event.UniqueElementId) {
+          this.putToElement(event.UniqueElementId, this.getElFromID(event.EventId));
+        }
         break;
     }
   }

@@ -14,6 +14,7 @@
     7. 1. Transfer theme selector to uf Menu
     7. 2. Setup global themes which derived from uf Menu
 10. DONE Menu change tabs to material 
+16. DONE When swapping tabs it reloads
 
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
@@ -29,3 +30,4 @@
 13. Set to load all icons from disk
 14. Make sure that shell can load any combination of ufs (does not fail if one failed)
 15. Consider requiring sourceId for all events?
+16. Communicaiton between script loader and ufm should be done over external events?

@@ -77,7 +77,9 @@ export class AppModule {
   private processButtonPressed(element: EventButtonPressed) {
     switch (element.EventId) {
       case uEventsIds.OccupationNg9ButtonPressed:
-        this.putToElement(element.UniqueElementId, this.getElFromID(element.EventId));
+        if (element.UniqueElementId) {
+          this.putToElement(element.UniqueElementId, this.getElFromID(element.EventId));
+        }
         break;
     }
   }

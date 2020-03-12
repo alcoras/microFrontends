@@ -9,9 +9,14 @@ class IncorrectEventName extends Error {
   public message = 'Incorrect event name was passed';
 }
 
-interface Selector {
+interface ISelector {
   value: string;
   viewValue: string;
+}
+
+interface IUFState {
+  elementId: string;
+  loaded: boolean;
 }
 
 @Component({
@@ -26,35 +31,36 @@ export class AppComponent {
 
   sourceId: number = uParts.Menu;
 
-  placement: { [id: number]: string } = {};
+  placement: { [id: number]: IUFState } = {};
 
-  themes: Selector[];
+  themes: ISelector[];
   selectedTheme: string;
 
-  langs: Selector[];
+  langs: ISelector[];
   selectedLang: string;
 
   constructor(
-    private eProxyService: EventProxyLibService,
-    private router: Router
+    private eProxyService: EventProxyLibService
   ) {
     this.preparePlacements();
-    // TODO: port should be configurable
-    const url = `${eProxyService.env.url}:3002/en/`;
+    this.prepareThemeAndLang();
+  }
+
+  // TODO: port should be configurable
+  private prepareThemeAndLang() {
+    const url = `${this.eProxyService.env.url}:3002/en/`;
     this.themes = [
-      {value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber'},
-      {value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink'},
-      {value: url + 'assets/pink-bluegrey.css', viewValue: 'Pink & Blue-grey'},
-      {value: url + 'assets/purple-green.css', viewValue: 'Purple & Green'}
+      { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
+      { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
+      { value: url + 'assets/pink-bluegrey.css', viewValue: 'Pink & Blue-grey' },
+      { value: url + 'assets/purple-green.css', viewValue: 'Purple & Green' }
     ];
-
     this.langs = [
-      {value: 'en', viewValue: 'EN'},
-      {value: 'uk', viewValue: 'UK'},
-      {value: 'ru', viewValue: 'RU'},
-      {value: 'lt', viewValue: 'LT'},
+      { value: 'en', viewValue: 'EN' },
+      { value: 'uk', viewValue: 'UK' },
+      { value: 'ru', viewValue: 'RU' },
+      { value: 'lt', viewValue: 'LT' },
     ];
-
     this.selectedTheme = this.themes[0].value;
     this.selectedLang = this.eProxyService.env.lang;
   }
@@ -81,11 +87,11 @@ export class AppComponent {
   }
 
   private preparePlacements() {
-    this.placement[uEventsIds.PerssonelButtonPressed] = 'personnel';
-    this.placement[uEventsIds.OccupationNg9ButtonPressed] = 'occupationsNg9';
+    this.placement[uEventsIds.PerssonelButtonPressed] = { elementId: 'personnel', loaded: false };
+    this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
   }
 
-  private getElFromID(id: number): string {
+  private getElFromID(id: number): IUFState {
     const elId = this.placement[id];
 
     if (!elId) {
@@ -96,16 +102,22 @@ export class AppComponent {
   }
 
   menuClick(evt, eventName: number) {
-    // create event
+    // create an event
     this.eventButtonPressed(eventName);
 
     const elId = this.getElFromID(eventName);
 
-    this.openTab(evt, elId);
+    this.openTab(evt, elId.elementId);
   }
 
   eventButtonPressed(eventName: number) {
-    const elId = this.getElFromID(eventName);
+    const elState = this.getElFromID(eventName);
+
+    const elId = elState.loaded ? null : elState.elementId;
+
+    if (elId) {
+      this.placement[eventName].loaded = true;
+    }
 
     const event = new EventButtonPressed(eventName, elId);
 
