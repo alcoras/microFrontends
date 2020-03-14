@@ -38,5 +38,13 @@
             "url": "http://localhost:3004",
             "webRoot": "${workspaceFolder}/personnel"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceRoot}/node_modules/Jasmine-es6/bin/jasmine.js",
+            "args": [
+                "${workspaceRoot}/tests/Test1spec.js"]
+        },
     ]
 }
