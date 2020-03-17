@@ -39,6 +39,8 @@ export class EnvService {
     const ufPH = 'uf';
     const langH = 'lang';
     const urlH = 'url';
+    const apiGatewayUrlH = 'apiGatewayUrl';
+    const apiGatewayPortH = 'apiGatewayPort';
     // Create env
     // Read environment variables from browser window
     const browserWindow = window || {};
@@ -53,7 +55,16 @@ export class EnvService {
     }
 
     if (browserWindowEnv.hasOwnProperty(urlH)) {
-      this.url = browserWindowEnv[urlH]; }
+      this.url = browserWindowEnv[urlH];
+    }
+
+    if (browserWindowEnv.hasOwnProperty(apiGatewayUrlH)) {
+      this.apiGatewayUrl = browserWindowEnv[apiGatewayUrlH];
+    }
+
+    if (browserWindowEnv.hasOwnProperty(apiGatewayPortH)) {
+      this.apiGatewayPort = browserWindowEnv[apiGatewayPortH];
+    }
 
     return browserWindowEnv;
   }

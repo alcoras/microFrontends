@@ -3,28 +3,26 @@ import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 
 import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
-import { ScriptLoaderComponent } from './script-loader/script-loader.component';
+
 import { UFManagerComponent } from './uf-manager/uf-manager.component';
-import { MessageService } from './msg.service';
+import { PrestartService } from './services/prestart.service';
+import { ResourceLoaderService } from './services/resource-loader.service';
 
 @NgModule({
   declarations: [
-    ScriptLoaderComponent,
     UFManagerComponent
   ],
   imports: [
     BrowserModule,
     EventProxyLibModule
   ],
-  providers: [ MessageService ],
+  providers: [ PrestartService, ResourceLoaderService],
   bootstrap: [],
-  entryComponents: [ScriptLoaderComponent, UFManagerComponent]
+  entryComponents: [UFManagerComponent]
 })
 
 export class AppModule {
   constructor(private injector: Injector) {}
-
-
   /**
    * do bootstrap for our micro frontends as custom elements
    */
@@ -32,12 +30,8 @@ export class AppModule {
     const { injector } = this;
 
     const ngCustomElement1 = createCustomElement(UFManagerComponent, { injector });
-    const ngCustomElement2 = createCustomElement(ScriptLoaderComponent, { injector });
 
     if (!customElements.get('uf-manager')) {
       customElements.define('uf-manager', ngCustomElement1); }
-
-    if (!customElements.get('script-loader')) {
-    customElements.define('script-loader', ngCustomElement2); }
   }
 }

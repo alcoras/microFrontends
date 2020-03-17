@@ -1,12 +1,20 @@
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 export interface ILanguageSettings {
   lang: string;
 }
 
+/**
+ * Language service temporary to hold language settings
+ */
+@Injectable({
+  providedIn: 'root'
+})
 export class LanguageService {
-  href = 'http://localhost:3333/language';
+
+  private href = 'http://localhost:3333/language';
   constructor(private httpClient: HttpClient) { }
 
   getLang(): Observable<HttpResponse<any>> {

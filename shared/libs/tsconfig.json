@@ -17,10 +17,19 @@
       "dom"
     ],
     "paths": {
+      "@angular/*": [ "./node_modules/@angular/*" ],
+      "@uf-shared-events/":["../../shared/events"],
+      "@uf-shared-events/*":["../../shared/events/*"],
+
+      "@uf-shared-models/":["../../shared/models"],
+      "@uf-shared-models/*":["../../shared/models/*"],
+
+      "@uf-shared-libs/":["../../shared/libs/dist"],
+      "@uf-shared-libs/*":["../../shared/libs/dist/*"],
       "event-proxy-lib": [
         "dist/event-proxy-lib/event-proxy-lib",
         "dist/event-proxy-lib"
-      ]
+      ],
     }
   },
   "angularCompilerOptions": {

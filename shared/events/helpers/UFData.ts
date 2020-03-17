@@ -1,4 +1,4 @@
-import { ResourceSheme } from "./ResourceSheme";
+import { ResourceSheme } from './ResourceSheme';
 
 export class UFData {
     public events: number[] = [];

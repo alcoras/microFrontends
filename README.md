@@ -1,5 +1,8 @@
 # Gg
 
+Building Libs:
+`cd shared/libs && ng build --prod`
+
 Run Shell:
 `cd shell && npm run ng_con`
 

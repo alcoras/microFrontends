@@ -6,7 +6,7 @@
   // API url
   window.__env.lang = 'en';
   window.__env.url = 'http://localhost';
-  //window.__env.apiGatewayUrl = 'http://localhost';
-  //window.__env.apiGatewayPort = '8080';
+  window.__env.apiGatewayUrl = 'http://localhost';
+  window.__env.apiGatewayPort = '54366';
 
 }(this));

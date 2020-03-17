@@ -1,7 +1,7 @@
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { SubscibeToEvent } from '../shared/events/index';
-import { uEvent, uEventsIds, uParts } from '../shared/models/event';
+import { SubscibeToEvent } from '@uf-shared-events/index';
+import { uEvent, uEventsIds } from '@uf-shared-models/event';
 import { EventProxyLibService } from '../event-proxy-lib.service';
 import { EnvService } from '../env/env.service';
 
@@ -17,16 +17,19 @@ function delay(ms: number) {
 // TODO: test with angular tests too (httpTestModule, to test requests)
 // TODO: reset server for each test
 
+class TestEvent extends uEvent {
+}
+
 describe('EventProxyLibService', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
-    const tEvent = new uEvent();
+    const tEvent = new TestEvent();
     tEvent.EventId = 1000;
     const testinID = '1000';
     let service: EventProxyLibService;
 
     beforeEach
     (
-      () => {
+      async () => {
         TestBed.configureTestingModule({
           providers: [EventProxyLibService, EnvService],
           imports: [HttpClientModule]
@@ -36,6 +39,8 @@ describe('EventProxyLibService', () => {
         service.changeApiGatewayURL('http://localhost:54366');
 
         tEvent.SourceId = testinID;
+
+        await delay(1000);
       }
     );
 
@@ -63,15 +68,10 @@ describe('EventProxyLibService', () => {
       (
         (res: HttpResponse<any>) => {
           expect(res.status).toEqual(200);
-
-          // const expected = JSON.parse(JSON.stringify(expectedJSONtoGetNewEvents));
-          // const actual = JSON.parse(JSON.stringify(res.body));
-
-          // expect(actual).toEqual(expected);
           done();
         },
-        () => { fail('HTTP response with failure.'); },
-        () => { done(); }
+        (err: any) => { done.fail('HTTP response with failure.'); },
+        () => { }
       );
     });
 
@@ -97,8 +97,7 @@ describe('EventProxyLibService', () => {
 
       const array = [];
       for (let i = 0; i < random; i++) {
-        const temp = new uEvent();
-        temp.EventId = i + 1;
+        const temp = new TestEvent();
         temp.SourceId = testinID;
         array.push(temp);
       }
@@ -120,9 +119,9 @@ describe('EventProxyLibService', () => {
     });
 
     it('should subscribe to one event, fire it, and receive it', async (done) => {
-      const waitForEventId = getRandomInt(999999);
+      const waitForEventId = getRandomInt(99999);
 
-      // // 1. Listening to events
+      // 1. Listening to events
       service.StartQNA(testinID).subscribe
       (
         (res: HttpResponse<any>) => {
@@ -142,21 +141,20 @@ describe('EventProxyLibService', () => {
       // 2. Subscribe to event
       const subEvent = new SubscibeToEvent([[waitForEventId, 0, 0]], false);
       subEvent.SourceId = testinID;
-      await service.dispatchEvent([subEvent]).toPromise();
+      await service.dispatchEvent(subEvent).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
       await delay(1000);
       // 3. Fire event
       tEvent.EventId = waitForEventId;
-      await service.dispatchEvent([tEvent]).toPromise();
-
+      await service.dispatchEvent(tEvent).toPromise();
     });
 
     it('should subscribe to many events, fire them, and receive them', async (done) => {
       // TODO: unxit when fixed issue on backend
       const waitForEventId = getRandomInt(500);
 
-      const randomAmount = 3;
+      const randomAmount = 2;
 
       const eventArray = [];
       const randomEventId = [];
@@ -187,7 +185,6 @@ describe('EventProxyLibService', () => {
       service.StartQNA(testinID).subscribe
       (
         (res: HttpResponse<any>) => {
-          console.log(res);
           expect(res.status).toEqual(200);
           expect(res.body.EventId).toEqual(uEventsIds.GetNewEvents);
 
@@ -195,7 +192,7 @@ describe('EventProxyLibService', () => {
 
           done();
         },
-        () => { done.fail(); },
+        () => { done.fail('HTTP response with failure.'); },
         () => { }
       );
     });

@@ -33,7 +33,7 @@ export class AppModule {
   title = 'menu';
   traceId = 1;
 
-  sourceId: number = uParts.Menu;
+  sourceId: string = uParts.Menu;
 
   elToPlace: { [id: number]: string } = {};
 
@@ -41,19 +41,30 @@ export class AppModule {
     private injector: Injector,
     private eProxyService: EventProxyLibService
   ) {
+    this.eProxyService.StartQNA(this.sourceId).subscribe(
+      (value) => {
+        console.log(value);
+        if (!value.body) { return; }
 
-    this.eProxyService.startQNA(this.sourceId).subscribe(
-      (value) => { this.parseNewEvent(value); },
+        if (!value.body.hasOwnProperty('EventId')) {
+          throw new Error('No EventId in message');
+        }
+
+        if (value.body['EventId'] === uEventsIds.GetNewEvents) {
+          this.parseNewEvent(value.body.Events);
+        }
+      },
       (error) => { console.log(this.title, error); },
       () => {}
     );
   }
 
   private parseNewEvent(event: any) {
+    console.log('parsing event');
     event.forEach(element => {
         switch (element.EventId) {
           case uEventsIds.InitMenu:
-            this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            // this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
             this.putToElement('menu-team', '<menu-team></menu-team>');
             break;
           default:

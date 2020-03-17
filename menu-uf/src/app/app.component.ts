@@ -29,7 +29,7 @@ export class AppComponent {
   title = 'menu';
   traceId = 1;
 
-  sourceId: number = uParts.Menu;
+  sourceId: string = uParts.Menu;
 
   placement: { [id: number]: IUFState } = {};
 

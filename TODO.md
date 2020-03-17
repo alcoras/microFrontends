@@ -15,6 +15,8 @@
     7. 2. Setup global themes which derived from uf Menu
 10. DONE Menu change tabs to material 
 16. DONE When swapping tabs it reloads
+18. DONE Change all models to check for proper event id
+16. DONE Communicaiton between script loader and ufm should be done over external events? Update: refactored so that ufm takes full control
 
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
@@ -30,4 +32,12 @@
 13. Set to load all icons from disk
 14. Make sure that shell can load any combination of ufs (does not fail if one failed)
 15. Consider requiring sourceId for all events?
-16. Communicaiton between script loader and ufm should be done over external events?
+17. In libs and tests I cant directly add models
+    17. 1. Update: remove folder shared in libs and add links to external shared files
+    17. 2. Update: still can't build wihthout local files, but tests can reference them..
+19. Write tests for uf-manager
+20. When loosing connection with backend there is no error or warning..
+21. Events still disappearing? YES
+22. DO FULL LOGGGING!!!!!!!!!
+
+21

@@ -1,7 +1,6 @@
 (function (window) {
 
   "use strict";
-
   const srcId = 1001;
   window.__env = window.__env || {};
   window.__env.uf = window.__env.uf || {};
