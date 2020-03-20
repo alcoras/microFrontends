@@ -39,6 +39,6 @@
 20. When loosing connection with backend there is no error or warning..
 21. Events still disappearing? YES
 22. Do conditional logging.
-23. Write tests for libs (multi-event recieviers, multi-event confirming)
+23. DONE Write tests for libs (multi-event recieviers, multi-event confirming)
 
 24.

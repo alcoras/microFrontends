@@ -21,7 +21,7 @@ class TestEvent extends uEvent {
 }
 
 describe('EventProxyLibService', () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
     const backendURL = 'http://localhost:54366';
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
@@ -218,50 +218,52 @@ describe('EventProxyLibService', () => {
       );
     });
 
-    fit('few sources subscribed to same event and they receive them', async (done) => {
-      let sourceIdBegin = 41;
+    it('few sources subscribed to same event and they receive them', async (done) => {
+      const sourceIdBegin = 41;
       const rndEventId = getRandomInt(1000);
+      const sourceAmount = 2;
 
-      const promisesSub: Promise<any>[] = [];
-      const promisesFire: Promise<any>[] = [];
-      serviceList.forEach(async (element) => {
-        // 1. Subscribe to them
-        const subEvent = new SubscibeToEvent([[rndEventId, 0, 0]], true);
-        subEvent.SourceId = sourceIdBegin.toString();
-        promisesSub.push(service.dispatchEvent([subEvent]).toPromise());
+      const subEventList = [];
+      const fireEventList = [];
+      for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
+          // 1. Subscribe to them
+          const subEvent = new SubscibeToEvent([[rndEventId, 0, 0]], true);
+          subEvent.SourceId = index.toString();
+          subEventList.push(subEvent);
 
-        // 2. Fire event
-        tEvent.EventId = rndEventId;
-        promisesFire.push(service.dispatchEvent(tEvent).toPromise());
+          // 2. Fire event
+          tEvent.EventId = rndEventId;
+          fireEventList.push(tEvent);
+      }
 
-        sourceIdBegin++;
-      });
-
-      await Promise.all(promisesSub);
+      await service.dispatchEvent(subEventList).toPromise();
       await delay(3000);
-      await Promise.all(promisesFire);
+      await service.dispatchEvent(fireEventList).toPromise();
       await delay(1000);
 
-      const promisesGet: Promise<any>[] = [];
-      sourceIdBegin = 41;
-      serviceList.forEach(async (element) => {
+      for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
+        await service.getLastEvents(index.toString()).toPromise().then(
+          async (res: HttpResponse<any>) => {
+            expect(res.body.EventId === uEventsIds.GetNewEvents);
 
-        // 3. Try to receive it
-        promisesGet.push(element.getLastEvents(sourceIdBegin.toString()).toPromise());
+            expect(res.body.Events[0].EventId === rndEventId);
 
-        // await element.getLastEvents(sourceIdBegin.toString()).toPromise().then(
-        //   async (res: HttpResponse<any>) => {
-        //     expect(res.body.Events[0].EventId).toBe(rndEventId, 'Event id is not what was expected');
+            const idList = [];
 
-        //     await element.confirmEvents(sourceIdBegin.toString(), [res.body.Events[0].AggregateId]).toPromise();
-        //   }
-        // );
-        sourceIdBegin++;
-      });
+            res.body.Events.forEach(element => {
+              idList.push(element.AggregateId);
+            });
 
-      const results = await Promise.all(promisesGet);
+            await service.confirmEvents(index.toString(), idList).toPromise();
 
-      console.log(results);
+            await service.getLastEvents(index.toString()).toPromise().then(
+              (res2: HttpResponse<any>) => {
+                expect(res2.body).toBeNull();
+              }
+            );
+          }
+        );
+      }
 
       done();
     });
