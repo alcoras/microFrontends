@@ -39,7 +39,7 @@ export class PrestartService {
    * Inits scripts
    * @param urls list of scripts' urls to load
    */
-  public async InitScripts(urls: string[]): Promise<any> {
+  public InitScripts(urls: string[]): Promise<any> {
     return this.preloadScripts(urls);
   }
 

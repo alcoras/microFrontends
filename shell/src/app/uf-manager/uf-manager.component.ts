@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
-import { Subject } from 'rxjs';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
@@ -16,23 +15,22 @@ class InitMenuEvent extends uEvent {
   }
 }
 
+function delay(ms) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
  * to their event which are loaded from JS configuration files statically hold.
  */
-@Component({
-  selector: 'app-uf-manager',
-  template: '',
-  providers: [ EventProxyLibService ]
+@Injectable({
+  providedIn: 'root'
 })
-export class UFManagerComponent implements OnInit {
-  title = 'uf-manager';
-  desc = 'micro frontend manager';
-  traceId = 1;
-  sourceId: string = uParts.UFManager;
-  constructorDone = new Subject();
+export class UFManagerComponent {
+  private title = 'uf-manager';
+  private sourceId: string = uParts.UFManager;
 
-  resources: { [srcId: number]: boolean } = {};
+  private resources: { [srcId: number]: boolean } = {};
 
   /**
    * Start listening to new events and subs to other micro frontend bootstraping
@@ -47,8 +45,12 @@ export class UFManagerComponent implements OnInit {
     private prestartService: PrestartService
   ) { }
 
-  ngOnInit(): void {
-    this.eProxyService.StartQNA(this.sourceId).subscribe
+  /**
+   * Inits ufmanager component with async functions
+   */
+  public Init() {
+    this.eProxyService.StartQNA(this.sourceId)
+    .subscribe
     (
       (value: HttpResponse<any>) => {
         if (!value.body) { return; }
@@ -65,17 +67,24 @@ export class UFManagerComponent implements OnInit {
       () => {}
     );
 
-    this.init();
-  }
+    return new Promise(async (resolve) => {
+      console.time('subscribeToEventsAsync');
+      await this.subscribeToEventsAsync();
+      console.timeEnd('subscribeToEventsAsync');
 
-  /**
-   * Inits ufmanager component with async functions
-   */
-  private init() {
-    this.subscribeToEvents();
-    this.preloadScripts().then(() => {
-      this.subscribeMicroFrontends();
-      this.preloadMenuMicroFrontend();
+      console.time('preloadScripts');
+      await this.preloadScripts();
+      console.timeEnd('preloadScripts');
+
+      console.time('subscribeMicroFrontends');
+      await this.subscribeMicroFrontends();
+      console.timeEnd('subscribeMicroFrontends');
+
+      console.time('preloadMenuMicroFrontend');
+      await this.preloadMenuMicroFrontend();
+      console.timeEnd('preloadMenuMicroFrontend');
+
+      resolve();
     });
   }
 
@@ -105,14 +114,14 @@ export class UFManagerComponent implements OnInit {
   private preloadMenuMicroFrontend() {
     const e = new InitMenuEvent(this.sourceId);
 
-    this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.dispatchEvent(e).toPromise();
   }
 
   /**
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private subscribeToEvents() {
+  private subscribeToEventsAsync() {
     const e = new SubscibeToEvent([
       [uEventsIds.LoadedResource, 0, 0],
       [uEventsIds.RequestToLoadScript, 0, 0],
@@ -122,7 +131,7 @@ export class UFManagerComponent implements OnInit {
 
     e.SourceId = this.sourceId.toString();
 
-    this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.dispatchEvent(e).toPromise();
   }
 
   /**
@@ -214,7 +223,9 @@ export class UFManagerComponent implements OnInit {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private subscribeMicroFrontends() {
+  private async subscribeMicroFrontends() {
+
+    const promises: Promise<any>[] = [];
 
     this.eProxyService.env.loadConfig();
     const dic = this.eProxyService.env.uf;
@@ -231,19 +242,16 @@ export class UFManagerComponent implements OnInit {
         let event = new SubscibeToEvent(subList);
 
         event.SourceId = key;
-        event.SourceEventUniqueId = this.traceId++;
 
-        this.eProxyService.dispatchEvent(event).toPromise();
+        promises.push(this.eProxyService.dispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(subList);
 
         event.SourceId = this.sourceId.toString();
-        event.SourceEventUniqueId = this.traceId++;
-        this.eProxyService.dispatchEvent(event).toPromise();
-
-        console.log('subbed');
+        promises.push(await this.eProxyService.dispatchEvent(event).toPromise());
       }
     }
+    return Promise.all(promises);
   }
 }

@@ -22,10 +22,13 @@ class TestEvent extends uEvent {
 
 describe('EventProxyLibService', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
+    const backendURL = 'http://localhost:54366';
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
     const testinID = '1000';
     let service: EventProxyLibService;
+    // tslint:disable-next-line: prefer-const
+    let serviceList: EventProxyLibService[] = new Array(3);
 
     beforeEach
     (
@@ -36,17 +39,36 @@ describe('EventProxyLibService', () => {
         });
 
         service = TestBed.inject(EventProxyLibService);
-        service.changeApiGatewayURL('http://localhost:54366');
+        service.changeApiGatewayURL(backendURL);
+
+        serviceList.forEach(element => {
+          element = TestBed.inject(EventProxyLibService);
+          element.changeApiGatewayURL(backendURL);
+        });
 
         tEvent.SourceId = testinID;
-
-        await delay(1000);
       }
     );
 
     afterEach(
-      () => {
+      async () => {
+
         service.endQNA();
+        await service.getLastEvents(testinID).toPromise().then(
+          async (ret) => {
+            if (!ret.body) {
+              return;
+            }
+            if (ret.body.EventId === uEventsIds.GetNewEvents) {
+              const idList = [];
+              ret.body.Events.forEach(element => {
+                idList.push(element.AggregateId);
+              });
+              await service.confirmEvents(testinID, idList).toPromise();
+            }
+          }
+        );
+
       }
     );
 
@@ -125,12 +147,12 @@ describe('EventProxyLibService', () => {
       service.StartQNA(testinID).subscribe
       (
         (res: HttpResponse<any>) => {
-          expect(res.status).toEqual(200, 'Incorrect http status');
-          expect(res.body.EventId).toEqual(uEventsIds.GetNewEvents, 'EventId incorrect');
+          expect(res.status).toBe(200, 'Incorrect http status');
+          expect(res.body.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
 
-          expect(res.body.Events.length).toEqual(1, 'Incorrect lenght');
+          expect(res.body.Events.length).toBe(1, 'Incorrect lenght');
 
-          expect(res.body.Events[0].EventId).toEqual(waitForEventId, 'Incorrect expected eventid');
+          expect(res.body.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
 
           done();
         },
@@ -189,11 +211,58 @@ describe('EventProxyLibService', () => {
           expect(res.body.EventId).toEqual(uEventsIds.GetNewEvents);
 
           expect(res.body.Events.length).toEqual(randomAmount);
-
           done();
         },
         () => { done.fail('HTTP response with failure.'); },
         () => { }
       );
+    });
+
+    fit('few sources subscribed to same event and they receive them', async (done) => {
+      let sourceIdBegin = 41;
+      const rndEventId = getRandomInt(1000);
+
+      const promisesSub: Promise<any>[] = [];
+      const promisesFire: Promise<any>[] = [];
+      serviceList.forEach(async (element) => {
+        // 1. Subscribe to them
+        const subEvent = new SubscibeToEvent([[rndEventId, 0, 0]], true);
+        subEvent.SourceId = sourceIdBegin.toString();
+        promisesSub.push(service.dispatchEvent([subEvent]).toPromise());
+
+        // 2. Fire event
+        tEvent.EventId = rndEventId;
+        promisesFire.push(service.dispatchEvent(tEvent).toPromise());
+
+        sourceIdBegin++;
+      });
+
+      await Promise.all(promisesSub);
+      await delay(3000);
+      await Promise.all(promisesFire);
+      await delay(1000);
+
+      const promisesGet: Promise<any>[] = [];
+      sourceIdBegin = 41;
+      serviceList.forEach(async (element) => {
+
+        // 3. Try to receive it
+        promisesGet.push(element.getLastEvents(sourceIdBegin.toString()).toPromise());
+
+        // await element.getLastEvents(sourceIdBegin.toString()).toPromise().then(
+        //   async (res: HttpResponse<any>) => {
+        //     expect(res.body.Events[0].EventId).toBe(rndEventId, 'Event id is not what was expected');
+
+        //     await element.confirmEvents(sourceIdBegin.toString(), [res.body.Events[0].AggregateId]).toPromise();
+        //   }
+        // );
+        sourceIdBegin++;
+      });
+
+      const results = await Promise.all(promisesGet);
+
+      console.log(results);
+
+      done();
     });
 });

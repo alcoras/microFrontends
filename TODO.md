@@ -17,6 +17,7 @@
 16. DONE When swapping tabs it reloads
 18. DONE Change all models to check for proper event id
 16. DONE Communicaiton between script loader and ufm should be done over external events? Update: refactored so that ufm takes full control
+11. DONE Change occupation to occupation-uf
 
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
@@ -26,18 +27,18 @@
     1. 5. DONE In uf-manager (shell) load language configs
     1. 6. DONE (only in menu) Create locales in projects
     1. 7. Translate other micro frontends
-8. Do element uf (show every angular-material element)
-11. Change occupation to occupation-uf
+8. Do angular element show uf (show every angular-material element)
 12. Think about adding all observables into one for logging, debugging, visualising purposes
 13. Set to load all icons from disk
 14. Make sure that shell can load any combination of ufs (does not fail if one failed)
 15. Consider requiring sourceId for all events?
-17. In libs and tests I cant directly add models
+17. In libs and tests I cant directly add models from externals folders
     17. 1. Update: remove folder shared in libs and add links to external shared files
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
 19. Write tests for uf-manager
 20. When loosing connection with backend there is no error or warning..
 21. Events still disappearing? YES
-22. DO FULL LOGGGING!!!!!!!!!
+22. Do conditional logging.
+23. Write tests for libs (multi-event recieviers, multi-event confirming)
 
-21
+24.

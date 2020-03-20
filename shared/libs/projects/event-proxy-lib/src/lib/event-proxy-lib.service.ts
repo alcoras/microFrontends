@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, Observer } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of, Observer, Subject } from 'rxjs';
+import { catchError, repeat, repeatWhen, takeUntil, share } from 'rxjs/operators';
 import { uEventsIds, uEvent } from './models/event';
 import { EnvService } from './env/env.service';
 
@@ -18,6 +18,8 @@ export class EventProxyLibService {
   private endOnNext = false;
   private interval;
   private status;
+
+  private Stop = new Subject();
 
   get Status(): boolean {
     return this.status;
@@ -74,12 +76,17 @@ export class EventProxyLibService {
 
     this.sourceID = sourceID;
 
-    return new Observable (
-      (observer: Observer<any>) => {
-        this.Status = true;
-        this.startTimer();
-        this.recursiveSub(observer);
-      });
+    return this.getLastEvents(this.sourceID)
+      .pipe(
+        repeat(9999), // stack too deep error if more than 9999
+        takeUntil(this.Stop),
+      );
+    // return new Observable (
+    //   (observer: Observer<any>) => {
+    //     this.Status = true;
+    //     this.startTimer();
+    //     this.recursiveSub(observer);
+    //   });
   }
 
   /**
@@ -105,6 +112,7 @@ export class EventProxyLibService {
     this.endOnNext = true;
     this.Status = false;
     this.stopTimer();
+    this.Stop.next(true);
   }
 
   /**
@@ -123,9 +131,7 @@ export class EventProxyLibService {
     this.getLastEvents(this.sourceID).subscribe
     (
       (res: HttpResponse<any>) => {
-        if (res) {
           obs.next(res);
-        }
       },
       (err: HttpErrorResponse) => { obs.error(err); },
       () => { this.preRecursiveSub(obs); }
@@ -187,7 +193,7 @@ export class EventProxyLibService {
    * @param [timeout] unused
    * @returns HTTPResponse (or error) with events
    */
-  private getLastEvents(srcId: string, traceId: number = 0, timeout: number = 5): Observable<HttpResponse<any>> {
+  public getLastEvents(srcId: string, traceId: number = 0, timeout: number = 5): Observable<HttpResponse<any>> {
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
     const url = this.apiGatewayURL + this.endpoint;
@@ -201,6 +207,7 @@ export class EventProxyLibService {
     )
     .pipe
     (
+      share(),
       catchError(this.handleErrors<any>('getLastEvent', null, debug)),
     );
   }

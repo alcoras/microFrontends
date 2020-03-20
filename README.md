@@ -1,7 +1,7 @@
 # Gg
 
 Building Libs:
-`cd shared/libs && ng build --prod`
+`cd shared/libs && ng build --prod` in ng 9.1.* should be fixed without --prod, has to with ivy (next time pass url to issue)
 
 Run Shell:
 `cd shell && npm run ng_con`

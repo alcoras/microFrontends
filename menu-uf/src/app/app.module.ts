@@ -43,7 +43,6 @@ export class AppModule {
   ) {
     this.eProxyService.StartQNA(this.sourceId).subscribe(
       (value) => {
-        console.log(value);
         if (!value.body) { return; }
 
         if (!value.body.hasOwnProperty('EventId')) {
@@ -60,11 +59,10 @@ export class AppModule {
   }
 
   private parseNewEvent(event: any) {
-    console.log('parsing event');
-    event.forEach(element => {
+    event.forEach(async (element) => {
         switch (element.EventId) {
           case uEventsIds.InitMenu:
-            // this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
             this.putToElement('menu-team', '<menu-team></menu-team>');
             break;
           default:
