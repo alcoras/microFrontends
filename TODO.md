@@ -18,6 +18,7 @@
 18. DONE Change all models to check for proper event id
 16. DONE Communicaiton between script loader and ufm should be done over external events? Update: refactored so that ufm takes full control
 11. DONE Change occupation to occupation-uf
+23. DONE Write tests for libs (multi-event recieviers, multi-event confirming)
 
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
@@ -39,6 +40,5 @@
 20. When loosing connection with backend there is no error or warning..
 21. Events still disappearing? YES
 22. Do conditional logging.
-23. DONE Write tests for libs (multi-event recieviers, multi-event confirming)
 
 24.

@@ -33,7 +33,7 @@ export class AppModule {
   title = 'personnel';
   traceId = 1;
 
-  sourceId: number = uParts.Personnel;
+  sourceId: string = uParts.Personnel;
 
   elToPlace: { [id: number]: string } = {};
 
@@ -41,8 +41,18 @@ export class AppModule {
     private injector: Injector,
     private eProxyService: EventProxyLibService) {
 
-    this.eProxyService.startQNA(this.sourceId).subscribe(
-      (value) => { this.parseNewEvent(value); },
+    this.eProxyService.StartQNA(this.sourceId).subscribe(
+      (value) => {
+        if (!value.body) { return; }
+
+        if (!value.body.hasOwnProperty('EventId')) {
+          throw new Error('No EventId in message');
+        }
+
+        if (value.body['EventId'] === uEventsIds.GetNewEvents) {
+          this.parseNewEvent(value.body.Events);
+        }
+      },
       (error) => { console.log(this.title, error); },
       () => {}
     );

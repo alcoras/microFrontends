@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+
 import { EventProxyLibComponent } from './event-proxy-lib.component';
 import { EnvService } from './env/env.service';
 
@@ -9,7 +10,7 @@ import { EnvService } from './env/env.service';
   providers: [ EnvService ],
   imports: [
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   exports: [EventProxyLibComponent]
 })

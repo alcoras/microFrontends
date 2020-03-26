@@ -18,7 +18,7 @@ export class AppComponent implements OnDestroy {
 
   constructor(
     private eProxyService: EventProxyLibService) {
-    const sub = eProxyService.startQNA(uParts.Personnel).subscribe
+    const sub = eProxyService.StartQNA(uParts.Personnel).subscribe
     (
       (value: any) => {},
       (error: any) => {},

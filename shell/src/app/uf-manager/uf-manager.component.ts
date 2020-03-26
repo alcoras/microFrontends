@@ -53,6 +53,8 @@ export class UFManagerComponent {
     .subscribe
     (
       (value: HttpResponse<any>) => {
+        if (!value) { throw new Error('Can\'t connect to backend'); }
+
         if (!value.body) { return; }
 
         if (!value.body.hasOwnProperty('EventId')) {
@@ -99,8 +101,8 @@ export class UFManagerComponent {
     const url: string = this.eProxyService.env.url;
     const urlList = [
       url + ':3002/en/scripts/conf.js', // Menu
-      // url + ':3004/scripts/conf.js', // Personnel
-      // url + ':3005/scripts/conf.js' // Occupation
+      url + ':3004/scripts/conf.js', // Personnel
+      url + ':3005/scripts/conf.js' // Occupation
     ];
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());

@@ -5,7 +5,6 @@ import { uEvent, uEventsIds } from '@uf-shared-models/event';
 import { EventProxyLibService } from '../event-proxy-lib.service';
 import { EnvService } from '../env/env.service';
 
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -85,7 +84,7 @@ describe('EventProxyLibService', () => {
       );
     });
 
-    it('Should respond with nothing JSON', async (done) => {
+    it('Should respond with empty response', async (done) => {
       service.StartQNA(testinID).subscribe
       (
         (res: HttpResponse<any>) => {
