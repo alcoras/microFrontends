@@ -6,13 +6,14 @@ import { trigger, state, transition, style, animate } from '@angular/animations'
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { ExampleHttpDatabase, IOccupation, } from './local-json-api';
+import { ExampleHttpDatabase, } from './local-json-api';
 import { FormGroup } from '@angular/forms';
+import { IPersonnel } from '../models/IPersonnel';
 
 @Component({
-  selector: 'app-occup-table3',
-  templateUrl: './occup-table3.component.html',
-  styleUrls: ['./occup-table3.component.css'],
+  selector: 'app-personnel-table',
+  templateUrl: './personnel-table.component.html',
+  styleUrls: ['./personnel-table.component.css'],
   animations: [
     trigger('detailExpand', [
       state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
@@ -22,15 +23,26 @@ import { FormGroup } from '@angular/forms';
     ])
   ],
 })
-export class OccupTable3Component implements OnInit, AfterViewInit {
+export class PersonnelTableComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  columnsToDisplay: string[] = ['id', 'occupation', 'created_at'];
+  columnsToDisplay: string[] = [
+    'PersonDataID',
+    'DateValue',
+    'DocReestratorID',
+    'Oklad',
+    'Stavka',
+    'PIP',
+    'KodDRFO',
+    'DataPriyomu',
+    'Posada',
+    'PodatkovaPilga',
+  ];
   exampleDatabase: ExampleHttpDatabase | null;
-  data: IOccupation[] = [];
-  expandedElement: IOccupation | null;
+  data: IPersonnel[] = [];
+  expandedElement: IPersonnel | null;
 
   dataSource = new MatTableDataSource();
 
@@ -45,12 +57,30 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   }
 
   updateEntry(id: number) {
-    const date = document.querySelector(`[date_element_id="${id}"]`) as HTMLInputElement;
-    const txtEl = document.querySelector(`[occu_element_id="${id}"]`) as HTMLTextAreaElement;
+    const DateValueEl = document.querySelector(`[personnel_DateValue="${id}"]`) as HTMLInputElement;
+    const DocReestratorIDEl = document.querySelector(`[personnel_DocReestratorID="${id}"]`) as HTMLTextAreaElement;
+    const OkladEl = document.querySelector(`[personnel_Oklad="${id}"]`) as HTMLTextAreaElement;
+    const StavkaEl = document.querySelector(`[personnel_Stavka="${id}"]`) as HTMLTextAreaElement;
+    const PIPEl = document.querySelector(`[personnel_PIP="${id}"]`) as HTMLTextAreaElement;
+    const KodDRFOEl = document.querySelector(`[personnel_KodDRFO="${id}"]`) as HTMLTextAreaElement;
+    const DataPriyomuEl = document.querySelector(`[personnel_DataPriyomu="${id}"]`) as HTMLInputElement;
+    const PosadaEl = document.querySelector(`[personnel_Posada="${id}"]`) as HTMLTextAreaElement;
+    const PodatkovaPilga = document.querySelector(`[personnel_PodatkovaPilga="${id}"]`) as HTMLTextAreaElement;
 
-    const up: IOccupation = { id: id.toString(), occupation: txtEl.value, created_at: (new Date(date.value)).toISOString() };
+    const up: IPersonnel = {
+      PersonDataID: id.toString(),
+      DateValue: (new Date(DateValueEl.value)).toISOString(),
+      DocReestratorID: DocReestratorIDEl.value,
+      KodDRFO: KodDRFOEl.value,
+      Oklad: OkladEl.value,
+      Stavka: StavkaEl.value,
+      PIP: PIPEl.value,
+      DataPriyomu: (new Date(DataPriyomuEl.value)).toISOString(),
+      Posada: PosadaEl.value,
+      PodatkovaPilga: PodatkovaPilga.value
+    };
 
-    this.exampleDatabase.updateOccupation(up).subscribe(
+    this.exampleDatabase.update(up).subscribe(
       (ret: HttpResponse<any>) => {
         if (ret.status === 200) {
           console.log('updates: ', id);
@@ -63,7 +93,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   }
 
   deleteEntry(id: number) {
-    this.exampleDatabase.delOccupation(id).subscribe(
+    this.exampleDatabase.delete(id).subscribe(
       (ret: HttpResponse<any>) => {
         if (ret.status === 200) {
           console.log('removed: ', id);
@@ -102,7 +132,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
         switchMap(() => {
           this.isLoadingResults = true;
           if (this.exampleDatabase !== undefined) {
-            return this.exampleDatabase.getOccupations(
+            return this.exampleDatabase.getAll(
               this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
           }
         }),
@@ -112,7 +142,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
           this.isRateLimitReached = false;
           this.resultsLength = +data.headers.get('X-Total-Count');
 
-          let ic: IOccupation[];
+          let ic: IPersonnel[];
           ic = data.body;
           this.dataSource = new MatTableDataSource(data.body);
           return ic;

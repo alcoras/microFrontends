@@ -1,34 +1,31 @@
-import { Component, OnDestroy } from '@angular/core';
-
-import { Observable, Subscription } from 'rxjs';
-
-import { uParts } from '@uf-shared-models/event';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent {
+  title = 'y';
 
-  private subs: Subscription = new Subscription();
-  private obs: Observable<any>;
-  private title = 'personnel';
+  animal: string;
+  name: string;
 
-  constructor(
-    private eProxyService: EventProxyLibService) {
-    const sub = eProxyService.StartQNA(uParts.Personnel).subscribe
-    (
-      (value: any) => {},
-      (error: any) => {},
-      () => {},
-    );
-
-    this.subs.add(sub);
+  constructor(private dialog: MatDialog) {
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
+  openDialog(): void {
+    const dialogRef = this.dialog.open(NewPersonnelComponent, {
+      height: 'auto',
+      width: 'auto',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log('The dialog was closed');
+      this.animal = result;
+    });
   }
 }

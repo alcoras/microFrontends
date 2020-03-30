@@ -1,0 +1,59 @@
+<mat-card class="center">
+
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>DateValue</mat-label>
+        <input matInput [matDatepicker]="picker1" [(ngModel)]="data.DateValue">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>DocReestratorID</mat-label>
+        <textarea [(ngModel)]="data.DocReestratorID" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Oklad</mat-label>
+        <textarea [(ngModel)]="data.Oklad" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Stavka</mat-label>
+        <textarea [(ngModel)]="data.Stavka" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>PIP</mat-label>
+        <textarea [(ngModel)]="data.PIP" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>KodDRFO</mat-label>
+        <textarea [(ngModel)]="data.KodDRFO" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>DataPriyomu</mat-label>
+        <input matInput [matDatepicker]="picker2" [(ngModel)]="data.DataPriyomu">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Posada</mat-label>
+        <textarea [(ngModel)]="data.Posada" matInput></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>PodatkovaPilga</mat-label>
+        <textarea [(ngModel)]="data.PodatkovaPilga" matInput></textarea>
+      </mat-form-field>
+
+    </mat-card-content>
+
+    <mat-card-actions class="right">
+      <button (click)="save()" mat-raised-button color="primary">Create</button>
+      <button (click)="onNoClick()" mat-raised-button color="warn">Cancel</button>
+    </mat-card-actions>
+  </mat-card>

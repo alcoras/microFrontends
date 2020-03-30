@@ -29,14 +29,14 @@
             "request": "launch",
             "name": "occupations",
             "url": "http://localhost:3003",
-            "webRoot": "${workspaceFolder}/occupations"
+            "webRoot": "${workspaceFolder}/occupation-uf"
         },
         {
             "type": "chrome",
             "request": "launch",
             "name": "personnel",
             "url": "http://localhost:3004",
-            "webRoot": "${workspaceFolder}/personnel"
+            "webRoot": "${workspaceFolder}/personnel-uf"
         },
         {
             "type": "node",
