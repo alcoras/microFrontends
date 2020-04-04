@@ -1,4 +1,4 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
@@ -15,13 +15,9 @@ class InitMenuEvent extends uEvent {
   }
 }
 
-function delay(ms) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
-}
-
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
- * to their event which are loaded from JS configuration files statically hold.
+ * to their events which are loaded from JS configuration files.
  */
 @Injectable({
   providedIn: 'root'
@@ -49,8 +45,7 @@ export class UFManagerComponent {
    * Inits ufmanager component with async functions
    */
   public Init() {
-    this.eProxyService.StartQNA(this.sourceId)
-    .subscribe
+    this.eProxyService.StartQNA(this.sourceId).subscribe
     (
       (value: HttpResponse<any>) => {
         if (!value) { throw new Error('Can\'t connect to backend'); }
@@ -70,21 +65,13 @@ export class UFManagerComponent {
     );
 
     return new Promise(async (resolve) => {
-      console.time('subscribeToEventsAsync');
       await this.subscribeToEventsAsync();
-      console.timeEnd('subscribeToEventsAsync');
 
-      console.time('preloadScripts');
       await this.preloadScripts();
-      console.timeEnd('preloadScripts');
 
-      console.time('subscribeMicroFrontends');
       await this.subscribeMicroFrontends();
-      console.timeEnd('subscribeMicroFrontends');
 
-      console.time('preloadMenuMicroFrontend');
       await this.preloadMenuMicroFrontend();
-      console.timeEnd('preloadMenuMicroFrontend');
 
       resolve();
     });
@@ -183,18 +170,6 @@ export class UFManagerComponent {
 
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-
-            // TODO: remove after some time
-            // const e = new RequestToLoadScripts(element.EventId, ufConfigs[config].resources);
-
-            // e.SourceId = config;
-            // e.SourceEventUniqueId = this.traceId++;
-
-            // this.eProxyService.dispatchEvent(e).subscribe(
-            //   (value: any) => { console.log(value); },
-            //   (error: any) => { console.log('error', error); },
-            //   () => {},
-            // );
           }
         }
       }

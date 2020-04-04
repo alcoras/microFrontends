@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
-import { createCustomElement } from '@angular/elements';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 
@@ -29,15 +28,4 @@ import { AppComponent } from './app.component';
 
 export class AppModule {
   constructor() {}
-  /**
-   * do bootstrap for our micro frontends as custom elements
-   */
-  // ngDoBootstrap(): void {
-  //    const { injector } = this;
-
-  //    const ngCustomElement1 = createCustomElement(UFManagerComponent, { injector });
-
-  //    if (!customElements.get('uf-manager')) {
-  //      customElements.define('uf-manager', ngCustomElement1); }
-  //  }
 }

@@ -33,9 +33,6 @@ export class EventProxyLibService {
   constructor(
     public env: EnvService,
     private httpClient: HttpClient) {
-    // TODO: should check if apigateway is correct url
-    this.apiGatewayURL = `${env.apiGatewayUrl}:${env.apiGatewayPort}`;
-    this.Status = false;
   }
 
   /**
@@ -51,6 +48,8 @@ export class EventProxyLibService {
     }
 
     this.sourceID = sourceID;
+    // TODO: should check if apigateway is correct url
+    this.Status = false;
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
@@ -79,11 +78,22 @@ export class EventProxyLibService {
     console.log(`${this.sourceID} changing api gateway to ${this.apiGatewayURL}`);
   }
 
-  public confirmEvents(srcId: string, idList: number[]) {
+  /**
+   * Confirms events
+   * @param srcId Source Id
+   * @param [idList] Array of ids to confirm specific events
+   * @param [confirmAll] if set true will confirm all outstanding events
+   * @returns HttpResponse observable
+   */
+  public confirmEvents(srcId: string, idList?: number[], confirmAll?: boolean) {
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
     const url = this.apiGatewayURL + this.endpoint;
-    const body = { EventID: uEventsIds.FrontEndEventReceived, SourceID: srcId, Ids: idList };
+    const body = {
+      EventID: uEventsIds.FrontEndEventReceived,
+      SourceID: srcId,
+      Ids: idList,
+      MarkAllReceived: confirmAll };
 
     console.log(`confirmEvents from ${this.sourceID}`);
     console.log(`URL: ${url}, body: ${JSON.stringify(body)}`);

@@ -8,7 +8,8 @@ import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { ExampleHttpDatabase, } from './local-json-api';
 import { FormGroup } from '@angular/forms';
-import { IPersonnel } from '../models/IPersonnel';
+import { IPersonnel } from '@uf-shared-models/';
+import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 
 @Component({
   selector: 'app-personnel-table',
@@ -53,7 +54,8 @@ export class PersonnelTableComponent implements OnInit, AfterViewInit {
   form: FormGroup;
 
   constructor(
-    private httpClient: HttpClient) {
+    private httpClient: HttpClient,
+    private apiService: PersonnelAPIService) {
   }
 
   updateEntry(id: number) {
@@ -68,16 +70,16 @@ export class PersonnelTableComponent implements OnInit, AfterViewInit {
     const PodatkovaPilga = document.querySelector(`[personnel_PodatkovaPilga="${id}"]`) as HTMLTextAreaElement;
 
     const up: IPersonnel = {
-      PersonDataID: id.toString(),
+      PersonDataID: id,
       DateValue: (new Date(DateValueEl.value)).toISOString(),
-      DocReestratorID: DocReestratorIDEl.value,
+      DocReestratorID: +DocReestratorIDEl.value,
       KodDRFO: KodDRFOEl.value,
-      Oklad: OkladEl.value,
-      Stavka: StavkaEl.value,
+      Oklad: +OkladEl.value,
+      Stavka: +StavkaEl.value,
       PIP: PIPEl.value,
       DataPriyomu: (new Date(DataPriyomuEl.value)).toISOString(),
-      Posada: PosadaEl.value,
-      PodatkovaPilga: PodatkovaPilga.value
+      Posada: +PosadaEl.value,
+      PodatkovaPilga: +PodatkovaPilga.value
     };
 
     this.exampleDatabase.update(up).subscribe(

@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ExampleHttpDatabase } from '../personnel-table/local-json-api';
-import { IPersonnel } from '../models/IPersonnel';
+import { IPersonnel } from '@uf-shared-models/index';
 
 @Component({
   selector: 'app-new-personnel',

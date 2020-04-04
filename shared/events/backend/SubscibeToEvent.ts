@@ -1,4 +1,4 @@
-import { uEventsIds, uEvent } from '../models/event';
+import { uEventsIds, uEvent } from '../../models/event';
 
 /**
  * Subscibe to event model, used to subscribe to other events

@@ -1,6 +1,6 @@
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IPersonnel } from '../models/IPersonnel';
+import { IPersonnel } from '@uf-shared-models/index';
 
 export interface IResponse {
   items: IPersonnel[];
@@ -9,7 +9,8 @@ export interface IResponse {
 
 export class ExampleHttpDatabase {
   href = 'http://localhost:3333/personnel';
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient) { }
 
   getAll(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<any>> {
     const reqUrl = `${this.href}?_sort=${sort}&_order=${order}&_page=${page + 1}&_limit=${pageSize}`;

@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { UFManagerComponent } from './uf-manager/uf-manager.component';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',

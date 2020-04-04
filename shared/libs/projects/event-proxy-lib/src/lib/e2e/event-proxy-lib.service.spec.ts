@@ -51,7 +51,6 @@ describe('EventProxyLibService', () => {
 
     afterEach(
       async () => {
-
         service.endQNA();
         await service.getLastEvents(testinID).toPromise().then(
           async (ret) => {
@@ -88,7 +87,7 @@ describe('EventProxyLibService', () => {
       service.StartQNA(testinID).subscribe
       (
         (res: HttpResponse<any>) => {
-          expect(res.status).toEqual(200);
+          expect(res.status).toBe(200, 'Status should be 200');
           done();
         },
         (err: any) => { done.fail('HTTP response with failure.'); },
@@ -172,7 +171,6 @@ describe('EventProxyLibService', () => {
     });
 
     it('should subscribe to many events, fire them, and receive them', async (done) => {
-      // TODO: unxit when fixed issue on backend
       const waitForEventId = getRandomInt(500);
 
       const randomAmount = 2;
