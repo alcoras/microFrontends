@@ -6,7 +6,12 @@ import { HttpResponse } from '@angular/common/http';
 import { uParts, uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 
-function getRandomInt(max) {
+/**
+ * Gets random number
+ * @param max max int value
+ * @returns random number
+ */
+function genRandomNumber(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
@@ -43,14 +48,14 @@ describe('PersonnelAPI service', () => {
     const newPersonnelData: IPersonnel = {
       PersonDataID: 0,
       DateValue: new Date().toISOString(),
-      DocReestratorID: getRandomInt(100),
-      KodDRFO: getRandomInt(100).toString(),
-      Oklad: getRandomInt(100),
-      Stavka: getRandomInt(100),
-      PIP: getRandomInt(100).toString(),
+      DocReestratorID: genRandomNumber(100),
+      KodDRFO: genRandomNumber(100).toString(),
+      Oklad: genRandomNumber(100),
+      Stavka: genRandomNumber(100),
+      PIP: genRandomNumber(100).toString(),
       DataPriyomu: new Date().toISOString(),
-      Posada: getRandomInt(100),
-      PodatkovaPilga: getRandomInt(100),
+      Posada: genRandomNumber(100),
+      PodatkovaPilga: genRandomNumber(100),
     };
 
     // 1. Sub to ReadPersonData
@@ -96,7 +101,7 @@ describe('PersonnelAPI service', () => {
     );
   });
 
-  fit('should get events after ReadPersonDataQuery', async (done) => {
+  it('should get events after ReadPersonDataQuery', async (done) => {
     // 1. Sub to ReadPersonData
     const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
     subEvent.SourceId = sourceId;

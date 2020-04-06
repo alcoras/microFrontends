@@ -6,3 +6,4 @@ export * from './EventButtonPressed';
 export * from './LanguageChange';
 export * from './backend/ReadPersonDataQuery';
 export * from './backend/CreateUpdateEnterpisePersonData';
+export * from './InitMenuEvent';

@@ -6,15 +6,18 @@ import { IPersonnel, APIGatewayResponse, PersonDataRead, uParts } from '@uf-shar
 import { ReadPersonDataQuery, CreateUpdateEnterpisePersonData } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 
-function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
-}
 
+/**
+ * Personnel API service for CRUD operations
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class PersonnelAPIService {
 
+  /**
+   * Source id of personnel apiservice
+   */
   private sourceId = uParts.Personnel;
 
   constructor(
@@ -68,13 +71,26 @@ export class PersonnelAPIService {
     );
   }
 
-  private get(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<any>> {
+  /**
+   * Sends event ReadPersonDataQuery to backend
+   * @param sort sort by given field
+   * @param order order (asc, dsc)
+   * @param page page to receive
+   * @param pageSize page size
+   * @returns Observable with HttpResponse
+   */
+  private get(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new ReadPersonDataQuery(sort, order, page, pageSize);
     e.SourceId = this.sourceId;
     return this.eProxyService.DispatchEvent(e);
   }
 
-  private createUpdate(personnel: IPersonnel) {
+  /**
+   * Creates new PersonData entry
+   * @param personnel IPersonnel
+   * @returns Observable with HttpResponse
+   */
+  private createUpdate(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new CreateUpdateEnterpisePersonData(this.sourceId, personnel);
     return this.eProxyService.DispatchEvent(e);
   }

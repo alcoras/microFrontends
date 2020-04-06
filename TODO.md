@@ -41,7 +41,7 @@
 21. Events still disappearing? YES
 22. Do conditional logging.
 24. Debugging in tests
-    24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave for another time
+    24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 25. Check for any and convert to strong type
 
 26.

@@ -1,19 +1,11 @@
 import { Injectable } from '@angular/core';
-import { uParts, uEventsIds, uEvent } from '@uf-shared-models/event';
+import { uParts, uEventsIds } from '@uf-shared-models/event';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange } from '@uf-shared-events/index';
+import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange, InitMenuEvent } from '@uf-shared-events/index';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
 import { HttpResponse } from '@angular/common/http';
-
-class InitMenuEvent extends uEvent {
-  constructor(sourceId: string) {
-    super();
-    this.EventId = uEventsIds.InitMenu;
-    this.SourceId = sourceId;
-  }
-}
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -23,10 +15,20 @@ class InitMenuEvent extends uEvent {
   providedIn: 'root'
 })
 export class UFManagerComponent {
+  /**
+   * Title  of ufmanager component
+   */
   private title = 'uf-manager';
+
+  /**
+   * Source id of ufmanager component
+   */
   private sourceId: string = uParts.UFManager;
 
-  private resources: { [srcId: number]: boolean } = {};
+  /**
+   * Resources dictionary to account which micro frontend is loaded
+   */
+  private resources: { [sourceId: number]: boolean } = {};
 
   /**
    * Start listening to new events and subs to other micro frontend bootstraping

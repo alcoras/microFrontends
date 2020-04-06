@@ -6,6 +6,18 @@
     "deprecation": {
       "severity": "warning"
     },
+    "completed-docs": [
+      true, {
+      "classes": true,
+      "enums": true,
+      "functions": true,
+      "interfaces": true,
+      "methods": true,
+      "namespaces": true,
+      "properties": true,
+      "types": true,
+      "variables": true }
+    ],
     "component-class-suffix": true,
     "contextual-lifecycle": true,
     "directive-class-suffix": true,

@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ResourceSheme } from '@uf-shared-events/';
 
+/**
+ * Script and link loader service
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -56,7 +59,7 @@ export class ResourceLoaderService {
 
     // check if it's loaded
     if (domResources.includes(resource.Attributes[attrToCheck])) {
-      return new Promise((resolve) => resolve({ resource }));
+      return Promise.resolve({ resource });
     }
 
     return new Promise((resolve) => {
