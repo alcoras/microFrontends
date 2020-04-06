@@ -200,7 +200,7 @@ export class UFManagerComponent {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private async subscribeMicroFrontends() {
+  private subscribeMicroFrontends() {
 
     const promises: Promise<any>[] = [];
 
@@ -226,7 +226,7 @@ export class UFManagerComponent {
         event = new SubscibeToEvent(subList);
 
         event.SourceId = this.sourceId.toString();
-        promises.push(await this.eProxyService.dispatchEvent(event).toPromise());
+        promises.push(this.eProxyService.dispatchEvent(event).toPromise());
       }
     }
     return Promise.all(promises);

@@ -16,6 +16,7 @@ export class EventProxyLibService {
   private status;
 
   private Stop = new Subject();
+  private jsonHeaders = new HttpHeaders({'Content-Type': 'application/json'});
 
   get Status(): boolean {
     return this.status;
@@ -53,7 +54,7 @@ export class EventProxyLibService {
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
-    return this.getLastEvents(this.sourceID)
+    return this.GetLastEvents(this.sourceID)
       .pipe(
         repeat(9999), // stack too deep error if more than 9999
         takeUntil(this.Stop),
@@ -63,7 +64,7 @@ export class EventProxyLibService {
   /**
    * Ends qna - sends complete to StartQNA observable
    */
-  public endQNA() {
+  public EndQNA() {
     this.Status = false;
     this.Stop.next(true);
     console.log(`${this.sourceID} Ending listening `);
@@ -73,7 +74,7 @@ export class EventProxyLibService {
    * Changes APi gateway URL
    * @param newURL new url string
    */
-  public changeApiGatewayURL(newURL: string) {
+  public ChangeApiGatewayURL(newURL: string) {
     this.apiGatewayURL = newURL;
     console.log(`${this.sourceID} changing api gateway to ${this.apiGatewayURL}`);
   }
@@ -85,9 +86,8 @@ export class EventProxyLibService {
    * @param [confirmAll] if set true will confirm all outstanding events
    * @returns HttpResponse observable
    */
-  public confirmEvents(srcId: string, idList?: number[], confirmAll?: boolean) {
-    const headers = new HttpHeaders({'Content-Type': 'application/json'});
-
+  public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false) {
+    const headers = this.jsonHeaders;
     const url = this.apiGatewayURL + this.endpoint;
     const body = {
       EventID: uEventsIds.FrontEndEventReceived,
@@ -115,9 +115,9 @@ export class EventProxyLibService {
    * @param event array of events one wish to register
    * @returns Observable with response or error
    */
-  public dispatchEvent(event: | uEvent | uEvent[]) {
+  public DispatchEvent(event: | uEvent | uEvent[]) {
+    const headers = this.jsonHeaders;
     const eventList = [].concat(event);
-    const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
     const url = this.apiGatewayURL + this.endpoint;
     const body = { EventID: uEventsIds.RegisterNewEvent, events: eventList };
@@ -144,8 +144,8 @@ export class EventProxyLibService {
    * @param [timeout] unused
    * @returns HTTPResponse (or error) with events
    */
-  public getLastEvents(srcId: string): Observable<HttpResponse<any>> {
-    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+  public GetLastEvents(srcId: string): Observable<HttpResponse<any>> {
+    const headers = this.jsonHeaders;
 
     const url = this.apiGatewayURL + this.endpoint;
     const body = { EventID: uEventsIds.GetNewEvents, SourceId: srcId };
@@ -179,7 +179,7 @@ export class EventProxyLibService {
       console.log(`${op} failed: ${error.message}`);
       console.log(data);
 
-      return of(result as T);
+      return of(result);
     };
   }
 }

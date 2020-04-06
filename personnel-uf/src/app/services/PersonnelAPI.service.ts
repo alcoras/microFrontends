@@ -21,17 +21,6 @@ export class PersonnelAPIService {
     private eProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
 
-  private get(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<any>> {
-    const e = new ReadPersonDataQuery(sort, order, page, pageSize);
-    e.SourceId = this.sourceId;
-    return this.eProxyService.dispatchEvent(e);
-  }
-
-  private createUpdate(personnel: IPersonnel) {
-    const e = new CreateUpdateEnterpisePersonData(this.sourceId, personnel);
-    return this.eProxyService.dispatchEvent(e);
-  }
-
   /**
    * Craetes or updates personnel entry (if PersonnelId is defined it will update)
    * @param personnel IPersonnel
@@ -77,5 +66,16 @@ export class PersonnelAPIService {
         });
       }
     );
+  }
+
+  private get(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<any>> {
+    const e = new ReadPersonDataQuery(sort, order, page, pageSize);
+    e.SourceId = this.sourceId;
+    return this.eProxyService.dispatchEvent(e);
+  }
+
+  private createUpdate(personnel: IPersonnel) {
+    const e = new CreateUpdateEnterpisePersonData(this.sourceId, personnel);
+    return this.eProxyService.dispatchEvent(e);
   }
 }

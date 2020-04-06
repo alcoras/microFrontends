@@ -24,7 +24,9 @@ export class PersonnelComponent {
     this.eProxyService.env.loadConfig();
     this.eProxyService.StartQNA(this.sourceId).subscribe(
       (value: HttpResponse<any>) => {
-        if (!value) { throw new Error('Can\'t connect to backend'); }
+        if (!value) {
+          throw new Error('Can\'t connect to backend');
+        }
 
         if (!value.body) { return; }
 

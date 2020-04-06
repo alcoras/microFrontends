@@ -42,5 +42,5 @@ describe('PrestartService', () => {
 
     expect(resourceLoaderMock.LoadResources).toHaveBeenCalled();
     done();
-  })
+  });
 });

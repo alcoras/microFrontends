@@ -1,10 +1,10 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 import { EventBusService } from '../services/EventBus.service';
 import { HttpResponse } from '@angular/common/http';
-import { uParts, uEventsIds, APIGatewayResponse, EventResponse, IPersonnel, PersonDataRead } from '@uf-shared-models/index';
-import { SubscibeToEvent, ReadPersonDataQuery } from '@uf-shared-events/index';
+import { uParts, uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
+import { SubscibeToEvent } from '@uf-shared-events/index';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -96,8 +96,7 @@ describe('PersonnelAPI service', () => {
     );
   });
 
-  it('should get events after ReadPersonDataQuery', async (done) => {
-
+  fit('should get events after ReadPersonDataQuery', async (done) => {
     // 1. Sub to ReadPersonData
     const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
     subEvent.SourceId = sourceId;
