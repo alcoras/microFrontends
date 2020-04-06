@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject } from 'rxjs';
-import { catchError, repeat, takeUntil, share } from 'rxjs/operators';
-import { uEventsIds, uEvent } from './models/event';
+import { catchError, repeat, takeUntil } from 'rxjs/operators';
+import { uEvent, uEventsIds } from './models/event';
 import { EnvService } from './env/env.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventProxyLibService {
+  private readonly endpoint = '/newEvents';
+  private readonly jsonHeaders = new HttpHeaders({'Content-Type': 'application/json'});
+
   private sourceID = '';
   private apiGatewayURL: string;
-  private endpoint = '/newEvents';
-
   private status;
-
   private Stop = new Subject();
-  private jsonHeaders = new HttpHeaders({'Content-Type': 'application/json'});
 
   get Status(): boolean {
     return this.status;
@@ -42,7 +41,7 @@ export class EventProxyLibService {
    * @param sourceID Source ID, used for registering receiver.
    * @returns Observable with respones from backend
    */
-  public StartQNA(sourceID: string): Observable<any> {
+  public StartQNA(sourceID: string): Observable<HttpResponse<any>> {
 
     if (!sourceID) {
       throw new Error('SourceID was not provided in StartQNA');
@@ -54,6 +53,7 @@ export class EventProxyLibService {
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
+    // TODO: integrate retry and test it
     return this.GetLastEvents(this.sourceID)
       .pipe(
         repeat(9999), // stack too deep error if more than 9999
@@ -86,7 +86,7 @@ export class EventProxyLibService {
    * @param [confirmAll] if set true will confirm all outstanding events
    * @returns HttpResponse observable
    */
-  public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false) {
+  public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false): Observable<HttpResponse<any>> {
     const headers = this.jsonHeaders;
     const url = this.apiGatewayURL + this.endpoint;
     const body = {
@@ -115,7 +115,7 @@ export class EventProxyLibService {
    * @param event array of events one wish to register
    * @returns Observable with response or error
    */
-  public DispatchEvent(event: | uEvent | uEvent[]) {
+  public DispatchEvent(event: | uEvent | uEvent[]): Observable<HttpResponse<any>> {
     const headers = this.jsonHeaders;
     const eventList = [].concat(event);
 
@@ -173,7 +173,7 @@ export class EventProxyLibService {
    * @param [result] error message?
    * @returns Observable with error?
    */
-  public handleErrors<T>(op = 'operation', result?: T, data?: string) {
+  private handleErrors<T>(op = 'operation', result?: T, data?: string) {
     return (error: any): Observable<T> => {
       console.error(error);
       console.log(`${op} failed: ${error.message}`);

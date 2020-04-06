@@ -22,7 +22,7 @@ export class PrestartService {
    * Initialize language
    */
   public InitLanguage() {
-    this.langService.getLang().toPromise().then(
+    return this.langService.getLang().toPromise().then(
       (res) => {
         if (res.status !== 200) {
           throw new Error('Failure on getting language');

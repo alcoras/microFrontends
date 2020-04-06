@@ -14,7 +14,6 @@ function delay(ms: number) {
 
 // TODO: these tests should be in backend or these are integration tests
 // TODO: test with angular tests too (httpTestModule, to test requests)
-// TODO: reset server for each test
 
 class TestEvent extends uEvent {
 }
@@ -38,11 +37,11 @@ describe('EventProxyLibService', () => {
         });
 
         service = TestBed.inject(EventProxyLibService);
-        service.changeApiGatewayURL(backendURL);
+        service.ChangeApiGatewayURL(backendURL);
 
         serviceList.forEach(element => {
           element = TestBed.inject(EventProxyLibService);
-          element.changeApiGatewayURL(backendURL);
+          element.ChangeApiGatewayURL(backendURL);
         });
 
         tEvent.SourceId = testinID;
@@ -51,8 +50,8 @@ describe('EventProxyLibService', () => {
 
     afterEach(
       async () => {
-        service.endQNA();
-        await service.getLastEvents(testinID).toPromise().then(
+        service.EndQNA();
+        await service.GetLastEvents(testinID).toPromise().then(
           async (ret) => {
             if (!ret.body) {
               return;
@@ -62,7 +61,7 @@ describe('EventProxyLibService', () => {
               ret.body.Events.forEach(element => {
                 idList.push(element.AggregateId);
               });
-              await service.confirmEvents(testinID, idList).toPromise();
+              await service.ConfirmEvents(testinID, idList).toPromise();
             }
           }
         );
@@ -71,7 +70,7 @@ describe('EventProxyLibService', () => {
     );
 
     xit('should fail if cannot connect', async (done) => {
-      service.changeApiGatewayURL('http://asdfdfsaafdsfadsadfs');
+      service.ChangeApiGatewayURL('http://asdfdfsaafdsfadsadfs');
 
       expect(service.Status).toBe(false);
 
@@ -96,7 +95,7 @@ describe('EventProxyLibService', () => {
     });
 
     it('should dispatchEvent and return list of id with one element', async (done) => {
-      service.dispatchEvent([tEvent]).subscribe
+      service.DispatchEvent([tEvent]).subscribe
       (
         (res: HttpResponse<any>) => {
           expect(res.status).toEqual(200);
@@ -122,7 +121,7 @@ describe('EventProxyLibService', () => {
         array.push(temp);
       }
 
-      service.dispatchEvent(array).subscribe
+      service.DispatchEvent(array).subscribe
       (
         (res: HttpResponse<any>) => {
           expect(res.status).toEqual(200);
@@ -161,13 +160,13 @@ describe('EventProxyLibService', () => {
       // 2. Subscribe to event
       const subEvent = new SubscibeToEvent([[waitForEventId, 0, 0]], false);
       subEvent.SourceId = testinID;
-      await service.dispatchEvent(subEvent).toPromise();
+      await service.DispatchEvent(subEvent).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
       await delay(1000);
       // 3. Fire event
       tEvent.EventId = waitForEventId;
-      await service.dispatchEvent(tEvent).toPromise();
+      await service.DispatchEvent(tEvent).toPromise();
     });
 
     it('should subscribe to many events, fire them, and receive them', async (done) => {
@@ -191,12 +190,12 @@ describe('EventProxyLibService', () => {
       // 1. Subscribe to events
       const subEvent = new SubscibeToEvent(randomSubList, false);
       subEvent.SourceId = testinID;
-      await service.dispatchEvent([subEvent]).toPromise();
+      await service.DispatchEvent([subEvent]).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
       await delay(3000);
       // 3. Fire event
-      await service.dispatchEvent(eventArray).toPromise();
+      await service.DispatchEvent(eventArray).toPromise();
 
       await delay(3000);
 
@@ -233,13 +232,13 @@ describe('EventProxyLibService', () => {
           fireEventList.push(tEvent);
       }
 
-      await service.dispatchEvent(subEventList).toPromise();
+      await service.DispatchEvent(subEventList).toPromise();
       await delay(3000);
-      await service.dispatchEvent(fireEventList).toPromise();
+      await service.DispatchEvent(fireEventList).toPromise();
       await delay(1000);
 
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
-        await service.getLastEvents(index.toString()).toPromise().then(
+        await service.GetLastEvents(index.toString()).toPromise().then(
           async (res: HttpResponse<any>) => {
             expect(res.body.EventId === uEventsIds.GetNewEvents);
 
@@ -251,9 +250,9 @@ describe('EventProxyLibService', () => {
               idList.push(element.AggregateId);
             });
 
-            await service.confirmEvents(index.toString(), idList).toPromise();
+            await service.ConfirmEvents(index.toString(), idList).toPromise();
 
-            await service.getLastEvents(index.toString()).toPromise().then(
+            await service.GetLastEvents(index.toString()).toPromise().then(
               (res2: HttpResponse<any>) => {
                 expect(res2.body).toBeNull();
               }

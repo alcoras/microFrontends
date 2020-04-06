@@ -9,11 +9,9 @@ import { EventBusService } from '../services/EventBus.service';
   providedIn: 'root'
 })
 export class PersonnelComponent {
-  title = 'personnel';
-
-  sourceId: string = uParts.Personnel;
-
-  elToPlace: { [id: number]: string } = {};
+  private title = 'personnel';
+  private sourceId: string = uParts.Personnel;
+  private elToPlace: { [id: number]: string } = {};
 
   constructor(
     private eProxyService: EventProxyLibService,
@@ -62,7 +60,7 @@ export class PersonnelComponent {
 
     e.SourceId = this.sourceId;
 
-    return this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.DispatchEvent(e).toPromise();
   }
 
   private preparePlacements() {
@@ -72,7 +70,7 @@ export class PersonnelComponent {
   private parseNewEvent(event: HttpResponse<EventResponse>) {
 
     event.body.Events.forEach(element => {
-      this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       switch (element.EventId) {
         case uEventsIds.PerssonelButtonPressed:
           this.processButtonPressed(element);
@@ -89,6 +87,8 @@ export class PersonnelComponent {
   private processButtonPressed(event: any) {
     const e = event as EventButtonPressed;
 
+    // TODO: remove tslint:disable.. after one more case in switch
+    // tslint:disable-next-line: no-small-switch
     switch (e.EventId) {
       case uEventsIds.PerssonelButtonPressed:
         if (e.UniqueElementId) {

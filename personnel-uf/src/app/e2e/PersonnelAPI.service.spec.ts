@@ -29,11 +29,11 @@ describe('PersonnelAPI service', () => {
     service = TestBed.inject(PersonnelAPIService);
     eProxyService = TestBed.inject(EventProxyLibService);
     eventBusService = TestBed.inject(EventBusService);
-    eProxyService.changeApiGatewayURL(backendURL);
+    eProxyService.ChangeApiGatewayURL(backendURL);
   });
 
   afterEach(async () => {
-    eProxyService.endQNA();
+    eProxyService.EndQNA();
 
     console.log('AfterEach cleanup End');
   });
@@ -56,7 +56,7 @@ describe('PersonnelAPI service', () => {
     // 1. Sub to ReadPersonData
     const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
     subEvent.SourceId = sourceId;
-    await eProxyService.dispatchEvent(subEvent).toPromise();
+    await eProxyService.DispatchEvent(subEvent).toPromise();
 
     // 2. Get current length
     let currentLen;
@@ -73,7 +73,7 @@ describe('PersonnelAPI service', () => {
           res.body.Events.forEach(element => {
             if (element.EventId === uEventsIds.ReadPersonData) {
               eventBusService.EventBus.next(element);
-              eProxyService.confirmEvents(sourceId, [element.AggregateId]).toPromise();
+              eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
             }
           });
         }
@@ -100,7 +100,7 @@ describe('PersonnelAPI service', () => {
     // 1. Sub to ReadPersonData
     const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
     subEvent.SourceId = sourceId;
-    await eProxyService.dispatchEvent(subEvent).toPromise();
+    await eProxyService.DispatchEvent(subEvent).toPromise();
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
@@ -109,7 +109,7 @@ describe('PersonnelAPI service', () => {
           res.body.Events.forEach(element => {
             if (element.EventId === uEventsIds.ReadPersonData) {
               eventBusService.EventBus.next(element);
-              eProxyService.confirmEvents(sourceId, [element.AggregateId]).toPromise();
+              eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
             }
           });
         }

@@ -103,7 +103,7 @@ export class UFManagerComponent {
   private preloadMenuMicroFrontend() {
     const e = new InitMenuEvent(this.sourceId);
 
-    return this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.DispatchEvent(e).toPromise();
   }
 
   /**
@@ -120,7 +120,7 @@ export class UFManagerComponent {
 
     e.SourceId = this.sourceId.toString();
 
-    return this.eProxyService.dispatchEvent(e).toPromise();
+    return this.eProxyService.DispatchEvent(e).toPromise();
   }
 
   /**
@@ -131,7 +131,7 @@ export class UFManagerComponent {
    */
   private parseNewEvent(event: any) {
     event.forEach( async (element) => {
-      this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       this.eProxyService.env.loadConfig();
       const ufConfigs = this.eProxyService.env.uf;
 
@@ -141,11 +141,9 @@ export class UFManagerComponent {
 
         // tslint:disable-next-line: forin
         for (const config in ufConfigs) {
-          if (ufConfigs.hasOwnProperty(config)) {
-            if (ufConfigs[config].events.includes(el.ResourceEventId)) {
-              this.resources[+config] = true;
-              return; // gets back to other event because forEach creates function for each loop
-            }
+          if (ufConfigs.hasOwnProperty(config) && ufConfigs[config].events.includes(el.ResourceEventId)) {
+            this.resources[+config] = true;
+            return; // gets back to other event because forEach creates function for each loop
           }
         }
       }
@@ -161,16 +159,14 @@ export class UFManagerComponent {
       }
 
       for (const config in ufConfigs) {
-        if (ufConfigs.hasOwnProperty(config)) {
-          if (ufConfigs[+config].events.includes(element.EventId)) {
-            // check if loaded
-            if (this.resources[+config]) {
-              break;
-            }
-
-            // else load resources
-            await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
+        if (ufConfigs.hasOwnProperty(config) && ufConfigs[+config].events.includes(element.EventId)) {
+          // check if loaded
+          if (this.resources[+config]) {
+            break;
           }
+
+          // else load resources
+          await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
         }
       }
     });
@@ -220,13 +216,13 @@ export class UFManagerComponent {
 
         event.SourceId = key;
 
-        promises.push(this.eProxyService.dispatchEvent(event).toPromise());
+        promises.push(this.eProxyService.DispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(subList);
 
         event.SourceId = this.sourceId.toString();
-        promises.push(this.eProxyService.dispatchEvent(event).toPromise());
+        promises.push(this.eProxyService.DispatchEvent(event).toPromise());
       }
     }
     return Promise.all(promises);

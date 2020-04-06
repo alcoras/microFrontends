@@ -41,6 +41,7 @@ export enum uEventsIds {
   GetNewEvents = 2008,
   RegisterEventIds = 2009,
   RemovePersonData = 2010,
-  ReadPersonData = 2011,
-  FrontEndEventReceived = 2012
+  ReadPersonDataQuery = 2011,
+  FrontEndEventReceived = 2012,
+  ReadPersonData = 2013
 }

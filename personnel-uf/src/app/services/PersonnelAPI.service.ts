@@ -71,11 +71,11 @@ export class PersonnelAPIService {
   private get(sort: string, order: string, page: number, pageSize: number): Observable<HttpResponse<any>> {
     const e = new ReadPersonDataQuery(sort, order, page, pageSize);
     e.SourceId = this.sourceId;
-    return this.eProxyService.dispatchEvent(e);
+    return this.eProxyService.DispatchEvent(e);
   }
 
   private createUpdate(personnel: IPersonnel) {
     const e = new CreateUpdateEnterpisePersonData(this.sourceId, personnel);
-    return this.eProxyService.dispatchEvent(e);
+    return this.eProxyService.DispatchEvent(e);
   }
 }

@@ -43,6 +43,7 @@ export class AppModule {
     private injector: Injector) {
   }
 
+  // tslint:disable-next-line: member-access
   ngDoBootstrap(): void {
     const { injector } = this;
 
