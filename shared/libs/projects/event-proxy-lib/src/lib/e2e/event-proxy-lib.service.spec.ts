@@ -214,7 +214,7 @@ describe('EventProxyLibService', () => {
       );
     });
 
-    it('few sources subscribed to same event and they receive them', async (done) => {
+    it('few sources subscribe to same event and they receive them', async (done) => {
       const sourceIdBegin = 41;
       const rndEventId = getRandomInt(1000);
       const sourceAmount = 2;

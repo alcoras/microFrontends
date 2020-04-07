@@ -5,22 +5,76 @@ import { catchError, repeat, takeUntil } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
 import { EnvService } from './env/env.service';
 
+/**
+ * Injects method name
+ * @param target ?
+ * @param name name of method
+ * @param desc ?
+ */
+export function annotateName(target, name, desc) {
+  const method = desc.value;
+  desc.value = function() {
+      const prevMethod = this.currentMethod;
+      this.currentMethod = name;
+      method.apply(this, arguments);
+      this.currentMethod = prevMethod;
+  };
+}
+
+/**
+ * Event Proxy service for communication with API gateway
+ * micro service
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class EventProxyLibService {
+  /**
+   * API gateway to which all http requests will be sent
+   */
   private readonly endpoint = '/newEvents';
+
+  /**
+   * Header which which will be used in all requests
+   */
   private readonly jsonHeaders = new HttpHeaders({'Content-Type': 'application/json'});
 
+  /**
+   * directive annotateName uses it to populate with current method name
+   */
+  private currentMethod: string;
+
+  /**
+   * Source id
+   */
   private sourceID = '';
+
+  /**
+   * Api gateway's URL
+   */
   private apiGatewayURL: string;
+
+  /**
+   * variable for Status getter, setter
+   */
   private status;
+
+  /**
+   * Stop is being used as a flag to stop QNA with backend
+   * when EndQNA is called
+   */
   private Stop = new Subject();
 
+  /**
+   * Gets status
+   */
   get Status(): boolean {
     return this.status;
   }
 
+  /**
+   * Sets status
+   */
   set Status(val: boolean) {
     this.status = val;
   }
@@ -86,28 +140,16 @@ export class EventProxyLibService {
    * @param [confirmAll] if set true will confirm all outstanding events
    * @returns HttpResponse observable
    */
+  @annotateName
   public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false): Observable<HttpResponse<any>> {
-    const headers = this.jsonHeaders;
-    const url = this.apiGatewayURL + this.endpoint;
+
     const body = {
       EventID: uEventsIds.FrontEndEventReceived,
       SourceID: srcId,
       Ids: idList,
       MarkAllReceived: confirmAll };
 
-    console.log(`confirmEvents from ${this.sourceID}`);
-    console.log(`URL: ${url}, body: ${JSON.stringify(body)}`);
-
-    return this.httpClient.post
-    (
-      url,
-      body,
-      { headers, observe: 'response' }
-    )
-    .pipe
-    (
-      catchError(this.handleErrors<any>('confirmEvents', ''))
-    );
+    return this.sendEvent(this.currentMethod, body);
   }
 
   /**
@@ -115,26 +157,12 @@ export class EventProxyLibService {
    * @param event array of events one wish to register
    * @returns Observable with response or error
    */
+  @annotateName
   public DispatchEvent(event: | uEvent | uEvent[]): Observable<HttpResponse<any>> {
-    const headers = this.jsonHeaders;
     const eventList = [].concat(event);
-
-    const url = this.apiGatewayURL + this.endpoint;
     const body = { EventID: uEventsIds.RegisterNewEvent, events: eventList };
 
-    console.log(`dispatchEvent from ${this.sourceID}`);
-    console.log(`URL: ${url}, body: ${JSON.stringify(body)}`);
-
-    return this.httpClient.post
-    (
-      url,
-      body,
-      { headers, observe: 'response' }
-    )
-    .pipe
-    (
-      catchError(this.handleErrors<any>('dispatchEvent', '')),
-    );
+    return this.sendEvent(this.currentMethod, body);
   }
 
   /**
@@ -144,15 +172,26 @@ export class EventProxyLibService {
    * @param [timeout] unused
    * @returns HTTPResponse (or error) with events
    */
+  @annotateName
   public GetLastEvents(srcId: string): Observable<HttpResponse<any>> {
-    const headers = this.jsonHeaders;
 
-    const url = this.apiGatewayURL + this.endpoint;
     const body = { EventID: uEventsIds.GetNewEvents, SourceId: srcId };
+
+    return this.sendEvent(this.currentMethod, body);
+  }
+
+  /**
+   * Sends event to backend (APIGateway microservice)
+   * @param caller function which called
+   * @param body message body
+   * @returns HttpResponse observable
+   */
+  private sendEvent(caller: string, body: any): Observable<HttpResponse<any>> {
+    const headers = this.jsonHeaders;
+    const url = this.apiGatewayURL + this.endpoint;
     const debug = url + JSON.stringify(body);
 
-    console.log(`getLastEvents from ${this.sourceID}`);
-    console.log(`URL: ${url}, body: ${JSON.stringify(body)}`);
+    console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);
 
     return this.httpClient.post
     (
@@ -162,21 +201,22 @@ export class EventProxyLibService {
     )
     .pipe
     (
-      catchError(this.handleErrors<any>('getLastEvent', null, debug)),
+      catchError((err, result) => this.handleErrors<any>(caller, err, result, debug)),
     );
   }
 
   /**
    * Handles errors
-   * @template T type of error?
+   * @template T type of error
    * @param [op] name of method
-   * @param [result] error message?
-   * @returns Observable with error?
+   * @param [errorMsg] error message provided by result
+   * @param [result] error Observable
+   * @returns Error Observable
    */
-  private handleErrors<T>(op = 'operation', result?: T, data?: string) {
+  private handleErrors<T>(op = 'operation', errorMsg?: any, result?: T, data?: string) {
     return (error: any): Observable<T> => {
       console.error(error);
-      console.log(`${op} failed: ${error.message}`);
+      console.log(`${op} failed: ${errorMsg}`);
       console.log(data);
 
       return of(result);

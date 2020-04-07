@@ -43,5 +43,6 @@
 24. Debugging in tests
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 25. Check for any and convert to strong type
+26. Transfer e2e tests to e2e and write unit tests
 
-26.
+27.
