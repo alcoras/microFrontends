@@ -1,13 +1,23 @@
-import { HttpClientModule, HttpResponse } from '@angular/common/http';
+import { HttpResponse, HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { uEvent, uEventsIds } from '@uf-shared-models/event';
-import { EventProxyLibService } from '../event-proxy-lib.service';
-import { EnvService } from '../env/env.service';
+import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib/';
 
+/**
+ * generates random number
+ * @param max max value
+ * @returns random number
+ */
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
+
+/**
+ * Returns promise after ms
+ * @param ms miliseconds
+ * @returns Promise
+ */
 function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
@@ -15,10 +25,16 @@ function delay(ms: number) {
 // TODO: these tests should be in backend or these are integration tests
 // TODO: test with angular tests too (httpTestModule, to test requests)
 
+/**
+ * Test event
+ */
 class TestEvent extends uEvent {
 }
 
+
+// tslint:disable-next-line: no-big-function
 describe('EventProxyLibService', () => {
+    const httpErrorMsg = 'HTTP response with failure.';
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
     const backendURL = 'http://localhost:54366';
     const tEvent = new TestEvent();
@@ -32,13 +48,14 @@ describe('EventProxyLibService', () => {
     (
       async () => {
         TestBed.configureTestingModule({
-          providers: [EventProxyLibService, EnvService],
-          imports: [HttpClientModule]
+          providers: [EventProxyLibService],
+          imports: [EventProxyLibModule]
         });
 
         service = TestBed.inject(EventProxyLibService);
         service.ChangeApiGatewayURL(backendURL);
 
+        // tslint:disable-next-line: no-ignored-initial-value
         serviceList.forEach(element => {
           element = TestBed.inject(EventProxyLibService);
           element.ChangeApiGatewayURL(backendURL);
@@ -51,35 +68,12 @@ describe('EventProxyLibService', () => {
     afterEach(
       async () => {
         service.EndQNA();
-        await service.GetLastEvents(testinID).toPromise().then(
-          async (ret) => {
-            if (!ret.body) {
-              return;
-            }
-            if (ret.body.EventId === uEventsIds.GetNewEvents) {
-              const idList = [];
-              ret.body.Events.forEach(element => {
-                idList.push(element.AggregateId);
-              });
-              await service.ConfirmEvents(testinID, idList).toPromise();
-            }
-          }
-        );
-
+        await service.ConfirmEvents(testinID, [], true).toPromise();
       }
     );
 
-    xit('should fail if cannot connect', async (done) => {
-      service.ChangeApiGatewayURL('http://asdfdfsaafdsfadsadfs');
-
-      expect(service.Status).toBe(false);
-
-      service.StartQNA(testinID).subscribe
-      (
-        () => { console.log('msg'); expect(service.Status).toEqual(false); done(); },
-        () => { console.log('err'); expect(service.Status).toEqual(false); done(); },
-        () => { console.log('compl'); expect(service.Status).toEqual(false); done(); }
-      );
+    it('shoutld init', () => {
+      expect(service).toBeTruthy();
     });
 
     it('Should respond with empty response', async (done) => {
@@ -89,7 +83,7 @@ describe('EventProxyLibService', () => {
           expect(res.status).toBe(200, 'Status should be 200');
           done();
         },
-        (err: any) => { done.fail('HTTP response with failure.'); },
+        () => { done.fail(httpErrorMsg); },
         () => { }
       );
     });
@@ -105,7 +99,7 @@ describe('EventProxyLibService', () => {
 
           done();
         },
-        () => { fail('HTTP response with failure.'); },
+        () => { fail(httpErrorMsg); },
         () => { }
       );
 
@@ -131,7 +125,7 @@ describe('EventProxyLibService', () => {
 
           done();
         },
-        () => { fail('HTTP response with failure.'); },
+        () => { fail(httpErrorMsg); },
         () => { }
       );
 
@@ -153,7 +147,7 @@ describe('EventProxyLibService', () => {
 
           done();
         },
-        () => { fail('HTTP response with failure.'); },
+        () => { fail(httpErrorMsg); },
         () => { }
       );
 
@@ -170,16 +164,12 @@ describe('EventProxyLibService', () => {
     });
 
     it('should subscribe to many events, fire them, and receive them', async (done) => {
-      const waitForEventId = getRandomInt(500);
-
       const randomAmount = 2;
 
       const eventArray = [];
-      const randomEventId = [];
       const randomSubList = [];
       for (let i = 0; i < randomAmount; i++) {
         const rnd = getRandomInt(1000);
-        randomEventId.push(rnd);
         randomSubList.push([rnd, 0, 0]);
         const temp = Object.assign({}, tEvent);
         temp.EventId = rnd;
@@ -209,7 +199,7 @@ describe('EventProxyLibService', () => {
           expect(res.body.Events.length).toEqual(randomAmount);
           done();
         },
-        () => { done.fail('HTTP response with failure.'); },
+        () => { done.fail(httpErrorMsg); },
         () => { }
       );
     });

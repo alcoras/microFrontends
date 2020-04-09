@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 
-/**
- * Component Placeholder
- */
 @Component({
   selector: 'app-root',
-  template: ``,
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor() {
-  }
+  title = 'e2eTests';
 }

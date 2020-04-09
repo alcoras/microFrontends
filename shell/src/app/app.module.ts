@@ -9,6 +9,9 @@ import { ResourceLoaderService } from './services/resource-loader.service';
 import { UFManagerFactory } from './uf-manager/uf-manager.factory';
 import { AppComponent } from './app.component';
 
+/**
+ * Entry point module
+ */
 @NgModule({
   declarations: [
     AppComponent

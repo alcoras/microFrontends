@@ -1,0 +1,40 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "@angular/*": [ "./node_modules/@angular/*" ],
+      "@uf-shared-events/":["../shared/events"],
+      "@uf-shared-events/*":["../shared/events/*"],
+
+      "@uf-shared-models/":["../shared/models"],
+      "@uf-shared-models/*":["../shared/models/*"],
+
+      "@uf-shared-libs/":["../shared/libs/dist"],
+      "@uf-shared-libs/*":["../shared/libs/dist/*"],
+
+      "@personnel-services/":["../personnel-uf/src/app/services"],
+      "@personnel-services/*":["../personnel-uf/src/app/services/*"],
+    }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  }
+}
