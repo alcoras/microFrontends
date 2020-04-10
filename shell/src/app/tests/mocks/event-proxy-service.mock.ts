@@ -1,4 +1,7 @@
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { uEvent } from '@uf-shared-libs/event-proxy-lib/lib/models/event';
+import { HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export let eProxyServiceMock: Partial<EventProxyLibService>;
 const currentLang = 'en';
@@ -14,5 +17,6 @@ eProxyServiceMock = {
     loadConfig: () => {
       window['__env'] = window['__env'] || {};
       window['__env']['lang'] = currentLang;
-    }}
+    }
+  }
 };

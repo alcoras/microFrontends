@@ -1,136 +1,154 @@
 import { TestBed } from '@angular/core/testing';
-import { PersonnelAPIService } from '../services/PersonnelAPI.service';
-import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
+import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventBusService } from '../services/EventBus.service';
+import { PersonnelAPIService } from '../services/PersonnelAPI.service';
+import { IPersonnel, PersonDataRead } from '@uf-shared-models/index';
 import { HttpResponse } from '@angular/common/http';
-import { uParts, uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
-import { SubscibeToEvent } from '@uf-shared-events/index';
+import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
+import { delay, genRandomNumber, TestEvent } from './helpers/helpers';
 
 /**
- * Gets random number
- * @param max max int value
- * @returns random number
+ * Test personnel data
  */
-function genRandomNumber(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
+const newPersonnelData: IPersonnel = {
+  PersonDataID: 0,
+  DateValue: new Date().toISOString(),
+  DocReestratorID: genRandomNumber(100),
+  KodDRFO: genRandomNumber(100).toString(),
+  Oklad: genRandomNumber(100),
+  Stavka: genRandomNumber(100),
+  PIP: genRandomNumber(100).toString(),
+  DataPriyomu: new Date().toISOString(),
+  Posada: genRandomNumber(100),
+  PodatkovaPilga: genRandomNumber(100),
+};
 
 describe('PersonnelAPI service', () => {
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
   let service: PersonnelAPIService;
-  let eProxyService: EventProxyLibService;
-  let eventBusService: EventBusService;
-  const sourceId = uParts.Personnel;
-  const backendURL = 'http://localhost:54366';
+  let eventBus: EventBusService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [EventProxyLibModule],
-      providers: [
-        EventProxyLibService,
-        EventBusService,
-      ]
-    });
-    service = TestBed.inject(PersonnelAPIService);
-    eProxyService = TestBed.inject(EventProxyLibService);
-    eventBusService = TestBed.inject(EventBusService);
-    eProxyService.ChangeApiGatewayURL(backendURL);
+  beforeEach(
+    async () => {
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: EventProxyLibService, useValue: eProxyServiceMock},
+        ],
+      });
+
+      service = TestBed.inject(PersonnelAPIService);
+      eventBus = TestBed.inject(EventBusService);
+    }
+  );
+
+  afterEach(() => {
   });
 
-  afterEach(async () => {
-    eProxyService.EndQNA();
+  describe('CreateUpdate', () => {
 
-    console.log('AfterEach cleanup End');
-  });
-
-  it('should create new PersonData entry', async (done) => {
-
-    const newPersonnelData: IPersonnel = {
-      PersonDataID: 0,
-      DateValue: new Date().toISOString(),
-      DocReestratorID: genRandomNumber(100),
-      KodDRFO: genRandomNumber(100).toString(),
-      Oklad: genRandomNumber(100),
-      Stavka: genRandomNumber(100),
-      PIP: genRandomNumber(100).toString(),
-      DataPriyomu: new Date().toISOString(),
-      Posada: genRandomNumber(100),
-      PodatkovaPilga: genRandomNumber(100),
-    };
-
-    // 1. Sub to ReadPersonData
-    const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
-    subEvent.SourceId = sourceId;
-    await eProxyService.DispatchEvent(subEvent).toPromise();
-
-    // 2. Get current length
-    let currentLen;
-    service.Get(null, null, null, null).then(
-      (res: IPersonnel[]) => {
-        currentLen = res.length;
-      }
-    );
-
-    // 3. Start listenting to events
-    eProxyService.StartQNA(sourceId).subscribe(
-      (res: HttpResponse<EventResponse>) => {
-        if (res.body) {
-          res.body.Events.forEach(element => {
-            if (element.EventId === uEventsIds.ReadPersonData) {
-              eventBusService.EventBus.next(element);
-              eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
-            }
-          });
+    it('testing response', (done) => {
+      service.CreateUpdate(newPersonnelData).then(
+        (res: HttpResponse<any>) => {
+          expect(res.status).toBe(200);
+          done();
+        },
+        (rej) => {
+          done.fail(rej);
         }
+      );
     });
 
-    // 4. create new persondata
-    service.CreateUpdate(newPersonnelData).then(
-      () => {
-        // 5. compare length
-        service.Get(null, null, null, null).then(
-          (res: IPersonnel[]) => {
-            expect(res.length).toBeGreaterThan(currentLen);
-            done();
-          }
-        );
-      },
-      (rejected) => {
-        done.fail(rejected);
-      }
-    );
-  });
-
-  it('should get events after ReadPersonDataQuery', async (done) => {
-    // 1. Sub to ReadPersonData
-    const subEvent = new SubscibeToEvent([[uEventsIds.ReadPersonData, 0, 0]]);
-    subEvent.SourceId = sourceId;
-    await eProxyService.DispatchEvent(subEvent).toPromise();
-
-    // 2. Start listenting to events
-    eProxyService.StartQNA(sourceId).subscribe(
-      (res: HttpResponse<any>) => {
-        if (res.body) {
-          res.body.Events.forEach(element => {
-            if (element.EventId === uEventsIds.ReadPersonData) {
-              eventBusService.EventBus.next(element);
-              eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
-            }
-          });
+    it('testing content', (done) => {
+      service.CreateUpdate(newPersonnelData).then(
+        (res: HttpResponse<any>) => {
+          expect(res.body.Events[0].KodDRFO).toBe(newPersonnelData.KodDRFO);
+          expect(res.body.Events[0].Oklad).toBe(newPersonnelData.Oklad);
+          done();
+        },
+        (rej) => {
+          done.fail(rej);
         }
+      );
     });
 
-    // 3. Send ReadPersonDataQuery event
-    service.Get(null, null, null, null).then(
-      (res: IPersonnel[]) => {
-        res.forEach(element => {
-          expect(element.PersonDataID).toBeDefined();
-          expect(element.DataPriyomu).toBeDefined();
-          expect(element.Oklad).toBeDefined();
-        });
-        done();
-      }
-    );
-
   });
+
+  describe('Get', () => {
+
+    it('passing to EventBus', () => {
+      eventBus.EventBus.subscribe( (data: PersonDataRead) => {
+        expect(data.ListOutputEnterprisePersonData.length).toBe(1);
+        expect(data.ListOutputEnterprisePersonData[0]).toBe(newPersonnelData);
+      });
+
+      const testEvent = new TestEvent();
+
+      // 123 just as in  event-proxy-service-mock.ts
+      testEvent.SourceEventUniqueId = 123;
+      testEvent.ListOutputEnterprisePersonData = [];
+      testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
+      eventBus.EventBus.next(testEvent);
+    });
+
+    it('get passed data, then get response', async (done) => {
+      service.Get(null, null, null, null).then(
+        (res: IPersonnel[]) => {
+          expect(res.length).toBe(1);
+          expect(res[0]).toBe(newPersonnelData);
+          done();
+        }
+      );
+
+      await delay(1000);
+
+      const testEvent = new TestEvent();
+
+      // 123 just as in  event-proxy-service-mock.ts
+      testEvent.ParentSourceEventUniqueId = 123;
+      testEvent.ListOutputEnterprisePersonData = [];
+      testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
+      eventBus.EventBus.next(testEvent);
+    });
+
+    it('get passed data many times', async (done) => {
+      let resp = 0;
+      service.Get(null, null, null, null).then(
+        (res: IPersonnel[]) => {
+          expect(res.length).toBe(1);
+          expect(res[0]).toBe(newPersonnelData);
+          resp++;
+        }
+      );
+
+      service.Get(null, null, null, null).then(
+        (res: IPersonnel[]) => {
+          resp++;
+          expect(res.length).toBe(1);
+          expect(res[0]).toBe(newPersonnelData);
+        }
+      );
+
+      service.Get(null, null, null, null).then(
+        (res: IPersonnel[]) => {
+          expect(res.length).toBe(1);
+          expect(res[0]).toBe(newPersonnelData);
+          resp++;
+          expect(resp).toBe(3);
+          done();
+        }
+      );
+
+      await delay(1000);
+
+      const testEvent = new TestEvent();
+
+      // 123 just as in  event-proxy-service-mock.ts
+      testEvent.ParentSourceEventUniqueId = 123;
+      testEvent.ListOutputEnterprisePersonData = [];
+      testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
+      eventBus.EventBus.next(testEvent);
+      eventBus.EventBus.next(testEvent);
+      eventBus.EventBus.next(testEvent);
+    });
+  });
+
 });

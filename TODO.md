@@ -47,9 +47,10 @@
 
 26. Transfer e2e tests to e2e and write unit/static tests; 
     21. 1. UPDATE: all e2e tests should go to e2eTests
-    21. 2. personnel-uf
+    21. 2. DONE personnel-uf
     21. 2. menu-uf
     21. 2. occupation-uf
     21. 2. DONE event-proxy-lib
+27. In DispatchEvent.toPromise() add checks for failure and throws
 
-27.
+28.

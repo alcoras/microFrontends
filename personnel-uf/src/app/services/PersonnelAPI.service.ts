@@ -33,7 +33,7 @@ export class PersonnelAPIService {
     return new Promise( (resolve, reject) => {
       this.createUpdate(personnel).toPromise().then( (val: HttpResponse<any>) => {
         if (val.status === 200) {
-          resolve();
+          resolve(val);
         } else {
           reject(val);
         }
@@ -49,6 +49,7 @@ export class PersonnelAPIService {
    * @param pageSize page size
    * @returns Promise with Personnel data
    */
+  // TODO: add timeout and reject
   public Get(sort: string, order: string, page: number, pageSize: number): Promise<IPersonnel[]> {
     return new Promise<IPersonnel[]>(
       resolve => {
@@ -63,6 +64,7 @@ export class PersonnelAPIService {
             (data: PersonDataRead) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
                 resolve(data.ListOutputEnterprisePersonData);
+                this.eProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
               }
             }
           );

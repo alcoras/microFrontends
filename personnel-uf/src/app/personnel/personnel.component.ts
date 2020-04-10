@@ -36,40 +36,40 @@ export class PersonnelComponent {
    */
   public async InitAsync() {
     this.eProxyService.env.loadConfig();
+    this.preparePlacements();
+    await this.subscribeToEventsAsync();
+  }
+
+  /**
+   * Starts qna with backend
+   */
+  public StartQNA() {
     this.eProxyService.StartQNA(this.sourceId).subscribe(
-      (value: HttpResponse<any>) => {
-        if (!value) {
+      (response: HttpResponse<any>) => {
+        if (!response) {
           throw new Error('Can\'t connect to backend');
         }
 
-        if (!value.body) { return; }
+        if (!response.body) { return; }
 
-        if (!value.body.hasOwnProperty('EventId')) {
+        if (!response.body.hasOwnProperty('EventId')) {
           throw new Error('No EventId in message');
         }
 
-        if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEvent(value);
+        if (response.body['EventId'] === uEventsIds.GetNewEvents) {
+          this.parseNewEvent(response);
         }
       },
       (error) => { console.log(this.title, error); },
-      () => {}
+      () => { }
     );
-
-    this.preparePlacements();
-
-    return new Promise(async (resolve) => {
-      await this.subscribeToEventsAsync();
-
-      resolve();
-    });
   }
 
   /**
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private subscribeToEventsAsync() {
+  private async subscribeToEventsAsync(): Promise<HttpResponse<any>> {
     const e = new SubscibeToEvent([
       [uEventsIds.ReadPersonData, 0, 0],
     ], true);
@@ -91,7 +91,6 @@ export class PersonnelComponent {
    * @param event HttpResposne with event list
    */
   private parseNewEvent(event: HttpResponse<EventResponse>) {
-
     event.body.Events.forEach(element => {
       switch (element.EventId) {
         case uEventsIds.PerssonelButtonPressed:
@@ -105,7 +104,7 @@ export class PersonnelComponent {
           this.eventBusService.EventBus.next(element);
           break;
         default:
-          throw new Error('Event not implemented.');
+          throw new Error('Event is not implemented.');
       }
     });
   }
