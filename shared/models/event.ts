@@ -3,7 +3,7 @@
  */
 export abstract class uEvent {
   /**
-   * Event id, can't be 0
+   * Event id, should not be 0
    */
   public EventId = 1;
 

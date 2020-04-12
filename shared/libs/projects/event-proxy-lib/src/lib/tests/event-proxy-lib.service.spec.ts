@@ -10,7 +10,16 @@ import { of } from 'rxjs';
 const TestSourceId = '1000';
 const backendURL = 'localhost';
 const backendPath = '/newEvents';
-const URL = backendURL + backendPath;
+const backendPort = '54366';
+const URL = `http://${backendURL}:${backendPort}${backendPath}`;
+
+window['__env'] = window['__env'] || {};
+
+window['__env'].one_language = false;
+// API url
+window['__env'].url = 'http://' + backendURL;
+window['__env'].apiGatewayUrl = window['__env'].url;
+window['__env'].apiGatewayPort = backendPort;
 
 class TestEvent extends uEvent {
 
@@ -31,7 +40,6 @@ describe('EventProxyLibService', () => {
       });
 
       service = TestBed.inject(EventProxyLibService);
-      service.ChangeApiGatewayURL(backendURL);
       httpTestingController = TestBed.inject(HttpTestingController);
     }
   );
@@ -55,6 +63,38 @@ describe('EventProxyLibService', () => {
         }
       );
 
+    });
+
+    it('testing url which should have been set up in constructor', () => {
+      expect(service.ApiGatewayURL).toBe(`http://${backendURL}:${backendPort}`);
+    });
+
+    it('testing if env service laod was correct', () => {
+      expect(service.env.apiGatewayUrl).toBe(`http://${backendURL}`);
+      expect(service.env.apiGatewayPort).toBe(backendPort);
+    });
+
+  });
+
+  describe('errors', () => {
+
+    it('should throw if apiGatewayURL is undefined', () => {
+      service.ApiGatewayURL = '';
+
+      expect( () => service.DispatchEvent(null).toPromise() ).toThrow();
+
+    });
+
+    it('handleErrors is triggered on error', () => {
+      const spies: jasmine.Spy<any>[] = [];
+      spies.push(spyOn<any>(service, 'handleErrors').and.callThrough());
+
+      service.DispatchEvent(null).toPromise();
+      httpTestingController.expectOne(URL).error(new ErrorEvent('Something went wrong'));
+
+      spies.forEach(spy => {
+        expect(spy).toHaveBeenCalled();
+      });
     });
 
   });

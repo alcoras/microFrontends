@@ -31,7 +31,7 @@ export class PrestartService {
       },
       (reject) => {
         console.log('prestart.service', reject);
-        throw new Error();
+        throw new Error(reject);
       });
   }
 
@@ -51,7 +51,7 @@ export class PrestartService {
     const lang: ILanguageSettings = response.body;
     window['__env'] = window['__env'] || {};
     window['__env']['lang'] = lang.lang;
-    this.eProxyService.env.loadConfig();
+    this.eProxyService.env.ReadEnvironmentVars();
 
     return lang.lang;
   }

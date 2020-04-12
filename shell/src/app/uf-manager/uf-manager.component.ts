@@ -46,7 +46,25 @@ export class UFManagerComponent {
   /**
    * Inits ufmanager component with async functions
    */
-  public Init() {
+  public async InitAsync() {
+    return new Promise(async (resolve) => {
+      await this.preloadScripts();
+
+      await this.subscribeToEventsAsync();
+
+      await this.subscribeMicroFrontends();
+
+      await this.preloadMenuMicroFrontend();
+
+      resolve();
+    });
+  }
+
+  /**
+   * Starts qna with backend
+   */
+  public StartQNA() {
+
     this.eProxyService.StartQNA(this.sourceId).subscribe
     (
       (value: HttpResponse<any>) => {
@@ -65,18 +83,6 @@ export class UFManagerComponent {
       (error) => { console.log(this.title, error); },
       () => {}
     );
-
-    return new Promise(async (resolve) => {
-      await this.subscribeToEventsAsync();
-
-      await this.preloadScripts();
-
-      await this.subscribeMicroFrontends();
-
-      await this.preloadMenuMicroFrontend();
-
-      resolve();
-    });
   }
 
   /**
@@ -86,12 +92,11 @@ export class UFManagerComponent {
   private preloadScripts() {
     const promises = [];
 
-    this.eProxyService.env.loadConfig();
     const url: string = this.eProxyService.env.url;
     const urlList = [
       url + ':3002/en/scripts/conf.js', // Menu
-      url + ':3004/scripts/conf.js', // Personnel
-      url + ':3005/scripts/conf.js' // Occupation
+      // url + ':3004/scripts/conf.js', // Personnel
+      // url + ':3005/scripts/conf.js' // Occupation
     ];
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());
@@ -131,10 +136,10 @@ export class UFManagerComponent {
    * event with request to load resources for that micro frontend.
    * @param event Event array
    */
+  // tslint:disable-next-line: cognitive-complexity
   private parseNewEvent(event: any) {
     event.forEach( async (element) => {
       this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
-      this.eProxyService.env.loadConfig();
       const ufConfigs = this.eProxyService.env.uf;
 
       // check if event is LoadedResource
@@ -202,7 +207,6 @@ export class UFManagerComponent {
 
     const promises: Promise<any>[] = [];
 
-    this.eProxyService.env.loadConfig();
     const dic = this.eProxyService.env.uf;
     for (const key in dic) {
       // Traverse through all uFrontends

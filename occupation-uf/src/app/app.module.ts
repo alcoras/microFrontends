@@ -73,7 +73,7 @@ export class AppModule {
 
   private parseNewEvent(event: any) {
     event.forEach(element => {
-        this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+        this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
         switch (element.EventId) {
           case uEventsIds.OccupationNg9ButtonPressed:
             this.processButtonPressed(element);

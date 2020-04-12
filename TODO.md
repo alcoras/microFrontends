@@ -48,9 +48,16 @@
 26. Transfer e2e tests to e2e and write unit/static tests; 
     21. 1. UPDATE: all e2e tests should go to e2eTests
     21. 2. DONE personnel-uf
-    21. 2. menu-uf
-    21. 2. occupation-uf
-    21. 2. DONE event-proxy-lib
+    21. 3. menu-uf
+    21. 4. occupation-uf
+    21. 5. uf-manager
+    21. 6. DONE event-proxy-lib
 27. In DispatchEvent.toPromise() add checks for failure and throws
+28. Add SourceName to every event for Observer
+29. Refactor EnvService 
 
-28.
+30. Fix errors in event-proxy-lib when: ng build --prod:
+    30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
+31. bug: language is not loading properly
+
+32.

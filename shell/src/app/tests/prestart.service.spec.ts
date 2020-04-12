@@ -28,11 +28,11 @@ describe('PrestartService', () => {
   });
 
   it('should set up language', async (done) => {
-    spyOn(eProxyServiceMock.env, 'loadConfig');
+    spyOn(eProxyServiceMock.env, 'ReadEnvironmentVars');
     await service.InitLanguage();
 
     expect(window['__env']['lang']).toBe('en', 'Lang env was not set up correctly');
-    expect(eProxyServiceMock.env.loadConfig).toHaveBeenCalled();
+    expect(eProxyServiceMock.env.ReadEnvironmentVars).toHaveBeenCalled();
     done();
   });
 

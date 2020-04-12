@@ -2,12 +2,6 @@ import { Component } from '@angular/core';
 import { uEventsIds, uParts } from '@uf-shared-models/event';
 import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { Router } from '@angular/router';
-
-class IncorrectEventName extends Error {
-  public name = 'IncorrectEventName';
-  public message = 'Incorrect event name was passed';
-}
 
 interface ISelector {
   value: string;
@@ -27,7 +21,6 @@ interface IUFState {
 })
 export class AppComponent {
   title = 'menu';
-  traceId = 1;
 
   sourceId: string = uParts.Menu;
 
@@ -79,7 +72,7 @@ export class AppComponent {
 
     e.SourceId = this.sourceId.toString();
 
-    this.eProxyService.dispatchEvent(e).subscribe(
+    this.eProxyService.DispatchEvent(e).subscribe(
       (value: any) => { },
       (error: any) => { console.log('error', error); },
       () => {  },
@@ -121,10 +114,9 @@ export class AppComponent {
 
     const event = new EventButtonPressed(eventName, elId);
 
-    event.SourceEventUniqueId = this.traceId++;
-    event.SourceId = this.sourceId.toString();
+    event.SourceId = this.sourceId;
 
-    this.eProxyService.dispatchEvent(event).subscribe(
+    this.eProxyService.DispatchEvent(event).subscribe(
       (value: any) => { console.log(value); },
       (error: any) => { console.log('error', error); },
       () => {},

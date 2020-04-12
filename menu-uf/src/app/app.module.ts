@@ -62,7 +62,7 @@ export class AppModule {
     event.forEach(async (element) => {
         switch (element.EventId) {
           case uEventsIds.InitMenu:
-            this.eProxyService.confirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
             this.putToElement('menu-team', '<menu-team></menu-team>');
             break;
           default:

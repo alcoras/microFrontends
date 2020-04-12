@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, repeat, takeUntil } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
 import { EnvService } from './env/env.service';
@@ -34,6 +34,20 @@ export class EventProxyLibService {
   private apiGatewayURL: string;
 
   /**
+   * Gets api gateway url
+   */
+  public get ApiGatewayURL(): string {
+    return this.apiGatewayURL;
+  }
+
+  /**
+   * Sets api gateway url
+   */
+  public set ApiGatewayURL(value: string) {
+    this.apiGatewayURL = value;
+  }
+
+  /**
    * variable for Status getter, setter
    */
   private status;
@@ -56,6 +70,7 @@ export class EventProxyLibService {
    */
   set Status(val: boolean) {
     this.status = val;
+    console.log(`${this.sourceID} changing api gateway to ${this.apiGatewayURL}`);
   }
 
   /**
@@ -66,6 +81,9 @@ export class EventProxyLibService {
   constructor(
     public env: EnvService,
     private httpClient: HttpClient) {
+      this.env.ReadEnvironmentVars();
+      const url = `${this.env.apiGatewayUrl}:${this.env.apiGatewayPort}`;
+      this.ApiGatewayURL = url;
   }
 
   /**
@@ -81,7 +99,6 @@ export class EventProxyLibService {
     }
 
     this.sourceID = sourceID;
-    // TODO: should check if apigateway is correct url
     this.Status = false;
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
@@ -101,15 +118,6 @@ export class EventProxyLibService {
     this.Status = false;
     this.Stop.next(true);
     console.log(`${this.sourceID} Ending listening `);
-  }
-
-  /**
-   * Changes APi gateway URL
-   * @param newURL new url string
-   */
-  public ChangeApiGatewayURL(newURL: string) {
-    this.apiGatewayURL = newURL;
-    console.log(`${this.sourceID} changing api gateway to ${this.apiGatewayURL}`);
   }
 
   /**
@@ -162,9 +170,13 @@ export class EventProxyLibService {
    * @returns HttpResponse observable
    */
   private sendEvent(caller: string, body: any) {
+
+    if (!this.apiGatewayURL) {
+      throw Error('ApiGateway URL is undefined');
+    }
+
     const headers = this.jsonHeaders;
     const url = this.apiGatewayURL + this.endpoint;
-    const debug = url + JSON.stringify(body);
 
     console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);
 
@@ -172,7 +184,7 @@ export class EventProxyLibService {
       url,
       body,
       { headers, observe: 'response' }).pipe(
-        catchError((err, result) => this.handleErrors<any>(caller, err, result, debug)),
+        catchError(this.handleErrors<any>(caller)),
     );
   }
 
@@ -184,12 +196,13 @@ export class EventProxyLibService {
    * @param [result] error Observable
    * @returns Error Observable
    */
-  private handleErrors<T>(op = 'operation', errorMsg?: any, result?: T, data?: string) {
+  private handleErrors<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error);
-      console.log(`${op} failed: ${errorMsg}`);
-      console.log(data);
 
+      console.error(`${operation} failed: ${error.message}`);
+      console.error(error);
+
+      // keep app running by returning an empty result
       return of(result);
     };
   }

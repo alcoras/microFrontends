@@ -26,15 +26,19 @@ export class EnvService {
   public url = 'http://localhost';
 
   public apiGatewayUrl = this.url;
-  public apiGatewayPort = 8080;
+  public apiGatewayPort = '8080';
 
   public uf: { [id: number]: UFData } = {};
 
   constructor() {
-    this.loadConfig();
+    this.ReadEnvironmentVars();
   }
 
-  public loadConfig() {
+  /**
+   * Reads predefined variables (default file: env.js which
+   * should be loaded as script)
+   */
+  public ReadEnvironmentVars() {
     const placeHolder = '__env';
     const ufPH = 'uf';
     const langH = 'lang';
