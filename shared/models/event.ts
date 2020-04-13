@@ -62,8 +62,8 @@ export enum uParts {
   Menu = '1001',
   Personnel = '1002',
   Occupations = '1003',
-  ScriptLoader = '1004',
-  OccupationNg9 = '1005',
+  ScriptLoader = '1004', // Deprecated
+  OccupationNg9 = '1005', // Deprecated
   UFManager = '1006'
 }
 

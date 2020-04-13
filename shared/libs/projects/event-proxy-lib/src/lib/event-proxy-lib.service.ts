@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, repeat, takeUntil } from 'rxjs/operators';
+import { catchError, repeat, takeUntil, timeout, retry } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
-import { EnvService } from './env/env.service';
+import { EnvironmentService } from './services/environment.service';
 
 /**
  * Event Proxy service for communication with API gateway
@@ -34,23 +34,15 @@ export class EventProxyLibService {
   private apiGatewayURL: string;
 
   /**
-   * Gets api gateway url
+   * Gets/Sets api gateway url
    */
   public get ApiGatewayURL(): string {
     return this.apiGatewayURL;
   }
 
-  /**
-   * Sets api gateway url
-   */
   public set ApiGatewayURL(value: string) {
     this.apiGatewayURL = value;
   }
-
-  /**
-   * variable for Status getter, setter
-   */
-  private status;
 
   /**
    * Stop is being used as a flag to stop QNA with backend
@@ -59,18 +51,20 @@ export class EventProxyLibService {
   private Stop = new Subject();
 
   /**
-   * Gets status
+   * status
    */
-  get Status(): boolean {
+  private status;
+
+  /**
+   * Gets/Sets status which true if there QNA (connection with constant request for new
+   * events) with backend.
+   */
+  public get Status(): boolean {
     return this.status;
   }
 
-  /**
-   * Sets status
-   */
-  set Status(val: boolean) {
+  public set Status(val: boolean) {
     this.status = val;
-    console.log(`${this.sourceID} changing api gateway to ${this.apiGatewayURL}`);
   }
 
   /**
@@ -79,10 +73,9 @@ export class EventProxyLibService {
    * @param httpClient Injects Angular HttpClient
    */
   constructor(
-    public env: EnvService,
+    public env: EnvironmentService,
     private httpClient: HttpClient) {
-      this.env.ReadEnvironmentVars();
-      const url = `${this.env.apiGatewayUrl}:${this.env.apiGatewayPort}`;
+      const url = `${this.env.APIGatewayUrl}:${this.env.APIGatewayPort}`;
       this.ApiGatewayURL = url;
   }
 
@@ -103,7 +96,6 @@ export class EventProxyLibService {
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
-    // TODO: integrate retry and test it
     return this.GetLastEvents(this.sourceID)
       .pipe(
         repeat(9999), // stack too deep error if more than 9999
@@ -117,7 +109,7 @@ export class EventProxyLibService {
   public EndQNA() {
     this.Status = false;
     this.Stop.next(true);
-    console.log(`${this.sourceID} Ending listening `);
+    console.log(`${this.sourceID} Ending listening`);
   }
 
   /**
@@ -127,7 +119,7 @@ export class EventProxyLibService {
    * @param [confirmAll] if set true will confirm all outstanding events
    * @returns HttpResponse observable
    */
-  public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false) {
+  public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false): Observable<HttpResponse<any>> {
     const body = {
       EventID: uEventsIds.FrontEndEventReceived,
       SourceID: srcId,
@@ -180,11 +172,14 @@ export class EventProxyLibService {
 
     console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);
 
+    // TODO: integrate retryWithBackoff and test it
     return this.httpClient.post(
       url,
       body,
-      { headers, observe: 'response' }).pipe(
-        catchError(this.handleErrors<any>(caller)),
+      { headers, observe: 'response' }
+    )
+    .pipe(
+      catchError(this.handleErrors<any>(caller)),
     );
   }
 

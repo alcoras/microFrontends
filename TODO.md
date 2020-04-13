@@ -19,6 +19,8 @@
 16. DONE Communicaiton between script loader and ufm should be done over external events? Update: refactored so that ufm takes full control
 11. DONE Change occupation to occupation-uf
 23. DONE Write tests for libs (multi-event recieviers, multi-event confirming)
+29. DONE Refactor EnvService 
+31. DONE bug: language is not loading properly (It was EnvService's bug, task 29)
 
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
@@ -28,11 +30,10 @@
     1. 5. DONE In uf-manager (shell) load language configs
     1. 6. DONE (only in menu) Create locales in projects
     1. 7. Translate other micro frontends
-8. Do angular element show uf (show every angular-material element)
-12. Think about adding all observables into one for logging, debugging, visualising purposes
+8. Do angular element show uf (show every angular-material element)12. Think about adding all observables into one for logging, debugging, visualising purposes
 13. Set to load all icons from disk
 14. Make sure that shell can load any combination of ufs (does not fail if one failed)
-15. Consider requiring sourceId for all events?
+15. Consider requiring sourceId for all events
 17. In libs and tests I cant directly add models from externals folders
     17. 1. Update: remove folder shared in libs and add links to external shared files
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
@@ -54,10 +55,9 @@
     21. 6. DONE event-proxy-lib
 27. In DispatchEvent.toPromise() add checks for failure and throws
 28. Add SourceName to every event for Observer
-29. Refactor EnvService 
 
 30. Fix errors in event-proxy-lib when: ng build --prod:
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
-31. bug: language is not loading properly
+32. find every promise or observable and handle errors
 
-32.
+33.

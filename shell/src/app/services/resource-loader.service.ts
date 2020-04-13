@@ -62,7 +62,8 @@ export class ResourceLoaderService {
       return Promise.resolve({ resource });
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      el.onerror = reject;
       el.onload = resolve;
 
       for (const key in resource.Attributes) {
@@ -71,7 +72,6 @@ export class ResourceLoaderService {
         }
       }
 
-      // TODO_HIGH: not sure how catch failure if script is not added
       document.body.appendChild(el);
     });
   }

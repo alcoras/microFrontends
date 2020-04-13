@@ -3,3 +3,4 @@ export * from './event';
 export * from './PersonDataRead';
 export * from './IPersonnel';
 export * from './APIGatewayResponse';
+export * from './UParts';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { uParts, uEventsIds } from '@uf-shared-models/event';
+import { uEventsIds, uEvent, UParts } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange, InitMenuEvent } from '@uf-shared-events/index';
 import { ResourceLoaderService } from '../services/resource-loader.service';
@@ -23,7 +23,12 @@ export class UFManagerComponent {
   /**
    * Source id of ufmanager component
    */
-  private sourceId: string = uParts.UFManager;
+  private sourceId: string = UParts.UFManager.SourceId;
+
+  /**
+   * Source name of ufmanager component
+   */
+  private sourceName: string = UParts.UFManager.SourceName;
 
   /**
    * Resources dictionary to account which micro frontend is loaded
@@ -47,8 +52,13 @@ export class UFManagerComponent {
    * Inits ufmanager component with async functions
    */
   public async InitAsync() {
-    return new Promise(async (resolve) => {
-      await this.preloadScripts();
+    return new Promise(async (resolve, reject) => {
+      await this.preloadScripts().then(
+        () => {},
+        () => {
+          throw new Error('Failed to load scripts');
+        }
+      );
 
       await this.subscribeToEventsAsync();
 
@@ -77,7 +87,7 @@ export class UFManagerComponent {
         }
 
         if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEvent(value.body.Events);
+          this.parseNewEventAsync(value.body.Events);
         }
       },
       (error) => { console.log(this.title, error); },
@@ -91,8 +101,12 @@ export class UFManagerComponent {
    */
   private preloadScripts() {
     const promises = [];
+    const url: string = this.eProxyService.env.Url;
 
-    const url: string = this.eProxyService.env.url;
+    if (!url) {
+      throw new Error('Url is not defined in environment (env.js)');
+    }
+
     const urlList = [
       url + ':3002/en/scripts/conf.js', // Menu
       // url + ':3004/scripts/conf.js', // Personnel
@@ -109,6 +123,7 @@ export class UFManagerComponent {
    */
   private preloadMenuMicroFrontend() {
     const e = new InitMenuEvent(this.sourceId);
+    e.SourceName = this.sourceName;
 
     return this.eProxyService.DispatchEvent(e).toPromise();
   }
@@ -118,15 +133,13 @@ export class UFManagerComponent {
    * @returns Promise
    */
   private subscribeToEventsAsync() {
-    const e = new SubscibeToEvent([
+    const e = new SubscibeToEvent(this.sourceId, [
       [uEventsIds.LoadedResource, 0, 0],
       [uEventsIds.RequestToLoadScript, 0, 0],
       [uEventsIds.LanguageChange, 0, 0],
       [uEventsIds.InitMenu, 0, 0]
     ]);
-
-    e.SourceId = this.sourceId.toString();
-
+    e.SourceName = this.sourceName;
     return this.eProxyService.DispatchEvent(e).toPromise();
   }
 
@@ -137,46 +150,46 @@ export class UFManagerComponent {
    * @param event Event array
    */
   // tslint:disable-next-line: cognitive-complexity
-  private parseNewEvent(event: any) {
-    event.forEach( async (element) => {
-      this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
-      const ufConfigs = this.eProxyService.env.uf;
+  private async parseNewEventAsync(eventList: uEvent[]) {
+    for (const element of eventList) {
+
+      console.log(`${this.sourceId} Parsing event:`, element);
+
+      const ufConfigs = window['__env']['uf'];
 
       // check if event is LoadedResource
       if (element.EventId === uEventsIds.LoadedResource) {
-        const el: LoadedResource = element;
+        const el: LoadedResource = element as LoadedResource;
 
-        // tslint:disable-next-line: forin
         for (const config in ufConfigs) {
           if (ufConfigs.hasOwnProperty(config) && ufConfigs[config].events.includes(el.ResourceEventId)) {
             this.resources[+config] = true;
-            return; // gets back to other event because forEach creates function for each loop
+            await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+          }
+        }
+      } else if (element.EventId === uEventsIds.RequestToLoadScript) {
+        const event: RequestToLoadScripts  = element as RequestToLoadScripts;
+        this.loadResourcesEvent(event);
+        await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      } else if (element.EventId === uEventsIds.LanguageChange) {
+        const event: LanguageChange  = element as LanguageChange;
+        this.changeLanguageEvent(event);
+        await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      } else {
+        for (const config in ufConfigs) {
+          if (ufConfigs.hasOwnProperty(config) && ufConfigs[+config].events.includes(element.EventId)) {
+            // check if loaded
+            if (this.resources[+config]) {
+              break;
+            }
+
+            // else load resources
+            await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
+            await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
           }
         }
       }
-
-      if (element.EventId === uEventsIds.RequestToLoadScript) {
-        this.loadResourcesEvent(element);
-        return;
-      }
-
-      if (element.EventId === uEventsIds.LanguageChange) {
-        this.changeLanguageEvent(element);
-        return;
-      }
-
-      for (const config in ufConfigs) {
-        if (ufConfigs.hasOwnProperty(config) && ufConfigs[+config].events.includes(element.EventId)) {
-          // check if loaded
-          if (this.resources[+config]) {
-            break;
-          }
-
-          // else load resources
-          await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-        }
-      }
-    });
+    }
   }
 
   /**
@@ -195,7 +208,6 @@ export class UFManagerComponent {
    */
   private loadResourcesEvent(event: RequestToLoadScripts) {
     this.resourceLoader.LoadResources(event.ResourceSchemes);
-
   }
 
   /**
@@ -207,27 +219,23 @@ export class UFManagerComponent {
 
     const promises: Promise<any>[] = [];
 
-    const dic = this.eProxyService.env.uf;
+    const dic = window['__env']['uf'];
     for (const key in dic) {
       // Traverse through all uFrontends
       if (dic.hasOwnProperty(key)) {
-
         const subList = [];
         dic[+key].events.forEach(eventId => {
           subList.push([eventId, 0, 0]);
         });
 
         // Subscribe designated micro frontend
-        let event = new SubscibeToEvent(subList);
-
-        event.SourceId = key;
-
+        let event = new SubscibeToEvent(key, subList);
+        event.SourceName = UParts.GetSourceNameFromSourceID(event.SourceId);
         promises.push(this.eProxyService.DispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
-        event = new SubscibeToEvent(subList);
-
-        event.SourceId = this.sourceId.toString();
+        event = new SubscibeToEvent(this.sourceId, subList);
+        event.SourceName = this.sourceName;
         promises.push(this.eProxyService.DispatchEvent(event).toPromise());
       }
     }

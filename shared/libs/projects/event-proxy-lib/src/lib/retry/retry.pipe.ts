@@ -10,15 +10,15 @@ export function retryWithBackoff(delayMs: number, maxRetry = MAX_RETRIES, backof
   let retries = maxRetry;
 
   return (src: Observable<any>) =>
-    src.pipe(
-      retryWhen((errors: Observable<any>) => errors.pipe(
-        mergeMap(error => {
-          if (retries-- > 0) {
-            const backoffTime = delayMs + (maxRetry - retries) * backoffMS;
-            return of(error).pipe(delay(backoffTime));
-          }
-          return throwError(errorMsg(maxRetry));
-        })
-      ))
-    );
+  src.pipe(
+    retryWhen((errors: Observable<any>) => errors.pipe(
+      mergeMap(error => {
+        if (retries-- > 0) {
+          const backoffTime = delayMs + (maxRetry - retries) * backoffMS;
+          return of(error).pipe(delay(backoffTime));
+        }
+        return throwError(errorMsg(maxRetry));
+      })
+    ))
+  );
 }

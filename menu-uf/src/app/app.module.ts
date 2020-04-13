@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { uEventsIds, uParts } from '@uf-shared-models/event';
+import { uEventsIds, uParts, uEvent } from '@uf-shared-models/event';
 import { MaterialModule } from './material-modules';
 
 @NgModule({
@@ -50,7 +50,7 @@ export class AppModule {
         }
 
         if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEvent(value.body.Events);
+          this.parseNewEventAsync(value.body.Events);
         }
       },
       (error) => { console.log(this.title, error); },
@@ -58,17 +58,16 @@ export class AppModule {
     );
   }
 
-  private parseNewEvent(event: any) {
-    event.forEach(async (element) => {
-        switch (element.EventId) {
-          case uEventsIds.InitMenu:
-            this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
-            this.putToElement('menu-team', '<menu-team></menu-team>');
-            break;
-          default:
-            throw new Error('Event not implemented.');
-        }
-    });
+  private async parseNewEventAsync(eventList: uEvent[]) {
+    for (const element of eventList) {
+      console.log(`${this.sourceId} Parsing event:`, element);
+      if (element.EventId === uEventsIds.InitMenu) {
+        this.putToElement('menu-team', '<menu-team></menu-team>');
+        await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+      } else {
+        throw new Error('Event not implemented.');
+      }
+    }
   }
 
   private putToElement(elName: string, elToPut: string) {

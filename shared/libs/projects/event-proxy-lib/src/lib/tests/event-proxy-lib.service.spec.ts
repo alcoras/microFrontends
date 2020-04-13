@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
-import { EnvService } from '../env/env.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { uEventsIds, uEvent } from '../models/event';
 import { HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
+import { EnvironmentService } from '../services/environment.service';
 
 /* tslint:disable */
 const TestSourceId = '1000';
@@ -35,7 +35,7 @@ describe('EventProxyLibService', () => {
   (
     async () => {
       TestBed.configureTestingModule({
-        providers: [EventProxyLibService, EnvService],
+        providers: [EventProxyLibService, EnvironmentService],
         imports: [HttpClientTestingModule]
       });
 
@@ -69,9 +69,9 @@ describe('EventProxyLibService', () => {
       expect(service.ApiGatewayURL).toBe(`http://${backendURL}:${backendPort}`);
     });
 
-    it('testing if env service laod was correct', () => {
-      expect(service.env.apiGatewayUrl).toBe(`http://${backendURL}`);
-      expect(service.env.apiGatewayPort).toBe(backendPort);
+    it('testing if env service load was correct', () => {
+      expect(service.env.APIGatewayUrl).toBe(`http://${backendURL}`);
+      expect(service.env.APIGatewayPort).toBe(backendPort);
     });
 
   });

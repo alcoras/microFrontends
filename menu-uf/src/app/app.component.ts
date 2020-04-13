@@ -41,7 +41,7 @@ export class AppComponent {
 
   // TODO: port should be configurable
   private prepareThemeAndLang() {
-    const url = `${this.eProxyService.env.url}:3002/en/`;
+    const url = `${this.eProxyService.env.Url}:3002/en/`;
     this.themes = [
       { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
       { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
@@ -55,7 +55,7 @@ export class AppComponent {
       { value: 'lt', viewValue: 'LT' },
     ];
     this.selectedTheme = this.themes[0].value;
-    this.selectedLang = this.eProxyService.env.lang;
+    this.selectedLang = this.eProxyService.env.Language;
   }
 
   public changeTheme() {

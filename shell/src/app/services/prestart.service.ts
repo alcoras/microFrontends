@@ -30,8 +30,8 @@ export class PrestartService {
         this.setUpLanguage(res);
       },
       (reject) => {
-        console.log('prestart.service', reject);
-        throw new Error(reject);
+        console.log('prestart.service failed with error: ', reject);
+        throw new Error();
       });
   }
 
@@ -49,10 +49,7 @@ export class PrestartService {
    */
   private setUpLanguage(response: HttpResponse<any>): string {
     const lang: ILanguageSettings = response.body;
-    window['__env'] = window['__env'] || {};
-    window['__env']['lang'] = lang.lang;
-    this.eProxyService.env.ReadEnvironmentVars();
-
+    this.eProxyService.env.Language = lang.lang;
     return lang.lang;
   }
 
