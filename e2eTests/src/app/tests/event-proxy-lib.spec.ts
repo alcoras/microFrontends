@@ -35,11 +35,13 @@ class TestEvent extends uEvent {
 // tslint:disable-next-line: no-big-function
 describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
+
     const backendURL = 'http://localhost:54366';
+    const backendPort = '54366';
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
     const testinID = '1000';
+    const testinName = 'testing';
     let service: EventProxyLibService;
     // tslint:disable-next-line: prefer-const
     let serviceList: EventProxyLibService[] = new Array(3);
@@ -47,18 +49,27 @@ describe('EventProxyLibService', () => {
     beforeEach
     (
       async () => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
+        window['__env'] = window['__env'] || {};
+
+        window['__env'].one_language = false;
+        // API url
+        window['__env'].url = 'http://' + backendURL;
+        window['__env'].apiGatewayUrl = window['__env'].url;
+        window['__env'].apiGatewayPort = backendPort;
+
         TestBed.configureTestingModule({
           providers: [EventProxyLibService],
           imports: [EventProxyLibModule]
         });
 
         service = TestBed.inject(EventProxyLibService);
-        service.ChangeApiGatewayURL(backendURL);
+        service.ApiGatewayURL = backendURL;
 
         // tslint:disable-next-line: no-ignored-initial-value
         serviceList.forEach(element => {
           element = TestBed.inject(EventProxyLibService);
-          element.ChangeApiGatewayURL(backendURL);
+          element.ApiGatewayURL = backendURL;
         });
 
         tEvent.SourceId = testinID;
@@ -69,10 +80,15 @@ describe('EventProxyLibService', () => {
       async () => {
         service.EndQNA();
         await service.ConfirmEvents(testinID, [], true).toPromise();
+
+        serviceList.forEach(async (element) => {
+          element.EndQNA();
+          await element.ConfirmEvents(testinID, [], true).toPromise();
+        });
       }
     );
 
-    it('shoutld init', () => {
+    fit('should init', () => {
       expect(service).toBeTruthy();
     });
 
@@ -152,8 +168,8 @@ describe('EventProxyLibService', () => {
       );
 
       // 2. Subscribe to event
-      const subEvent = new SubscibeToEvent([[waitForEventId, 0, 0]], false);
-      subEvent.SourceId = testinID;
+      const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], false);
+      subEvent.SourceName = testinName;
       await service.DispatchEvent(subEvent).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
@@ -178,8 +194,7 @@ describe('EventProxyLibService', () => {
       }
 
       // 1. Subscribe to events
-      const subEvent = new SubscibeToEvent(randomSubList, false);
-      subEvent.SourceId = testinID;
+      const subEvent = new SubscibeToEvent(testinID, randomSubList, false);
       await service.DispatchEvent([subEvent]).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
@@ -213,8 +228,7 @@ describe('EventProxyLibService', () => {
       const fireEventList = [];
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
           // 1. Subscribe to them
-          const subEvent = new SubscibeToEvent([[rndEventId, 0, 0]], true);
-          subEvent.SourceId = index.toString();
+          const subEvent = new SubscibeToEvent(index.toString(), [[rndEventId, 0, 0]], true);
           subEventList.push(subEvent);
 
           // 2. Fire event

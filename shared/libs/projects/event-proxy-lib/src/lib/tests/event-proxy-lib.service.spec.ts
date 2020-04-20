@@ -3,8 +3,17 @@ import { EventProxyLibService } from '../event-proxy-lib.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { uEventsIds, uEvent } from '../models/event';
 import { HttpResponse } from '@angular/common/http';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/environment.service';
+
+/**
+ * Returns promise after ms
+ * @param ms miliseconds
+ * @returns Promise
+ */
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
 /* tslint:disable */
 const TestSourceId = '1000';
@@ -45,13 +54,100 @@ describe('EventProxyLibService', () => {
   );
 
   afterEach(() => {
+    service.EndQNA();
     httpTestingController.verify();
   });
 
   describe('StartQNA', () => {
 
+    it('on init status should be false', () => {
+      expect(service.Status).toBeFalse();
+    });
+
+    it('on StartQNA status should be true', (done) => {
+
+      spyOn(service, 'GetLastEvents')
+        .and
+        .returnValue(of(new HttpResponse({status: 200})));
+
+      service.StartQNA(TestSourceId).subscribe(
+        () => {
+          expect(service.Status).toBeTrue();
+          service.EndQNA();
+          done();
+        }
+      );
+    });
+
+    it('after EndQNA status should be false', (done) => {
+      // tslint:disable-next-line: completed-docs
+      function fakeGetLastEvents(): Observable<HttpResponse<any>> {
+        return new Observable( sub => {
+          setTimeout(() => {
+            sub.next(new HttpResponse({status: 200}));
+            sub.complete();
+          }, 100);
+        });
+      }
+
+      spyOn(service, 'GetLastEvents')
+        .and
+        .callFake(() => fakeGetLastEvents());
+
+      service.StartQNA(TestSourceId).subscribe(
+        () => {
+          service.EndQNA();
+          expect(service.Status).toBeFalse();
+          done();
+        }
+      );
+    });
+
+    it('emulating work', async (done) => {
+      let requestsSent = 0;
+      let requestsParsed = 0;
+      let doneParsing = 0;
+      let launchedParsing = 0;
+      // tslint:disable-next-line: completed-docs
+      function fakeGetLastEvents(): Observable<HttpResponse<any>> {
+        requestsSent++;
+        return new Observable(sub => {
+          setTimeout(() => {
+            sub.next(new HttpResponse({status: 200}));
+            sub.complete();
+          }, 100);
+        });
+      }
+
+      // tslint:disable-next-line: completed-docs
+      async function parseAsync() {
+        launchedParsing++;
+        await delay(200);
+        doneParsing++;
+      }
+
+      spyOn(service, 'GetLastEvents')
+        .and
+        .callFake(() => fakeGetLastEvents());
+
+      service.StartQNA(TestSourceId).subscribe(
+        () => {
+          parseAsync();
+          requestsParsed++;
+        }
+      );
+
+      await delay(600);
+      expect(requestsParsed).toBe(requestsSent, 'Parsed should equal reqeusts sent');
+      expect(launchedParsing).toBe(2, 'launchedParsing should be 2');
+      expect(doneParsing).toBe(2, 'doneParsing should be 2');
+      service.EndQNA();
+      done();
+    });
+
     it('testing startQNA', async (done) => {
-      const getLastEventsSpy = spyOn(service, 'GetLastEvents').and
+      const getLastEventsSpy = spyOn(service, 'GetLastEvents')
+        .and
         .returnValue( of (new HttpResponse({status: 200})) );
 
       service.StartQNA(TestSourceId).subscribe(

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { uParts, uEventsIds, EventResponse } from '@uf-shared-models/index';
+import { UParts, uEventsIds, EventResponse } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
@@ -13,13 +13,15 @@ import { EventBusService } from '../services/EventBus.service';
 })
 export class PersonnelComponent {
   /**
-   * Title  of personnel component
+   * Source id of personnel component
    */
-  private title = 'personnel';
+  private sourceId: string = UParts.Personnel.SourceId;
+
   /**
-   * Source id of personnel component use for communcation with backend
+   * Source name of personnel component
    */
-  private sourceId: string = uParts.Personnel;
+  private sourceName: string = UParts.Personnel.SourceName;
+
   /**
    * Element to place array
    */
@@ -35,7 +37,6 @@ export class PersonnelComponent {
    * @returns Promise
    */
   public async InitAsync() {
-    this.eProxyService.env.loadConfig();
     this.preparePlacements();
     await this.subscribeToEventsAsync();
   }
@@ -60,7 +61,7 @@ export class PersonnelComponent {
           this.parseNewEvent(response);
         }
       },
-      (error) => { console.log(this.title, error); },
+      (error) => { console.log(this.sourceName, error); },
       () => { }
     );
   }
@@ -70,11 +71,12 @@ export class PersonnelComponent {
    * @returns Promise
    */
   private async subscribeToEventsAsync(): Promise<HttpResponse<any>> {
-    const e = new SubscibeToEvent([
-      [uEventsIds.ReadPersonData, 0, 0],
-    ], true);
+    const e = new SubscibeToEvent(
+      this.sourceId, [
+      [uEventsIds.ReadPersonData, 0, 0]
+    ]);
 
-    e.SourceId = this.sourceId;
+    e.SourceName = this.sourceName;
 
     return this.eProxyService.DispatchEvent(e).toPromise();
   }

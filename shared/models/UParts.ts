@@ -46,7 +46,7 @@ export class UParts {
    * Occupations micro frontend
    */
   public static Occupations: IInfo = {
-    SourceId: '1003',
+    SourceId: '1005',
     SourceName: 'Occupations'
   };
 
@@ -56,6 +56,14 @@ export class UParts {
   public static UFManager: IInfo = {
     SourceId: '1006',
     SourceName: 'UFManager'
+  };
+
+  /**
+   * Micro frontend observer. Used for monitoring and alike function
+   */
+  public static Observer: IInfo = {
+    SourceId: '1007',
+    SourceName: 'Observer'
   };
 
   /**

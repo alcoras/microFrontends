@@ -6,6 +6,7 @@ import { IPersonnel, PersonDataRead } from '@uf-shared-models/index';
 import { HttpResponse } from '@angular/common/http';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { delay, genRandomNumber, TestEvent } from './helpers/helpers';
+import { IGetResponse } from '../services/interfaces/IGetResponse';
 
 /**
  * Test personnel data
@@ -41,6 +42,35 @@ describe('PersonnelAPI service', () => {
   );
 
   afterEach(() => {
+  });
+
+  describe('Delete', () => {
+
+    it('testing response', (done) => {
+      service.Delete(19).then(
+        (res: HttpResponse<any>) => {
+          expect(res.status).toBe(200);
+          done();
+        },
+        (rej) => {
+          done.fail(rej);
+        }
+      );
+    });
+
+    it('testing content', (done) => {
+      const personDataId = genRandomNumber(200);
+      service.Delete(personDataId).then(
+        (res: HttpResponse<any>) => {
+          expect(res.body.Events[0].PersonDataID).toBe(personDataId);
+          done();
+        },
+        (rej) => {
+          done.fail(rej);
+        }
+      );
+    });
+
   });
 
   describe('CreateUpdate', () => {
@@ -90,10 +120,10 @@ describe('PersonnelAPI service', () => {
     });
 
     it('get passed data, then get response', async (done) => {
-      service.Get(null, null, null, null).then(
-        (res: IPersonnel[]) => {
-          expect(res.length).toBe(1);
-          expect(res[0]).toBe(newPersonnelData);
+      service.Get(null, null, null).then(
+        (res: IGetResponse) => {
+          expect(res.items.length).toBe(1);
+          expect(res.items[0]).toBe(newPersonnelData);
           done();
         }
       );
@@ -111,26 +141,26 @@ describe('PersonnelAPI service', () => {
 
     it('get passed data many times', async (done) => {
       let resp = 0;
-      service.Get(null, null, null, null).then(
-        (res: IPersonnel[]) => {
-          expect(res.length).toBe(1);
-          expect(res[0]).toBe(newPersonnelData);
+      service.Get(null, null, null).then(
+        (res: IGetResponse) => {
+          expect(res.items.length).toBe(1);
+          expect(res.items[0]).toBe(newPersonnelData);
           resp++;
         }
       );
 
-      service.Get(null, null, null, null).then(
-        (res: IPersonnel[]) => {
+      service.Get(null, null, null).then(
+        (res: IGetResponse) => {
           resp++;
-          expect(res.length).toBe(1);
-          expect(res[0]).toBe(newPersonnelData);
+          expect(res.items.length).toBe(1);
+          expect(res.items[0]).toBe(newPersonnelData);
         }
       );
 
-      service.Get(null, null, null, null).then(
-        (res: IPersonnel[]) => {
-          expect(res.length).toBe(1);
-          expect(res[0]).toBe(newPersonnelData);
+      service.Get(null, null, null).then(
+        (res: IGetResponse) => {
+          expect(res.items.length).toBe(1);
+          expect(res.items[0]).toBe(newPersonnelData);
           resp++;
           expect(resp).toBe(3);
           done();

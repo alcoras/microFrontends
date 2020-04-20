@@ -10,7 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { uParts, uEventsIds } from '@uf-shared-models/event';
+import { uEventsIds } from '@uf-shared-models/event';
 import { NewOccupComponent } from './new-occup/new-occup.component';
 import { MaterialModule } from './meterial-module';
 

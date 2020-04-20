@@ -55,19 +55,6 @@ export abstract class uEvent {
 }
 
 /**
- * Micro froents Id list
- */
-export enum uParts {
-  FrontendShell = '1000',
-  Menu = '1001',
-  Personnel = '1002',
-  Occupations = '1003',
-  ScriptLoader = '1004', // Deprecated
-  OccupationNg9 = '1005', // Deprecated
-  UFManager = '1006'
-}
-
-/**
  * Event's id list
  */
 export enum uEventsIds {
@@ -78,6 +65,7 @@ export enum uEventsIds {
   LoadedResource = 1004,
   OccupationNg9ButtonPressed = 1005,
   LanguageChange = 1006,
+  ObserverButtonPressed = 1007,
 
   PingRequest = 2001,
   SubscribeToEvent = 2002,

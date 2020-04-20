@@ -1,7 +1,22 @@
-<mat-tab-group>
-  <mat-tab label="Table"> Content 1 </mat-tab>
-  <mat-tab label="Map"> Content 2 </mat-tab>
-  <mat-tab label="Validation"> Content 3 </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar backgroundColor="primary">
+
+  <a mat-tab-link
+    routerLink="table"
+    routerLinkActive="active">
+    Table
+  </a>
+
+  <a mat-tab-link
+    routerLink="map"
+    routerLinkActive="active">
+    Map
+  </a>
+
+  <a mat-tab-link
+    routerLink="validation"
+    routerLinkActive="active">
+    Validation
+  </a>
+</nav>
 
 <router-outlet></router-outlet>

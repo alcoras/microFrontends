@@ -4,4 +4,5 @@ import { uEvent } from './event';
 export class PersonDataRead extends uEvent {
   ListOutputEnterprisePersonData: IPersonnel[];
   ParentSourceEventUniqueId: number;
+  CommonNumberRecords: number;
 }

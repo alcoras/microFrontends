@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { uEventsIds, uParts } from '@uf-shared-models/event';
+import { uEventsIds, uParts, UParts } from '@uf-shared-models/index';
 import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 
@@ -20,23 +20,46 @@ interface IUFState {
   providers: [ EventProxyLibService ],
 })
 export class AppComponent {
-  title = 'menu';
+  private sourceId: string = UParts.Menu.SourceId;
+  private sourceName: string = UParts.Menu.SourceName;
 
-  sourceId: string = uParts.Menu;
+  private placement: { [id: number]: IUFState } = {};
 
-  placement: { [id: number]: IUFState } = {};
+  private themes: ISelector[];
+  private selectedTheme: string;
 
-  themes: ISelector[];
-  selectedTheme: string;
-
-  langs: ISelector[];
-  selectedLang: string;
+  private langs: ISelector[];
+  private selectedLang: string;
 
   constructor(
     private eProxyService: EventProxyLibService
   ) {
     this.preparePlacements();
     this.prepareThemeAndLang();
+  }
+
+  public menuClick(evt, eventName: number) {
+    // create an event
+    this.eventButtonPressed(eventName);
+
+    const elId = this.getElFromID(eventName);
+
+    this.openTab(evt, elId.elementId);
+  }
+
+  public changeTheme() {
+    const el = document.getElementById('themeAsset') as HTMLLinkElement;
+    el.href = this.selectedTheme;
+  }
+
+
+  public changeLanguage() {
+    const e = new LanguageChange(this.selectedLang);
+
+    e.SourceId = this.sourceId;
+    e.SourceName = this.sourceName;
+
+    this.eProxyService.DispatchEvent(e).toPromise();
   }
 
   // TODO: port should be configurable
@@ -58,25 +81,8 @@ export class AppComponent {
     this.selectedLang = this.eProxyService.env.Language;
   }
 
-  public changeTheme() {
-    const el = document.getElementById('themeAsset') as HTMLLinkElement;
-    el.href = this.selectedTheme;
-  }
-
-  refresh() {
+  private refresh() {
     window.location.reload();
-  }
-
-  public changeLanguage() {
-    const e = new LanguageChange(this.selectedLang);
-
-    e.SourceId = this.sourceId.toString();
-
-    this.eProxyService.DispatchEvent(e).subscribe(
-      (value: any) => { },
-      (error: any) => { console.log('error', error); },
-      () => {  },
-    );
   }
 
   private preparePlacements() {
@@ -94,16 +100,7 @@ export class AppComponent {
     return elId;
   }
 
-  menuClick(evt, eventName: number) {
-    // create an event
-    this.eventButtonPressed(eventName);
-
-    const elId = this.getElFromID(eventName);
-
-    this.openTab(evt, elId.elementId);
-  }
-
-  eventButtonPressed(eventName: number) {
+  private eventButtonPressed(eventName: number) {
     const elState = this.getElFromID(eventName);
 
     const elId = elState.loaded ? null : elState.elementId;
@@ -123,7 +120,7 @@ export class AppComponent {
     );
   }
 
-  openTab(evt, tabName: string) {
+  private openTab(evt, tabName: string) {
     let i: number;
     let tabcontent;
     let tablinks;

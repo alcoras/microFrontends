@@ -1,10 +1,7 @@
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { EventButtonPressed } from '@uf-shared-events/index';
-import { uEvent, uEventsIds } from '@uf-shared-models/event';
-import { EventResponse } from '@uf-shared-models/index';
-import { repeat, takeUntil } from 'rxjs/operators';
+import { uEvent } from '@uf-shared-models/event';
 
 /* tslint:disable */
 export let eProxyServiceMock: Partial<EventProxyLibService>;
@@ -13,17 +10,6 @@ const currentURL = 'localhost';
 /* tslint:enable */
 
 eProxyServiceMock = {
-  env: {
-    lang: currentLang,
-    url: currentURL,
-    apiGatewayUrl: currentURL,
-    apiGatewayPort: 80,
-    uf: {},
-    loadConfig: () => {
-      window['__env'] = window['__env'] || {};
-      window['__env']['lang'] = currentLang;
-    }
-  },
 
   StartQNA(sourceID: string) {
     return this.GetLastEvents(sourceID);

@@ -14,12 +14,14 @@ import { EventBusService } from './services/EventBus.service';
 import { PersonnelAPIService } from './services/PersonnelAPI.service';
 import { PersonnelComponent } from './personnel/personnel.component';
 import { PersonnelComponentFactory } from './personnel/personnel.factory';
+import { PersonnelTable2Component } from './personnel-table-2/personnel-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PersonnelTableComponent,
-    NewPersonnelComponent
+    PersonnelTable2Component,
+    NewPersonnelComponent,
   ],
   imports: [
     BrowserModule,

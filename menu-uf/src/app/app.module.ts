@@ -31,7 +31,6 @@ import { MaterialModule } from './material-modules';
 
 export class AppModule {
   title = 'menu';
-  traceId = 1;
 
   sourceId: string = uParts.Menu;
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, repeat, takeUntil, timeout, retry } from 'rxjs/operators';
+import { catchError, repeat, takeUntil, timeout, retry, repeatWhen } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
 import { EnvironmentService } from './services/environment.service';
 
@@ -34,6 +34,13 @@ export class EventProxyLibService {
   private apiGatewayURL: string;
 
   /**
+   * How many times new connection will be
+   * established in StartQNA observable
+   * Note: stack too deep error if more than 9999
+   */
+  private readonly repeatTimes = 9999;
+
+  /**
    * Gets/Sets api gateway url
    */
   public get ApiGatewayURL(): string {
@@ -48,12 +55,12 @@ export class EventProxyLibService {
    * Stop is being used as a flag to stop QNA with backend
    * when EndQNA is called
    */
-  private Stop = new Subject();
+  private stop = new Subject();
 
   /**
    * status
    */
-  private status;
+  private status = false;
 
   /**
    * Gets/Sets status which true if there QNA (connection with constant request for new
@@ -92,14 +99,14 @@ export class EventProxyLibService {
     }
 
     this.sourceID = sourceID;
-    this.Status = false;
+    this.Status = true;
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
     return this.GetLastEvents(this.sourceID)
       .pipe(
-        repeat(9999), // stack too deep error if more than 9999
-        takeUntil(this.Stop),
+        repeatWhen(() => this.GetLastEvents(this.sourceID)),
+        takeUntil(this.stop),
       );
   }
 
@@ -108,7 +115,7 @@ export class EventProxyLibService {
    */
   public EndQNA() {
     this.Status = false;
-    this.Stop.next(true);
+    this.stop.next(true);
     console.log(`${this.sourceID} Ending listening`);
   }
 
