@@ -15,7 +15,7 @@ export class ResourceSheme {
     public Attributes: { [attrName: string]: string; } = {};
 
     /**
-     * Sets attribute by adding them to attributes array
+     * Sets (or adds) attribute to the attributes dictionary
      * @param attr attribute's name
      * @param value attribute's value
      */

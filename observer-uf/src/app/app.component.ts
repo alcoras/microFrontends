@@ -3,6 +3,7 @@ import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { UParts, uEventsIds, uEvent } from '@uf-shared-models/index';
 import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventBusService } from './services/EventBus.service';
+import { HttpResponse } from '@angular/common/http';
 
 /**
  * Component
@@ -28,21 +29,40 @@ export class AppComponent {
     private eProxyService: EventProxyLibService,
     private eventBus: EventBusService
   ) {
-      this.eProxyService.StartQNA(this.sourceId).subscribe(
-        (value) => {
-          if (!value.body) { return; }
+    this.StartQNA();
+  }
 
-          if (!value.body.hasOwnProperty('EventId')) {
-            throw new Error('No EventId in message');
-          }
+  /**
+   * Starts qna with backend
+   */
+  public StartQNA() {
+    this.eProxyService.StartQNA(this.sourceId).subscribe(
+      (value) => {
+        this.newHttpResponseAsync(value);
+      },
+      (error) => { console.error(this.sourceName, error); },
+      () => {}
+    );
+  }
 
-          if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-            this.parseNewEventAsync(value.body.Events);
-          }
-        },
-        (error) => { console.log(this.sourceName, error); },
-        () => {}
-      );
+  /**
+   * Parses new http response
+   * @param response HttpResponse
+   */
+  private async newHttpResponseAsync(response: HttpResponse<any>) {
+    if (!response) {
+      throw new Error('Can\'t connect to backend');
+    }
+
+    if (!response.body) { return; }
+
+    if (!response.body.hasOwnProperty('EventId')) {
+      throw new Error('No EventId in message');
+    }
+
+    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
+      this.parseNewEventAsync(response.body);
+    }
   }
 
   /**

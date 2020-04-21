@@ -1,5 +1,6 @@
-## Tasks
+# Tasks
 
+## DONE
 6. DONE Update everything to ng9
     6. 1. DONE shell
     6. 2. DONE uf Menu
@@ -23,6 +24,7 @@
 31. DONE bug: language is not loading properly (It was EnvService's bug, task 29)
 19. DUPLICATE 26. 5 Write tests for uf-manager
 
+## UNDONE
 1. Languages
     1. 1. DONE Do a select for language selector in uf Menu
     1. 2. DONE(through window) Make a way to refresh (through navigation)
@@ -41,7 +43,8 @@
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
 20. When loosing connection with backend there is no error or warning..
 21. Events still disappearing? YES?
-    21. 1. Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?
+    21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
+    21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
 22. Do conditional logging.
 24. Debugging in tests
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
@@ -58,5 +61,6 @@
 30. Fix errors in event-proxy-lib when: ng build --prod:
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
 32. find every promise or observable and handle errors
+33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
 
-33.
+33. 

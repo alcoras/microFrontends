@@ -1,0 +1,22 @@
+{
+  "include": [
+    "./src/config"
+  ],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outFile": "./src/scripts/config.js",
+    "sourceMap": false,
+    "module": "amd",
+    "removeComments": true,
+    "moduleResolution": "node",
+    "target": "es2015",
+    "lib": ["es2018", "dom"],
+    "paths": {
+      "@uf-shared-events/":["../shared/events"],
+      "@uf-shared-events/*":["../shared/events/*"],
+
+      "@uf-shared-models/":["../shared/models"],
+      "@uf-shared-models/*":["../shared/models/*"]
+    }
+  }
+}

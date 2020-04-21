@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { uEventsIds, uParts, UParts } from '@uf-shared-models/index';
+import { uEventsIds, UParts } from '@uf-shared-models/index';
 import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 
@@ -20,16 +20,16 @@ interface IUFState {
   providers: [ EventProxyLibService ],
 })
 export class AppComponent {
+
+  public themes: ISelector[];
+  public selectedTheme: string;
+
+  public langs: ISelector[];
+  public selectedLang: string;
   private sourceId: string = UParts.Menu.SourceId;
   private sourceName: string = UParts.Menu.SourceName;
 
   private placement: { [id: number]: IUFState } = {};
-
-  private themes: ISelector[];
-  private selectedTheme: string;
-
-  private langs: ISelector[];
-  private selectedLang: string;
 
   constructor(
     private eProxyService: EventProxyLibService
@@ -62,6 +62,10 @@ export class AppComponent {
     this.eProxyService.DispatchEvent(e).toPromise();
   }
 
+  public refresh() {
+    window.location.reload();
+  }
+
   // TODO: port should be configurable
   private prepareThemeAndLang() {
     const url = `${this.eProxyService.env.Url}:3002/en/`;
@@ -81,13 +85,10 @@ export class AppComponent {
     this.selectedLang = this.eProxyService.env.Language;
   }
 
-  private refresh() {
-    window.location.reload();
-  }
-
   private preparePlacements() {
     this.placement[uEventsIds.PerssonelButtonPressed] = { elementId: 'personnel', loaded: false };
     this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
+    this.placement[uEventsIds.ObserverButtonPressed] = { elementId: 'observer', loaded: false };
   }
 
   private getElFromID(id: number): IUFState {
@@ -113,11 +114,7 @@ export class AppComponent {
 
     event.SourceId = this.sourceId;
 
-    this.eProxyService.DispatchEvent(event).subscribe(
-      (value: any) => { console.log(value); },
-      (error: any) => { console.log('error', error); },
-      () => {},
-    );
+    this.eProxyService.DispatchEvent(event).toPromise();
   }
 
   private openTab(evt, tabName: string) {

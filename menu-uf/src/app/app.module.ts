@@ -2,14 +2,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpResponse } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { uEventsIds, uParts, uEvent } from '@uf-shared-models/event';
+import { uEventsIds, uEvent, UParts } from '@uf-shared-models/index';
 import { MaterialModule } from './material-modules';
 
 @NgModule({
@@ -32,7 +32,7 @@ import { MaterialModule } from './material-modules';
 export class AppModule {
   title = 'menu';
 
-  sourceId: string = uParts.Menu;
+  sourceId: string = UParts.Menu.SourceId;
 
   elToPlace: { [id: number]: string } = {};
 
@@ -41,20 +41,24 @@ export class AppModule {
     private eProxyService: EventProxyLibService
   ) {
     this.eProxyService.StartQNA(this.sourceId).subscribe(
-      (value) => {
-        if (!value.body) { return; }
-
-        if (!value.body.hasOwnProperty('EventId')) {
-          throw new Error('No EventId in message');
-        }
-
-        if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEventAsync(value.body.Events);
-        }
+      (response) => {
+        this.newHttpResponseAsync(response);
       },
       (error) => { console.log(this.title, error); },
       () => {}
     );
+  }
+
+  private async newHttpResponseAsync(response: HttpResponse<any>) {
+    if (!response.body) { return; }
+
+    if (!response.body.hasOwnProperty('EventId')) {
+      throw new Error('No EventId in message');
+    }
+
+    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
+      this.parseNewEventAsync(response.body.Events);
+    }
   }
 
   private async parseNewEventAsync(eventList: uEvent[]) {

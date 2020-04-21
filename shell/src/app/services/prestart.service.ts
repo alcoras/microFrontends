@@ -30,8 +30,8 @@ export class PrestartService {
         this.setUpLanguage(res);
       },
       (reject) => {
-        console.log('prestart.service failed with error: ', reject);
-        throw new Error();
+        console.log('prestart.service could not get language, setting default (en)', reject);
+        this.setUpLanguage(null);
       });
   }
 
@@ -47,10 +47,12 @@ export class PrestartService {
    * Sets up language by setting global environment paramater
    * @param response HttpResponse with lang data
    */
-  private setUpLanguage(response: HttpResponse<any>): string {
-    const lang: ILanguageSettings = response.body;
-    this.eProxyService.env.Language = lang.lang;
-    return lang.lang;
+  private setUpLanguage(response: HttpResponse<ILanguageSettings> | null) {
+    if (!response) {
+      this.eProxyService.env.Language = 'en';
+      return;
+    }
+    this.eProxyService.env.Language = response.body.lang;
   }
 
   /**

@@ -32,5 +32,12 @@
             "url": "http://localhost:3004",
             "webRoot": "${workspaceFolder}/personnel-uf"
         },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "observer",
+            "url": "http://localhost:3005",
+            "webRoot": "${workspaceFolder}/observer-uf"
+        }
     ]
 }

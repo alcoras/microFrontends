@@ -16,11 +16,6 @@ import { HttpResponse } from '@angular/common/http';
 })
 export class UFManagerComponent {
   /**
-   * Title  of ufmanager component
-   */
-  private title = 'uf-manager';
-
-  /**
    * Source id of ufmanager component
    */
   private sourceId: string = UParts.UFManager.SourceId;
@@ -77,22 +72,30 @@ export class UFManagerComponent {
 
     this.eProxyService.StartQNA(this.sourceId).subscribe
     (
-      (value: HttpResponse<any>) => {
-        if (!value) { throw new Error('Can\'t connect to backend'); }
-
-        if (!value.body) { return; }
-
-        if (!value.body.hasOwnProperty('EventId')) {
-          throw new Error('No EventId in message');
-        }
-
-        if (value.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEventAsync(value.body.Events);
-        }
+      (response: HttpResponse<any>) => {
+        this.newHttpResponseAsync(response);
       },
-      (error) => { console.log(this.title, error); },
+      (error) => { console.log(this.sourceName, error); },
       () => {}
     );
+  }
+
+  /**
+   * News http response async parser
+   * @param response HttpResponse
+   */
+  private async newHttpResponseAsync(response: HttpResponse<any>) {
+    if (!response) { throw new Error('Can\'t connect to backend'); }
+
+    if (!response.body) { return; }
+
+    if (!response.body.hasOwnProperty('EventId')) {
+      throw new Error('No EventId in message');
+    }
+
+    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
+      this.parseNewEventAsync(response.body.Events);
+    }
   }
 
   /**
@@ -110,7 +113,8 @@ export class UFManagerComponent {
     const urlList = [
       url + ':3002/en/scripts/conf.js', // Menu
       // url + ':3004/scripts/conf.js', // Personnel
-      // url + ':3005/scripts/conf.js' // Occupation
+      // url + ':3005/scripts/conf.js', // Occupation
+      url + ':3006/scripts/conf.js' // Observer
     ];
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());

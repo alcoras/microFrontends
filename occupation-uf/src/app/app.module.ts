@@ -10,7 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EventButtonPressed } from '@uf-shared-events/index';
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { uEventsIds } from '@uf-shared-models/event';
+import { uEventsIds, UParts } from '@uf-shared-models/index';
 import { NewOccupComponent } from './new-occup/new-occup.component';
 import { MaterialModule } from './meterial-module';
 
@@ -37,10 +37,10 @@ import { OccupTable3Component } from './occup-table3/occup-table3.component';
 })
 
 export class AppModule {
-  title = 'occupationsNg9';
+  title = 'occupation';
   traceId = 1;
 
-  sourceId: string = uParts.OccupationNg9;
+  sourceId: string = UParts.Occupations.SourceId;
 
   elToPlace: { [id: number]: string } = {};
 

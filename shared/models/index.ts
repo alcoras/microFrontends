@@ -1,6 +1,6 @@
 export * from './EventResponse';
 export * from './event';
 export * from './PersonDataRead';
-export * from './IPersonnel';
+export * from './Interfaces/IPersonnel';
 export * from './APIGatewayResponse';
 export * from './UParts';

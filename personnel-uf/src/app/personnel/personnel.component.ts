@@ -47,23 +47,31 @@ export class PersonnelComponent {
   public StartQNA() {
     this.eProxyService.StartQNA(this.sourceId).subscribe(
       (response: HttpResponse<any>) => {
-        if (!response) {
-          throw new Error('Can\'t connect to backend');
-        }
-
-        if (!response.body) { return; }
-
-        if (!response.body.hasOwnProperty('EventId')) {
-          throw new Error('No EventId in message');
-        }
-
-        if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-          this.parseNewEvent(response);
-        }
+        this.newHttpResponseAsync(response);
       },
-      (error) => { console.log(this.sourceName, error); },
+      (error) => { console.error(this.sourceName, error); },
       () => { }
     );
+  }
+
+  /**
+   * Parses new http response
+   * @param response HttpResponse
+   */
+  private async newHttpResponseAsync(response: HttpResponse<any>) {
+    if (!response) {
+      throw new Error('Can\'t connect to backend');
+    }
+
+    if (!response.body) { return; }
+
+    if (!response.body.hasOwnProperty('EventId')) {
+      throw new Error('No EventId in message');
+    }
+
+    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
+      this.parseNewEvent(response);
+    }
   }
 
   /**
