@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, repeat, takeUntil, timeout, retry, repeatWhen } from 'rxjs/operators';
+import { Observable, of, Subject, Observer } from 'rxjs';
+import { catchError  } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
 import { EnvironmentService } from './services/environment.service';
 
@@ -33,12 +33,6 @@ export class EventProxyLibService {
    */
   private apiGatewayURL: string;
 
-  /**
-   * How many times new connection will be
-   * established in StartQNA observable
-   * Note: stack too deep error if more than 9999
-   */
-  private readonly repeatTimes = 9999;
 
   /**
    * Gets/Sets api gateway url
@@ -103,17 +97,19 @@ export class EventProxyLibService {
 
     console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
 
-    return this.GetLastEvents(this.sourceID)
-      .pipe(
-        repeat(this.repeatTimes),
-        takeUntil(this.stop),
-      );
+    return new Observable<HttpResponse<any>>( sub => {
+      this.push(sub);
+    });
   }
 
   /**
    * Ends qna - sends complete to StartQNA observable
    */
   public EndQNA() {
+    if (!this.Status) {
+      console.log(`${this.sourceID} Ended, but already ended.`);
+      return;
+    }
     this.Status = false;
     this.stop.next(true);
     console.log(`${this.sourceID} Ending listening`);
@@ -187,6 +183,28 @@ export class EventProxyLibService {
     )
     .pipe(
       catchError(this.handleErrors<any>(caller)),
+    );
+  }
+
+  /**
+   * Recursive push for infinite (or until stopped) event requesting from backend
+   * @param sub Observer
+   */
+  private push(sub: Observer<any>) {
+    if (!this.Status) {
+      sub.complete();
+    }
+    this.GetLastEvents(this.sourceID).toPromise().then(
+      (resolve: HttpResponse<any>) => {
+        sub.next(resolve);
+        this.push(sub);
+      },
+      (reject) => {
+        setTimeout(() => {
+          sub.next(reject);
+          this.push(sub);
+        }, 1000);
+      }
     );
   }
 

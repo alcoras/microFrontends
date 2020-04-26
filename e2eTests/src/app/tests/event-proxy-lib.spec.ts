@@ -33,7 +33,7 @@ class TestEvent extends uEvent {
 
 
 // tslint:disable-next-line: no-big-function
-describe('EventProxyLibService', () => {
+fdescribe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
 
     const backendURL = 'http://localhost:54366';
@@ -88,7 +88,7 @@ describe('EventProxyLibService', () => {
       }
     );
 
-    fit('should init', () => {
+    it('should init', () => {
       expect(service).toBeTruthy();
     });
 

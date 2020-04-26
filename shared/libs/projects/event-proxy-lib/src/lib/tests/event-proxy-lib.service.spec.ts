@@ -103,26 +103,31 @@ describe('EventProxyLibService', () => {
       );
     });
 
+    // TODO: convert to marble test
+    // https://rxjs-dev.firebaseapp.com/guide/testing/internal-marble-tests
     it('emulating work', async (done) => {
+      const responseTimeMs = 100;
+      const parsingTimeMs = 200;
+      const emulationTimeMs = 600;
       let requestsSent = 0;
       let requestsParsed = 0;
       let doneParsing = 0;
       let launchedParsing = 0;
       // tslint:disable-next-line: completed-docs
       function fakeGetLastEvents(): Observable<HttpResponse<any>> {
-        requestsSent++;
         return new Observable(sub => {
           setTimeout(() => {
             sub.next(new HttpResponse({status: 200}));
+            requestsSent++;
             sub.complete();
-          }, 100);
+          }, responseTimeMs);
         });
       }
 
       // tslint:disable-next-line: completed-docs
       async function parseAsync() {
         launchedParsing++;
-        await delay(200);
+        await delay(parsingTimeMs);
         doneParsing++;
       }
 
@@ -137,10 +142,12 @@ describe('EventProxyLibService', () => {
         }
       );
 
-      await delay(600);
+      await delay(emulationTimeMs);
+      expect(requestsSent + 1).toBe(emulationTimeMs / responseTimeMs, 'requests in emulation time');
+      // + 1 for requests because 100 ms delay thus always one less request
       expect(requestsParsed).toBe(requestsSent, 'Parsed should equal reqeusts sent');
-      expect(launchedParsing).toBe(2, 'launchedParsing should be 2');
-      expect(doneParsing).toBe(2, 'doneParsing should be 2');
+      expect(launchedParsing).toBe(requestsSent, 'launchedParsing should be 2');
+      expect(doneParsing).toBe( (emulationTimeMs - responseTimeMs - parsingTimeMs) / responseTimeMs);
       service.EndQNA();
       done();
     });
