@@ -105,7 +105,7 @@ export class EventProxyLibService {
 
     return this.GetLastEvents(this.sourceID)
       .pipe(
-        repeatWhen(() => this.GetLastEvents(this.sourceID)),
+        repeat(this.repeatTimes),
         takeUntil(this.stop),
       );
   }

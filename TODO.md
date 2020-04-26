@@ -62,5 +62,7 @@
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
 32. find every promise or observable and handle errors
 33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
-
-33. 
+34. e2eTests actually are integration? tests, currently there are no e2e tests
+35. Consider adding (example personnel-uf/**/PersonnelAPI.service) event subscribtion to id to library
+ 
+36

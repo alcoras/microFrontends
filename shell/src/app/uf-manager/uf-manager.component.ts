@@ -99,7 +99,7 @@ export class UFManagerComponent {
   }
 
   /**
-   * Preloads scripts for each micro frontend.
+   * Preloads scripts for each micro frontend. muy importante
    * @returns Promise
    */
   private preloadScripts() {
@@ -112,9 +112,9 @@ export class UFManagerComponent {
 
     const urlList = [
       url + ':3002/en/scripts/conf.js', // Menu
-      // url + ':3004/scripts/conf.js', // Personnel
+      url + ':3004/scripts/conf.js', // Personnel
       // url + ':3005/scripts/conf.js', // Occupation
-      url + ':3006/scripts/conf.js' // Observer
+      // url + ':3006/scripts/conf.js' // Observer
     ];
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());
