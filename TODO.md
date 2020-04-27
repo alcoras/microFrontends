@@ -63,7 +63,9 @@
 32. find every promise or observable and handle errors
 33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
 34. e2eTests actually are integration? tests, currently there are no e2e tests
-35. Consider adding (example personnel-uf/**/PersonnelAPI.service) event subscribtion to id to library
+35. Consider adding (example personnel-uf/**/PersonnelAPI.service) event subscription-to-id to library
 36. add concurrently and serve to projects
-
-37.
+37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
+38. shared\events\backend\CreateUpdateEnterpisePersonData.ts convert to classes
+39. Consider adding interfaces for microfrontends (sourceId sourceName and so on)
+40

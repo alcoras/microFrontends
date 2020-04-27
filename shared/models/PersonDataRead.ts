@@ -17,7 +17,7 @@ export class PersonDataRead extends uEvent {
   public ParentSourceEventUniqueId: number;
 
   /**
-   * Total number of entries for PersonData
+   * Total number of entries of PersonData
    */
   public CommonNumberRecords: number;
 }

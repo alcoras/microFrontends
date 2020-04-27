@@ -77,7 +77,7 @@ export class PersonnelAPIService {
       (resolve, reject) => {
         this.get(multiSorting, page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
           if (response.status !== 200) {
-            return new Error('Failed to retrive data');
+            return new Error('Failed to retrieve data');
           }
 
           const uniqueId = response.body.Ids[0];

@@ -6,7 +6,6 @@ import { trigger, state, transition, style, animate } from '@angular/animations'
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { ExampleHttpDatabase, } from './local-json-api';
 import { FormGroup } from '@angular/forms';
 import { IPersonnel } from '@uf-shared-models/';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
@@ -45,7 +44,6 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
     'Posada',
     'PodatkovaPilga',
   ];
-  exampleDatabase: ExampleHttpDatabase | null;
   data: IPersonnel[] = [];
   expandedElement: IPersonnel | null;
 
@@ -135,7 +133,6 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.exampleDatabase = new ExampleHttpDatabase(this.httpClient);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -145,19 +142,19 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          if (this.exampleDatabase !== undefined) {
-            const sorts: string[] = [];
 
-            // check if active sort is in a list of collums we provide
-            if (this.columnsToDisplay.includes(this.sort.active)) {
-              // add - char to the end if desc
-              const oneSort = this.sort.direction === 'desc' ? this.sort.active : `${this.sort.active}-`;
+          const sorts: string[] = [];
 
-              sorts.push(oneSort);
-            }
+          // check if active sort is in a list of collums we provide
+          if (this.columnsToDisplay.includes(this.sort.active)) {
+            // add - char to the end if desc
+            const oneSort = this.sort.direction === 'desc' ? this.sort.active : `${this.sort.active}-`;
 
-            return this.apiService.Get(sorts, this.paginator.pageIndex, this.paginator.pageSize);
+            sorts.push(oneSort);
           }
+
+          return this.apiService.Get(sorts, this.paginator.pageIndex, this.paginator.pageSize);
+
         }),
         map((data: IGetResponse) => {
           // Flip flag to show that loading has finished.

@@ -1,4 +1,4 @@
-import { uEvent, uEventsIds } from '../../models/event';
+import { uEvent, uEventsIds } from '../../../models/event';
 
 /**
  * Remove enterpise person data event

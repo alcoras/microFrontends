@@ -28,18 +28,16 @@ describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eventBus: EventBusService;
 
-  beforeEach(
-    async () => {
-      TestBed.configureTestingModule({
-        providers: [
-          { provide: EventProxyLibService, useValue: eProxyServiceMock},
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: EventProxyLibService, useValue: eProxyServiceMock},
         ],
       });
 
-      service = TestBed.inject(PersonnelAPIService);
-      eventBus = TestBed.inject(EventBusService);
-    }
-  );
+    service = TestBed.inject(PersonnelAPIService);
+    eventBus = TestBed.inject(EventBusService);
+  });
 
   afterEach(() => {
   });

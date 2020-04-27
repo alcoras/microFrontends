@@ -79,5 +79,11 @@ export enum uEventsIds {
   RemovePersonData = 2010,
   ReadPersonDataQuery = 2011,
   FrontEndEventReceived = 2012,
-  ReadPersonData = 2013
+  ReadPersonData = 2013,
+  UpdatePersonData = 2014,
+  OccupationsCreate = 2015,
+  OccupationsUpdate = 2016,
+  OccupationsDelete = 2017,
+  OccupationsReadQuery = 2018,
+  OccupationsRead = 2019,
 }

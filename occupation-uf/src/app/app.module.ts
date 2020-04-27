@@ -1,20 +1,21 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EventButtonPressed } from '@uf-shared-events/index';
-import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 import { uEventsIds, UParts } from '@uf-shared-models/index';
 import { NewOccupComponent } from './new-occup/new-occup.component';
 import { MaterialModule } from './meterial-module';
 
 import { OccupTable3Component } from './occup-table3/occup-table3.component';
+import { EventBusService } from './services/EventBus.service';
+import { OccupationAPIService } from './services/OccupationAPI.service';
 
 @NgModule({
   declarations: [
@@ -29,10 +30,13 @@ import { OccupTable3Component } from './occup-table3/occup-table3.component';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    HttpClientModule,
     EventProxyLibModule
   ],
-  providers: [ EventProxyLibService ],
+  providers: [
+    EventProxyLibService,
+    EventBusService,
+    OccupationAPIService
+  ],
   entryComponents: [AppComponent]
 })
 

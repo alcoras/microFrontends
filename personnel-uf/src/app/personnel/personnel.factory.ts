@@ -6,8 +6,8 @@ import { PersonnelComponent } from './personnel.component';
  * @returns Promise
  */
 export function PersonnelComponentFactory(provider: PersonnelComponent) {
-  return new Promise( (res) => {
-    provider.InitAsync();
+  return new Promise( async (res) => {
+    await provider.InitAsync();
     provider.StartQNA();
     res();
   });

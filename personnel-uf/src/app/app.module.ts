@@ -8,7 +8,6 @@ import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event
 
 import { AppComponent } from './app.component';
 import { MaterialModule } from './meterial-module';
-import { PersonnelTableComponent } from './personnel-table/personnel-table.component';
 import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 import { EventBusService } from './services/EventBus.service';
 import { PersonnelAPIService } from './services/PersonnelAPI.service';
@@ -19,7 +18,6 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
 @NgModule({
   declarations: [
     AppComponent,
-    PersonnelTableComponent,
     PersonnelTable2Component,
     NewPersonnelComponent,
   ],
@@ -35,10 +33,9 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
     EventProxyLibService,
     EventBusService,
     PersonnelAPIService,
-    PersonnelComponent,
     { provide: APP_INITIALIZER, useFactory: PersonnelComponentFactory, deps: [PersonnelComponent], multi: false}
   ],
-  bootstrap: [AppComponent],
+  entryComponents: [AppComponent],
 })
 export class AppModule {
   constructor(
@@ -49,7 +46,7 @@ export class AppModule {
   ngDoBootstrap(): void {
     const { injector } = this;
 
-    const ngCustomElement2 = createCustomElement(PersonnelComponent, { injector });
+    const ngCustomElement2 = createCustomElement(AppComponent, { injector });
 
     if (!customElements.get('team-personnel-2')) {
       customElements.define('team-personnel-2', ngCustomElement2); }

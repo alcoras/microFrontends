@@ -6,6 +6,7 @@
     "start": "ng serve --port 3005",
     "build": "ng build",
     "test": "ng test",
+    "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "ng_serve": "serve --cors -l tcp://0.0.0.0:3005 dist/",

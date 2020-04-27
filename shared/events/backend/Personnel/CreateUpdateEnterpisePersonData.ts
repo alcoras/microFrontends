@@ -1,5 +1,5 @@
-import { IPersonnel } from '../../models/Interfaces/IPersonnel';
-import { uEventsIds, uEvent } from '../../models/event';
+import { IPersonnel } from '../../../models/Interfaces/IPersonnel';
+import { uEventsIds, uEvent } from '../../../models/event';
 
 export class CreateUpdateEnterpisePersonData implements IPersonnel, uEvent {
   PersonDataID: number;
