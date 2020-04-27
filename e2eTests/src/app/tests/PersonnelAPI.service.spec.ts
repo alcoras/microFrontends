@@ -6,15 +6,7 @@ import { HttpResponse } from '@angular/common/http';
 import { UParts, uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
-
-/**
- * Gets random number
- * @param max max int value
- * @returns random number
- */
-function genRandomNumber(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
+import { genRandomNumber } from './helpers/helpers';
 
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;

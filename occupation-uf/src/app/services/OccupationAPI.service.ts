@@ -102,6 +102,9 @@ export class OccupationAPIService {
    */
   // TODO: add timeout and reject
   public Get(page: number, pageSize: number): Promise<IGetResponse> {
+    if (page < 1 || pageSize < 1) {
+      throw new Error('page or pagesize was less than 1');
+    }
     return new Promise<IGetResponse>(
       (resolve, reject) => {
         this.get(page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {

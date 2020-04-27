@@ -33,7 +33,7 @@ class TestEvent extends uEvent {
 
 
 // tslint:disable-next-line: no-big-function
-fdescribe('EventProxyLibService', () => {
+describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
 
     const backendURL = 'http://localhost:54366';
@@ -65,6 +65,7 @@ fdescribe('EventProxyLibService', () => {
 
         service = TestBed.inject(EventProxyLibService);
         service.ApiGatewayURL = backendURL;
+        await service.ConfirmEvents(testinID, [], true).toPromise();
 
         // tslint:disable-next-line: no-ignored-initial-value
         serviceList.forEach(element => {
@@ -168,7 +169,7 @@ fdescribe('EventProxyLibService', () => {
       );
 
       // 2. Subscribe to event
-      const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], false);
+      const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], true);
       subEvent.SourceName = testinName;
       await service.DispatchEvent(subEvent).toPromise();
 

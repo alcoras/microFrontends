@@ -193,6 +193,7 @@ export class EventProxyLibService {
   private push(sub: Observer<any>) {
     if (!this.Status) {
       sub.complete();
+      return;
     }
     this.GetLastEvents(this.sourceID).toPromise().then(
       (resolve: HttpResponse<any>) => {

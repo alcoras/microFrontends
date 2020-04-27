@@ -31,6 +31,9 @@
 
       "@personnel-services/":["../personnel-uf/src/app/services"],
       "@personnel-services/*":["../personnel-uf/src/app/services/*"],
+
+      "@occupation-services/":["../occupation-uf/src/app/services"],
+      "@occupation-services/*":["../occupation-uf/src/app/services/*"],
     }
   },
   "angularCompilerOptions": {
