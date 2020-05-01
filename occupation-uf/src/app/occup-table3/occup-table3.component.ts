@@ -3,11 +3,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
-import { HttpClient, HttpResponse } from '@angular/common/http';
 import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { ExampleHttpDatabase, IOccupation, } from './local-json-api';
 import { FormGroup } from '@angular/forms';
+import { OccupationData } from '@uf-shared-models/';
+import { OccupationAPIService } from '../services/OccupationAPI.service';
+import { IGetResponse } from '../services/interfaces/IGetResponse';
 
 @Component({
   selector: 'app-occup-table3',
@@ -27,10 +28,12 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  columnsToDisplay: string[] = ['id', 'occupation', 'created_at'];
-  exampleDatabase: ExampleHttpDatabase | null;
-  data: IOccupation[] = [];
-  expandedElement: IOccupation | null;
+  columnsToDisplay: string[] = [
+    'OccupationAggregateIdHolderId',
+    'Name',
+    'TariffCategory'];
+  data: OccupationData[] = [];
+  expandedElement: OccupationData | null;
 
   dataSource = new MatTableDataSource();
 
@@ -41,37 +44,42 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   form: FormGroup;
 
   constructor(
-    private httpClient: HttpClient) {
+    private apiService: OccupationAPIService) {
   }
 
   updateEntry(id: number) {
-    const date = document.querySelector(`[date_element_id="${id}"]`) as HTMLInputElement;
-    const txtEl = document.querySelector(`[occu_element_id="${id}"]`) as HTMLTextAreaElement;
+    const tariffElement = document.querySelector(`[occu_TariffCategory="${id}"]`) as HTMLTextAreaElement;
+    const nameElement = document.querySelector(`[occu_Name="${id}"]`) as HTMLTextAreaElement;
 
-    const up: IOccupation = { id: id.toString(), occupation: txtEl.value, created_at: (new Date(date.value)).toISOString() };
+    const up: OccupationData = {
+      OccupationAggregateIdHolderId: id,
+      DocReestratorId: 1, // TODO: because demo
+      Name: nameElement.value,
+      TariffCategory: +tariffElement.value
+    };
 
-    this.exampleDatabase.updateOccupation(up).subscribe(
-      (ret: HttpResponse<any>) => {
-        if (ret.status === 200) {
-          console.log('updates: ', id);
-          this.refreshTable();
-        }
+    this.apiService.Update(up).then(
+      () => {
+        console.log('update', id);
+        this.refreshTable();
       },
-      () => {},
-      () => {}
+      (rejected) => {
+        console.error(rejected);
+        throw new Error('Failed to update');
+      }
     );
   }
 
-  deleteEntry(id: number) {
-    this.exampleDatabase.delOccupation(id).subscribe(
-      (ret: HttpResponse<any>) => {
-        if (ret.status === 200) {
-          console.log('removed: ', id);
-          this.refreshTable();
-        }
+  public DeleteEntry(id: number) {
+    this.apiService.Delete(id).then(
+      (resolved) => {
+        console.log('delete', id);
+        this.refreshTable();
       },
-      () => {},
-      () => {}
+      (rejected) => {
+        console.error(rejected);
+        throw new Error('Failed to update');
+      }
     );
   }
 
@@ -91,7 +99,6 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.exampleDatabase = new ExampleHttpDatabase(this.httpClient);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -101,26 +108,25 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          if (this.exampleDatabase !== undefined) {
-            return this.exampleDatabase.getOccupations(
-              this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
-          }
+
+          return this.apiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
-        map((data: HttpResponse<any>) => {
+        map((data: IGetResponse) => {
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = false;
-          this.resultsLength = +data.headers.get('X-Total-Count');
+          this.resultsLength = data.total;
 
-          let ic: IOccupation[];
-          ic = data.body;
-          this.dataSource = new MatTableDataSource(data.body);
+          let ic: OccupationData[];
+          ic = data.items;
+          this.dataSource = new MatTableDataSource(data.items);
           return ic;
         }),
-        catchError(() => {
+        catchError((err) => {
           this.isLoadingResults = false;
           // Catch if the GitHub API has reached its rate limit. Return empty data.
           this.isRateLimitReached = true;
+          console.error(err);
           return observableOf([]);
         })
       ).subscribe((data) => this.data = data);

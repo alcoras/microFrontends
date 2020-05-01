@@ -1,13 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ExampleHttpDatabase } from '../occup-table3/local-json-api';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-
-export interface IOccupation {
-  id: string;
-  occupation: string;
-  created_at: string;
-}
+import { OccupationAPIService } from '../services/OccupationAPI.service';
+import { OccupationData } from '@uf-shared-models/index';
 
 @Component({
   selector: 'app-new-occup',
@@ -16,13 +10,10 @@ export interface IOccupation {
 })
 export class NewOccupComponent implements OnInit {
 
-  exampleDatabase: ExampleHttpDatabase | null;
-
   constructor(
-    private httpClient: HttpClient,
+    private apiService: OccupationAPIService,
     public dialogRef: MatDialogRef<NewOccupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IOccupation) {
-    this.exampleDatabase = new ExampleHttpDatabase(this.httpClient);
+    @Inject(MAT_DIALOG_DATA) public data: OccupationData) {
   }
 
   onNoClick(): void {
@@ -32,15 +23,15 @@ export class NewOccupComponent implements OnInit {
 
   save(): void {
     this.dialogRef.close();
-    this.exampleDatabase.createNewEntry(this.data).subscribe(
-      (ret: HttpResponse<any>) => {
-        if (ret.status === 201) {
-          console.log('added');
-          // this.refreshTable();
-        }
+    this.apiService.Create(this.data).then(
+      () => {
+        console.log('added');
+        window.location.reload();
       },
-      () => {},
-      () => {}
+      (rejected) => {
+        console.error(rejected);
+        throw new Error('Failed to update');
+      }
     );
   }
 

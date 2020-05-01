@@ -1,13 +1,14 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, async } from '@angular/core/testing';
 import { PersonnelAPIService } from '@personnel-services/PersonnelAPI.service';
 import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 import { EventBusService } from '@personnel-services/EventBus.service';
 import { HttpResponse } from '@angular/common/http';
-import { UParts, uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
+import { uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
 import { genRandomNumber } from './helpers/helpers';
 
+// tslint:disable-next-line: no-big-function
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eProxyService: EventProxyLibService;
@@ -15,6 +16,11 @@ describe('PersonnelAPI service', () => {
   const sourceId = 'PersonnelAPI_testing';
   const backendURL = 'http://localhost:54366';
   const backendPort = '54366';
+
+  beforeAll(async () => {
+    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
+    await eProxyService.DispatchEvent(subEvent).toPromise();
+  });
 
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
@@ -74,12 +80,51 @@ describe('PersonnelAPI service', () => {
     };
   }
 
-  it('should create and delete PersonData entry', async (done) => {
+  describe('Update', () => {
+    it('should update existing PersonData entry', async (done) => {
+      // 1. Sub to ReadPersonData
+
+      // 2. Start listenting to events
+      eProxyService.StartQNA(sourceId).subscribe(
+        (res: HttpResponse<EventResponse>) => propogateEvent(res));
+
+      // 3. Get entry
+      let entryToUpdate: IPersonnel;
+
+      await service.Get([], 1, 1000).then(
+        (res: IGetResponse) => {
+          if (res.total === 0) {
+            done.fail('no entries found');
+          }
+          entryToUpdate = res.items[0];
+        }
+      );
+
+      // 4. change something
+      const newField = `new field (${genRandomNumber(100)})`;
+      entryToUpdate.KodDRFO = newField;
+      entryToUpdate.PIP = newField;
+      await service.Update(entryToUpdate);
+
+      // 5. compare entry
+      await service.Get([], 1, 1000).then(
+        (res: IGetResponse) => {
+          for (const iterator of res.items) {
+            if (entryToUpdate.PersonDataID === iterator.PersonDataID) {
+              expect(entryToUpdate.KodDRFO).toBe(newField);
+              expect(entryToUpdate.PIP).toBe(newField);
+              done();
+            }
+          }
+        }
+      );
+    }, 6000);
+  });
+
+  it('should create and delete Person data entry', async (done) => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 15 * 1000;
     const newPersonnelData = createPersonnelEntry();
-    // 1. Sub to ReadPersonData
-    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
-    await eProxyService.DispatchEvent(subEvent).toPromise();
+    // 1. Subscription is happening before tests in beforeAll
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
@@ -91,7 +136,7 @@ describe('PersonnelAPI service', () => {
     let currentLen: number;
     let id: number;
 
-    await service.Get([], 0, 1000).then(
+    await service.Get([], 1, 1000).then(
       (res: IGetResponse) => {
         id = res.items[0].PersonDataID;
         currentLen = res.total;
@@ -99,32 +144,29 @@ describe('PersonnelAPI service', () => {
     );
 
     // 4. create new persondata
-    await service.CreateUpdate(newPersonnelData);
+    await service.Create(newPersonnelData);
 
-    await service.Get([], 0, 1000).then(
+    await service.Get([], 1, 1000).then(
       (res: IGetResponse) => {
         expect(res.total).toBeGreaterThan(currentLen);
-        done();
       }
     );
 
     // 5. delete an entry
     await service.Delete(id);
 
-    await service.Get([], 0, 1000).then(
+    await service.Get([], 1, 1000).then(
       (res: IGetResponse) => {
         expect(res.total).toEqual(currentLen);
         done();
       }
     );
-  });
+  }, 6000);
 
   for (let index = 0; index < 1; index++) {
-    it('should create new PersonData entry', async (done) => {
+    fit('should create new PersonData entry', async (done) => {
       const newPersonnelData = createPersonnelEntry();
-      // 1. Sub to ReadPersonData
-      const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
-      await eProxyService.DispatchEvent(subEvent).toPromise();
+      // 1. Subscription is happening before tests in beforeAll
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
@@ -132,21 +174,20 @@ describe('PersonnelAPI service', () => {
           propogateEvent(res);
         },
         (err) => { done.fail(err); },
-        () => { console.log('complete'); }
       );
 
       // 3. Get current length
       let currentLen;
-      await service.Get([], 0, 1000).then(
+      await service.Get([], 1, 1000).then(
         (res: IGetResponse) => {
           currentLen = res.items.length;
         }
       );
 
       // 4. create new persondata
-      await service.CreateUpdate(newPersonnelData).then(() => {
+      await service.Create(newPersonnelData).then(() => {
           // 5. compare length
-          service.Get([], 0, 1000).then(
+          service.Get([], 1, 1000).then(
             (res: IGetResponse) => {
               expect(res.total).toBeGreaterThan(currentLen);
               done();
@@ -161,9 +202,7 @@ describe('PersonnelAPI service', () => {
   }
 
   it('should get events after ReadPersonDataQuery', async (done) => {
-    // 1. Sub to ReadPersonData
-    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
-    await eProxyService.DispatchEvent(subEvent).toPromise();
+    // 1. Subscription is happening before tests in beforeAll
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
@@ -172,7 +211,7 @@ describe('PersonnelAPI service', () => {
     });
 
     // 3. Send ReadPersonDataQuery event
-    service.Get([], 0, 5).then(
+    service.Get([], 1, 5).then(
       (res: IGetResponse) => {
         res.items.forEach(element => {
           expect(element.PersonDataID).toBeDefined();

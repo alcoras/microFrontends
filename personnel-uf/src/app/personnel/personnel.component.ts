@@ -6,7 +6,7 @@ import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
 
 /**
- * Main entry for personnel micro frontend
+ * Main entry component for personnel micro frontend
  */
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class PersonnelComponent {
   private sourceName: string = UParts.Personnel.SourceName;
 
   /**
-   * Element to place array
+   * Element to place dictionary
    */
   private elToPlace: { [id: number]: string } = {};
 

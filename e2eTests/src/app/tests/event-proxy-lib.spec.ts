@@ -1,4 +1,4 @@
-import { HttpResponse, HttpClientModule } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { uEvent, uEventsIds } from '@uf-shared-models/event';
@@ -77,8 +77,7 @@ describe('EventProxyLibService', () => {
       }
     );
 
-    afterEach(
-      async () => {
+    afterEach(async () => {
         service.EndQNA();
         await service.ConfirmEvents(testinID, [], true).toPromise();
 
@@ -163,9 +162,7 @@ describe('EventProxyLibService', () => {
           expect(res.body.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
 
           done();
-        },
-        () => { fail(httpErrorMsg); },
-        () => { }
+        }
       );
 
       // 2. Subscribe to event
@@ -199,11 +196,11 @@ describe('EventProxyLibService', () => {
       await service.DispatchEvent([subEvent]).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
-      await delay(3000);
+      await delay(1000);
       // 3. Fire event
       await service.DispatchEvent(eventArray).toPromise();
 
-      await delay(3000);
+      await delay(1000);
 
       // 3. Listening to events
       service.StartQNA(testinID).subscribe
@@ -238,7 +235,7 @@ describe('EventProxyLibService', () => {
       }
 
       await service.DispatchEvent(subEventList).toPromise();
-      await delay(3000);
+      await delay(1000);
       await service.DispatchEvent(fireEventList).toPromise();
       await delay(1000);
 

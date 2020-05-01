@@ -3,7 +3,11 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { EventBusService } from './EventBus.service';
 import { IPersonnel, APIGatewayResponse, PersonDataRead, UParts } from '@uf-shared-models/index';
-import { ReadPersonDataQuery, CreateUpdateEnterpisePersonData, RemoveEnterpisePersonData } from '@uf-shared-events/index';
+import {
+  ReadPersonDataQuery,
+  CreateUpdatePersonData,
+  PersonDataCreateUpdateFlag,
+  RemoveEnterpisePersonData } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 import { IGetResponse } from './interfaces/IGetResponse';
 
@@ -47,14 +51,32 @@ export class PersonnelAPIService {
   }
 
   /**
-   * Craetes or updates personnel entry (if PersonnelId is defined it will update)
+   * Craetes new personnel entry
    * @param personnel IPersonnel
    * @returns Promise
    */
-  public CreateUpdate(personnel: IPersonnel): Promise<HttpResponse<any>> {
+  public Create(personnel: IPersonnel): Promise<HttpResponse<any>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.createUpdate(personnel).toPromise().then( (val: HttpResponse<any>) => {
+      this.create(personnel).toPromise().then( (val: HttpResponse<any>) => {
+        if (val.status === 200) {
+          resolve(val);
+        } else {
+          reject(val);
+        }
+      });
+    });
+  }
+
+  /**
+   * Craetes new personnel entry
+   * @param personnel IPersonnel
+   * @returns Promise
+   */
+  public Update(personnel: IPersonnel): Promise<HttpResponse<any>> {
+    return new Promise( (resolve, reject) => {
+      // tslint:disable-next-line: no-identical-functions
+      this.update(personnel).toPromise().then( (val: HttpResponse<any>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -112,12 +134,29 @@ export class PersonnelAPIService {
   }
 
   /**
+   * Update existing PersonData entry
+   * @param personnel IPersonnel
+   * @returns Observable with HttpResponse
+   */
+  private update(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
+    const e = new CreateUpdatePersonData(
+      this.sourceId,
+      PersonDataCreateUpdateFlag.Update,
+      personnel);
+    e.SourceName = this.sourceName;
+    return this.eProxyService.DispatchEvent(e);
+  }
+
+  /**
    * Creates new PersonData entry
    * @param personnel IPersonnel
    * @returns Observable with HttpResponse
    */
-  private createUpdate(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
-    const e = new CreateUpdateEnterpisePersonData(this.sourceId, personnel);
+  private create(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
+    const e = new CreateUpdatePersonData(
+      this.sourceId,
+      PersonDataCreateUpdateFlag.Create,
+      personnel);
     e.SourceName = this.sourceName;
     return this.eProxyService.DispatchEvent(e);
   }

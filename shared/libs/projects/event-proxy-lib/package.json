@@ -1,5 +1,8 @@
 {
   "name": "event-proxy-lib",
+  "scripts": {
+    "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true"
+  },
   "version": "1.0.1",
   "peerDependencies": {
     "@angular/common": "^9.0.5",

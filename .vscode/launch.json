@@ -22,7 +22,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "occupations",
-            "url": "http://localhost:3003",
+            "url": "http://localhost:3005",
             "webRoot": "${workspaceFolder}/occupation-uf"
         },
         {

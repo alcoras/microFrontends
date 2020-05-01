@@ -15,8 +15,9 @@ export abstract class uEvent {
 
   /**
    * Source id of sender (microservice/frontend)
+   * undefined - to prevent sending no SourceId
    */
-  public SourceId = '';
+  public SourceId = 'undefined';
 
   /**
    * Aggregate id of event given by EventBroker
@@ -72,7 +73,7 @@ export enum uEventsIds {
   EventProccessedSuccessfully = 2003,
   EventProccessedWithFails = 2004,
   EventReceived = 2005,
-  CreateUpdatePersonData = 2006,
+  CreatePersonData = 2006,
   RegisterNewEvent = 2007,
   GetNewEvents = 2008,
   RegisterEventIds = 2009,

@@ -107,12 +107,12 @@ export class EventProxyLibService {
    */
   public EndQNA() {
     if (!this.Status) {
-      console.log(`${this.sourceID} Ended, but already ended.`);
+      console.log(`${this.sourceID} Trying to end, but already ended.`);
       return;
     }
     this.Status = false;
     this.stop.next(true);
-    console.log(`${this.sourceID} Ending listening`);
+    console.log(`${this.sourceID} Ending listening.`);
   }
 
   /**

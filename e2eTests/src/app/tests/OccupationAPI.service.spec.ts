@@ -13,12 +13,13 @@ import { IGetResponse } from '@occupation-services/interfaces/IGetResponse';
  */
 function createOccupationEntry(): OccupationData {
   return {
-    Name: `random Name ${genRandomNumber(100)}`,
+    Name: `random Name ${genRandomNumber(1000)}`,
     DocReestratorId: genRandomNumber(100),
     TariffCategory: genRandomNumber(10)
   };
 }
 
+// tslint:disable-next-line: no-big-function
 describe('Occupation API service', () => {
   let service: OccupationAPIService;
   let eProxyService: EventProxyLibService;
@@ -26,6 +27,11 @@ describe('Occupation API service', () => {
   const sourceId = 'OccupationAPI_testing';
   const backendURL = 'http://localhost:54366';
   const backendPort = '54366';
+
+  beforeAll(async () => {
+    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
+    await eProxyService.DispatchEvent(subEvent).toPromise();
+  });
 
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
@@ -87,18 +93,16 @@ describe('Occupation API service', () => {
     });
 
     it('should get events after Occupation query', async (done) => {
-
-      // 1. sub to OccupationsRead
-      const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
-      await eProxyService.DispatchEvent(subEvent).toPromise();
+      // 1. Subscription happens before tests
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
         (res: HttpResponse<any>) => {
           propogateEvent(res);
-      });
+        }
+      );
 
-      // 3. Send ReadPersonDataQuery event
+      // 3. Send OccupationReadDataQuery event
       const page = 1;
       const limit = 3;
       service.Get(page, limit).then(
@@ -113,15 +117,13 @@ describe('Occupation API service', () => {
           done();
         }
       );
-    });
+    }, 6000);
   });
 
   describe('Combination', () => {
-    fit('should create and then delete entry', async (done) => {
+    it('should create and then delete entry', async (done) => {
       const newEntry = createOccupationEntry();
-      // 1. Sub to OccupationsRead
-      const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
-      await eProxyService.DispatchEvent(subEvent).toPromise();
+      // 1. Subscription happens before tests
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
@@ -129,7 +131,7 @@ describe('Occupation API service', () => {
           propogateEvent(res);
       });
 
-      // 3. Get current length
+      // 3. Get current length and id
       let currentLen: number;
       let id: number;
 
@@ -140,13 +142,12 @@ describe('Occupation API service', () => {
         }
       );
 
-      // 4. create new persondata
+      // 4. create new occupation entry
       await service.Create(newEntry);
 
       await service.Get(1, 1000).then(
         (res: IGetResponse) => {
           expect(res.total).toBeGreaterThan(currentLen);
-          done();
         }
       );
 
@@ -162,14 +163,54 @@ describe('Occupation API service', () => {
     }, 6000);
   });
 
+  describe('Update', () => {
+
+    it('should update existing Occupation entry', async (done) => {
+
+      // 1. Subscription happens before tests
+
+      // 2. Start listenting to events
+      eProxyService.StartQNA(sourceId).subscribe(
+        (res: HttpResponse<EventResponse>) => {
+          propogateEvent(res);
+      });
+
+      let entryToUpdate: OccupationData;
+      // 3. Get entry
+      await service.Get(1, 1000).then(
+        (res: IGetResponse) => {
+          if (res.total === 0) {
+            done.fail('no entries found');
+          }
+          entryToUpdate = res.items[0];
+      });
+
+      // 4. change name
+      const newName = `new Name (${genRandomNumber(100)})`;
+      entryToUpdate.Name = newName;
+      entryToUpdate.DocReestratorId = 1; // TODO: for demo purposes
+      await service.Update(entryToUpdate);
+
+      // 5. compare entry
+      await service.Get(1, 1000).then(
+        (res: IGetResponse) => {
+          for (const iterator of res.items) {
+            if (entryToUpdate.OccupationAggregateIdHolderId === iterator.OccupationAggregateIdHolderId) {
+              expect(entryToUpdate.Name).toBe(newName);
+              done();
+            }
+          }
+      });
+    }, 6000);
+  });
+
   describe('Create', () => {
 
-    it('should create new PersonData entry', async (done) => {
+    for (let index = 0; index < 1; index++) {
+    it('should create new Occupation entry', async (done) => {
       const newOccupationData = createOccupationEntry();
 
-      // 1. sub to OccupationsRead
-      const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
-      await eProxyService.DispatchEvent(subEvent).toPromise();
+      // 1. Subscription happens before tests
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
@@ -201,6 +242,7 @@ describe('Occupation API service', () => {
     );
 
     }, 6000);
+  }
 
   });
 });

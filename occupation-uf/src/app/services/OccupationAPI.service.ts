@@ -2,23 +2,15 @@ import { HttpResponse, } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { EventBusService } from './EventBus.service';
-import { APIGatewayResponse, UParts, OccupationData, uEvent, uEventsIds } from '@uf-shared-models/index';
-import { OccupationsCreateUpdate, OccupationCreateUpdateFlag, OccupationsReadQuery, OccupationsReadResults } from '@uf-shared-events/index';
+import { APIGatewayResponse, UParts, OccupationData } from '@uf-shared-models/index';
+import {
+  OccupationsDeleteEvent,
+  OccupationsCreateUpdate,
+  OccupationCreateUpdateFlag,
+  OccupationsReadQuery,
+  OccupationsReadResults } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 import { IGetResponse } from './interfaces/IGetResponse';
-
-/**
- * Event to delete occupation entry
- */
-class OccupationDeleteEvent extends uEvent {
-  /**
-   * @param ObjectAggregateId Occupation id to delete
-   */
-  constructor(public ObjectAggregateId: number) {
-    super();
-    this.EventId = uEventsIds.OccupationsDelete;
-  }
-}
 
 /**
  * Personnel API service for CRUD operations
@@ -82,10 +74,10 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Promise
    */
-  public Update(occupationData: OccupationData, dateTimeValue: string): Promise<HttpResponse<any>> {
+  public Update(occupationData: OccupationData): Promise<HttpResponse<any>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(occupationData, dateTimeValue).toPromise().then( (val: HttpResponse<any>) => {
+      this.update(occupationData).toPromise().then( (val: HttpResponse<any>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -111,7 +103,6 @@ export class OccupationAPIService {
           if (response.status !== 200) {
             return new Error('Failed to retrieve data');
           }
-
           const uniqueId = response.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
@@ -146,11 +137,11 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Observable with HttpResponse
    */
-  private update(occupationData: OccupationData, dateTimeValue: string): Observable<HttpResponse<APIGatewayResponse>> {
+  private update(occupationData: OccupationData): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new OccupationsCreateUpdate(
       this.sourceId,
       OccupationCreateUpdateFlag.Update,
-      dateTimeValue,
+      new Date().toISOString(),
       occupationData);
 
     e.SourceName = this.sourceName;
@@ -163,6 +154,7 @@ export class OccupationAPIService {
    * @returns Observable with HttpResponse
    */
   private create(occupationData: OccupationData): Observable<HttpResponse<APIGatewayResponse>> {
+    occupationData.DocReestratorId = 1; // TODO: for Demo purpose
     const e = new OccupationsCreateUpdate(
       this.sourceId,
       OccupationCreateUpdateFlag.Create,
@@ -179,7 +171,7 @@ export class OccupationAPIService {
    * @returns Observable with HttpResponse
    */
   private delete(id: number): Observable<HttpResponse<APIGatewayResponse>> {
-    const e = new OccupationDeleteEvent(id);
+    const e = new OccupationsDeleteEvent(this.sourceId, id);
     e.SourceName = this.sourceName;
     return this.eProxyService.DispatchEvent(e);
   }

@@ -2,15 +2,13 @@
 
     <mat-card-content>
       <mat-form-field>
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="picker1" [(ngModel)]="data.created_at">
-        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
+        <mat-label>Tariff Category</mat-label>
+        <textarea [(ngModel)]="data.TariffCategory" matInput></textarea>
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>occupation</mat-label>
-        <textarea [(ngModel)]="data.occupation" matInput></textarea>
+        <mat-label>Occupation Name</mat-label>
+        <textarea [(ngModel)]="data.Name" matInput></textarea>
       </mat-form-field>
     </mat-card-content>
 

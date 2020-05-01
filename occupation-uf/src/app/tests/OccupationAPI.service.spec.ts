@@ -63,7 +63,7 @@ describe('Occupation API service', () => {
   describe('Update', () => {
 
     it('testing response', (done) => {
-      service.Update(newOccupationData, null).then(
+      service.Update(newOccupationData).then(
         (res: HttpResponse<any>) => {
           expect(res.status).toBe(200);
           done();
@@ -76,7 +76,7 @@ describe('Occupation API service', () => {
 
     it('testing content', (done) => {
       const dateTimeVal = new Date().toISOString();
-      service.Update(newOccupationData, dateTimeVal).then(
+      service.Update(newOccupationData).then(
         (res: HttpResponse<any>) => {
           expect(res.body.Events[0].DateTimeValue).toBe(dateTimeVal);
           expect(res.body.Events[0].EventId).toBe(uEventsIds.OccupationsUpdate);

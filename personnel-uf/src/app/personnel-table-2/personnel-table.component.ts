@@ -56,7 +56,6 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   form: FormGroup;
 
   constructor(
-    private httpClient: HttpClient,
     private apiService: PersonnelAPIService) {
   }
 
@@ -88,7 +87,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
       PodatkovaPilga: +PodatkovaPilga.value
     };
 
-    this.apiService.CreateUpdate(up).then(
+    this.apiService.Update(up).then(
       (resolved) => {
         console.log('update', id);
         this.refreshTable();
@@ -153,7 +152,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
             sorts.push(oneSort);
           }
 
-          return this.apiService.Get(sorts, this.paginator.pageIndex, this.paginator.pageSize);
+          return this.apiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
 
         }),
         map((data: IGetResponse) => {
@@ -167,9 +166,10 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
           this.dataSource = new MatTableDataSource(data.items);
           return ic;
         }),
-        catchError(() => {
+        catchError((err) => {
           this.isLoadingResults = false;
           this.isRateLimitReached = true;
+          console.error(err)
           return observableOf([]);
         })
       ).subscribe((data) => this.data = data);
