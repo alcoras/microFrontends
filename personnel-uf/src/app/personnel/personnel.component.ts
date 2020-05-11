@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { UParts, uEventsIds, EventResponse } from '@uf-shared-models/index';
+import { UParts, uEventsIds, EventResponse, APIGatewayResponse } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
@@ -34,9 +34,10 @@ export class PersonnelComponent {
 
   /**
    * Inits async is called by factory to assure its execution
+   *
    * @returns Promise
    */
-  public async InitAsync() {
+  public async InitAsync(): Promise<void> {
     this.preparePlacements();
     await this.subscribeToEventsAsync();
   }
@@ -44,13 +45,12 @@ export class PersonnelComponent {
   /**
    * Starts qna with backend
    */
-  public StartQNA() {
+  public StartQNA(): void {
     this.eProxyService.StartQNA(this.sourceId).subscribe(
-      (response: HttpResponse<any>) => {
+      (response: HttpResponse<EventResponse>) => {
         this.newHttpResponseAsync(response);
       },
       (error) => { console.error(this.sourceName, error); },
-      () => { }
     );
   }
 
@@ -58,14 +58,14 @@ export class PersonnelComponent {
    * Parses new http response
    * @param response HttpResponse
    */
-  private async newHttpResponseAsync(response: HttpResponse<any>) {
+  private async newHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
     if (!response) {
       throw new Error('Can\'t connect to backend');
     }
 
     if (!response.body) { return; }
 
-    if (!response.body.hasOwnProperty('EventId')) {
+    if (!response.body.EventId) {
       throw new Error('No EventId in message');
     }
 
@@ -78,7 +78,7 @@ export class PersonnelComponent {
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private async subscribeToEventsAsync(): Promise<HttpResponse<any>> {
+  private async subscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(
       this.sourceId, [
       [uEventsIds.ReadPersonData, 0, 0]
@@ -92,19 +92,19 @@ export class PersonnelComponent {
   /**
    * Prepares placements for components
    */
-  private preparePlacements() {
-    this.elToPlace[uEventsIds.PerssonelButtonPressed] = '<team-personnel-2></team-personnel-2>';
+  private preparePlacements(): void {
+    this.elToPlace[uEventsIds.PersonnelButtonPressed] = '<team-personnel-2></team-personnel-2>';
   }
 
   /**
    * Parses new events
    * @param event HttpResposne with event list
    */
-  private parseNewEvent(event: HttpResponse<EventResponse>) {
+  private parseNewEvent(event: HttpResponse<EventResponse>): void {
     event.body.Events.forEach(element => {
       switch (element.EventId) {
-        case uEventsIds.PerssonelButtonPressed:
-          if (this.processButtonPressed(element)) {
+        case uEventsIds.PersonnelButtonPressed:
+          if (this.processButtonPressed(element as EventButtonPressed)) {
             this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
           } else {
             throw new Error('Did not proccess after processButtonPressed');
@@ -122,16 +122,16 @@ export class PersonnelComponent {
   /**
    * Process button pressed event
    * @param event EventButtonPressed
+   * @returns true if successfully done
    */
-  private processButtonPressed(event: any) {
-    const e = event as EventButtonPressed;
+  private processButtonPressed(event: EventButtonPressed): boolean {
 
     // TODO: remove tslint:disable.. after one more case in switch
     // tslint:disable-next-line: no-small-switch
-    switch (e.EventId) {
-      case uEventsIds.PerssonelButtonPressed:
-        if (e.UniqueElementId) {
-          this.putToElement(e.UniqueElementId, this.getElFromID(e.EventId));
+    switch (event.EventId) {
+      case uEventsIds.PersonnelButtonPressed:
+        if (event.UniqueElementId) {
+          this.putToElement(event.UniqueElementId, this.getElFromID(event.EventId));
           return true;
         }
         break;
@@ -141,20 +141,21 @@ export class PersonnelComponent {
   }
 
   /**
-   * Puts to element to DOm
-   * @param elName element name to put in
-   * @param elToPut element name to put
+   * Puts to element to DOM
+   *
+   * @param {string} elName element name to put in
+   * @param {string} elToPut element name to put
    */
-  private putToElement(elName: string, elToPut: string) {
-    let element: HTMLElement;
-    element = document.getElementById(elName);
-    element.innerHTML = elToPut;
+  private putToElement(elName: string, elToPut: string): void {
+    document.getElementById(elName).innerHTML = elToPut;
   }
+
+
 
   /**
    * Gets element by id
    * @param id number of elment
-   * @returns name of element
+   * @returns {string} name of element
    */
   private getElFromID(id: number): string {
     const elId = this.elToPlace[id];

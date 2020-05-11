@@ -29,6 +29,8 @@
 35. DONE Consider adding (example personnel-uf/**/PersonnelAPI.service) event subscription-to-id to library
     35. 1. UPDATE: For demo should not be done
 38. DONE: shared\events\backend\CreateUpdateEnterpisePersonData.ts convert to classes
+44. DUPLICATE 40. migrate to eslint
+43. DONE: personnel-tests: write checks for page and pagesize
 
 ## UNDONE
 1. Languages
@@ -73,6 +75,22 @@
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 39. Consider adding interfaces for microfrontends (sourceId sourceName and so on)
 40. Make migration from tslint to eslint because: https://www.npmjs.com/package/tslint
+    40. 1. DONE personnel-uf
+    40. 2. shell
+    40. 3. menu-uf
+    40. 4. e2eTests
+    40. 5. observer-uf
+    40. 6. occupation-uf
+    40. 7. shared
 41. consider adding metric/performace tests
 42. occupations: transfer logic from module to component/service
-43. personnel-tests: write checks for page and pagesize
+45. remove abbreviations in names of functions/methods/classes/params 
+    45. 1. DONE personnel-uf
+    45. 2. shell
+    45. 3. menu-uf
+    45. 4. e2eTests
+    45. 5. observer-uf
+    45. 6. occupation-uf
+    45. 7. shared
+
+46.

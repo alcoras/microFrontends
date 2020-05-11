@@ -5,7 +5,7 @@ import { PersonDataRead } from '@uf-shared-models/index';
  * @param ms miliseconds
  * @returns Promise
  */
-export function delay(ms: number) {
+export function delay(ms: number): Promise<any> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -14,7 +14,7 @@ export function delay(ms: number) {
  * @param max max int value
  * @returns random number
  */
-export function genRandomNumber(max) {
+export function genRandomNumber(max): number {
   return Math.floor(Math.random() * Math.floor(max));
 }
 

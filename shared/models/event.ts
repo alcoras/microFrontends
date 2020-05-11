@@ -60,7 +60,7 @@ export abstract class uEvent {
  */
 export enum uEventsIds {
   InitEvent = 1000,
-  PerssonelButtonPressed = 1001,
+  PersonnelButtonPressed = 1001,
   InitMenu = 1002,
   RequestToLoadScript = 1003,
   LoadedResource = 1004,

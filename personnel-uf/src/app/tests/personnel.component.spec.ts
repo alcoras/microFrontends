@@ -28,8 +28,6 @@ describe('Personnel micro frontend component', () => {
     }
   );
 
-  afterEach(() => {
-  });
 
   it('should init and have called functions', async (done) => {
     const spies: jasmine.Spy<any>[] = [];
@@ -48,7 +46,7 @@ describe('Personnel micro frontend component', () => {
 
   it('testing PerssonelButtonPressed should trigger some actions', async (done) => {
     const event = new EventResponse();
-    const buttonEvent = new EventButtonPressed(uEventsIds.PerssonelButtonPressed, 'gg');
+    const buttonEvent = new EventButtonPressed(uEventsIds.PersonnelButtonPressed, 'gg');
 
     event.EventId = uEventsIds.GetNewEvents;
     event.Events = [];

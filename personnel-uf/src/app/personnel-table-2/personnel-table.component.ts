@@ -3,10 +3,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
-import { HttpClient, HttpResponse } from '@angular/common/http';
 import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { FormGroup } from '@angular/forms';
 import { IPersonnel } from '@uf-shared-models/';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { IGetResponse } from '../services/interfaces/IGetResponse';
@@ -29,10 +27,24 @@ import { IGetResponse } from '../services/interfaces/IGetResponse';
 })
 export class PersonnelTable2Component implements OnInit, AfterViewInit {
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) private sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) private paginator: MatPaginator;
 
-  columnsToDisplay: string[] = [
+  /**
+   * Placeholder for View
+   *
+   * @type {(IPersonnel | null)}
+   * @memberof PersonnelTable2Component
+   */
+  public ExpandedElement: IPersonnel | null;
+
+  /**
+   * List of Collumns to be displayed
+   *
+   * @type {string[]}
+   * @memberof PersonnelTable2Component
+   */
+  public ColumnsToDisplay: string[] = [
     'PersonDataID',
     'DateValue',
     'DocReestratorID',
@@ -44,26 +56,70 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
     'Posada',
     'PodatkovaPilga',
   ];
-  data: IPersonnel[] = [];
-  expandedElement: IPersonnel | null;
 
-  dataSource = new MatTableDataSource();
+  public ResultsLength = 0;
+  public IsLoadingResults = true;
+  public DataSource = new MatTableDataSource();
+  public BackendError = false;
 
-  resultsLength = 0;
-  isLoadingResults = true;
-  isRateLimitReached = false;
+  private data: IPersonnel[] = [];
 
-  form: FormGroup;
+  public constructor(
+    private personnelApiService: PersonnelAPIService) {
+  }
 
-  constructor(
-    private apiService: PersonnelAPIService) {
+  public ngOnInit(): void {
+    this.DataSource.paginator = this.paginator;
+    this.DataSource.sort = this.sort;
+  }
+
+  public ngAfterViewInit(): void {
+
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.IsLoadingResults = true;
+
+          const sorts: string[] = [];
+
+          // check if active sort is in a list of collums we provide
+          if (this.ColumnsToDisplay.includes(this.sort.active)) {
+            // add - char to the end if desc
+            const oneSort = this.sort.direction === 'desc' ? this.sort.active : `${this.sort.active}-`;
+
+            sorts.push(oneSort);
+          }
+
+          return this.personnelApiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
+
+        }),
+        map((data: IGetResponse) => {
+          // Flip flag to show that loading has finished.
+          this.IsLoadingResults = false;
+          this.ResultsLength = data.total;
+
+          const ic: IPersonnel[] = data.items;
+          this.DataSource = new MatTableDataSource(data.items);
+          return ic;
+        }),
+        catchError((err) => {
+          this.IsLoadingResults = false;
+          this.BackendError = true;
+          console.error(err)
+          return observableOf([]);
+        })
+      ).subscribe((data) => this.data = data);
   }
 
   /**
    * Updates entry given PersonDataID
    * @param id PersonDataID
    */
-  public UpdateEntry(id: number) {
+  public UpdateEntry(id: number): void {
     const DateValueEl = document.querySelector(`[personnel_DateValue="${id}"]`) as HTMLInputElement;
     const DocReestratorIDEl = document.querySelector(`[personnel_DocReestratorID="${id}"]`) as HTMLTextAreaElement;
     const OkladEl = document.querySelector(`[personnel_Oklad="${id}"]`) as HTMLTextAreaElement;
@@ -87,10 +143,10 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
       PodatkovaPilga: +PodatkovaPilga.value
     };
 
-    this.apiService.Update(up).then(
-      (resolved) => {
+    this.personnelApiService.Update(up).then(
+      () => {
         console.log('update', id);
-        this.refreshTable();
+        this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
@@ -103,11 +159,11 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
    * Deletes entry
    * @param id PersonDataId
    */
-  public DeleteEntry(id: number) {
-    this.apiService.Delete(id).then(
-      (resolved) => {
+  public DeleteEntry(id: number): void {
+    this.personnelApiService.Delete(id).then(
+      () => {
         console.log('delete', id);
-        this.refreshTable();
+        this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
@@ -116,64 +172,25 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
     );
   }
 
-  refreshTable() {
-    // TODO: genius reload
+  /**
+   * Refreshes table without reload page
+   *
+   * @private
+   * @memberof PersonnelTable2Component
+   */
+  public RefreshTable(): void {
     this.paginator._changePageSize(this.paginator.pageSize);
   }
 
-  applyFilter(event: Event) {
+  /**
+   * Applies filter on table
+   *
+   * @private
+   * @param {Event} event ?
+   * @memberof PersonnelTable2Component
+   */
+  public ApplyFilter(event: Event): void {
     const filterVal = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterVal.trim().toLowerCase();
-  }
-
-  ngOnInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  ngAfterViewInit(): void {
-
-    // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-    merge(this.sort.sortChange, this.paginator.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-
-          const sorts: string[] = [];
-
-          // check if active sort is in a list of collums we provide
-          if (this.columnsToDisplay.includes(this.sort.active)) {
-            // add - char to the end if desc
-            const oneSort = this.sort.direction === 'desc' ? this.sort.active : `${this.sort.active}-`;
-
-            sorts.push(oneSort);
-          }
-
-          return this.apiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
-
-        }),
-        map((data: IGetResponse) => {
-          // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = false;
-          this.resultsLength = data.total;
-
-          let ic: IPersonnel[];
-          ic = data.items;
-          this.dataSource = new MatTableDataSource(data.items);
-          return ic;
-        }),
-        catchError((err) => {
-          this.isLoadingResults = false;
-          this.isRateLimitReached = true;
-          console.error(err)
-          return observableOf([]);
-        })
-      ).subscribe((data) => this.data = data);
+    this.DataSource.filter = filterVal.trim().toLowerCase();
   }
 }
-
-

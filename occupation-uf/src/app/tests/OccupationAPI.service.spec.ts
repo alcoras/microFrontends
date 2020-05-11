@@ -124,6 +124,14 @@ describe('Occupation API service', () => {
 
   describe('Get', () => {
 
+    it('should throw if page 0', () => {
+      expect( () => service.Get(0, 1)).toThrow();
+    });
+
+    it('should throw if pagesize 0', () => {
+      expect( () => service.Get(1, 0)).toThrow();
+    });
+
     it('passing to EventBus', () => {
       eventBus.EventBus.subscribe( (data: OccupationsReadResults) => {
         expect(data.OccupationDataList.length).toBe(1);

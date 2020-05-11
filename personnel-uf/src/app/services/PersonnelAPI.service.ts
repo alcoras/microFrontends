@@ -29,8 +29,8 @@ export class PersonnelAPIService {
    */
   private sourceName = UParts.Personnel.SourceName;
 
-  constructor(
-    private eProxyService: EventProxyLibService,
+  public constructor(
+    private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
 
   /**
@@ -38,9 +38,9 @@ export class PersonnelAPIService {
    * @param personDataId PersonDataId to remove by
    * @returns Promise
    */
-  public Delete(personDataId: number): Promise<HttpResponse<any>> {
+  public Delete(personDataId: number): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
-      this.delete(personDataId).toPromise().then( (val: HttpResponse<any>) => {
+      this.delete(personDataId).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -55,10 +55,10 @@ export class PersonnelAPIService {
    * @param personnel IPersonnel
    * @returns Promise
    */
-  public Create(personnel: IPersonnel): Promise<HttpResponse<any>> {
+  public Create(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(personnel).toPromise().then( (val: HttpResponse<any>) => {
+      this.create(personnel).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -73,10 +73,10 @@ export class PersonnelAPIService {
    * @param personnel IPersonnel
    * @returns Promise
    */
-  public Update(personnel: IPersonnel): Promise<HttpResponse<any>> {
+  public Update(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(personnel).toPromise().then( (val: HttpResponse<any>) => {
+      this.update(personnel).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -95,8 +95,11 @@ export class PersonnelAPIService {
    */
   // TODO: add timeout and reject
   public Get(multiSorting: string[], page: number, pageSize: number): Promise<IGetResponse> {
+    if (page < 1 || pageSize < 1) {
+      throw new Error('page or pagesize was less than 1');
+    }
     return new Promise<IGetResponse>(
-      (resolve, reject) => {
+      (resolve) => {
         this.get(multiSorting, page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
           if (response.status !== 200) {
             return new Error('Failed to retrieve data');
@@ -107,7 +110,7 @@ export class PersonnelAPIService {
           this.eventBusService.EventBus.subscribe(
             (data: PersonDataRead) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                this.eProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
+                this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.ListOutputEnterprisePersonData,
                   total: data.CommonNumberRecords
@@ -130,7 +133,7 @@ export class PersonnelAPIService {
   private get(multiSorting: string[], page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new ReadPersonDataQuery(this.sourceId, multiSorting, page, pageSize);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -144,7 +147,7 @@ export class PersonnelAPIService {
       PersonDataCreateUpdateFlag.Update,
       personnel);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -158,7 +161,7 @@ export class PersonnelAPIService {
       PersonDataCreateUpdateFlag.Create,
       personnel);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -169,6 +172,6 @@ export class PersonnelAPIService {
   private delete(personDataId: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new RemoveEnterpisePersonData(this.sourceName, personDataId);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 }

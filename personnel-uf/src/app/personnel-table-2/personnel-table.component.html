@@ -1,34 +1,34 @@
 <mat-form-field>
   <div class="example-loading-shade"
-       *ngIf="isLoadingResults || isRateLimitReached">
-    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+       *ngIf="IsLoadingResults || BackendError">
+    <mat-spinner *ngIf="IsLoadingResults"></mat-spinner>
+    <div class="example-rate-limit-reached" *ngIf="BackendError">
       Can't Connect to backend
     </div>
   </div>
 
   <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)">
+  <input matInput (keyup)="ApplyFilter($event)">
 </mat-form-field>
 
-<mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons="true"></mat-paginator>
+<mat-paginator [length]="ResultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons="true"></mat-paginator>
 
 <table mat-table
-       [dataSource]="dataSource"
+       [dataSource]="DataSource"
        multiTemplateDataRows
        matSort
        matSortActive="created" matSortDisableClear
        class="mat-elevation-z8">
-  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay;">
+  <ng-container matColumnDef="{{column}}" *ngFor="let column of ColumnsToDisplay;">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </th>
     <td mat-cell *matCellDef="let element" class="hand-cursor"> {{ element[column] }} </td>
   </ng-container>
 
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="expandedDetail">
-    <td mat-cell *matCellDef="let element; let i = index" [attr.colspan]="columnsToDisplay.length">
+    <td mat-cell *matCellDef="let element; let i = index" [attr.colspan]="ColumnsToDisplay.length">
       <div class="example-element-detail"
-           [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+           [@detailExpand]="element == ExpandedElement ? 'expanded' : 'collapsed'">
             <mat-card class="center">
 
               <mat-card-subtitle>ID: <b>{{element.PersonDataID}}</b></mat-card-subtitle>
@@ -94,11 +94,11 @@
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
-  <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+  <tr mat-header-row *matHeaderRowDef="ColumnsToDisplay; sticky: true"></tr>
+  <tr mat-row *matRowDef="let element; columns: ColumnsToDisplay;"
       class="example-element-row"
-      [class.example-expanded-row]="expandedElement === element"
-      (click)="expandedElement = expandedElement === element ? null : element">
+      [class.example-expanded-row]="ExpandedElement === element"
+      (click)="ExpandedElement = ExpandedElement === element ? null : element">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 </table>

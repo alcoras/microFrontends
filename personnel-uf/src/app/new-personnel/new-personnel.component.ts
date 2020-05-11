@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { IPersonnel } from '@uf-shared-models/index';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 
@@ -9,20 +9,19 @@ import { PersonnelAPIService } from '../services/PersonnelAPI.service';
   templateUrl: './new-personnel.component.html',
   styleUrls: ['./new-personnel.component.css']
 })
-export class NewPersonnelComponent implements OnInit {
+export class NewPersonnelComponent {
 
-  constructor(
+  public constructor(
     private apiService: PersonnelAPIService,
     public dialogRef: MatDialogRef<NewPersonnelComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IPersonnel) {
-  }
+    @Inject(MAT_DIALOG_DATA) public data: IPersonnel) { }
 
-  onNoClick(): void {
+  public OnNoClick(): void {
     this.dialogRef.close();
     console.log(this.data);
   }
 
-  save(): void {
+  public Save(): void {
     this.dialogRef.close();
     this.apiService.Create(this.data).then(
       (ret: HttpResponse<any>) => {
@@ -31,11 +30,7 @@ export class NewPersonnelComponent implements OnInit {
           window.location.reload();
         }
       },
-      () => {},
     );
-  }
-
-  ngOnInit(): void {
   }
 
 }
