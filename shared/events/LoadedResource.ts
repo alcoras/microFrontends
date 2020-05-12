@@ -7,11 +7,12 @@ import { ResourceSheme } from './helpers/ResourceSheme';
  */
 export class LoadedResource extends uEvent {
     /**
-     * Creates an instance of request to load scripts.
-     * @param RequestEventId event id which requested the load
-     * @param ResourceSchemes Resource scheme with element's data (script, src..)
+     * Creates an instance of LoadedResource.
+     * @param {number} ResourceEventId event id which requested the load
+     * @param {ResourceSheme} ResourceScheme Resource scheme with element's data (script, src..)
+     * @memberof LoadedResource
      */
-    constructor(
+    public constructor(
         public ResourceEventId: number,
         public ResourceScheme: ResourceSheme
     ) {

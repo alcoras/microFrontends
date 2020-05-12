@@ -9,7 +9,7 @@ export class LanguageChange extends uEvent {
      * Creates an instance of language change.
      * @param NewLanguage new language
      */
-    constructor(
+    public constructor(
         public NewLanguage: string
     ) {
       super();

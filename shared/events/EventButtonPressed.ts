@@ -7,7 +7,7 @@ import { ButtonIds } from './helpers/ButtonIds';
  * reach other micro frontends
  */
 export class EventButtonPressed extends uEvent {
-    constructor(
+    public constructor(
         public ButtonPressedEventId: number,
         public UniqueElementId: string
     ) {

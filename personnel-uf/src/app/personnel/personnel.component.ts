@@ -27,7 +27,7 @@ export class PersonnelComponent {
    */
   private elToPlace: { [id: number]: string } = {};
 
-  constructor(
+  public constructor(
     private eProxyService: EventProxyLibService,
     private eventBusService: EventBusService) {
   }
@@ -149,8 +149,6 @@ export class PersonnelComponent {
   private putToElement(elName: string, elToPut: string): void {
     document.getElementById(elName).innerHTML = elToPut;
   }
-
-
 
   /**
    * Gets element by id

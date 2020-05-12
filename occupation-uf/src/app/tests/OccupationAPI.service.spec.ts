@@ -148,7 +148,7 @@ describe('Occupation API service', () => {
     });
 
     it('get passed data, then get response', async (done) => {
-      service.Get(null, null).then(
+      service.Get(1, 1).then(
         (res: IGetResponse) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
@@ -169,7 +169,7 @@ describe('Occupation API service', () => {
 
     it('get passed data many times', async (done) => {
       let resp = 0;
-      service.Get(null, null).then(
+      service.Get(1, 1).then(
         (res: IGetResponse) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
@@ -177,7 +177,7 @@ describe('Occupation API service', () => {
         }
       );
 
-      service.Get(null, null).then(
+      service.Get(1, 1).then(
         (res: IGetResponse) => {
           resp++;
           expect(res.items.length).toBe(1);
@@ -185,7 +185,7 @@ describe('Occupation API service', () => {
         }
       );
 
-      service.Get(null, null).then(
+      service.Get(1, 1).then(
         (res: IGetResponse) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);

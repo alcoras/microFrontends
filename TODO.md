@@ -31,6 +31,18 @@
 38. DONE: shared\events\backend\CreateUpdateEnterpisePersonData.ts convert to classes
 44. DUPLICATE 40. migrate to eslint
 43. DONE: personnel-tests: write checks for page and pagesize
+40. DONE Make migration from tslint to eslint because: https://www.npmjs.com/package/tslint
+    40. 1. DONE personnel-uf
+    40. 2. DONE shell
+    40. 3. DONE menu-uf
+    40. 4. DONE e2eTests
+    40. 5. DONE observer-uf
+    40. 6. DONE occupation-uf
+    40. 7. DONE shared
+
+## NOT DEMO
+22. Do conditional logging. NOT DEMO
+41. consider adding metric/performace tests
 
 ## UNDONE
 1. Languages
@@ -51,10 +63,10 @@
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
 20. When loosing connection with backend there is no error or warning..
+    20. 1. Expected behaviour: should try reconnect every T period
 21. Events still disappearing? YES?
     21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
     21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
-22. Do conditional logging.
 24. Debugging in tests
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 25. Check for type: any and convert to strong type (search and apply to all projects)
@@ -70,21 +82,19 @@
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
 32. find every promise or observable and handle errors
 33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
+    33. 1. personnel-uf
+    33. 2. shell
+    33. 3. menu-uf
+    33. 4. e2eTests
+    33. 5. DONE observer-uf
+    33. 6. occupation-uf
+    33. 7. shared
 34. e2eTests actually are integration? tests, currently there are no e2e tests
 36. add concurrently and serve to projects
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 39. Consider adding interfaces for microfrontends (sourceId sourceName and so on)
-40. Make migration from tslint to eslint because: https://www.npmjs.com/package/tslint
-    40. 1. DONE personnel-uf
-    40. 2. shell
-    40. 3. menu-uf
-    40. 4. e2eTests
-    40. 5. observer-uf
-    40. 6. occupation-uf
-    40. 7. shared
-41. consider adding metric/performace tests
 42. occupations: transfer logic from module to component/service
-45. remove abbreviations in names of functions/methods/classes/params 
+45. remove abbreviations in names of functions/methods/classes/params and fix linting 
     45. 1. DONE personnel-uf
     45. 2. shell
     45. 3. menu-uf

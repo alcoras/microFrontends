@@ -9,7 +9,7 @@ import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 })
 export class AppComponent {
 
-  constructor(
+  public constructor(
     private dialog: MatDialog) {
   }
 

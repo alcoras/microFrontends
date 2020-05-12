@@ -30,8 +30,8 @@ export class OccupationAPIService {
    */
   private sourceName = UParts.Occupations.SourceName;
 
-  constructor(
-    private eProxyService: EventProxyLibService,
+  public constructor(
+    private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
 
   /**
@@ -89,16 +89,19 @@ export class OccupationAPIService {
 
   /**
    * Queries for occupation data
-   * @param page page to get
-   * @param pageSize limit per page
+   *
+   * @param {number} page page to get
+   * @param {number} pageSize entries' limit
+   * @returns {Promise<IGetResponse>} Promise with response
+   * @memberof OccupationAPIService
    */
-  // TODO: add timeout and reject
+  // TODO: add reject and timeout
   public Get(page: number, pageSize: number): Promise<IGetResponse> {
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
     return new Promise<IGetResponse>(
-      (resolve, reject) => {
+      (resolve) => {
         this.get(page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
           if (response.status !== 200) {
             return new Error('Failed to retrieve data');
@@ -108,7 +111,7 @@ export class OccupationAPIService {
           this.eventBusService.EventBus.subscribe(
             (data: OccupationsReadResults) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                this.eProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
+                this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.OccupationDataList,
                   total: data.TotalRecordsAmount
@@ -123,13 +126,17 @@ export class OccupationAPIService {
 
   /**
    * Queries for occupation data
-   * @param page page to get
-   * @param pageSize limit per page
+   *
+   * @private
+   * @param {number} page page to get
+   * @param {number} pageSize entries' limit
+   * @returns {Observable<HttpResponse<APIGatewayResponse>>} Observable with Http response
+   * @memberof OccupationAPIService
    */
   private get(page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new OccupationsReadQuery(this.sourceId, new Date().toISOString(), page, pageSize);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -145,7 +152,7 @@ export class OccupationAPIService {
       occupationData);
 
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -162,7 +169,7 @@ export class OccupationAPIService {
       occupationData);
 
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 
   /**
@@ -173,6 +180,6 @@ export class OccupationAPIService {
   private delete(id: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new OccupationsDeleteEvent(this.sourceId, id);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEvent(e);
   }
 }

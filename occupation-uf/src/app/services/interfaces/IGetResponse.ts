@@ -8,7 +8,7 @@ export interface IGetResponse {
    */
   items: OccupationData[];
   /**
-   * Total amaount of entries
+   * Total amount of entries
    */
   total: number;
 }
