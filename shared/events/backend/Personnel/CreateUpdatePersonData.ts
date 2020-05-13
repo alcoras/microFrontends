@@ -37,7 +37,13 @@ export class CreateUpdatePersonData extends uEvent implements IPersonnel {
   public PodatkovaPilga: number;
   // tslint:enable
 
-  constructor(
+  /**
+   *
+   * @param sourceId source id
+   * @param createUpdateFlag create/update flag
+   * @param Personnel personnel data
+   */
+  public constructor(
     sourceId: string,
     createUpdateFlag: PersonDataCreateUpdateFlag,
     Personnel: IPersonnel) {

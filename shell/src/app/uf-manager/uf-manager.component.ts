@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
-import { uEventsIds, uEvent, UParts } from '@uf-shared-models/index';
+import { uEventsIds, uEvent, UParts, EventResponse, APIGatewayResponse } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { SubscibeToEvent, RequestToLoadScripts, LoadedResource, LanguageChange, InitMenuEvent } from '@uf-shared-events/index';
+import {
+  SubscibeToEvent,
+  RequestToLoadScripts,
+  LoadedResource,
+  LanguageChange,
+  InitializeMenuEvent } from '@uf-shared-events/index';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
@@ -31,13 +36,14 @@ export class UFManagerComponent {
   private resources: { [sourceId: number]: boolean } = {};
 
   /**
-   * Start listening to new events and subs to other micro frontend bootstraping
-   * functions
-   * @param eProxyService library service used for communication with backend
-   * @param msgService helper for communication between Script-Loader
+   * Creates an instance of UFManagerComponent.
+   * @param eventProxyService - library service used for communication with backend
+   * @param resourceLoader - helper for communication between Script-Loader
+   * @param languageService - langauge service for demo
+   * @param prestartService - prestart service for demo
    */
-  constructor(
-    private eProxyService: EventProxyLibService,
+  public constructor(
+    private eventProxyService: EventProxyLibService,
     private resourceLoader: ResourceLoaderService,
     private languageService: LanguageService,
     private prestartService: PrestartService
@@ -46,50 +52,39 @@ export class UFManagerComponent {
   /**
    * Inits ufmanager component with async functions
    */
-  public async InitAsync() {
-    return new Promise(async (resolve, reject) => {
-      await this.preloadScripts().then(
-        () => {},
-        () => {
-          throw new Error('Failed to load scripts');
-        }
-      );
+  public async InitAsync(): Promise<void> {
 
-      await this.subscribeToEventsAsync();
+    await this.preloadScripts().then(
+      () => { console.log(`${this.sourceName} preloadedScripts done. `)},
+      () => { throw new Error('Failed to load scripts'); } );
 
-      await this.subscribeMicroFrontends();
+    await this.subscribeToEventsAsync();
 
-      await this.preloadMenuMicroFrontend();
+    await this.subscribeMicroFrontends();
 
-      resolve();
-    });
+    await this.preloadMenuMicroFrontend();
+
   }
 
   /**
    * Starts qna with backend
    */
-  public StartQNA() {
+  public StartQNA(): void {
 
-    this.eProxyService.StartQNA(this.sourceId).subscribe
-    (
-      (response: HttpResponse<any>) => {
+    this.eventProxyService.StartQNA(this.sourceId).subscribe(
+      (response: HttpResponse<EventResponse>) => {
         this.newHttpResponseAsync(response);
       },
       (error) => { console.log(this.sourceName, error); },
-      () => {}
     );
   }
 
-  /**
-   * News http response async parser
-   * @param response HttpResponse
-   */
-  private async newHttpResponseAsync(response: HttpResponse<any>) {
+  private async newHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
     if (!response) { throw new Error('Can\'t connect to backend'); }
 
     if (!response.body) { return; }
 
-    if (!response.body.hasOwnProperty('EventId')) {
+    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
       throw new Error('No EventId in message');
     }
 
@@ -102,16 +97,16 @@ export class UFManagerComponent {
    * Preloads scripts for each micro frontend. muy importante
    * @returns Promise
    */
-  private preloadScripts() {
+  private preloadScripts(): Promise<void[]> {
     const promises = [];
-    const url: string = this.eProxyService.env.Url;
+    const url: string = this.eventProxyService.environmentService.Url;
 
     if (!url) {
       throw new Error('Url is not defined in environment (env.js)');
     }
 
     const urlList = [
-      url + ':3002/en/scripts/conf.js', // Menu
+      url + ':3002/en/scripts/config.js', // Menu
       url + ':3004/scripts/conf.js', // Personnel
       // url + ':3005/scripts/conf.js', // Occupation
       // url + ':3006/scripts/conf.js' // Observer
@@ -125,18 +120,18 @@ export class UFManagerComponent {
    * Sends event to backend to init Menu
    * @returns Promise
    */
-  private preloadMenuMicroFrontend() {
-    const e = new InitMenuEvent(this.sourceId);
+  private preloadMenuMicroFrontend(): Promise<HttpResponse<APIGatewayResponse>> {
+    const e = new InitializeMenuEvent(this.sourceId);
     e.SourceName = this.sourceName;
 
-    return this.eProxyService.DispatchEvent(e).toPromise();
+    return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
   /**
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private subscribeToEventsAsync() {
+  private subscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(this.sourceId, [
       [uEventsIds.LoadedResource, 0, 0],
       [uEventsIds.RequestToLoadScript, 0, 0],
@@ -144,17 +139,16 @@ export class UFManagerComponent {
       [uEventsIds.InitMenu, 0, 0]
     ]);
     e.SourceName = this.sourceName;
-    return this.eProxyService.DispatchEvent(e).toPromise();
+    return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
   /**
    * Parses new events, every new event goes through this function which will determine
    * its further path, also if resource responsible for event is not yet loaded, sends
    * event with request to load resources for that micro frontend.
-   * @param event Event array
+   * @param eventList - Event array
    */
-  // tslint:disable-next-line: cognitive-complexity
-  private async parseNewEventAsync(eventList: uEvent[]) {
+  private async parseNewEventAsync(eventList: uEvent[]): Promise<void> {
     for (const element of eventList) {
 
       console.log(`${this.sourceId} Parsing event:`, element);
@@ -166,22 +160,23 @@ export class UFManagerComponent {
         const el: LoadedResource = element as LoadedResource;
 
         for (const config in ufConfigs) {
-          if (ufConfigs.hasOwnProperty(config) && ufConfigs[config].events.includes(el.ResourceEventId)) {
+          if (Object.prototype.hasOwnProperty.call(ufConfigs, config)
+            && ufConfigs[config].events.includes(el.ResourceEventId)) {
             this.resources[+config] = true;
-            await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
           }
         }
       } else if (element.EventId === uEventsIds.RequestToLoadScript) {
         const event: RequestToLoadScripts  = element as RequestToLoadScripts;
         this.loadResourcesEvent(event);
-        await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       } else if (element.EventId === uEventsIds.LanguageChange) {
         const event: LanguageChange  = element as LanguageChange;
         this.changeLanguageEvent(event);
-        await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
       } else {
         for (const config in ufConfigs) {
-          if (ufConfigs.hasOwnProperty(config) && ufConfigs[+config].events.includes(element.EventId)) {
+          if (Object.prototype.hasOwnProperty.call(ufConfigs, config) && ufConfigs[+config].events.includes(element.EventId)) {
             // check if loaded
             if (this.resources[+config]) {
               break;
@@ -189,7 +184,7 @@ export class UFManagerComponent {
 
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-            await this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
           }
         }
       }
@@ -198,19 +193,19 @@ export class UFManagerComponent {
 
   /**
    * Events change language
-   * @param event Event model for language change event
+   * @param event - Event model for language change event
    */
-  private changeLanguageEvent(event: LanguageChange) {
-    this.languageService.setLang(event.NewLanguage).toPromise().then(
+  private changeLanguageEvent(event: LanguageChange): void {
+    this.languageService.SetLang(event.NewLanguage).toPromise().then(
       () => { window.location.reload(); }
     );
   }
 
   /**
    * Attempts to load a resource
-   * @param event resource load event model
+   * @param event - resource load event model
    */
-  private loadResourcesEvent(event: RequestToLoadScripts) {
+  private loadResourcesEvent(event: RequestToLoadScripts): void {
     this.resourceLoader.LoadResources(event.ResourceSchemes);
   }
 
@@ -219,14 +214,14 @@ export class UFManagerComponent {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private subscribeMicroFrontends() {
+  private subscribeMicroFrontends(): Promise<HttpResponse<APIGatewayResponse>[]> {
 
-    const promises: Promise<any>[] = [];
+    const promises: Promise<HttpResponse<APIGatewayResponse>>[] = [];
 
     const dic = window['__env']['uf'];
     for (const key in dic) {
       // Traverse through all uFrontends
-      if (dic.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(dic, key)) {
         const subList = [];
         dic[+key].events.forEach(eventId => {
           subList.push([eventId, 0, 0]);
@@ -235,12 +230,12 @@ export class UFManagerComponent {
         // Subscribe designated micro frontend
         let event = new SubscibeToEvent(key, subList);
         event.SourceName = UParts.GetSourceNameFromSourceID(event.SourceId);
-        promises.push(this.eProxyService.DispatchEvent(event).toPromise());
+        promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(this.sourceId, subList);
         event.SourceName = this.sourceName;
-        promises.push(this.eProxyService.DispatchEvent(event).toPromise());
+        promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
       }
     }
     return Promise.all(promises);

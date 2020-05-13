@@ -8,11 +8,12 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "build-config": "tsc --project tsconfig.conf-builder.json",
     "ng_serve": "serve --cors -l tcp://0.0.0.0:3002 dist/",
     "ng_build": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
-    "ng_con": "concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" ",
+    "ng_con": "npm run build-config && concurrently --kill-others \"npm run ng_build\"  \"npm run ng_serve\" ",
     "ng_build_lang": "ng build --localize --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
-    "ng_con_lang": "concurrently --kill-others \"npm run ng_build_lang\"  \"npm run ng_serve\" "
+    "ng_con_lang": "npm run build-config && concurrently --kill-others \"npm run ng_build_lang\"  \"npm run ng_serve\" "
   },
   "private": true,
   "dependencies": {

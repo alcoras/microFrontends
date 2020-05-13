@@ -39,10 +39,17 @@
     40. 5. DONE observer-uf
     40. 6. DONE occupation-uf
     40. 7. DONE shared
+26. DONE Transfer e2e tests to e2e and write unit/static tests; 
+    26. 1. UPDATE: all e2e tests should go to e2eTests
+    26. 2. DONE personnel-uf
+    26. 3. DONE menu-uf
+    26. 4. DONE occupation-uf
+    26. 5. DONE uf-manager
+    26. 6. DONE event-proxy-lib
 
 ## NOT DEMO
-22. Do conditional logging. NOT DEMO
-41. consider adding metric/performace tests
+22. Do conditional logging.
+41. Consider adding metric/performace/stress tests
 
 ## UNDONE
 1. Languages
@@ -70,13 +77,6 @@
 24. Debugging in tests
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 25. Check for type: any and convert to strong type (search and apply to all projects)
-26. Transfer e2e tests to e2e and write unit/static tests; 
-    26. 1. UPDATE: all e2e tests should go to e2eTests
-    26. 2. DONE personnel-uf
-    26. 3. menu-uf
-    26. 4. occupation-uf
-    26. 5. uf-manager
-    26. 6. DONE event-proxy-lib
 28. Add SourceName to every event for Observer
 30. Fix warnings in event-proxy-lib when: ng build --prod:
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
@@ -96,11 +96,22 @@
 42. occupations: transfer logic from module to component/service
 45. remove abbreviations in names of functions/methods/classes/params and fix linting 
     45. 1. DONE personnel-uf
-    45. 2. shell
-    45. 3. menu-uf
+    45. 2. DONE shell
+    45. 3. DONE menu-uf
     45. 4. e2eTests
     45. 5. observer-uf
     45. 6. occupation-uf
-    45. 7. shared
+    45. 7. DONE shared
+46. Configure unit test debugging
+    46. 1. DONE personnel-uf
+    46. 2. DONE shell
+    46. 3. DONE menu-uf
+    46. 4. e2eTests
+    46. 5. observer-uf
+    46. 6. occupation-uf
+    46. 7. DONE shared->event-proxy-lib
+47. write unit/static tests for:
+    47. 1. shell->uf-manager
+    47. 2. menu->menu-service
 
-46.
+48.

@@ -10,9 +10,9 @@ export class SubscibeToEvent extends uEvent {
    * @param IdsTripleList Array of numbers [0,0,0] [eventid, parentid, somethingelseId]
    * @param [CleanSubscriptionList] boolean flag to indicate whether to clean all previous subs
    */
-  constructor(
+  public constructor(
     SourceId: string,
-    public IdsTripleList: any[][],
+    public IdsTripleList: number[][],
     public CleanSubscriptionList: boolean = false) {
       super();
       this.EventId = uEventsIds.SubscribeToEvent;

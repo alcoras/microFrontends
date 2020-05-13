@@ -9,15 +9,13 @@ import { ResourceSheme } from '@uf-shared-events/';
 })
 export class ResourceLoaderService {
 
-  constructor() { }
-
   /**
    * Loads resources like script or link to DOM just to wrap
    * @param resources ResourceScheme
    * @returns Promises for every load
    */
-  public async LoadResources(resources: ResourceSheme | ResourceSheme[]): Promise<any> {
-    const promises: Promise<any>[] = [];
+  public async LoadResources(resources: ResourceSheme | ResourceSheme[]): Promise<void[]> {
+    const promises = [];
 
     const resourceList = [].concat(resources);
 
@@ -33,7 +31,8 @@ export class ResourceLoaderService {
    * @param resource Resource Scheme
    * @returns Promises for every load
    */
-  private loadResource(resource: ResourceSheme) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private loadResource(resource: ResourceSheme): Promise<any> {
 
     let domResources = [];
     let attrToCheck: string;
@@ -67,7 +66,7 @@ export class ResourceLoaderService {
       el.onload = resolve;
 
       for (const key in resource.Attributes) {
-        if (resource.Attributes.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(resource.Attributes, key)) {
           el.setAttribute(key, resource.Attributes[key]);
         }
       }

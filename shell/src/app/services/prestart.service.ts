@@ -12,34 +12,40 @@ import { ResourceLoaderService } from './resource-loader.service';
   providedIn: 'root',
 })
 export class PrestartService {
-  constructor(
-    private langService: LanguageService,
-    private eProxyService: EventProxyLibService,
+  public constructor(
+    private languageService: LanguageService,
+    private eventProxyService: EventProxyLibService,
     private resourceLoader: ResourceLoaderService
   ) { }
 
   /**
-   * Initialize language
+   * Initialize language (DEMO)
+   *
+   * @returns {Promise<void>}
+   * @memberof PrestartService
    */
-  public InitLanguage() {
-    return this.langService.getLang().toPromise().then(
-      (res) => {
-        if (res.status !== 200) {
-          throw new Error('Failure on getting language');
-        }
-        this.setUpLanguage(res);
-      },
-      (reject) => {
-        console.log('prestart.service could not get language, setting default (en)', reject);
-        this.setUpLanguage(null);
-      });
+  public async InitLanguage(): Promise<void> {
+    try {
+      const res = await this.languageService.GetLang().toPromise();
+      if (res.status !== 200) {
+        throw new Error('Failure on getting language');
+      }
+      this.setUpLanguage(res);
+    }
+    catch (reject) {
+      console.log('prestart.service could not get language, setting default (en)', reject);
+      this.setUpLanguage(null);
+    }
   }
 
   /**
    * Inits scripts
-   * @param urls list of scripts' urls to load
+   *
+   * @param {string[]} urls list of scripts
+   * @returns {Promise<void[]>} Promises
+   * @memberof PrestartService
    */
-  public InitScripts(urls: string[]): Promise<any> {
+  public InitScripts(urls: string[]): Promise<void[][]> {
     return this.preloadScripts(urls);
   }
 
@@ -47,20 +53,24 @@ export class PrestartService {
    * Sets up language by setting global environment paramater
    * @param response HttpResponse with lang data
    */
-  private setUpLanguage(response: HttpResponse<ILanguageSettings> | null) {
+  private setUpLanguage(response: HttpResponse<ILanguageSettings> | null): void {
     if (!response) {
-      this.eProxyService.env.Language = 'en';
+      this.eventProxyService.environmentService.Language = 'en';
       return;
     }
-    this.eProxyService.env.Language = response.body.lang;
+    this.eventProxyService.environmentService.Language = response.body.lang;
   }
 
   /**
    * Preloads scripts for every microservice
+   *
+   * @private
+   * @param {string[]} urlList list of scripts
    * @returns Promises for every script
+   * @memberof PrestartService
    */
-  private async preloadScripts(urlList: string[]) {
-    const promises: any[] = [];
+  private async preloadScripts(urlList: string[]): Promise<void[][]> {
+    const promises: Promise<void[]>[] = [];
 
     urlList.forEach(url => {
       const resource = new ResourceSheme();

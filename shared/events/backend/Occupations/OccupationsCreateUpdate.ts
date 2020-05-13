@@ -43,7 +43,14 @@ export class OccupationsCreateUpdate extends uEvent {
    */
   public IsDeleted?: boolean;
 
-  constructor(
+  /**
+   *
+   * @param sourceId Source id
+   * @param createUpdateFlag create update flag
+   * @param dateTimeValue at what time to update/craete
+   * @param data OccupationData
+   */
+  public constructor(
     sourceId: string,
     createUpdateFlag: OccupationCreateUpdateFlag,
     dateTimeValue: string,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject, Observer } from 'rxjs';
@@ -36,6 +37,7 @@ export class EventProxyLibService {
 
   /**
    * Gets/Sets api gateway url
+   * @returns api gateway url
    */
   public get ApiGatewayURL(): string {
     return this.apiGatewayURL;
@@ -59,6 +61,7 @@ export class EventProxyLibService {
   /**
    * Gets/Sets status which true if there QNA (connection with constant request for new
    * events) with backend.
+   * @returns status
    */
   public get Status(): boolean {
     return this.status;
@@ -70,13 +73,13 @@ export class EventProxyLibService {
 
   /**
    * Creates an instance of event proxy lib service.
-   * @param env Injects Environment settings
+   * @param environmentService Injects Environment settings
    * @param httpClient Injects Angular HttpClient
    */
-  constructor(
-    public env: EnvironmentService,
+  public constructor(
+    public environmentService: EnvironmentService,
     private httpClient: HttpClient) {
-      const url = `${this.env.APIGatewayUrl}:${this.env.APIGatewayPort}`;
+      const url = `${this.environmentService.APIGatewayUrl}:${this.environmentService.APIGatewayPort}`;
       this.ApiGatewayURL = url;
   }
 
@@ -105,7 +108,7 @@ export class EventProxyLibService {
   /**
    * Ends qna - sends complete to StartQNA observable
    */
-  public EndQNA() {
+  public EndQNA(): void {
     if (!this.Status) {
       console.log(`${this.sourceID} Trying to end, but already ended.`);
       return;
@@ -147,8 +150,6 @@ export class EventProxyLibService {
   /**
    * Gets unreceived events from backend
    * @param srcId SourceID
-   * @param [traceId] unused
-   * @param [timeout] unused
    * @returns HTTPResponse (or error) with events
    */
   public GetLastEvents(srcId: string): Observable<HttpResponse<any>> {
@@ -164,7 +165,7 @@ export class EventProxyLibService {
    * @param body message body
    * @returns HttpResponse observable
    */
-  private sendEvent(caller: string, body: any) {
+  private sendEvent(caller: string, body: any): Observable<any> {
 
     if (!this.apiGatewayURL) {
       throw Error('ApiGateway URL is undefined');
@@ -190,7 +191,7 @@ export class EventProxyLibService {
    * Recursive push for infinite (or until stopped) event requesting from backend
    * @param sub Observer
    */
-  private push(sub: Observer<any>) {
+  private push(sub: Observer<any>): void {
     if (!this.Status) {
       sub.complete();
       return;
@@ -211,14 +212,12 @@ export class EventProxyLibService {
 
   /**
    * Handles errors
-   * @template T type of error
-   * @param [op] name of method
-   * @param [errorMsg] error message provided by result
-   * @param [result] error Observable
-   * @returns Error Observable
+   * @param operation method/function name
+   * @param result result observer
+   * @returns Error observable
    */
   private handleErrors<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error): Observable<T> => {
 
       console.error(`${operation} failed: ${error.message}`);
       console.error(error);

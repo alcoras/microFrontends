@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable jsdoc/require-jsdoc */
 import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -11,24 +13,25 @@ import { EnvironmentService } from '../services/environment.service';
  * @param ms miliseconds
  * @returns Promise
  */
-function delay(ms: number) {
+function delay(ms: number): Promise<any> {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-/* tslint:disable */
+const envPrefix = '__env';
 const TestSourceId = '1000';
 const backendURL = 'localhost';
 const backendPath = '/newEvents';
 const backendPort = '54366';
 const URL = `http://${backendURL}:${backendPort}${backendPath}`;
 
-window['__env'] = window['__env'] || {};
+window[envPrefix] = window[envPrefix] || {};
 
-window['__env'].one_language = false;
+// eslint-disable-next-line @typescript-eslint/camelcase
+window[envPrefix].one_language = false;
 // API url
-window['__env'].url = 'http://' + backendURL;
-window['__env'].apiGatewayUrl = window['__env'].url;
-window['__env'].apiGatewayPort = backendPort;
+window[envPrefix].url = 'http://' + backendURL;
+window[envPrefix].apiGatewayUrl = window[envPrefix].url;
+window[envPrefix].apiGatewayPort = backendPort;
 
 class TestEvent extends uEvent {
 
@@ -40,8 +43,7 @@ describe('EventProxyLibService', () => {
   let service: EventProxyLibService;
   let httpTestingController: HttpTestingController;
 
-  beforeEach
-  (
+  beforeEach(
     async () => {
       TestBed.configureTestingModule({
         providers: [EventProxyLibService, EnvironmentService],
@@ -80,7 +82,7 @@ describe('EventProxyLibService', () => {
     });
 
     it('after EndQNA status should be false', (done) => {
-      // tslint:disable-next-line: completed-docs
+
       function fakeGetLastEvents(): Observable<HttpResponse<any>> {
         return new Observable( sub => {
           setTimeout(() => {
@@ -124,8 +126,7 @@ describe('EventProxyLibService', () => {
         });
       }
 
-      // tslint:disable-next-line: completed-docs
-      async function parseAsync() {
+      async function parseAsync(): Promise<void> {
         launchedParsing++;
         await delay(parsingTimeMs);
         doneParsing++;
@@ -172,9 +173,9 @@ describe('EventProxyLibService', () => {
       expect(service.ApiGatewayURL).toBe(`http://${backendURL}:${backendPort}`);
     });
 
-    it('testing if env service load was correct', () => {
-      expect(service.env.APIGatewayUrl).toBe(`http://${backendURL}`);
-      expect(service.env.APIGatewayPort).toBe(backendPort);
+    it('testing if environmentService service load was correct', () => {
+      expect(service.environmentService.APIGatewayUrl).toBe(`http://${backendURL}`);
+      expect(service.environmentService.APIGatewayPort).toBe(backendPort);
     });
 
   });

@@ -1,8 +1,7 @@
 import { uEventsIds, uEvent } from '../models/event';
 
 /**
- * Language change event model
- * @field NewLanguage new language (en, lt..)
+ * Language change event model (DEMO)
  */
 export class LanguageChange extends uEvent {
     /**

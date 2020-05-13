@@ -127,7 +127,6 @@ describe('PersonnelAPI service', () => {
 
   });
 
-
   describe('Get', () => {
 
     it('should throw if page 0', () => {

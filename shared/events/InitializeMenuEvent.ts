@@ -3,7 +3,7 @@ import { uEventsIds, uEvent } from '../models/event';
 /**
  * Initialize menu event
  */
-export class InitMenuEvent extends uEvent {
+export class InitializeMenuEvent extends uEvent {
   public constructor(sourceId: string) {
     super();
     this.EventId = uEventsIds.InitMenu;

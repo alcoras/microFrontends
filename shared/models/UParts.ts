@@ -71,7 +71,7 @@ export class UParts {
    * @param sourceId source id string
    * @returns source name
    */
-  public static GetSourceNameFromSourceID(sourceId: string) {
+  public static GetSourceNameFromSourceID(sourceId: string): string {
     const members = Object.getOwnPropertyNames(this);
 
     for (const key of members) {
@@ -85,10 +85,10 @@ export class UParts {
 
   /**
    * Gets id name from source name
-   * @param sourceId source id string
+   * @param sourceName source id string
    * @returns source name
    */
-  public static GetSourceIdFromSourceName(sourceName: string) {
+  public static GetSourceIdFromSourceName(sourceName: string): string {
     const members = Object.getOwnPropertyNames(this);
 
     for (const key of members) {

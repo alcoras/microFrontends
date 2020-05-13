@@ -13,10 +13,34 @@
         },
         {
             "type": "chrome",
+            "request": "attach",
+            "name": "shell unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/shell",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/shell"
+            }
+        },
+        {
+            "type": "chrome",
             "request": "launch",
             "name": "menu",
-            "url": "http://localhost:3002",
+            "url": "http://localhost:3002/en/",
             "webRoot": "${workspaceFolder}/menu-uf"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "menu unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/menu-uf",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/menu-uf"
+            }
         },
         {
             "type": "chrome",
@@ -34,10 +58,34 @@
         },
         {
             "type": "chrome",
+            "request": "attach",
+            "name": "personnel unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/personnel-uf",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/personnel-uf"
+            }
+        },
+        {
+            "type": "chrome",
             "request": "launch",
             "name": "observer",
             "url": "http://localhost:3005",
             "webRoot": "${workspaceFolder}/observer-uf"
-        }
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "event-proxy-lib unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/shared/libs/projects/event-proxy-lib",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/shared/libs/projects/event-proxy-lib"
+            }
+        },
     ]
 }

@@ -4,7 +4,7 @@ import { PrestartService } from '../services/prestart.service';
 import { LanguageService } from '../services/lang.service';
 import { langServiceMock } from './mocks/lang.mock';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
+import { eventProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { resourceLoaderMock } from './mocks/resource-loader.mock';
 
@@ -16,7 +16,7 @@ describe('PrestartService', () => {
       imports: [],
       providers: [
         { provide: LanguageService, useValue: langServiceMock },
-        { provide: EventProxyLibService, useValue: eProxyServiceMock},
+        { provide: EventProxyLibService, useValue: eventProxyServiceMock},
         { provide: ResourceLoaderService, useValue: resourceLoaderMock}
       ]
     });
@@ -25,15 +25,6 @@ describe('PrestartService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
-  });
-
-  it('should set up language', async (done) => {
-    spyOn(eProxyServiceMock.env, 'ReadEnvironmentVars');
-    await service.InitLanguage();
-
-    expect(window['__env']['lang']).toBe('en', 'Lang env was not set up correctly');
-    expect(eProxyServiceMock.env.ReadEnvironmentVars).toHaveBeenCalled();
-    done();
   });
 
   it('should set up scripts', async (done) => {

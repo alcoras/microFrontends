@@ -27,10 +27,10 @@ describe('ResourceLoaderService', () => {
     resource.Element = elType;
     resource.setAttribute(attrToCheck, source);
 
-    await service.LoadResources(resource).then();
+    await service.LoadResources(resource);
 
     expect(window[envHolder].test).toBe(true, 'Did not load script');
     expect(window[envHolder].number).toBe(42, 'Inncorret life\'s purpose');
     done();
-  });
+  }, 1000);
 });

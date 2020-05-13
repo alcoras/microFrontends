@@ -11,7 +11,7 @@ export class RequestToLoadScripts extends uEvent {
      * @param RequestEventId event id which requested the load
      * @param ResourceSchemes scheme with data about HTML element to be loaded
      */
-    constructor(
+    public constructor(
         public RequestEventId: number,
         public ResourceSchemes: ResourceSheme[]
     ) {

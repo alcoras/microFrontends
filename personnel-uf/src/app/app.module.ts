@@ -38,12 +38,10 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
   entryComponents: [AppComponent],
 })
 export class AppModule {
-  constructor(
-    private injector: Injector) {
+  public constructor(private injector: Injector) {
   }
 
-  // tslint:disable-next-line: member-access
-  ngDoBootstrap(): void {
+  public ngDoBootstrap(): void {
     const { injector } = this;
 
     const ngCustomElement2 = createCustomElement(AppComponent, { injector });

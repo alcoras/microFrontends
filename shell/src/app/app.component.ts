@@ -8,6 +8,4 @@ import { Component } from '@angular/core';
   template: ``,
 })
 export class AppComponent {
-  constructor() {
-  }
 }

@@ -2,9 +2,9 @@ export * from './RequestToLoadScript';
 export * from './LoadedResource';
 export * from './EventButtonPressed';
 export * from './LanguageChange';
-export * from './InitMenuEvent';
+export * from './InitializeMenuEvent';
 
-export * from './helpers/UFData';
+export * from './helpers/MicroFrontendData';
 export * from './helpers/ResourceSheme';
 
 export * from './backend/SubscibeToEvent';

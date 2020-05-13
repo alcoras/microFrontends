@@ -6,7 +6,7 @@ import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
 
 /**
- * Main entry component for personnel micro frontend
+ * Component for personnel micro frontend to connect to backend
  */
 @Injectable({
   providedIn: 'root'
@@ -65,7 +65,7 @@ export class PersonnelComponent {
 
     if (!response.body) { return; }
 
-    if (!response.body.EventId) {
+    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
       throw new Error('No EventId in message');
     }
 

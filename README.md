@@ -34,6 +34,11 @@ in ng 9.1.* should be fixed without --prod, has to do with ivy (next time pass u
     npm i
 ### Launch:
     npm run ng_con
+### Debugging tests:
+    cd personnel-uf
+    ng test
+    In Vscode Debug Extension select: personnel unit tests, Run it (F5)
+    Put breakpoint in unit test, Restart (ctrl+shift+F5)
 
 Run backends:
 1. language, fake data `cd backend-occup && npm run data`  

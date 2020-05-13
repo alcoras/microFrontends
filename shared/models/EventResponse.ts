@@ -1,6 +1,17 @@
 import { uEvent } from './event';
 
+/**
+ * Standard structure for getting new events
+ */
 export class EventResponse {
-  EventId: number;
-  Events: uEvent[];
+  /**
+   * Event Id
+   *
+   */
+  public EventId: number;
+
+  /**
+   * List of events
+   */
+  public Events: uEvent[];
 }

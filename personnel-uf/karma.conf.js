@@ -25,10 +25,10 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeDebugging'],
+    browsers: ['ChromeDebug'],
     singleRun: false,
     customLaunchers: {
-      ChromeDebugging: {
+      ChromeDebug: {
         base: 'Chrome',
         flags: [ '--remote-debugging-port=9333' ]
       }

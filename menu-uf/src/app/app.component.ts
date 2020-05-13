@@ -17,7 +17,6 @@ interface IUFState {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [ EventProxyLibService ],
 })
 export class AppComponent {
 
@@ -31,14 +30,19 @@ export class AppComponent {
 
   private placement: { [id: number]: IUFState } = {};
 
-  constructor(
-    private eProxyService: EventProxyLibService
+  public constructor(
+    private eventProxyService: EventProxyLibService
   ) {
     this.preparePlacements();
     this.prepareThemeAndLang();
   }
 
-  public menuClick(evt, eventName: number) {
+  /**
+   * Handle menu clicks
+   * @param evt ?
+   * @param eventName button event name
+   */
+  public MenuClick(evt, eventName: number): void {
     // create an event
     this.eventButtonPressed(eventName);
 
@@ -47,28 +51,39 @@ export class AppComponent {
     this.openTab(evt, elId.elementId);
   }
 
-  public changeTheme() {
+  /**
+   * Change theme handler
+   */
+  public ChangeTheme(): void {
     const el = document.getElementById('themeAsset') as HTMLLinkElement;
     el.href = this.selectedTheme;
   }
 
-
-  public changeLanguage() {
+  /**
+   * Button change language handler
+   */
+  public ChangeLanguage(): void {
     const e = new LanguageChange(this.selectedLang);
 
     e.SourceId = this.sourceId;
     e.SourceName = this.sourceName;
 
-    this.eProxyService.DispatchEvent(e).toPromise();
+    this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
-  public refresh() {
+  /**
+   * Reload page
+   */
+  public Reload(): void {
     window.location.reload();
   }
 
   // TODO: port should be configurable
-  private prepareThemeAndLang() {
-    const url = `${this.eProxyService.env.Url}:3002/en/`;
+  /**
+   *  Prepares theme and language
+   */
+  private prepareThemeAndLang(): void {
+    const url = `${this.eventProxyService.environmentService.Url}:3002/en/`;
     this.themes = [
       { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
       { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
@@ -82,11 +97,14 @@ export class AppComponent {
       { value: 'lt', viewValue: 'LT' },
     ];
     this.selectedTheme = this.themes[0].value;
-    this.selectedLang = this.eProxyService.env.Language;
+    this.selectedLang = this.eventProxyService.environmentService.Language;
   }
 
-  private preparePlacements() {
-    this.placement[uEventsIds.PerssonelButtonPressed] = { elementId: 'personnel', loaded: false };
+  /**
+   * Prepares placements for Micro Frontends
+   */
+  private preparePlacements(): void {
+    this.placement[uEventsIds.PersonnelButtonPressed] = { elementId: 'personnel', loaded: false };
     this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
     this.placement[uEventsIds.ObserverButtonPressed] = { elementId: 'observer', loaded: false };
   }
@@ -101,7 +119,7 @@ export class AppComponent {
     return elId;
   }
 
-  private eventButtonPressed(eventName: number) {
+  private eventButtonPressed(eventName: number): void {
     const elState = this.getElFromID(eventName);
 
     const elId = elState.loaded ? null : elState.elementId;
@@ -114,20 +132,25 @@ export class AppComponent {
 
     event.SourceId = this.sourceId;
 
-    this.eProxyService.DispatchEvent(event).toPromise();
+    this.eventProxyService.DispatchEvent(event).toPromise();
   }
 
-  private openTab(evt, tabName: string) {
+  /**
+   * Opens tab
+   * @param evt ?
+   * @param tabName tab name of micro frontend
+   */
+  // (DEMO)
+  private openTab(evt, tabName: string): void {
     let i: number;
-    let tabcontent;
-    let tablinks;
 
-    tabcontent = document.getElementsByClassName('tabcontent');
+    const tabcontent = document.getElementsByClassName('tabcontent') as HTMLCollectionOf<HTMLElement>;
 
     for (i = 0; i < tabcontent.length; i++) {
       tabcontent[i].style.display = 'none';
     }
-    tablinks = document.getElementsByClassName('tablinks');
+
+    const tablinks = document.getElementsByClassName('tablinks');
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(' active', '');
     }

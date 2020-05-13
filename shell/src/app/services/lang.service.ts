@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -7,7 +8,7 @@ export interface ILanguageSettings {
 }
 
 /**
- * Language service temporary to hold language settings
+ * Language service temporary to hold language settings (DEMO)
  */
 @Injectable({
   providedIn: 'root'
@@ -15,14 +16,20 @@ export interface ILanguageSettings {
 export class LanguageService {
 
   private href = 'http://localhost:3333/language';
-  constructor(private httpClient: HttpClient) { }
 
-  getLang(): Observable<HttpResponse<any>> {
+  /**
+   *Creates an instance of LanguageService.
+   * @param {HttpClient} httpClient angular http client
+   * @memberof LanguageService
+   */
+  public constructor(private httpClient: HttpClient) { }
+
+  public GetLang(): Observable<HttpResponse<any>> {
     const reqUrl = `${this.href}`;
     return this.httpClient.get(reqUrl, {observe: 'response'});
   }
 
-  setLang(newLang = 'en'): Observable<HttpResponse<any>> {
+  public SetLang(newLang = 'en'): Observable<HttpResponse<any>> {
     const reqUrl = `${this.href}`;
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
     const body = { lang: newLang };

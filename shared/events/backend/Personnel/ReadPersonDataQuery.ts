@@ -6,7 +6,7 @@ import { uEvent, uEventsIds } from '../../../models/event';
 export class ReadPersonDataQuery extends uEvent {
 
   /**
-   * Creates an instance of read person data query
+   *
    * @param ListParametersNameForSorting (Multi)sorting query ('field1', 'field2') for
    * descending add - to the end of field ('field1', 'field2-')
    * @param NumberPageOutput Page
@@ -14,7 +14,16 @@ export class ReadPersonDataQuery extends uEvent {
    *
    * Examples:
    */
-  constructor(
+
+  /**
+   * Creates an instance of read person data query
+   * @param sourceId source id
+   * @param ListParametersNameForSorting (Multi)sorting query ('field1', 'field2') for
+   * descending add - to the end of field ('field1', 'field2-')
+   * @param NumberPageOutput page to show
+   * @param NumberRecordsOnPage limit of entries
+   */
+  public constructor(
     sourceId: string,
     public ListParametersNameForSorting: string[],
     public NumberPageOutput: number,

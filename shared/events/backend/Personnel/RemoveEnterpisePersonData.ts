@@ -5,7 +5,11 @@ import { uEvent, uEventsIds } from '../../../models/event';
  */
 export class RemoveEnterpisePersonData extends uEvent {
 
-  constructor(sourceId: string, public PersonDataID: number) {
+  /**
+   * @param sourceId source id
+   * @param PersonDataID personda data id to remove
+   */
+  public constructor(sourceId: string, public PersonDataID: number) {
     super();
     this.SourceId = sourceId;
     this.EventId = uEventsIds.RemovePersonData;

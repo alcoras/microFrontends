@@ -31,5 +31,4 @@ module.exports = {
     'jsdoc/require-returns-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'warn'
   },
-  ignorePatterns: [ 'src/app/tests/*']
 }
