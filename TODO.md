@@ -1,5 +1,8 @@
 # Tasks
 
+## DROP
+34. DROP e2eTests actually are integration? tests, currently there are no e2e tests
+
 ## DONE
 6. DONE Update everything to ng9  
     6. 1. DONE shell
@@ -46,6 +49,24 @@
     26. 4. DONE occupation-uf
     26. 5. DONE uf-manager
     26. 6. DONE event-proxy-lib
+45. DONE remove abbreviations in names of functions/methods/classes/params and fix linting 
+    45. 1. DONE personnel-uf
+    45. 2. DONE shell
+    45. 3. DONE menu-uf
+    45. 4. DONE e2eTests
+    45. 5. DONE observer-uf
+    45. 6. DONE occupation-uf
+    45. 7. DONE shared
+46. Configure unit test debugging
+    46. 1. DONE personnel-uf
+    46. 2. DONE shell
+    46. 3. DONE menu-uf
+    46. 4. DONE e2eTests
+    46. 5. DONE observer-uf
+    46. 6. DONE occupation-uf
+    46. 7. DONE shared->event-proxy-lib
+42. DONE occupations: transfer logic from module to component/service
+39. DONE Consider adding interfaces for microfrontends (sourceId sourceName and so on)
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -82,36 +103,16 @@
     30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
 32. find every promise or observable and handle errors
 33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
+    33. 0. !!!!! optimize output, so it extracts static values without including whole class
     33. 1. personnel-uf
     33. 2. shell
     33. 3. menu-uf
     33. 4. e2eTests
-    33. 5. DONE observer-uf
+    33. 5. observer-uf
     33. 6. occupation-uf
     33. 7. shared
-34. e2eTests actually are integration? tests, currently there are no e2e tests
 36. add concurrently and serve to projects
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
-39. Consider adding interfaces for microfrontends (sourceId sourceName and so on)
-42. occupations: transfer logic from module to component/service
-45. remove abbreviations in names of functions/methods/classes/params and fix linting 
-    45. 1. DONE personnel-uf
-    45. 2. DONE shell
-    45. 3. DONE menu-uf
-    45. 4. e2eTests
-    45. 5. observer-uf
-    45. 6. occupation-uf
-    45. 7. DONE shared
-46. Configure unit test debugging
-    46. 1. DONE personnel-uf
-    46. 2. DONE shell
-    46. 3. DONE menu-uf
-    46. 4. e2eTests
-    46. 5. observer-uf
-    46. 6. occupation-uf
-    46. 7. DONE shared->event-proxy-lib
-47. write unit/static tests for:
-    47. 1. shell->uf-manager
-    47. 2. menu->menu-service
+47. write unit/static tests micro frontend prelaunch services
 
 48.

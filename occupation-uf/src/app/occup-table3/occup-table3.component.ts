@@ -5,7 +5,6 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { merge, of as observableOf} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { FormGroup } from '@angular/forms';
 import { OccupationData } from '@uf-shared-models/';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { IGetResponse } from '../services/interfaces/IGetResponse';
@@ -25,43 +24,51 @@ import { IGetResponse } from '../services/interfaces/IGetResponse';
 })
 export class OccupTable3Component implements OnInit, AfterViewInit {
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) private sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) private paginator: MatPaginator;
 
-  columnsToDisplay: string[] = [
+  /**
+   * Placeholder for View
+   */
+  public ExpandedElement: OccupationData | null;
+
+  /**
+   * List of Collumns to be displayed
+   */
+  public ColumnsToDisplay: string[] = [
     'OccupationAggregateIdHolderId',
     'Name',
-    'TariffCategory'];
-  data: OccupationData[] = [];
-  expandedElement: OccupationData | null;
+    'TariffCategory'
+  ];
 
-  dataSource = new MatTableDataSource();
+  public ResultsLength = 0;
+  public IsLoadingResults = true;
+  public DataSource = new MatTableDataSource();
+  public BackendError = false;
 
-  resultsLength = 0;
-  isLoadingResults = true;
-  isRateLimitReached = false;
+  private data: OccupationData[] = [];
 
-  form: FormGroup;
+  public constructor(private occupationApiService: OccupationAPIService) { }
 
-  constructor(
-    private apiService: OccupationAPIService) {
-  }
-
-  updateEntry(id: number) {
+  /**
+   * Updates entry given id
+   * @param id OccupationAggregateIdHolderId
+   */
+  public UpdateEntry(id: number): void {
     const tariffElement = document.querySelector(`[occu_TariffCategory="${id}"]`) as HTMLTextAreaElement;
     const nameElement = document.querySelector(`[occu_Name="${id}"]`) as HTMLTextAreaElement;
 
     const up: OccupationData = {
       OccupationAggregateIdHolderId: id,
-      DocReestratorId: 1, // TODO: because demo
+      DocReestratorId: 1, // DEMO
       Name: nameElement.value,
       TariffCategory: +tariffElement.value
     };
 
-    this.apiService.Update(up).then(
+    this.occupationApiService.Update(up).then(
       () => {
         console.log('update', id);
-        this.refreshTable();
+        this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
@@ -70,11 +77,15 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
     );
   }
 
-  public DeleteEntry(id: number) {
-    this.apiService.Delete(id).then(
-      (resolved) => {
+  /**
+   * Deletes entry
+   * @param id OccupationAggregateIdHolderId
+   */
+  public DeleteEntry(id: number): void {
+    this.occupationApiService.Delete(id).then(
+      () => {
         console.log('delete', id);
-        this.refreshTable();
+        this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
@@ -83,22 +94,34 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
     );
   }
 
-  refreshTable() {
-    // TODO: genius reload
+  /**
+   * Refreshes table without reload page
+   *
+   * @private
+   * @memberof PersonnelTable2Component
+   */
+  public RefreshTable(): void {
     this.paginator._changePageSize(this.paginator.pageSize);
   }
 
-  applyFilter(event: Event) {
+  /**
+   * Applies filter on table
+   *
+   * @private
+   * @param {Event} event ?
+   * @memberof PersonnelTable2Component
+   */
+  public ApplyFilter(event: Event): void {
     const filterVal = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterVal.trim().toLowerCase();
+    this.DataSource.filter = filterVal.trim().toLowerCase();
   }
 
-  ngOnInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  public ngOnInit(): void {
+    this.DataSource.paginator = this.paginator;
+    this.DataSource.sort = this.sort;
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -107,25 +130,22 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
       .pipe(
         startWith({}),
         switchMap(() => {
-          this.isLoadingResults = true;
+          this.IsLoadingResults = true;
 
-          return this.apiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
+          return this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
         map((data: IGetResponse) => {
           // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = false;
-          this.resultsLength = data.total;
+          this.IsLoadingResults = false;
+          this.ResultsLength = data.total;
 
-          let ic: OccupationData[];
-          ic = data.items;
-          this.dataSource = new MatTableDataSource(data.items);
+          const ic: OccupationData[] = data.items;
+          this.DataSource = new MatTableDataSource(data.items);
           return ic;
         }),
         catchError((err) => {
-          this.isLoadingResults = false;
-          // Catch if the GitHub API has reached its rate limit. Return empty data.
-          this.isRateLimitReached = true;
+          this.IsLoadingResults = false;
+          this.BackendError = true;
           console.error(err);
           return observableOf([]);
         })

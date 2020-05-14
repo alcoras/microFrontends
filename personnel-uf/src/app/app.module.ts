@@ -38,8 +38,7 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
   entryComponents: [AppComponent],
 })
 export class AppModule {
-  public constructor(private injector: Injector) {
-  }
+  public constructor(private injector: Injector) { }
 
   public ngDoBootstrap(): void {
     const { injector } = this;

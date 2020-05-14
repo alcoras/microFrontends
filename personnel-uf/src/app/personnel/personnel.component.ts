@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { UParts, uEventsIds, EventResponse, APIGatewayResponse } from '@uf-shared-models/index';
+import { UParts, uEventsIds, EventResponse, APIGatewayResponse, IMicroFrontend, uEvent } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
@@ -11,16 +11,9 @@ import { EventBusService } from '../services/EventBus.service';
 @Injectable({
   providedIn: 'root'
 })
-export class PersonnelComponent {
-  /**
-   * Source id of personnel component
-   */
-  private sourceId: string = UParts.Personnel.SourceId;
-
-  /**
-   * Source name of personnel component
-   */
-  private sourceName: string = UParts.Personnel.SourceName;
+export class PersonnelComponent implements IMicroFrontend {
+  public SourceId: string = UParts.Personnel.SourceId;
+  public SourceName: string = UParts.Personnel.SourceName;
 
   /**
    * Element to place dictionary
@@ -28,40 +21,26 @@ export class PersonnelComponent {
   private elToPlace: { [id: number]: string } = {};
 
   public constructor(
-    private eProxyService: EventProxyLibService,
+    private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) {
   }
 
-  /**
-   * Inits async is called by factory to assure its execution
-   *
-   * @returns Promise
-   */
   public async InitAsync(): Promise<void> {
     this.preparePlacements();
-    await this.subscribeToEventsAsync();
+    await this.SubscribeToEventsAsync();
   }
 
-  /**
-   * Starts qna with backend
-   */
   public StartQNA(): void {
-    this.eProxyService.StartQNA(this.sourceId).subscribe(
+    this.eventProxyService.StartQNA(this.SourceId).subscribe(
       (response: HttpResponse<EventResponse>) => {
-        this.newHttpResponseAsync(response);
+        this.NewHttpResponseAsync(response);
       },
-      (error) => { console.error(this.sourceName, error); },
+      (error) => { console.error(this.SourceName, error); },
     );
   }
 
-  /**
-   * Parses new http response
-   * @param response HttpResponse
-   */
-  private async newHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) {
-      throw new Error('Can\'t connect to backend');
-    }
+  public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
+    if (!response) { throw new Error('Can\'t connect to backend'); }
 
     if (!response.body) { return; }
 
@@ -70,7 +49,7 @@ export class PersonnelComponent {
     }
 
     if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-      this.parseNewEvent(response);
+      this.ParseNewEventAsync(response.body.Events);
     }
   }
 
@@ -78,34 +57,23 @@ export class PersonnelComponent {
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private async subscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
+  public async SubscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(
-      this.sourceId, [
+      this.SourceId, [
       [uEventsIds.ReadPersonData, 0, 0]
     ]);
 
-    e.SourceName = this.sourceName;
+    e.SourceName = this.SourceName;
 
-    return this.eProxyService.DispatchEvent(e).toPromise();
+    return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
-  /**
-   * Prepares placements for components
-   */
-  private preparePlacements(): void {
-    this.elToPlace[uEventsIds.PersonnelButtonPressed] = '<team-personnel-2></team-personnel-2>';
-  }
-
-  /**
-   * Parses new events
-   * @param event HttpResposne with event list
-   */
-  private parseNewEvent(event: HttpResponse<EventResponse>): void {
-    event.body.Events.forEach(element => {
+  public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
+    for (const element of eventList) {
       switch (element.EventId) {
         case uEventsIds.PersonnelButtonPressed:
           if (this.processButtonPressed(element as EventButtonPressed)) {
-            this.eProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            this.eventProxyService.ConfirmEvents(this.SourceId, [element.AggregateId]).toPromise();
           } else {
             throw new Error('Did not proccess after processButtonPressed');
           }
@@ -116,7 +84,14 @@ export class PersonnelComponent {
         default:
           throw new Error('Event is not implemented.');
       }
-    });
+    }
+  }
+
+  /**
+   * Prepares placements for components
+   */
+  private preparePlacements(): void {
+    this.elToPlace[uEventsIds.PersonnelButtonPressed] = '<team-personnel-2></team-personnel-2>';
   }
 
   /**

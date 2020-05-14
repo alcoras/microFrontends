@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { OccupationData } from '@uf-shared-models/index';
@@ -8,20 +8,26 @@ import { OccupationData } from '@uf-shared-models/index';
   templateUrl: './new-occup.component.html',
   styleUrls: ['./new-occup.component.css']
 })
-export class NewOccupComponent implements OnInit {
+export class NewOccupComponent {
 
-  constructor(
+  public constructor(
     private apiService: OccupationAPIService,
     public dialogRef: MatDialogRef<NewOccupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: OccupationData) {
   }
 
-  onNoClick(): void {
+  /**
+   * Handles dialog Cancel/No
+   */
+  public OnNoClick(): void {
     this.dialogRef.close();
     console.log(this.data);
   }
 
-  save(): void {
+  /**
+   * Handles dialog's save
+   */
+  public Save(): void {
     this.dialogRef.close();
     this.apiService.Create(this.data).then(
       () => {
@@ -34,8 +40,4 @@ export class NewOccupComponent implements OnInit {
       }
     );
   }
-
-  ngOnInit(): void {
-  }
-
 }

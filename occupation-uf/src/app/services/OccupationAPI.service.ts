@@ -39,9 +39,9 @@ export class OccupationAPIService {
    * @param id Occupation to remove by
    * @returns Promise
    */
-  public Delete(id: number): Promise<HttpResponse<any>> {
+  public Delete(id: number): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
-      this.delete(id).toPromise().then( (val: HttpResponse<any>) => {
+      this.delete(id).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -56,10 +56,10 @@ export class OccupationAPIService {
    * @param occupationData new OccupationData
    * @returns Promise
    */
-  public Create(occupationData: OccupationData): Promise<HttpResponse<any>> {
+  public Create(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(occupationData).toPromise().then( (val: HttpResponse<any>) => {
+      this.create(occupationData).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -74,10 +74,10 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Promise
    */
-  public Update(occupationData: OccupationData): Promise<HttpResponse<any>> {
+  public Update(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(occupationData).toPromise().then( (val: HttpResponse<any>) => {
+      this.update(occupationData).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
         if (val.status === 200) {
           resolve(val);
         } else {
@@ -90,10 +90,9 @@ export class OccupationAPIService {
   /**
    * Queries for occupation data
    *
-   * @param {number} page page to get
-   * @param {number} pageSize entries' limit
-   * @returns {Promise<IGetResponse>} Promise with response
-   * @memberof OccupationAPIService
+   * @param page page to get
+   * @param pageSize entries' limit
+   * @returns Promise with response
    */
   // TODO: add reject and timeout
   public Get(page: number, pageSize: number): Promise<IGetResponse> {
@@ -127,11 +126,9 @@ export class OccupationAPIService {
   /**
    * Queries for occupation data
    *
-   * @private
-   * @param {number} page page to get
-   * @param {number} pageSize entries' limit
-   * @returns {Observable<HttpResponse<APIGatewayResponse>>} Observable with Http response
-   * @memberof OccupationAPIService
+   * @param page page to get
+   * @param pageSize entries' limit
+   * @returns Observable with Http response
    */
   private get(page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
     const e = new OccupationsReadQuery(this.sourceId, new Date().toISOString(), page, pageSize);

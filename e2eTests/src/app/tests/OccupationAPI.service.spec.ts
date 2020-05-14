@@ -76,7 +76,7 @@ describe('Occupation API service', () => {
     }
   }
 
-  it('test service creation', () => {
+  fit('test service creation', () => {
     expect(service).toBeTruthy();
     expect(eProxyService).toBeTruthy();
     expect(eventBusService).toBeTruthy();

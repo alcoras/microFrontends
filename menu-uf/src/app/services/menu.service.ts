@@ -24,6 +24,7 @@ export class MenuService implements IMicroFrontend {
       (error) => { console.error(this.SourceName, error); },
     );
   }
+
   public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
     if (!response) { throw new Error('Can\'t connect to backend'); }
 

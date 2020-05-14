@@ -51,6 +51,18 @@
         },
         {
             "type": "chrome",
+            "request": "attach",
+            "name": "occupations unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/occupation-uf",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/occupation-uf"
+            }
+        },
+        {
+            "type": "chrome",
             "request": "launch",
             "name": "personnel",
             "url": "http://localhost:3004",
@@ -78,6 +90,18 @@
         {
             "type": "chrome",
             "request": "attach",
+            "name": "observer unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/observer-uf",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/observer-uf"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
             "name": "event-proxy-lib unit tests",
             "address": "localhost",
             "port": 9333,
@@ -85,6 +109,18 @@
             "webRoot": "${workspaceFolder}/shared/libs/projects/event-proxy-lib",
             "pathMapping": {
               "/_karma_webpack_": "${workspaceFolder}/shared/libs/projects/event-proxy-lib"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "e2e unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/e2eTests",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/e2eTests"
             }
         },
     ]

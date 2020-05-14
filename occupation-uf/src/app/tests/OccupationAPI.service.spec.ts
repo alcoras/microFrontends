@@ -5,7 +5,7 @@ import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { HttpResponse } from '@angular/common/http';
 import { genRandomNumber, delay } from './helpers/helpers';
-import { OccupationData, uEventsIds } from '@uf-shared-models/index';
+import { OccupationData, uEventsIds, APIGatewayResponse } from '@uf-shared-models/index';
 import { OccupationsReadResults } from '@uf-shared-events/index';
 import { IGetResponse } from '../services/interfaces/IGetResponse';
 
@@ -36,7 +36,7 @@ describe('Occupation API service', () => {
   describe('Delete', () => {
     it('testing response', (done) => {
       service.Delete(19).then(
-        (res: HttpResponse<any>) => {
+        (res: HttpResponse<APIGatewayResponse>) => {
           expect(res.status).toBe(200);
           done();
         },
@@ -64,7 +64,7 @@ describe('Occupation API service', () => {
 
     it('testing response', (done) => {
       service.Update(newOccupationData).then(
-        (res: HttpResponse<any>) => {
+        (res: HttpResponse<APIGatewayResponse>) => {
           expect(res.status).toBe(200);
           done();
         },
@@ -75,10 +75,8 @@ describe('Occupation API service', () => {
     });
 
     it('testing content', (done) => {
-      const dateTimeVal = new Date().toISOString();
       service.Update(newOccupationData).then(
         (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].DateTimeValue).toBe(dateTimeVal);
           expect(res.body.Events[0].EventId).toBe(uEventsIds.OccupationsUpdate);
           expect(res.body.Events[0].Name).toBe(newOccupationData.Name);
           expect(res.body.Events[0].TariffCategory).toBe(newOccupationData.TariffCategory);

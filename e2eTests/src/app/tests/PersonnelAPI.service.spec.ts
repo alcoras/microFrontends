@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { PersonnelAPIService } from '@personnel-services/PersonnelAPI.service';
 import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 import { EventBusService } from '@personnel-services/EventBus.service';
@@ -8,7 +8,6 @@ import { SubscibeToEvent } from '@uf-shared-events/index';
 import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
 import { genRandomNumber } from './helpers/helpers';
 
-// tslint:disable-next-line: no-big-function
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eProxyService: EventProxyLibService;
@@ -52,8 +51,7 @@ describe('PersonnelAPI service', () => {
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
   });
 
-  // tslint:disable-next-line: completed-docs
-  function propogateEvent(res: HttpResponse<EventResponse>) {
+  function propogateEvent(res: HttpResponse<EventResponse>): void {
     if (res.body) {
       res.body.Events.forEach(element => {
         if (element.EventId === uEventsIds.ReadPersonData) {
@@ -64,7 +62,6 @@ describe('PersonnelAPI service', () => {
     }
   }
 
-  // tslint:disable-next-line: completed-docs
   function createPersonnelEntry(): IPersonnel {
     return {
       PersonDataID: 0,
@@ -164,7 +161,7 @@ describe('PersonnelAPI service', () => {
   }, 6000);
 
   for (let index = 0; index < 1; index++) {
-    fit('should create new PersonData entry', async (done) => {
+    it('should create new PersonData entry', async (done) => {
       const newPersonnelData = createPersonnelEntry();
       // 1. Subscription is happening before tests in beforeAll
 

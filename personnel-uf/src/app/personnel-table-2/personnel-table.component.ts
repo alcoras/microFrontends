@@ -32,17 +32,11 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
 
   /**
    * Placeholder for View
-   *
-   * @type {(IPersonnel | null)}
-   * @memberof PersonnelTable2Component
    */
   public ExpandedElement: IPersonnel | null;
 
   /**
    * List of Collumns to be displayed
-   *
-   * @type {string[]}
-   * @memberof PersonnelTable2Component
    */
   public ColumnsToDisplay: string[] = [
     'PersonDataID',
