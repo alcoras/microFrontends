@@ -1,7 +1,7 @@
 import { UParts } from '@uf-shared-models/UParts';
 import { uEventsIds } from '@uf-shared-models/event';
 import { ResourceSheme } from '@uf-shared-events/helpers/ResourceSheme';
-import { MicroFrontendData } from '@uf-shared-events/';
+import { MicroFrontendData } from '@uf-shared-events/index';
 
 /**
  * Source Id
@@ -13,6 +13,10 @@ const srcId = UParts.Observer.SourceId;
  */
 const port = '3006';
 
+window['__env'] = window['__env'] || {};
+window['__env']['uf'] = window['__env']['uf'] || {};
+window['__env']['uf'][srcId] = window['__env']['uf'][srcId] || {};
+
 /**
  * Microservice's domain
  */
@@ -22,10 +26,6 @@ const domain = window['__env']['url'] || 'http://127.0.0.1';
  * Microservice's URL
  */
 const url = `${domain}:${port}/`;
-
-window['__env'] = window['__env'] || {};
-window['__env']['uf'] = window['__env']['uf'] || {};
-window['__env']['uf'][srcId] = window['__env']['uf'][srcId] || {};
 
 /**
  * Microservice's config
@@ -47,5 +47,6 @@ for (const script of scriptList) {
   temp.setAttribute('type', 'module');
   uf[srcId].resources.push(temp);
 }
+
 
 window['__env']['uf'][srcId] = uf[srcId];
