@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { uEventsIds, uEvent, UParts, EventResponse, APIGatewayResponse } from '@uf-shared-models/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
 import {
   SubscibeToEvent,
   RequestToLoadScripts,
@@ -11,6 +11,7 @@ import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
 import { HttpResponse } from '@angular/common/http';
+import { AuthenticationService, LoginRequest } from '../services/AuthenticationService';
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -37,13 +38,17 @@ export class UFManagerComponent {
 
   /**
    * Creates an instance of UFManagerComponent.
+   * @param authService auth service
    * @param eventProxyService - library service used for communication with backend
+   * @param environmentService - some DOM globals
    * @param resourceLoader - helper for communication between Script-Loader
    * @param languageService - langauge service for demo
    * @param prestartService - prestart service for demo
    */
   public constructor(
+    private authService: AuthenticationService,
     private eventProxyService: EventProxyLibService,
+    private environmentService: EnvironmentService,
     private resourceLoader: ResourceLoaderService,
     private languageService: LanguageService,
     private prestartService: PrestartService
@@ -53,6 +58,14 @@ export class UFManagerComponent {
    * Inits ufmanager component with async functions
    */
   public async InitAsync(): Promise<void> {
+
+    await this.authService.LoginAsync().then(
+      () => { console.log('Logged In.')},
+      (error: LoginRequest) => {
+        alert(error.Error);
+        throw new Error(error.FullError);
+      }
+    );
 
     await this.preloadScripts().then(
       () => { console.log(`${this.sourceName} preloadedScripts done. `)},
@@ -79,6 +92,7 @@ export class UFManagerComponent {
     );
   }
 
+
   private async newHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
     if (!response) { throw new Error('Can\'t connect to backend'); }
 
@@ -99,15 +113,15 @@ export class UFManagerComponent {
    */
   private preloadScripts(): Promise<void[]> {
     const promises = [];
-    const url: string = this.eventProxyService.environmentService.Url;
+    const url: string = this.environmentService.Url;
 
     if (!url) {
       throw new Error('Url is not defined in environment (env.js)');
     }
 
     const urlList = [
-      url + ':3002/en/scripts/config.js', // Menu
-      url + ':3004/scripts/conf.js', // Personnel
+      // url + ':3002/en/scripts/config.js', // Menu
+      // url + ':3004/scripts/conf.js', // Personnel
       // url + ':3005/scripts/conf.js', // Occupation
       // url + ':3006/scripts/conf.js' // Observer
     ];
@@ -136,7 +150,7 @@ export class UFManagerComponent {
       [uEventsIds.LoadedResource, 0, 0],
       [uEventsIds.RequestToLoadScript, 0, 0],
       [uEventsIds.LanguageChange, 0, 0],
-      [uEventsIds.InitMenu, 0, 0]
+      [uEventsIds.InitMenu, 0, 0],
     ]);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e).toPromise();
@@ -166,15 +180,18 @@ export class UFManagerComponent {
             await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
           }
         }
-      } else if (element.EventId === uEventsIds.RequestToLoadScript) {
+      }
+      else if (element.EventId === uEventsIds.RequestToLoadScript) {
         const event: RequestToLoadScripts  = element as RequestToLoadScripts;
         this.loadResourcesEvent(event);
         await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
-      } else if (element.EventId === uEventsIds.LanguageChange) {
+      }
+      else if (element.EventId === uEventsIds.LanguageChange) {
         const event: LanguageChange  = element as LanguageChange;
         this.changeLanguageEvent(event);
         await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
-      } else {
+      }
+      else {
         for (const config in ufConfigs) {
           if (Object.prototype.hasOwnProperty.call(ufConfigs, config) && ufConfigs[+config].events.includes(element.EventId)) {
             // check if loaded

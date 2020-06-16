@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, of, Subject, Observer } from 'rxjs';
 import { catchError  } from 'rxjs/operators';
 import { uEvent, uEventsIds } from './models/event';
-import { EnvironmentService } from './services/environment.service';
+import { EnvironmentService } from './services/EnvironmentService';
 
 /**
  * Event Proxy service for communication with API gateway
@@ -77,14 +77,13 @@ export class EventProxyLibService {
    * @param httpClient Injects Angular HttpClient
    */
   public constructor(
-    public environmentService: EnvironmentService,
+    private environmentService: EnvironmentService,
     private httpClient: HttpClient) {
-      const url = `${this.environmentService.APIGatewayUrl}:${this.environmentService.APIGatewayPort}`;
-      this.ApiGatewayURL = url;
+      this.ApiGatewayURL = `${this.environmentService.APIGatewayUrl}:${this.environmentService.APIGatewayPort}`;
   }
 
   /**
-   * Establisheds communication with backend to receive new events.
+   * Establishes communication with backend to receive new events.
    * It maintains it and if fails resets it.
    * @param sourceID Source ID, used for registering receiver.
    * @returns Observable with respones from backend
@@ -130,7 +129,8 @@ export class EventProxyLibService {
       EventID: uEventsIds.FrontEndEventReceived,
       SourceID: srcId,
       Ids: idList,
-      MarkAllReceived: confirmAll };
+      MarkAllReceived: confirmAll,
+    };
 
     return this.sendEvent('ConfirmEvents', body);
   }
@@ -142,30 +142,54 @@ export class EventProxyLibService {
    */
   public DispatchEvent(event: | uEvent | uEvent[]): Observable<HttpResponse<any>> {
     const eventList = [].concat(event);
-    const body = { EventID: uEventsIds.RegisterNewEvent, events: eventList };
+    const body = {
+      EventID: uEventsIds.RegisterNewEvent,
+      events: eventList
+    };
 
     return this.sendEvent('DispatchEvent', body);
   }
 
   /**
-   * Gets unreceived events from backend
+   * Gets all unconfirmed events from backend
    * @param srcId SourceID
    * @returns HTTPResponse (or error) with events
    */
   public GetLastEvents(srcId: string): Observable<HttpResponse<any>> {
 
-    const body = { EventID: uEventsIds.GetNewEvents, SourceId: srcId };
+    const body = {
+      EventID: uEventsIds.GetNewEvents,
+      SourceId: srcId,
+    };
 
     return this.sendEvent('GetLastEvents', body);
+  }
+
+  /**
+   * Tries to log in into system
+   * @param timestamp ISO formatted time string
+   * @param signature Signature
+   * @returns HTTPResponse (or error) with events
+   */
+  public LogIn(timestamp: string, signature: string): Observable<HttpResponse<any>> {
+
+    const body = {
+      EventId: uEventsIds.LoginRequested,
+      LoginTimestamp: timestamp,
+      LoginSignature: signature
+    }
+
+    return this.sendEvent('LogIn', body, true);
   }
 
   /**
    * Sends event to backend (APIGateway microservice)
    * @param caller function which called
    * @param body message body
+   * @param anonymous (default false) if set to true will not include LoginToken field
    * @returns HttpResponse observable
    */
-  private sendEvent(caller: string, body: any): Observable<any> {
+  private sendEvent(caller: string, body: any, anonymous = false): Observable<any> {
 
     if (!this.apiGatewayURL) {
       throw Error('ApiGateway URL is undefined');
@@ -173,6 +197,10 @@ export class EventProxyLibService {
 
     const headers = this.jsonHeaders;
     const url = this.apiGatewayURL + this.endpoint;
+
+    if (!anonymous) {
+      body['LoginToken'] = this.environmentService.AuthorizationToken;
+    }
 
     console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);
 

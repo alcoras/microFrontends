@@ -3,7 +3,7 @@
  */
 export abstract class uEvent {
   /**
-   * Event id, can't be 0
+   * Event id, should not be 0
    */
   public EventId = 1;
 
@@ -15,8 +15,9 @@ export abstract class uEvent {
 
   /**
    * Source id of sender (microservice/frontend)
+   * undefined - to prevent sending no SourceId
    */
-  public SourceId = '';
+  public SourceId = 'undefined';
 
   /**
    * Aggregate id of event given by EventBroker
@@ -55,41 +56,39 @@ export abstract class uEvent {
 }
 
 /**
- * Micro froents Id list
- */
-export enum uParts {
-  FrontendShell = '1000',
-  Menu = '1001',
-  Personnel = '1002',
-  Occupations = '1003',
-  ScriptLoader = '1004',
-  OccupationNg9 = '1005',
-  UFManager = '1006'
-}
-
-/**
  * Event's id list
  */
 export enum uEventsIds {
   InitEvent = 1000,
-  PerssonelButtonPressed = 1001,
+  PersonnelButtonPressed = 1001,
   InitMenu = 1002,
   RequestToLoadScript = 1003,
   LoadedResource = 1004,
   OccupationNg9ButtonPressed = 1005,
   LanguageChange = 1006,
+  ObserverButtonPressed = 1007,
 
   PingRequest = 2001,
   SubscribeToEvent = 2002,
   EventProccessedSuccessfully = 2003,
   EventProccessedWithFails = 2004,
   EventReceived = 2005,
-  CreateUpdatePersonData = 2006,
+  CreatePersonData = 2006,
   RegisterNewEvent = 2007,
   GetNewEvents = 2008,
   RegisterEventIds = 2009,
   RemovePersonData = 2010,
   ReadPersonDataQuery = 2011,
   FrontEndEventReceived = 2012,
-  ReadPersonData = 2013
+  ReadPersonData = 2013,
+  UpdatePersonData = 2014,
+  OccupationsCreate = 2015,
+  OccupationsUpdate = 2016,
+  OccupationsDelete = 2017,
+  OccupationsReadQuery = 2018,
+  OccupationsRead = 2019,
+  ReadPersonDataOnDateQuery = 2020,
+  LoginRequested = 2021,
+  LoginFailed = 2022,
+  LoginSuccess = 2023,
 }

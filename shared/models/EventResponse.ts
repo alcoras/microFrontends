@@ -6,7 +6,6 @@ import { uEvent } from './event';
 export class EventResponse {
   /**
    * Event Id
-   *
    */
   public EventId: number;
 

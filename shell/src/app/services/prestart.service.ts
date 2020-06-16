@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LanguageService, ILanguageSettings } from './lang.service';
 import { HttpResponse } from '@angular/common/http';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
 import { ResourceSheme } from '@uf-shared-events/helpers/ResourceSheme';
 import { ResourceLoaderService } from './resource-loader.service';
 
@@ -14,7 +14,7 @@ import { ResourceLoaderService } from './resource-loader.service';
 export class PrestartService {
   public constructor(
     private languageService: LanguageService,
-    private eventProxyService: EventProxyLibService,
+    private environmentService: EnvironmentService,
     private resourceLoader: ResourceLoaderService
   ) { }
 
@@ -55,10 +55,10 @@ export class PrestartService {
    */
   private setUpLanguage(response: HttpResponse<ILanguageSettings> | null): void {
     if (!response) {
-      this.eventProxyService.environmentService.Language = 'en';
+      this.environmentService.Language = 'en';
       return;
     }
-    this.eventProxyService.environmentService.Language = response.body.lang;
+    this.environmentService.Language = response.body.lang;
   }
 
   /**

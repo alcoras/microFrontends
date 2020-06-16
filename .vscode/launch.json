@@ -13,7 +13,7 @@
         },
         {
             "type": "chrome",
-            "request": "attach",
+            "request": "attach", 
             "name": "shell unit tests",
             "address": "localhost",
             "port": 9333,

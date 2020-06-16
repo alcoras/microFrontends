@@ -1,6 +1,6 @@
 
 /**
- * Environment service for reading global variables from winndow.__env
+ * Environment service for reading global variables from window.__env
  */
 export class EnvironmentService {
 
@@ -13,14 +13,15 @@ export class EnvironmentService {
    * Gets window[envPrefix] (window.__env)
    * @returns window[envPrefix]
    */
-  public Get() {
+  // TODO: enable when I figure out how to add external models to angular library
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public Get(): any {
     return window[this.envPrefix];
   }
 
   /**
    * Gets/Sets local/remote url which is used to preload
    * micro frontends's scripts
-   * @param url new url
    * @returns url (localhost)
    */
   public get Url(): string {
@@ -33,7 +34,6 @@ export class EnvironmentService {
 
   /**
    * Gets/Sets apigateway url which is used for event communication
-   * @param url new url
    * @returns apigateway url
    */
   public get APIGatewayUrl(): string {
@@ -46,7 +46,6 @@ export class EnvironmentService {
 
   /**
    * Gets/Sets apigateway url which is used for event communication
-   * @param port new port
    * @returns apigateway url
    */
   public get APIGatewayPort(): string {
@@ -59,7 +58,6 @@ export class EnvironmentService {
 
   /**
    * Gets/Sets default language
-   * @param value new language (en, lt, ru, uk)
    * @returns language abbreviation
    */
   public get Language(): string {
@@ -71,8 +69,47 @@ export class EnvironmentService {
   }
 
   /**
-   * Gets micro frontend's settings preloaded by env.js
+   * Gets/Sets authorization token
+   * @returns token
    */
+  public get AuthorizationToken(): string {
+    return window[this.envPrefix]['authToken'];
+  }
+
+  public set AuthorizationToken(value: string) {
+    window[this.envPrefix]['authToken'] = value;
+  }
+
+  /**
+   * Gets/Sets token valid from date
+   * @returns date ISO string
+   */
+  public get TokenBeginDate(): string {
+    return window[this.envPrefix]['tokenBeginDate'];
+  }
+
+  public set TokenBeginDate(value: string) {
+    window[this.envPrefix]['tokenBeginDate'] = value;
+  }
+
+  /**
+   * Gets/Sets token valid to date
+   * @returns date ISO string
+   */
+  public get TokenExpirationDate(): string {
+    return window[this.envPrefix]['tokenExpirationDate'];
+  }
+
+  public set TokenExpirationDate(value: string) {
+    window[this.envPrefix]['tokenExpirationDate'] = value;
+  }
+
+  /**
+   * Gets micro frontend's settings preloaded by env.js
+   * @returns Microfrontend list object
+   */
+  // TODO: enable when I figure out how to add external models to angular library
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public get UFList(): any {
     return window[this.envPrefix]['uf'];
   }

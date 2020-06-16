@@ -87,4 +87,8 @@ export enum uEventsIds {
   OccupationsDelete = 2017,
   OccupationsReadQuery = 2018,
   OccupationsRead = 2019,
+  ReadPersonDataOnDateQuery = 2020,
+  LoginRequested = 2021,
+  LoginFailed = 2022,
+  LoginSuccess = 2023,
 }

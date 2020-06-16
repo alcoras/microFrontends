@@ -1,7 +1,7 @@
 import { Observable, throwError, of } from 'rxjs';
 import { retryWhen, mergeMap, delay } from 'rxjs/operators';
 
-const errorMsg = (maxRetry: number) => `Failed after ${maxRetry}.`;
+const errorMsg = (maxRetry: number): string => `Failed after ${maxRetry}.`;
 
 const MAX_RETRIES = 3;
 const BACKOFFMS = 1000;

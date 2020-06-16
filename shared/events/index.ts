@@ -8,6 +8,7 @@ export * from './helpers/MicroFrontendData';
 export * from './helpers/ResourceSheme';
 
 export * from './backend/SubscibeToEvent';
+export * from './backend/LoginSuccess';
 
 export * from './backend/Personnel/ReadPersonDataQuery';
 export * from './backend/Personnel/CreateUpdatePersonData';

@@ -6,7 +6,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { uEventsIds, uEvent } from '../models/event';
 import { HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
-import { EnvironmentService } from '../services/environment.service';
+import { EnvironmentService } from '../services/EnvironmentService';
 
 /**
  * Returns promise after ms
@@ -172,12 +172,6 @@ describe('EventProxyLibService', () => {
     it('testing url which should have been set up in constructor', () => {
       expect(service.ApiGatewayURL).toBe(`http://${backendURL}:${backendPort}`);
     });
-
-    it('testing if environmentService service load was correct', () => {
-      expect(service.environmentService.APIGatewayUrl).toBe(`http://${backendURL}`);
-      expect(service.environmentService.APIGatewayPort).toBe(backendPort);
-    });
-
   });
 
   describe('errors', () => {
@@ -243,6 +237,7 @@ describe('EventProxyLibService', () => {
         SourceID: TestSourceId,
         Ids: [],
         MarkAllReceived: true,
+        LoginToken: undefined
       };
 
       service.ConfirmEvents(TestSourceId, [], true).subscribe(
@@ -263,6 +258,7 @@ describe('EventProxyLibService', () => {
         SourceID: TestSourceId,
         Ids: [10, 20, 30],
         MarkAllReceived: false,
+        LoginToken: undefined
       };
 
       service.ConfirmEvents(TestSourceId, testBody.Ids).subscribe(
@@ -284,7 +280,8 @@ describe('EventProxyLibService', () => {
 
       const testBody = {
         EventID: uEventsIds.RegisterNewEvent,
-        events: [new TestEvent()]
+        events: [new TestEvent()],
+        LoginToken: undefined
       };
 
       service.DispatchEvent(new TestEvent()).subscribe(
@@ -303,7 +300,8 @@ describe('EventProxyLibService', () => {
 
       const testBody = {
         EventID: uEventsIds.RegisterNewEvent,
-        events: [new TestEvent(), new TestEvent(), new TestEvent() ]
+        events: [new TestEvent(), new TestEvent(), new TestEvent() ],
+        LoginToken: undefined
       };
 
       service.DispatchEvent([new TestEvent(), new TestEvent(), new TestEvent()]).subscribe(
@@ -322,7 +320,11 @@ describe('EventProxyLibService', () => {
 
   describe('GetLastEvents', () => {
 
-    const testBody = { EventID: uEventsIds.GetNewEvents, SourceId: TestSourceId };
+    const testBody = {
+      EventID: uEventsIds.GetNewEvents,
+      SourceId: TestSourceId,
+      LoginToken: undefined
+    };
 
     it('testing body', () => {
       service.GetLastEvents(TestSourceId).subscribe(

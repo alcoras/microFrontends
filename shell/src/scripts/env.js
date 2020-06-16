@@ -9,4 +9,9 @@
   window.__env.apiGatewayUrl = 'http://localhost';
   window.__env.apiGatewayPort = '54366';
 
+  window.__env.loggedIn = false;
+  window.__env.authToken = null;
+  window.__env.tokenBeginDate = null;
+  window.__env.tokenExpirationDate = null;
+
 }(this));

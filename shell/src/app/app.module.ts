@@ -8,6 +8,7 @@ import { PrestartService } from './services/prestart.service';
 import { ResourceLoaderService } from './services/resource-loader.service';
 import { UFManagerFactory } from './uf-manager/uf-manager.factory';
 import { AppComponent } from './app.component';
+import { AuthenticationService } from './services/AuthenticationService';
 
 /**
  * Entry point module
@@ -24,6 +25,7 @@ import { AppComponent } from './app.component';
     PrestartService,
     ResourceLoaderService,
     UFManagerComponent,
+    AuthenticationService,
     { provide: APP_INITIALIZER, useFactory: UFManagerFactory, deps: [UFManagerComponent], multi: false}
   ],
   bootstrap: [AppComponent]
