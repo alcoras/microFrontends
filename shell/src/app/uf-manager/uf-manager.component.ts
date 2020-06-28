@@ -120,9 +120,9 @@ export class UFManagerComponent {
     }
 
     const urlList = [
-      // url + ':3002/en/scripts/config.js', // Menu
-      // url + ':3004/scripts/conf.js', // Personnel
-      // url + ':3005/scripts/conf.js', // Occupation
+      url + ':3002/en/scripts/conf.js', // Menu
+      url + ':3004/scripts/conf.js', // Personnel
+      url + ':3005/scripts/conf.js', // Occupation
       // url + ':3006/scripts/conf.js' // Observer
     ];
     promises.push(this.prestartService.InitScripts(urlList));

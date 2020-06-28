@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NewOccupComponent } from './new-occup/new-occup.component';
 
@@ -8,25 +8,17 @@ import { NewOccupComponent } from './new-occup/new-occup.component';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'y';
 
-  animal: string;
-  name: string;
 
-  constructor(private dialog: MatDialog) {
+  public constructor(
+    private dialog: MatDialog) {
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(NewOccupComponent, {
+  public openDialog(): void {
+    this.dialog.open(NewOccupComponent, {
       height: 'auto',
       width: 'auto',
       data: {}
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // console.log('The dialog was closed');
-      this.animal = result;
-    });
   }
-
 }

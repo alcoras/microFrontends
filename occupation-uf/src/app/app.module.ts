@@ -1,13 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
 
 import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
+
+import { AppComponent } from './app.component';
+
 import { NewOccupComponent } from './new-occup/new-occup.component';
 import { MaterialModule } from './meterial-module';
 
@@ -28,7 +28,6 @@ import { OccupationService } from './services/Occupation.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,

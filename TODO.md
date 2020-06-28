@@ -67,6 +67,8 @@
     46. 7. DONE shared->event-proxy-lib
 42. DONE occupations: transfer logic from module to component/service
 39. DONE Consider adding interfaces for microfrontends (sourceId sourceName and so on)
+24. DONE Debugging in tests
+    24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -95,8 +97,6 @@
 21. Events still disappearing? YES?
     21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
     21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
-24. Debugging in tests
-    24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 25. Check for type: any and convert to strong type (search and apply to all projects)
 28. Add SourceName to every event for Observer
 30. Fix warnings in event-proxy-lib when: ng build --prod:

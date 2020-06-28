@@ -22,8 +22,7 @@ export class PersonnelComponent implements IMicroFrontend {
 
   public constructor(
     private eventProxyService: EventProxyLibService,
-    private eventBusService: EventBusService) {
-  }
+    private eventBusService: EventBusService) {}
 
   public async InitAsync(): Promise<void> {
     this.preparePlacements();
@@ -82,6 +81,7 @@ export class PersonnelComponent implements IMicroFrontend {
           this.eventBusService.EventBus.next(element);
           break;
         default:
+          console.error(element);
           throw new Error('Event is not implemented.');
       }
     }

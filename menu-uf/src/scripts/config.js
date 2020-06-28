@@ -94,6 +94,10 @@ define("shared/models/event", ["require", "exports"], function (require, exports
         uEventsIds[uEventsIds["OccupationsDelete"] = 2017] = "OccupationsDelete";
         uEventsIds[uEventsIds["OccupationsReadQuery"] = 2018] = "OccupationsReadQuery";
         uEventsIds[uEventsIds["OccupationsRead"] = 2019] = "OccupationsRead";
+        uEventsIds[uEventsIds["ReadPersonDataOnDateQuery"] = 2020] = "ReadPersonDataOnDateQuery";
+        uEventsIds[uEventsIds["LoginRequested"] = 2021] = "LoginRequested";
+        uEventsIds[uEventsIds["LoginFailed"] = 2022] = "LoginFailed";
+        uEventsIds[uEventsIds["LoginSuccess"] = 2023] = "LoginSuccess";
     })(uEventsIds = exports.uEventsIds || (exports.uEventsIds = {}));
 });
 define("shared/events/helpers/ResourceSheme", ["require", "exports"], function (require, exports) {
@@ -211,17 +215,24 @@ define("shared/events/backend/SubscibeToEvent", ["require", "exports", "shared/m
     }
     exports.SubscibeToEvent = SubscibeToEvent;
 });
-define("shared/events/backend/Personnel/ReadPersonDataQuery", ["require", "exports", "shared/models/event"], function (require, exports, event_7) {
+define("shared/events/backend/LoginSuccess", ["require", "exports", "shared/models/event"], function (require, exports, event_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class ReadPersonDataQuery extends event_7.uEvent {
+    class LoginSuccess extends event_7.uEvent {
+    }
+    exports.LoginSuccess = LoginSuccess;
+});
+define("shared/events/backend/Personnel/ReadPersonDataQuery", ["require", "exports", "shared/models/event"], function (require, exports, event_8) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class ReadPersonDataQuery extends event_8.uEvent {
         constructor(sourceId, ListParametersNameForSorting, NumberPageOutput, NumberRecordsOnPage) {
             super();
             this.ListParametersNameForSorting = ListParametersNameForSorting;
             this.NumberPageOutput = NumberPageOutput;
             this.NumberRecordsOnPage = NumberRecordsOnPage;
             this.SourceId = sourceId;
-            this.EventId = event_7.uEventsIds.ReadPersonDataQuery;
+            this.EventId = event_8.uEventsIds.ReadPersonDataQuery;
         }
     }
     exports.ReadPersonDataQuery = ReadPersonDataQuery;
@@ -230,7 +241,7 @@ define("shared/models/Interfaces/IPersonnel", ["require", "exports"], function (
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("shared/events/backend/Personnel/CreateUpdatePersonData", ["require", "exports", "shared/models/event"], function (require, exports, event_8) {
+define("shared/events/backend/Personnel/CreateUpdatePersonData", ["require", "exports", "shared/models/event"], function (require, exports, event_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var PersonDataCreateUpdateFlag;
@@ -238,7 +249,7 @@ define("shared/events/backend/Personnel/CreateUpdatePersonData", ["require", "ex
         PersonDataCreateUpdateFlag[PersonDataCreateUpdateFlag["Create"] = 2006] = "Create";
         PersonDataCreateUpdateFlag[PersonDataCreateUpdateFlag["Update"] = 2014] = "Update";
     })(PersonDataCreateUpdateFlag = exports.PersonDataCreateUpdateFlag || (exports.PersonDataCreateUpdateFlag = {}));
-    class CreateUpdatePersonData extends event_8.uEvent {
+    class CreateUpdatePersonData extends event_9.uEvent {
         constructor(sourceId, createUpdateFlag, Personnel) {
             super();
             this.EventId = createUpdateFlag;
@@ -257,15 +268,15 @@ define("shared/events/backend/Personnel/CreateUpdatePersonData", ["require", "ex
     }
     exports.CreateUpdatePersonData = CreateUpdatePersonData;
 });
-define("shared/events/backend/Personnel/RemoveEnterpisePersonData", ["require", "exports", "shared/models/event"], function (require, exports, event_9) {
+define("shared/events/backend/Personnel/RemoveEnterpisePersonData", ["require", "exports", "shared/models/event"], function (require, exports, event_10) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class RemoveEnterpisePersonData extends event_9.uEvent {
+    class RemoveEnterpisePersonData extends event_10.uEvent {
         constructor(sourceId, PersonDataID) {
             super();
             this.PersonDataID = PersonDataID;
             this.SourceId = sourceId;
-            this.EventId = event_9.uEventsIds.RemovePersonData;
+            this.EventId = event_10.uEventsIds.RemovePersonData;
         }
     }
     exports.RemoveEnterpisePersonData = RemoveEnterpisePersonData;
@@ -277,7 +288,7 @@ define("shared/models/Adds/OccupationData", ["require", "exports"], function (re
     }
     exports.OccupationData = OccupationData;
 });
-define("shared/events/backend/Occupations/OccupationsCreateUpdate", ["require", "exports", "shared/models/event"], function (require, exports, event_10) {
+define("shared/events/backend/Occupations/OccupationsCreateUpdate", ["require", "exports", "shared/models/event"], function (require, exports, event_11) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var OccupationCreateUpdateFlag;
@@ -285,7 +296,7 @@ define("shared/events/backend/Occupations/OccupationsCreateUpdate", ["require", 
         OccupationCreateUpdateFlag[OccupationCreateUpdateFlag["Create"] = 2015] = "Create";
         OccupationCreateUpdateFlag[OccupationCreateUpdateFlag["Update"] = 2016] = "Update";
     })(OccupationCreateUpdateFlag = exports.OccupationCreateUpdateFlag || (exports.OccupationCreateUpdateFlag = {}));
-    class OccupationsCreateUpdate extends event_10.uEvent {
+    class OccupationsCreateUpdate extends event_11.uEvent {
         constructor(sourceId, createUpdateFlag, dateTimeValue, data) {
             super();
             this.SourceId = sourceId;
@@ -299,10 +310,10 @@ define("shared/events/backend/Occupations/OccupationsCreateUpdate", ["require", 
     }
     exports.OccupationsCreateUpdate = OccupationsCreateUpdate;
 });
-define("shared/events/backend/Occupations/OccupationsReadQuery", ["require", "exports", "shared/models/event"], function (require, exports, event_11) {
+define("shared/events/backend/Occupations/OccupationsReadQuery", ["require", "exports", "shared/models/event"], function (require, exports, event_12) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class OccupationsReadQuery extends event_11.uEvent {
+    class OccupationsReadQuery extends event_12.uEvent {
         constructor(sourceId, DateTimeValue, Page, Limit) {
             super();
             this.DateTimeValue = DateTimeValue;
@@ -311,32 +322,32 @@ define("shared/events/backend/Occupations/OccupationsReadQuery", ["require", "ex
             if (Page <= 0 || Limit <= 0)
                 throw new Error('Page or Limit cannot be 0 or below');
             this.SourceId = sourceId;
-            this.EventId = event_11.uEventsIds.OccupationsReadQuery;
+            this.EventId = event_12.uEventsIds.OccupationsReadQuery;
         }
     }
     exports.OccupationsReadQuery = OccupationsReadQuery;
 });
-define("shared/events/backend/Occupations/OccupationsReadResults", ["require", "exports", "shared/models/event"], function (require, exports, event_12) {
+define("shared/events/backend/Occupations/OccupationsReadResults", ["require", "exports", "shared/models/event"], function (require, exports, event_13) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class OccupationsReadResults extends event_12.uEvent {
+    class OccupationsReadResults extends event_13.uEvent {
     }
     exports.OccupationsReadResults = OccupationsReadResults;
 });
-define("shared/events/backend/Occupations/OccupationsDeleteEvent", ["require", "exports", "shared/models/event"], function (require, exports, event_13) {
+define("shared/events/backend/Occupations/OccupationsDeleteEvent", ["require", "exports", "shared/models/event"], function (require, exports, event_14) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class OccupationsDeleteEvent extends event_13.uEvent {
+    class OccupationsDeleteEvent extends event_14.uEvent {
         constructor(sourceId, ObjectAggregateId) {
             super();
             this.ObjectAggregateId = ObjectAggregateId;
             this.SourceId = sourceId;
-            this.EventId = event_13.uEventsIds.OccupationsDelete;
+            this.EventId = event_14.uEventsIds.OccupationsDelete;
         }
     }
     exports.OccupationsDeleteEvent = OccupationsDeleteEvent;
 });
-define("shared/events/index", ["require", "exports", "shared/events/RequestToLoadScript", "shared/events/LoadedResource", "shared/events/EventButtonPressed", "shared/events/LanguageChange", "shared/events/InitializeMenuEvent", "shared/events/helpers/MicroFrontendData", "shared/events/helpers/ResourceSheme", "shared/events/backend/SubscibeToEvent", "shared/events/backend/Personnel/ReadPersonDataQuery", "shared/events/backend/Personnel/CreateUpdatePersonData", "shared/events/backend/Personnel/RemoveEnterpisePersonData", "shared/events/backend/Occupations/OccupationsCreateUpdate", "shared/events/backend/Occupations/OccupationsReadQuery", "shared/events/backend/Occupations/OccupationsReadResults", "shared/events/backend/Occupations/OccupationsDeleteEvent"], function (require, exports, RequestToLoadScript_1, LoadedResource_1, EventButtonPressed_1, LanguageChange_1, InitializeMenuEvent_1, MicroFrontendData_1, ResourceSheme_1, SubscibeToEvent_1, ReadPersonDataQuery_1, CreateUpdatePersonData_1, RemoveEnterpisePersonData_1, OccupationsCreateUpdate_1, OccupationsReadQuery_1, OccupationsReadResults_1, OccupationsDeleteEvent_1) {
+define("shared/events/index", ["require", "exports", "shared/events/RequestToLoadScript", "shared/events/LoadedResource", "shared/events/EventButtonPressed", "shared/events/LanguageChange", "shared/events/InitializeMenuEvent", "shared/events/helpers/MicroFrontendData", "shared/events/helpers/ResourceSheme", "shared/events/backend/SubscibeToEvent", "shared/events/backend/LoginSuccess", "shared/events/backend/Personnel/ReadPersonDataQuery", "shared/events/backend/Personnel/CreateUpdatePersonData", "shared/events/backend/Personnel/RemoveEnterpisePersonData", "shared/events/backend/Occupations/OccupationsCreateUpdate", "shared/events/backend/Occupations/OccupationsReadQuery", "shared/events/backend/Occupations/OccupationsReadResults", "shared/events/backend/Occupations/OccupationsDeleteEvent"], function (require, exports, RequestToLoadScript_1, LoadedResource_1, EventButtonPressed_1, LanguageChange_1, InitializeMenuEvent_1, MicroFrontendData_1, ResourceSheme_1, SubscibeToEvent_1, LoginSuccess_1, ReadPersonDataQuery_1, CreateUpdatePersonData_1, RemoveEnterpisePersonData_1, OccupationsCreateUpdate_1, OccupationsReadQuery_1, OccupationsReadResults_1, OccupationsDeleteEvent_1) {
     "use strict";
     function __export(m) {
         for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -350,6 +361,7 @@ define("shared/events/index", ["require", "exports", "shared/events/RequestToLoa
     __export(MicroFrontendData_1);
     __export(ResourceSheme_1);
     __export(SubscibeToEvent_1);
+    __export(LoginSuccess_1);
     __export(ReadPersonDataQuery_1);
     __export(CreateUpdatePersonData_1);
     __export(RemoveEnterpisePersonData_1);
@@ -358,7 +370,7 @@ define("shared/events/index", ["require", "exports", "shared/events/RequestToLoa
     __export(OccupationsReadResults_1);
     __export(OccupationsDeleteEvent_1);
 });
-define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts", "shared/models/event", "shared/events/helpers/ResourceSheme", "shared/events/index"], function (require, exports, UParts_1, event_14, ResourceSheme_2, _uf_shared_events_1) {
+define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts", "shared/models/event", "shared/events/helpers/ResourceSheme", "shared/events/index"], function (require, exports, UParts_1, event_15, ResourceSheme_2, _uf_shared_events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     const srcId = UParts_1.UParts.Menu.SourceId;
@@ -372,7 +384,7 @@ define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts
     window['__env']['uf'][srcId] = window['__env']['uf'][srcId] || {};
     const uf = {};
     uf[srcId] = new _uf_shared_events_1.MicroFrontendData();
-    uf[srcId].events.push(event_14.uEventsIds.InitMenu);
+    uf[srcId].events.push(event_15.uEventsIds.InitMenu);
     const scriptList = ['runtime.js', 'polyfills.js', 'main.js', 'styles.js'];
     for (const script of scriptList) {
         const temp = new ResourceSheme_2.ResourceSheme();

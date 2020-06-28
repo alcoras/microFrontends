@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { uEventsIds, UParts } from '@uf-shared-models/index';
 import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
 
 interface ISelector {
   value: string;
@@ -31,7 +31,8 @@ export class AppComponent {
   private placement: { [id: number]: IUFState } = {};
 
   public constructor(
-    private eventProxyService: EventProxyLibService
+    private environmentService: EnvironmentService,
+    private eventProxyService: EventProxyLibService,
   ) {
     this.preparePlacements();
     this.prepareThemeAndLang();
@@ -83,7 +84,7 @@ export class AppComponent {
    *  Prepares theme and language
    */
   private prepareThemeAndLang(): void {
-    const url = `${this.eventProxyService.environmentService.Url}:3002/en/`;
+    const url = `${this.environmentService.Url}:3002/en/`;
     this.themes = [
       { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
       { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
@@ -97,7 +98,7 @@ export class AppComponent {
       { value: 'lt', viewValue: 'LT' },
     ];
     this.selectedTheme = this.themes[0].value;
-    this.selectedLang = this.eventProxyService.environmentService.Language;
+    this.selectedLang = this.environmentService.Language;
   }
 
   /**

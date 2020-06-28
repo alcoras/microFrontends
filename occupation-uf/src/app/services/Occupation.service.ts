@@ -67,6 +67,7 @@ export class OccupationService implements IMicroFrontend {
             if (this.processButtonPressed(element)) {
               this.eventProxyService.ConfirmEvents(this.SourceId, [element.AggregateId]).toPromise();
             } else {
+              console.error(element);
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
