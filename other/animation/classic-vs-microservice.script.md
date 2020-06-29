@@ -3,7 +3,7 @@ Legend:
 
 Slide 1: 
 Caption 1: What is microservice?
-Caption 1 UA:
+Caption 1 UA: Що таке мікросервіс?
 Line 1: A microservice is a piece of software which is responsible for only one bounded context.
 Line 2 UA: Мікросервіс це шматок програмного коду, що відповідає за роботу частини функціоналу системи
 
