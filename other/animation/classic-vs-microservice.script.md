@@ -19,7 +19,7 @@ Page 2: {
     Line 1: Microservice can be developed independetly of other microservices in the system.
     Line 1 UA: 
 
-    Line 2: Your team from ... work independently on Cart from other teams, because they have full control over lifecycle of microservice.
+    Line 2: Your team from Brazil can work independently on Cart from other teams, because they have full control over lifecycle of microservice.
     Line 2 UA:
 }
 
