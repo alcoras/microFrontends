@@ -30,7 +30,7 @@ Page 3: {
     Line 1 UA: Мікросервіс можна оновлювати без зупинки роботи системи
 
     Slide 5
-    Line 2: When you run e-commerce website even 5 min. downtime can lead your customer to another shop.
+    Line 2: When you're running e-commerce website even 5 min. downtime can lead your customer to another shop.
     Line 2 UA: 
 
     Slide 6
