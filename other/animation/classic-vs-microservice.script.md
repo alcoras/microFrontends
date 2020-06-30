@@ -20,18 +20,18 @@ Page 2: {
     Line 1 UA: Кожен мікросервіс може розроблятися незалежно від інших мікросервісів
 
     Line 2: Your team from Brazil can work independently on Cart from other teams, because they have full control over lifecycle of microservice.
-    Line 2 UA:
+    Line 2 UA: Ваша команда розробників з Бразилії може працювати незалежно від інших команд над кошиком та має повний контроль над життєвим циклом цього мікросервіса.
 }
 
 Page 3: {
 
     Slide 4
     Line 1: Microservice can be deployed without halting the system.
-    Line 1 UA:
+    Line 1 UA: Мікросервіс можна оновлювати без зупинки роботи системи
 
     Slide 5
     Line 2: When you run e-commerce website even 5 min. downtime can lead your customer to another shop.
-    Line 2 UA:
+    Line 2 UA: 
 
     Slide 6
     Line 3: With microservices you can have coexisting, old and new, versions at the same time.
