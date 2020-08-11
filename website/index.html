@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial;}
+
+.center {
+  text-align: center;
+  margin: auto;
+  width: 60%;
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+</head>
+<body>
+
+<div class="center">
+    <h2>ForestPath</h2>
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, '1')">What is Microservice?</button>
+        <button class="tablinks" onclick="openCity(event, '2')">New Projects</button>
+        <button class="tablinks" onclick="openCity(event, '3')">Legacy to new</button>
+        <button class="tablinks" onclick="openCity(event, '4')">1c to new</button>
+        <button class="tablinks" onclick="openCity(event, '5')">Other</button>
+        <button class="tablinks" onclick="openCity(event, '6')">Contacts</button>
+    </div>
+
+    <div id="1" class="tabcontent">
+        <h3>What is Microservice?</h3>
+        <h4>Microservice is an architecture for ever expanding architecture</h4>
+        <h4>It's way to build ambitious projects and maintain them</h4>
+        <h4>It's a way to build software to withhold changes in tehcnologies</h4>
+        <h3>VIDEO</h3>
+    </div> 
+
+    <div id="2" class="tabcontent">
+        <h3>Building huge new projects</h3>
+        <h4>If you plan huge and long term project architecture based on microservices is great solution</h4>
+        <h4>If you building something rigght on the cutting-edge - microservices will bring you flexibility over and over again</h4>
+    </div>
+    
+    <div id="3" class="tabcontent">
+        <h3>Legacy to new</h3>
+        <h4>Legacy systems are hard to maintain and obnoxious when it comes to adding new features, microservices allow for slow and steady tranistion into new technologies</h4>
+    </div>
+
+    <div id="4" class="tabcontent">
+        <h3>1c to new</h3>
+        <h4></h4>
+    </div>
+
+    <div id="5" class="tabcontent">
+        <h4>Download presentation</h4>
+        <h4>Youtube link</h4>
+    </div>
+
+    <div id="6" class="tabcontent">
+        <h3>Contacts</h3>
+    </div>
+</div>
+
+
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+   
+</body>
+</html> 

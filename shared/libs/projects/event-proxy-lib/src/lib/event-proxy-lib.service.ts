@@ -183,6 +183,19 @@ export class EventProxyLibService {
   }
 
   /**
+   * Sends existing token to get new token
+   * @returns  HTTPResponse (or error) with events
+   */
+  public RenewToken(): Observable<HttpResponse<any>> {
+
+    const body = {
+      EventId: uEventsIds.RenewToken
+    }
+
+    return this.sendEvent('RenewToken', body);
+  }
+
+  /**
    * Sends event to backend (APIGateway microservice)
    * @param caller function which called
    * @param body message body
@@ -199,7 +212,7 @@ export class EventProxyLibService {
     const url = this.apiGatewayURL + this.endpoint;
 
     if (!anonymous) {
-      body['LoginToken'] = this.environmentService.AuthorizationToken;
+      body['Token'] = this.environmentService.AuthorizationToken;
     }
 
     console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);

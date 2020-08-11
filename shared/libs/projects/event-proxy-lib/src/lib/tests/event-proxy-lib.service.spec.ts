@@ -237,7 +237,7 @@ describe('EventProxyLibService', () => {
         SourceID: TestSourceId,
         Ids: [],
         MarkAllReceived: true,
-        LoginToken: undefined
+        Token: undefined
       };
 
       service.ConfirmEvents(TestSourceId, [], true).subscribe(
@@ -258,7 +258,7 @@ describe('EventProxyLibService', () => {
         SourceID: TestSourceId,
         Ids: [10, 20, 30],
         MarkAllReceived: false,
-        LoginToken: undefined
+        Token: undefined
       };
 
       service.ConfirmEvents(TestSourceId, testBody.Ids).subscribe(
@@ -281,7 +281,7 @@ describe('EventProxyLibService', () => {
       const testBody = {
         EventID: uEventsIds.RegisterNewEvent,
         events: [new TestEvent()],
-        LoginToken: undefined
+        Token: undefined
       };
 
       service.DispatchEvent(new TestEvent()).subscribe(
@@ -301,7 +301,7 @@ describe('EventProxyLibService', () => {
       const testBody = {
         EventID: uEventsIds.RegisterNewEvent,
         events: [new TestEvent(), new TestEvent(), new TestEvent() ],
-        LoginToken: undefined
+        Token: undefined
       };
 
       service.DispatchEvent([new TestEvent(), new TestEvent(), new TestEvent()]).subscribe(
@@ -323,7 +323,7 @@ describe('EventProxyLibService', () => {
     const testBody = {
       EventID: uEventsIds.GetNewEvents,
       SourceId: TestSourceId,
-      LoginToken: undefined
+      Token: undefined
     };
 
     it('testing body', () => {

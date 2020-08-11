@@ -98,6 +98,11 @@ define("shared/models/event", ["require", "exports"], function (require, exports
         uEventsIds[uEventsIds["LoginRequested"] = 2021] = "LoginRequested";
         uEventsIds[uEventsIds["LoginFailed"] = 2022] = "LoginFailed";
         uEventsIds[uEventsIds["LoginSuccess"] = 2023] = "LoginSuccess";
+        uEventsIds[uEventsIds["SOneDokumentPrihodAnaliticheskiyProvedenie"] = 2025] = "SOneDokumentPrihodAnaliticheskiyProvedenie";
+        uEventsIds[uEventsIds["SOneDokumentPrihodAnaliticheskiyOtmenaProvedeniya"] = 2026] = "SOneDokumentPrihodAnaliticheskiyOtmenaProvedeniya";
+        uEventsIds[uEventsIds["RenewToken"] = 2027] = "RenewToken";
+        uEventsIds[uEventsIds["TokenRenewSuccess"] = 2028] = "TokenRenewSuccess";
+        uEventsIds[uEventsIds["LoginSuccessWithTokenInformation"] = 2029] = "LoginSuccessWithTokenInformation";
     })(uEventsIds = exports.uEventsIds || (exports.uEventsIds = {}));
 });
 define("shared/events/helpers/ResourceSheme", ["require", "exports"], function (require, exports) {
