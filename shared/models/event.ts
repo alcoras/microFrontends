@@ -3,7 +3,7 @@
  */
 export abstract class uEvent {
   /**
-   * Event id, should not be 0
+   * Event id, should never be 0
    */
   public EventId = 1;
 
@@ -96,4 +96,5 @@ export enum uEventsIds {
   RenewToken = 2027,
   TokenRenewSuccess = 2028,
   LoginSuccessWithTokenInformation = 2029,
+  TokenRenewSuccessWithTokenInformation = 2030,
 }

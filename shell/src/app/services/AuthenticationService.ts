@@ -1,33 +1,14 @@
 import { Injectable } from '@angular/core';
 import Web3 from 'web3';
 import * as Eth from 'ethjs';
-import * as moment from 'moment';
 import { EnvironmentService, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { HttpResponse } from '@angular/common/http';
 import { LoginSuccess } from '@uf-shared-events/';
 import { uEventsIds } from '@uf-shared-models/event';
+import { LoginRequest } from '../models/LoginRequest';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];
-
-/**
- * Message which will be sent to API gateway
- */
-export class LoginRequest {
-  /**
-   * ISO time string
-   */
-  public Timestamp: string;
-
-  /**
-   * Signature starting with 0x
-   */
-  public Signature: string;
-
-  public Error: string;
-
-  public FullError: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -42,7 +23,7 @@ export class AuthenticationService {
    */
   private eth: Eth;
 
-  private refreshTokenTimeout;
+  private upcomingToken: LoginSuccess;
 
   public constructor(
     private environmentService: EnvironmentService,
@@ -51,46 +32,13 @@ export class AuthenticationService {
 
 
   /**
-   * Logouts
+   * Passive Logout
    */
   public Logout(): void {
     this.environmentService.AuthorizationToken = '';
     this.environmentService.TokenBeginDate = '';
     this.environmentService.TokenExpirationDate = '';
   }
-
-  /**
-   *
-   */
-  public async RenewTokenAsync(): Promise<string> {
-
-    const ret = new Promise<string>((resolve, reject) => {
-      this.eventProxyService.RenewToken().toPromise().then(
-        (response: HttpResponse<LoginSuccess>) => {
-          if (response.status !== 200) {
-            return new Error('Failed to retrieve data');
-          }
-
-          if (response.body.EventId === uEventsIds.LoginFailed) {
-            reject('Failed to login');
-          } else if (response.body.EventId === uEventsIds.LoginSuccessWithTokenInformation) {
-            const login = response.body as LoginSuccess;
-            this.setUpcomingSession(login);
-            resolve();
-          }
-          else {
-            reject(`EventID ${response.body.EventId} was not recognized`);
-          }
-        },
-        (reject) => {
-          return new Error(reject);
-        }
-      );
-    });
-
-    return Promise.resolve(ret);
-  }
-
 
 
   /**
@@ -137,11 +85,36 @@ export class AuthenticationService {
   }
 
   /**
-   * Checks if logged in
-   * @returns true if still logged in
+   * Sends RenewToken to backend
+   * @returns LoginRequest without errors if successful (later on can contain information about user)
    */
-  public IsLoggedIn(): boolean {
-    return moment().isBefore(this.getExpirationTime());
+  private async renewTokenAsync(): Promise<string> {
+
+    const ret = new Promise<string>((resolve, reject) => {
+      this.eventProxyService.RenewToken().toPromise().then(
+        (response: HttpResponse<LoginSuccess>) => {
+          if (response.status !== 200) {
+            return new Error('Failed to retrieve data');
+          }
+
+          if (response.body.EventId === uEventsIds.LoginFailed) {
+            reject('Failed to login');
+          } else if (response.body.EventId === uEventsIds.TokenRenewSuccessWithTokenInformation) {
+            const login = response.body as LoginSuccess;
+            this.setUpcomingSession(login);
+            resolve();
+          }
+          else {
+            reject(`EventID ${response.body.EventId} was not recognized`);
+          }
+        },
+        (reject) => {
+          return new Error(reject);
+        }
+      );
+    });
+
+    return Promise.resolve(ret);
   }
 
   /**
@@ -160,6 +133,7 @@ export class AuthenticationService {
       return Promise.reject(logRequest);
     }
 
+    // https://docs.metamask.io/guide/getting-started.html#basic-considerations
     const accounts = await MetamaskEthereumHandle.request({ method: 'eth_requestAccounts' });
     const account = accounts[0];
 
@@ -194,25 +168,25 @@ export class AuthenticationService {
     return Promise.resolve(ret);
   }
 
-  private getExpirationTime(): moment.Moment {
-    return moment(this.environmentService.TokenExpirationDate);
-  }
-
   /**
    * Sets session
    * @param login LoginSuccess data
    */
   private setSession(login: LoginSuccess): void {
-    this.environmentService.TokenBeginDate = login.TokenBegins;
-    this.environmentService.TokenExpirationDate = login.TokenExpires;
-    this.environmentService.AuthorizationToken = login.Token;
+    this.updateToken(login);
 
     const expires = new Date(login.TokenExpires);
     const timeout = expires.getTime() - Date.now() - (60 * 1000);
 
-    this.refreshTokenTimeout = setTimeout(() => {
-      this.RenewTokenAsync();
+    setTimeout(() => {
+      this.renewTokenAsync();
     }, timeout);
+  }
+
+  private updateToken(login: LoginSuccess): void {
+    this.environmentService.TokenBeginDate = login.TokenBegins;
+    this.environmentService.TokenExpirationDate = login.TokenExpires;
+    this.environmentService.AuthorizationToken = login.Token;
   }
 
   /**
@@ -220,7 +194,15 @@ export class AuthenticationService {
    * @param login LoginSuccess data
    */
   private setUpcomingSession(login: LoginSuccess): void {
-    throw new Error('Method not implemented.');
+    this.upcomingToken = login;
+
+    const tokenBeginDate = new Date(this.upcomingToken.TokenBegins);
+    const timeNowInMiliSeconds = Date.now();
+    const timeout = tokenBeginDate.getTime() - timeNowInMiliSeconds;
+
+    setTimeout(() => {
+      this.setSession(this.upcomingToken);
+    }, timeout);
   }
 
   /**

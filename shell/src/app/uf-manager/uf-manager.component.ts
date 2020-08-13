@@ -11,7 +11,8 @@ import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
 import { HttpResponse } from '@angular/common/http';
-import { AuthenticationService, LoginRequest } from '../services/AuthenticationService';
+import { AuthenticationService } from '../services/AuthenticationService';
+import { LoginRequest } from "../models/LoginRequest";
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -119,7 +120,7 @@ export class UFManagerComponent {
     }
 
     const urlList = [
-      url + ':3002/en/scripts/conf.js', // Menu
+      // url + ':3002/en/scripts/conf.js', // Menu
       // url + ':3004/scripts/conf.js', // Personnel
       // url + ':3005/scripts/conf.js', // Occupation
       // url + ':3006/scripts/conf.js' // Observer

@@ -1,4 +1,5 @@
-import { AuthenticationService, LoginRequest } from "../services/AuthenticationService"
+import { AuthenticationService } from "../services/AuthenticationService"
+import { LoginRequest } from "../models/LoginRequest";
 import { TestBed } from '@angular/core/testing';
 import { EnvironmentService, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { eventProxyServiceMock, tokenConst } from './mocks/event-proxy-service.mock';
