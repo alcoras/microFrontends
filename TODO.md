@@ -114,5 +114,6 @@
 36. add concurrently and serve to projects
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
+48. write integration tests for Authentication Service
 
-48.
+49
