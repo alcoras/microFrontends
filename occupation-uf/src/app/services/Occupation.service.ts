@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { IMicroFrontend, UParts, uEventsIds, EventResponse, APIGatewayResponse, uEvent } from '@uf-shared-models/index';
+import {
+  IMicroFrontend,
+  UParts,
+  uEventsIds,
+  EventResponse,
+  APIGatewayResponse,
+  uEvent,
+  MicroFrontendInfo } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { HttpResponse } from '@angular/common/http';
 import { SubscibeToEvent, EventButtonPressed } from '@uf-shared-events/index';
@@ -9,8 +16,8 @@ import { EventBusService } from './EventBus.service';
   providedIn: 'root'
 })
 export class OccupationService implements IMicroFrontend {
-  public SourceId: string = UParts.Occupations.SourceId;
-  public SourceName: string = UParts.Occupations.SourceId;
+
+  public SourceInfo: MicroFrontendInfo = UParts.Occupations;
 
   /**
    * Element to place dictionary
@@ -22,16 +29,17 @@ export class OccupationService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    this.SubscribeToEventsAsync();
+    await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
   public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceId).subscribe(
+    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
       (response: HttpResponse<EventResponse>) => {
+        console.log(response);
         this.NewHttpResponseAsync(response);
       },
-      (error) => { console.error(this.SourceName, error); },
+      (error) => { console.error(this.SourceInfo.SourceName, error); },
     );
   }
 
@@ -46,16 +54,19 @@ export class OccupationService implements IMicroFrontend {
 
     if (response.body['EventId'] === uEventsIds.GetNewEvents) {
       this.ParseNewEventAsync(response.body.Events);
+    } else {
+      console.error(response);
+      throw new Error('EventId is not recognized');
     }
   }
 
   public SubscribeToEventsAsync():  Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(
-      this.SourceId, [
-      [uEventsIds.OccupationsRead, 0, 0]
-    ]);
+      this.SourceInfo.SourceId, [
+      [uEventsIds.OccupationsRead, 0, 0],
+    ], true);
 
-    e.SourceName = this.SourceName;
+    e.SourceName = this.SourceInfo.SourceName;
 
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
@@ -65,18 +76,18 @@ export class OccupationService implements IMicroFrontend {
       switch (element.EventId) {
         case uEventsIds.OccupationNg9ButtonPressed:
             if (this.processButtonPressed(element)) {
-              this.eventProxyService.ConfirmEvents(this.SourceId, [element.AggregateId]).toPromise();
+              await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
               console.error(element);
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
-          case uEventsIds.OccupationsRead:
+        case uEventsIds.OccupationsRead:
             this.eventBus.EventBus.next(element);
             break;
-          default:
-            throw new Error('Event not implemented.');
-        }
+        default:
+            throw new Error(`Event ${element.EventId} not implemented.`);
+      }
     }
   }
 

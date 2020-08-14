@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { UParts, uEventsIds, EventResponse, APIGatewayResponse, IMicroFrontend, uEvent } from '@uf-shared-models/index';
+import {
+  UParts,
+  uEventsIds,
+  EventResponse,
+  APIGatewayResponse,
+  IMicroFrontend,
+  uEvent,
+  MicroFrontendInfo } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
@@ -12,8 +19,8 @@ import { EventBusService } from '../services/EventBus.service';
   providedIn: 'root'
 })
 export class PersonnelComponent implements IMicroFrontend {
-  public SourceId: string = UParts.Personnel.SourceId;
-  public SourceName: string = UParts.Personnel.SourceName;
+
+  public SourceInfo: MicroFrontendInfo = UParts.Personnel;
 
   /**
    * Element to place dictionary
@@ -30,11 +37,11 @@ export class PersonnelComponent implements IMicroFrontend {
   }
 
   public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceId).subscribe(
+    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
       (response: HttpResponse<EventResponse>) => {
         this.NewHttpResponseAsync(response);
       },
-      (error) => { console.error(this.SourceName, error); },
+      (error) => { console.error(this.SourceInfo.SourceName, error); },
     );
   }
 
@@ -49,6 +56,9 @@ export class PersonnelComponent implements IMicroFrontend {
 
     if (response.body['EventId'] === uEventsIds.GetNewEvents) {
       this.ParseNewEventAsync(response.body.Events);
+    } else {
+      console.error(response);
+      throw new Error("Message has no EventId");
     }
   }
 
@@ -58,11 +68,11 @@ export class PersonnelComponent implements IMicroFrontend {
    */
   public async SubscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(
-      this.SourceId, [
+      this.SourceInfo.SourceId, [
       [uEventsIds.ReadPersonData, 0, 0]
-    ]);
+    ], true);
 
-    e.SourceName = this.SourceName;
+    e.SourceName = this.SourceInfo.SourceName;
 
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
@@ -72,7 +82,7 @@ export class PersonnelComponent implements IMicroFrontend {
       switch (element.EventId) {
         case uEventsIds.PersonnelButtonPressed:
           if (this.processButtonPressed(element as EventButtonPressed)) {
-            this.eventProxyService.ConfirmEvents(this.SourceId, [element.AggregateId]).toPromise();
+            this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           } else {
             throw new Error('Did not proccess after processButtonPressed');
           }

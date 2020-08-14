@@ -9,7 +9,17 @@ import { HttpResponse } from '@angular/common/http';
 import { IGetResponse } from '@occupation-services/interfaces/IGetResponse';
 
 /**
- * retruns new occupation entry for testing
+ *
+ * @param sourceId source id
+ * @param eProxyService event proxy service
+ */
+async function subscribeToOccupationsRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
+  const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
+  await eProxyService.DispatchEvent(subEvent).toPromise();
+}
+
+/**
+ * @returns new occupation entry for testing
  */
 function createOccupationEntry(): OccupationData {
   return {
@@ -19,7 +29,6 @@ function createOccupationEntry(): OccupationData {
   };
 }
 
-// tslint:disable-next-line: no-big-function
 describe('Occupation API service', () => {
   let service: OccupationAPIService;
   let eProxyService: EventProxyLibService;
@@ -28,15 +37,11 @@ describe('Occupation API service', () => {
   const backendURL = 'http://localhost:54366';
   const backendPort = '54366';
 
-  beforeAll(async () => {
-    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
-    await eProxyService.DispatchEvent(subEvent).toPromise();
-  });
-
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
     window['__env'] = window['__env'] || {};
 
+    // eslint-disable-next-line @typescript-eslint/camelcase
     window['__env'].one_language = false;
     // API url
     window['__env'].url = 'http://' + backendURL;
@@ -57,6 +62,7 @@ describe('Occupation API service', () => {
     eProxyService.ApiGatewayURL = backendURL;
 
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await subscribeToOccupationsRead(sourceId, eProxyService);
   });
 
   afterEach(async () => {
@@ -64,8 +70,11 @@ describe('Occupation API service', () => {
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
   });
 
-  // tslint:disable-next-line: completed-docs
-  function propogateEvent(res: HttpResponse<EventResponse>) {
+  /**
+   *
+   * @param res http response to propogate
+   */
+  function propogateEvent(res: HttpResponse<EventResponse>): void {
     if (res.body) {
       res.body.Events.forEach(element => {
         if (element.EventId === uEventsIds.OccupationsRead) {
@@ -76,7 +85,7 @@ describe('Occupation API service', () => {
     }
   }
 
-  fit('test service creation', () => {
+  it('test service creation', () => {
     expect(service).toBeTruthy();
     expect(eProxyService).toBeTruthy();
     expect(eventBusService).toBeTruthy();
@@ -97,7 +106,7 @@ describe('Occupation API service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<any>) => {
+        (res: HttpResponse<EventResponse>) => {
           propogateEvent(res);
         }
       );
@@ -246,3 +255,4 @@ describe('Occupation API service', () => {
 
   });
 });
+

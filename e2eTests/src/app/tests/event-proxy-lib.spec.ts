@@ -3,13 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { uEvent, uEventsIds } from '@uf-shared-models/event';
 import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib/';
+import { APIGatewayResponse, EventResponse } from '@uf-shared-models/index';
 
 /**
  * generates random number
  * @param max max value
  * @returns random number
  */
-function getRandomInt(max) {
+function getRandomInt(max: number): number {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
@@ -18,7 +19,7 @@ function getRandomInt(max) {
  * @param ms miliseconds
  * @returns Promise
  */
-function delay(ms: number) {
+function delay(ms: number): Promise<void> {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
@@ -32,7 +33,6 @@ class TestEvent extends uEvent {
 }
 
 
-// tslint:disable-next-line: no-big-function
 describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
 
@@ -43,15 +43,14 @@ describe('EventProxyLibService', () => {
     const testinID = '1000';
     const testinName = 'testing';
     let service: EventProxyLibService;
-    // tslint:disable-next-line: prefer-const
-    let serviceList: EventProxyLibService[] = new Array(3);
+    const serviceList: EventProxyLibService[] = new Array(3);
 
-    beforeEach
-    (
+    beforeEach(
       async () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
         window['__env'] = window['__env'] || {};
 
+        // eslint-disable-next-line @typescript-eslint/camelcase
         window['__env'].one_language = false;
         // API url
         window['__env'].url = 'http://' + backendURL;
@@ -67,10 +66,10 @@ describe('EventProxyLibService', () => {
         service.ApiGatewayURL = backendURL;
         await service.ConfirmEvents(testinID, [], true).toPromise();
 
-        // tslint:disable-next-line: no-ignored-initial-value
-        serviceList.forEach(element => {
+        serviceList.forEach(async element => {
           element = TestBed.inject(EventProxyLibService);
           element.ApiGatewayURL = backendURL;
+          await element.ConfirmEvents(testinID, [], true).toPromise();
         });
 
         tEvent.SourceId = testinID;
@@ -93,21 +92,18 @@ describe('EventProxyLibService', () => {
     });
 
     it('Should respond with empty response', async (done) => {
-      service.StartQNA(testinID).subscribe
-      (
-        (res: HttpResponse<any>) => {
+      service.StartQNA(testinID).subscribe(
+        (res: HttpResponse<EventResponse>) => {
           expect(res.status).toBe(200, 'Status should be 200');
           done();
         },
         () => { done.fail(httpErrorMsg); },
-        () => { }
       );
     });
 
     it('should dispatchEvent and return list of id with one element', async (done) => {
-      service.DispatchEvent([tEvent]).subscribe
-      (
-        (res: HttpResponse<any>) => {
+      service.DispatchEvent([tEvent]).subscribe(
+        (res: HttpResponse<APIGatewayResponse>) => {
           expect(res.status).toEqual(200);
 
           expect(res.body.EventId).toEqual(uEventsIds.RegisterEventIds);
@@ -116,7 +112,6 @@ describe('EventProxyLibService', () => {
           done();
         },
         () => { fail(httpErrorMsg); },
-        () => { }
       );
 
     });
@@ -131,9 +126,8 @@ describe('EventProxyLibService', () => {
         array.push(temp);
       }
 
-      service.DispatchEvent(array).subscribe
-      (
-        (res: HttpResponse<any>) => {
+      service.DispatchEvent(array).subscribe(
+        (res: HttpResponse<APIGatewayResponse>) => {
           expect(res.status).toEqual(200);
 
           expect(res.body.EventId).toEqual(uEventsIds.RegisterEventIds);
@@ -142,7 +136,6 @@ describe('EventProxyLibService', () => {
           done();
         },
         () => { fail(httpErrorMsg); },
-        () => { }
       );
 
     });
@@ -151,9 +144,8 @@ describe('EventProxyLibService', () => {
       const waitForEventId = getRandomInt(99999);
 
       // 1. Listening to events
-      service.StartQNA(testinID).subscribe
-      (
-        (res: HttpResponse<any>) => {
+      service.StartQNA(testinID).subscribe(
+        (res: HttpResponse<EventResponse>) => {
           expect(res.status).toBe(200, 'Incorrect http status');
           expect(res.body.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
 
@@ -203,9 +195,8 @@ describe('EventProxyLibService', () => {
       await delay(1000);
 
       // 3. Listening to events
-      service.StartQNA(testinID).subscribe
-      (
-        (res: HttpResponse<any>) => {
+      service.StartQNA(testinID).subscribe(
+        (res: HttpResponse<EventResponse>) => {
           expect(res.status).toEqual(200);
           expect(res.body.EventId).toEqual(uEventsIds.GetNewEvents);
 
@@ -213,7 +204,6 @@ describe('EventProxyLibService', () => {
           done();
         },
         () => { done.fail(httpErrorMsg); },
-        () => { }
       );
     });
 
@@ -235,13 +225,13 @@ describe('EventProxyLibService', () => {
       }
 
       await service.DispatchEvent(subEventList).toPromise();
-      await delay(1000);
+      await delay(2000);
       await service.DispatchEvent(fireEventList).toPromise();
-      await delay(1000);
+      await delay(2000);
 
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
         await service.GetLastEvents(index.toString()).toPromise().then(
-          async (res: HttpResponse<any>) => {
+          async (res: HttpResponse<EventResponse>) => {
             expect(res.body.EventId === uEventsIds.GetNewEvents);
 
             expect(res.body.Events[0].EventId === rndEventId);
@@ -255,7 +245,7 @@ describe('EventProxyLibService', () => {
             await service.ConfirmEvents(index.toString(), idList).toPromise();
 
             await service.GetLastEvents(index.toString()).toPromise().then(
-              (res2: HttpResponse<any>) => {
+              (res2: HttpResponse<EventResponse>) => {
                 expect(res2.body).toBeNull();
               }
             );

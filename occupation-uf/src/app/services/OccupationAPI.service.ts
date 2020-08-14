@@ -30,6 +30,8 @@ export class OccupationAPIService {
    */
   private sourceName = UParts.Occupations.SourceName;
 
+  private timeoutForRequestsInMiliseconds = 5000;
+
   public constructor(
     private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
@@ -95,22 +97,22 @@ export class OccupationAPIService {
    * @returns Promise with response
    */
   // TODO: add reject and timeout
-  public Get(page: number, pageSize: number): Promise<IGetResponse> {
+  public Get(page: number, pageSize: number): Promise<unknown> {
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
-    return new Promise<IGetResponse>(
-      (resolve) => {
+    const getResponsePromise = new Promise<IGetResponse>(
+      (resolve, reject) => {
         this.get(page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
           if (response.status !== 200) {
-            return new Error('Failed to retrieve data');
+            reject('Failed to retrieve data');
           }
           const uniqueId = response.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
-            (data: OccupationsReadResults) => {
+            async (data: OccupationsReadResults) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
+                await this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.OccupationDataList,
                   total: data.TotalRecordsAmount
@@ -118,9 +120,22 @@ export class OccupationAPIService {
               }
             }
           );
+
         });
       }
     );
+
+    return new Promise((resolve, reject) => {
+      const race = this.promiseTimeout(this.timeoutForRequestsInMiliseconds, getResponsePromise);
+
+      race.then((response) => {
+        resolve(response);
+      })
+
+      race.catch((error) => {
+        reject(error);
+      })
+    })
   }
 
   /**
@@ -178,5 +193,22 @@ export class OccupationAPIService {
     const e = new OccupationsDeleteEvent(this.sourceId, id);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e);
+  }
+
+  /**
+   * sets a race against a promise
+   * @param timeoutMiliseconds miliseconds before error
+   * @param promise promise to race against
+   * @returns Timeout or finished promise
+   */
+  private promiseTimeout(timeoutMiliseconds: number, promise: Promise<unknown>): Promise<unknown> {
+    const timeout = new Promise((resolve, reject) => {
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        reject("Timeout in " + timeoutMiliseconds);
+      }, timeoutMiliseconds);
+    })
+
+    return Promise.race([promise, timeout]);
   }
 }

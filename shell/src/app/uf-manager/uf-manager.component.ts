@@ -12,7 +12,6 @@ import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '../services/AuthenticationService';
-import { LoginRequest } from "../models/LoginRequest";
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -60,23 +59,29 @@ export class UFManagerComponent {
    */
   public async InitAsync(): Promise<void> {
 
-    await this.authService.LoginAsync().then(
-      () => { console.log('Logged In.')},
-      (error: LoginRequest) => {
-        alert(error.Error);
-        throw new Error(error.FullError);
-      }
-    );
+    // await this.authService.LoginAsync().then(
+    //   () => { console.log('Logged In.')},
+    //   (error: LoginRequest) => {
+    //     alert(error.Error);
+    //     throw new Error(error.FullError);
+    //   }
+    // );
 
     await this.preloadScripts().then(
       () => { console.log(`${this.sourceName} preloadedScripts done. `)},
       () => { throw new Error('Failed to load scripts'); } );
 
-    await this.subscribeToEventsAsync();
+    await this.subscribeToEventsAsync().then(
+      () => { console.log(`${this.sourceName} subscribeToEventsAsync done.`)}
+    );
 
-    await this.subscribeMicroFrontends();
+    await this.subscribeMicroFrontends().then(
+      () => { console.log(`${this.sourceName} subscribeMicroFrontends done.`)}
+    );
 
-    await this.preloadMenuMicroFrontend();
+    await this.preloadMenuMicroFrontend().then(
+      () => { console.log(`${this.sourceName} preloadMenuMicroFrontend done.`)}
+    )
   }
 
   /**
@@ -120,10 +125,10 @@ export class UFManagerComponent {
     }
 
     const urlList = [
-      // url + ':3002/en/scripts/conf.js', // Menu
-      // url + ':3004/scripts/conf.js', // Personnel
-      // url + ':3005/scripts/conf.js', // Occupation
-      // url + ':3006/scripts/conf.js' // Observer
+      url + ':3002/en/scripts/conf.js',   // Menu
+      url + ':3004/scripts/conf.js',      // Personnel
+      url + ':3005/scripts/conf.js',      // Occupation
+      // url + ':3006/scripts/conf.js'    // Observer
     ];
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());
@@ -151,7 +156,7 @@ export class UFManagerComponent {
       [uEventsIds.RequestToLoadScript, 0, 0],
       [uEventsIds.LanguageChange, 0, 0],
       [uEventsIds.InitMenu, 0, 0],
-    ]);
+    ], true);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
@@ -193,7 +198,8 @@ export class UFManagerComponent {
       }
       else {
         for (const config in ufConfigs) {
-          if (Object.prototype.hasOwnProperty.call(ufConfigs, config) && ufConfigs[+config].events.includes(element.EventId)) {
+          if (Object.prototype.hasOwnProperty.call(ufConfigs, config) &&
+              ufConfigs[+config].events.includes(element.EventId)) {
             // check if loaded
             if (this.resources[+config]) {
               break;
@@ -240,7 +246,7 @@ export class UFManagerComponent {
       // Traverse through all uFrontends
       if (Object.prototype.hasOwnProperty.call(dic, key)) {
         const subList = [];
-        dic[+key].events.forEach(eventId => {
+        dic[+key].events.forEach((eventId: number) => {
           subList.push([eventId, 0, 0]);
         });
 

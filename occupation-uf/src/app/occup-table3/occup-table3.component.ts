@@ -129,10 +129,10 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
     merge(this.sort.sortChange, this.paginator.page)
       .pipe(
         startWith({}),
-        switchMap(() => {
+        switchMap(async () => {
           this.IsLoadingResults = true;
 
-          return this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
+          return await this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
         map((data: IGetResponse) => {
           // Flip flag to show that loading has finished.

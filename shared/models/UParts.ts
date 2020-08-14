@@ -1,17 +1,4 @@
-/**
- * Infor for Micro fronteds/services
- */
-interface IInfo {
-  /**
-   * SourceId mandatory as it is used to subscribe and receive events
-   */
-  SourceId: string;
-
-  /**
-   * Informational entry
-   */
-  SourceName: string;
-}
+import { MicroFrontendInfo } from './MicroFrontendInfo';
 
 /**
  * Micro fronteds/services and their data used for communication
@@ -21,7 +8,7 @@ export class UParts {
   /**
    * Frontend shell which loads every other micro frontend
    */
-  public static FrontendShell: IInfo = {
+  public static FrontendShell: MicroFrontendInfo = {
     SourceId: '1000',
     SourceName: 'FrontendShell'
   };
@@ -29,7 +16,7 @@ export class UParts {
   /**
    * Menu micro frontend normally is loaded into shell as first frontend
    */
-  public static Menu: IInfo = {
+  public static Menu: MicroFrontendInfo = {
     SourceId: '1001',
     SourceName: 'Menu'
   };
@@ -37,7 +24,7 @@ export class UParts {
   /**
    * Personnel micro frontend
    */
-  public static Personnel: IInfo = {
+  public static Personnel: MicroFrontendInfo = {
     SourceId: '1002',
     SourceName: 'Personnel'
   };
@@ -45,7 +32,7 @@ export class UParts {
   /**
    * Occupations micro frontend
    */
-  public static Occupations: IInfo = {
+  public static Occupations: MicroFrontendInfo = {
     SourceId: '1005',
     SourceName: 'Occupations'
   };
@@ -53,7 +40,7 @@ export class UParts {
   /**
    * Micro frontend manager. Part of Frontend shell
    */
-  public static UFManager: IInfo = {
+  public static UFManager: MicroFrontendInfo = {
     SourceId: '1006',
     SourceName: 'UFManager'
   };
@@ -61,7 +48,7 @@ export class UParts {
   /**
    * Micro frontend observer. Used for monitoring and alike function
    */
-  public static Observer: IInfo = {
+  public static Observer: MicroFrontendInfo = {
     SourceId: '1007',
     SourceName: 'Observer'
   };

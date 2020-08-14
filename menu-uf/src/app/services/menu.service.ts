@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IMicroFrontend, EventResponse, uEventsIds, uEvent, UParts } from '@uf-shared-models/index';
+import { IMicroFrontend, EventResponse, uEventsIds, uEvent, UParts, MicroFrontendInfo } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { HttpResponse } from '@angular/common/http';
 
@@ -7,8 +7,8 @@ import { HttpResponse } from '@angular/common/http';
   providedIn: 'root'
 })
 export class MenuService implements IMicroFrontend {
-  public SourceId: string = UParts.Menu.SourceId;
-  public SourceName: string = UParts.Menu.SourceName;
+
+  public SourceInfo: MicroFrontendInfo = UParts.Menu;
 
   public constructor(private eventProxyService: EventProxyLibService) {}
 
@@ -17,11 +17,11 @@ export class MenuService implements IMicroFrontend {
   }
 
   public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceId).subscribe(
+    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
       (response: HttpResponse<EventResponse>) => {
         this.NewHttpResponseAsync(response);
       },
-      (error) => { console.error(this.SourceName, error); },
+      (error) => { console.error(this.SourceInfo.SourceName, error); },
     );
   }
 
@@ -41,13 +41,12 @@ export class MenuService implements IMicroFrontend {
 
   public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
     for (const element of eventList) {
-      console.log(`${this.SourceName} Parsing event:`, element);
       /**
        * Init menu event
        */
       if (element.EventId === uEventsIds.InitMenu) {
         this.putToElement('menu-team', '<menu-team></menu-team>');
-        await this.eventProxyService.ConfirmEvents(this.SourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       } else {
         throw new Error('Event not implemented.');
       }

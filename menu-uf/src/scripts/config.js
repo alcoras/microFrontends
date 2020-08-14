@@ -103,6 +103,7 @@ define("shared/models/event", ["require", "exports"], function (require, exports
         uEventsIds[uEventsIds["RenewToken"] = 2027] = "RenewToken";
         uEventsIds[uEventsIds["TokenRenewSuccess"] = 2028] = "TokenRenewSuccess";
         uEventsIds[uEventsIds["LoginSuccessWithTokenInformation"] = 2029] = "LoginSuccessWithTokenInformation";
+        uEventsIds[uEventsIds["TokenRenewSuccessWithTokenInformation"] = 2030] = "TokenRenewSuccessWithTokenInformation";
     })(uEventsIds = exports.uEventsIds || (exports.uEventsIds = {}));
 });
 define("shared/events/helpers/ResourceSheme", ["require", "exports"], function (require, exports) {

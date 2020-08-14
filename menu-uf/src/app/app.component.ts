@@ -127,6 +127,8 @@ export class AppComponent {
 
     if (elId) {
       this.placement[eventName].loaded = true;
+    } else {
+      return;
     }
 
     const event = new EventButtonPressed(eventName, elId);

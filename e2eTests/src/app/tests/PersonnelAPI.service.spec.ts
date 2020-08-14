@@ -8,6 +8,17 @@ import { SubscibeToEvent } from '@uf-shared-events/index';
 import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
 import { genRandomNumber } from './helpers/helpers';
 
+/**
+ *
+ * @param sourceId source id
+ * @param eProxyService event proxy service
+ */
+async function subscribeToPersonDataRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
+  const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
+  await eProxyService.DispatchEvent(subEvent).toPromise();
+}
+
+
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eProxyService: EventProxyLibService;
@@ -16,15 +27,11 @@ describe('PersonnelAPI service', () => {
   const backendURL = 'http://localhost:54366';
   const backendPort = '54366';
 
-  beforeAll(async () => {
-    const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
-    await eProxyService.DispatchEvent(subEvent).toPromise();
-  });
-
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
     window['__env'] = window['__env'] || {};
 
+    // eslint-disable-next-line @typescript-eslint/camelcase
     window['__env'].one_language = false;
     // API url
     window['__env'].url = 'http://' + backendURL;
@@ -44,6 +51,7 @@ describe('PersonnelAPI service', () => {
     eProxyService.ApiGatewayURL = backendURL;
 
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await subscribeToPersonDataRead(sourceId, eProxyService);
   });
 
   afterEach(async () => {
@@ -51,6 +59,10 @@ describe('PersonnelAPI service', () => {
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
   });
 
+  /**
+   *
+   * @param res http response to propogate
+   */
   function propogateEvent(res: HttpResponse<EventResponse>): void {
     if (res.body) {
       res.body.Events.forEach(element => {
@@ -62,6 +74,10 @@ describe('PersonnelAPI service', () => {
     }
   }
 
+  /**
+   * Creates Personnel entry for testing
+   * @returns Personnel with filled random data
+   */
   function createPersonnelEntry(): IPersonnel {
     return {
       PersonDataID: 0,
@@ -203,7 +219,7 @@ describe('PersonnelAPI service', () => {
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
-      (res: HttpResponse<any>) => {
+      (res: HttpResponse<EventResponse>) => {
         propogateEvent(res);
     });
 
@@ -221,3 +237,4 @@ describe('PersonnelAPI service', () => {
 
   });
 });
+

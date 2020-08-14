@@ -108,9 +108,9 @@ export class PersonnelAPIService {
           const uniqueId = response.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
-            (data: PersonDataRead) => {
+            async (data: PersonDataRead) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
+                await this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.ListOutputEnterprisePersonData,
                   total: data.CommonNumberRecords

@@ -9,7 +9,6 @@ import { NewOccupComponent } from './new-occup/new-occup.component';
 })
 export class AppComponent {
 
-
   public constructor(
     private dialog: MatDialog) {
   }
