@@ -1,0 +1,19 @@
+{
+  "name": "launcher",
+  "version": "1.0.0",
+  "description": "launches all micro frontends",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-shell-dev": "cd ..\\shell && npm run ng_con",
+    "start-menu-dev": "cd ..\\menu-uf && npm run ng_con_lang",
+    "start-occupation-dev": "cd ..\\occupation-uf && npm run ng_con",
+    "start-personnel-dev": "cd ..\\personnel-uf && npm run ng_con",
+    "start-dev": "concurrently --kill-others \"npm run start-shell-dev\" \"npm run start-menu-dev\" \"npm run start-occupation-dev\" \"npm run start-personnel-dev\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  }
+}
