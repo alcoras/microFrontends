@@ -1,3 +1,10 @@
+define("shared/models/MicroFrontendInfo", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class MicroFrontendInfo {
+    }
+    exports.MicroFrontendInfo = MicroFrontendInfo;
+});
 define("shared/models/UParts", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });

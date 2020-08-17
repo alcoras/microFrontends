@@ -5,8 +5,8 @@
   window.__env.version = "1.0.0";
   // API url
   window.__env.lang = 'en';
-  window.__env.url = 'http://192.168.0.101';
-  window.__env.apiGatewayUrl = 'http://192.168.0.101';
+  window.__env.url = 'http://81.162.230.75';
+  window.__env.apiGatewayUrl = 'http://81.162.230.75';
   window.__env.apiGatewayPort = '54366';
 
   window.__env.loggedIn = false;
