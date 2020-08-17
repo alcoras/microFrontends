@@ -28,6 +28,8 @@
     "personnel-start-dev":        "cd ..\\personnel-uf && npm run ng_serve_dev",
     "personnel-watch":            "cd ..\\personnel-uf && npm run ng_con",
 
+    "backend-start":              "cd .. && startbackend.bat",
+
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod",
     "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev",
 
@@ -35,7 +37,7 @@
     "start-dev": "concurrently --kill-others \"npm run shell-start-dev\" \"npm run menu-start-dev\" \"npm run occupation-start-dev\" \"npm run personnel-start-dev\"",
     
     "watch": "concurrently --kill-others \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\"",
-    "start": "npm run build-prod && npm run start-prod"
+    "start": "npm run backend-start && npm run start-prod"
   },
   "author": "",
   "license": "ISC",

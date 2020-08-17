@@ -1,9 +1,9 @@
 @ECHO OFF
-cd C:\Prog\csharp\AcSRep\EventBroker\bin\Release\netcoreapp3.0
+cd C:\Users\MTX\source\repos\AcS\EventBroker\bin\Release\netcoreapp3.0
 start EventBroker.exe
-cd C:\Prog\csharp\AcSRep\APIGateway\bin\Release\netcoreapp3.0
+cd C:\Users\MTX\source\repos\AcS\APIGateway\bin\Release\netcoreapp3.0
 start APIGateway.exe
-cd C:\Prog\csharp\AcSRep\Occupations\bin\Release\netcoreapp3.0
+cd C:\Users\MTX\source\repos\AcS\Occupations\bin\Release\netcoreapp3.0
 start Occupations.exe
-cd C:\Prog\csharp\AcSRep\PersonData\bin\Release\netcoreapp3.0
+cd C:\Users\MTX\source\repos\AcS\PersonData\bin\Release\netcoreapp3.0
 start PersonData.exe
