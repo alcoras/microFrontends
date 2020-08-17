@@ -1,6 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
+/prod
+/build
 /dist
 /tmp
 /out-tsc
@@ -45,4 +47,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/src/scripts/env.js
+/src/environments/*
+!/src/environments/environment.template.ts

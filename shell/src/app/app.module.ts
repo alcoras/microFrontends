@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 
-import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
+import {  EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
 
 import { UFManagerComponent } from './uf-manager/uf-manager.component';
 import { PrestartService } from './services/prestart.service';
@@ -26,7 +26,12 @@ import { AuthenticationService } from './services/AuthenticationService';
     ResourceLoaderService,
     UFManagerComponent,
     AuthenticationService,
-    { provide: APP_INITIALIZER, useFactory: UFManagerFactory, deps: [UFManagerComponent], multi: false}
+    {
+      provide: APP_INITIALIZER,
+      useFactory: UFManagerFactory,
+      deps: [UFManagerComponent],
+      multi: false
+    }
   ],
   bootstrap: [AppComponent]
 })

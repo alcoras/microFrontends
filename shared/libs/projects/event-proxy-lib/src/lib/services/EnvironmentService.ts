@@ -9,14 +9,47 @@ export class EnvironmentService {
    */
   private envPrefix = '__env';
 
+
+  public get ConfigUrlList(): string[] {
+    return window[this.envPrefix]['microfrontendConfigPathList'];
+  }
+
+  public set ConfigUrlList(value: string[]) {
+    window[this.envPrefix]['microfrontendConfigPathList'] = value;
+  }
+
   /**
    * Gets window[envPrefix] (window.__env)
    * @returns window[envPrefix]
    */
   // TODO: enable when I figure out how to add external models to angular library
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public Get(): any {
+  public Get(): unknown {
     return window[this.envPrefix];
+  }
+
+  /**
+   * URL list for microfrontend configs
+   * @returns array of strings to be loaded and parsed by shell
+   */
+  public get MicroFrontendConfigPathList(): string[] {
+    return window[this.envPrefix]['microfrontendConfigPathList'];
+  }
+
+  public set MicroFrontendConfigPathList(value: string[]) {
+    window[this.envPrefix]['microfrontendConfigPathList'] = value;
+  }
+
+  /**
+   * Gets/sets one language boolean
+   * @returns true if one language
+   */
+  public get OneLangauge(): boolean {
+    return window[this.envPrefix]['oneLanguage'];
+  }
+
+  public set OneLanguage(value: boolean) {
+    window[this.envPrefix]['oneLanguage'] = value;
   }
 
   /**

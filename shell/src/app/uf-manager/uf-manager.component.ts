@@ -125,12 +125,12 @@ export class UFManagerComponent {
       throw new Error('Url is not defined in environment (env.js)');
     }
 
-    const urlList = [
-      url + ':3002/en/scripts/conf.js',   // Menu
-      url + ':3004/scripts/conf.js',      // Personnel
-      url + ':3005/scripts/conf.js',      // Occupation
-      // url + ':3006/scripts/conf.js'    // Observer
-    ];
+    const urlList = this.environmentService.ConfigUrlList;
+
+    if (urlList.length == 0) {
+      console.warn('Config list is not defined in environment (env.js)');
+    }
+
     promises.push(this.prestartService.InitScripts(urlList));
     promises.push(this.prestartService.InitLanguage());
     return Promise.all(promises);
