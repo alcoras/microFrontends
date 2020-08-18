@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "build-config": "tsc --project tsconfig.conf-builder.json",
     "ng_build_prod": "ng build --localize --prod --outputHashing=none --output-path prod/",
-    "ng_serve_prod": "serve -l tcp://0.0.0.0:8082 prod/",
+    "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8082 prod/",
     "ng_start": "npm run ng_build_prod && npm run npm_serve_prod",
 
     "ng_serve_dev": "serve --cors -l tcp://0.0.0.0:3002 dist/",

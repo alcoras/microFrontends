@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "ng_build_prod": "ng build --prod --outputHashing=none --output-path prod/",
-    "ng_serve_prod": "serve -l tcp://0.0.0.0:8080 prod/",
+    "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8080 prod/",
     "ng_start_prod": "npm run ng_build_prod && npm run npm_serve_prod",
 
     "ng_build_dev": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false",
