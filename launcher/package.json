@@ -33,10 +33,10 @@
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod",
     "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev",
 
-    "start-prod": "concurrently --kill-others \"npm run shell-start-prod\" \"npm run menu-start-prod\" \"npm run occupation-start-prod\" \"npm run personnel-start-prod\"",
-    "start-dev": "concurrently --kill-others \"npm run shell-start-dev\" \"npm run menu-start-dev\" \"npm run occupation-start-dev\" \"npm run personnel-start-dev\"",
+    "start-prod": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold\" \"npm run shell-start-prod\" \"npm run menu-start-prod\" \"npm run occupation-start-prod\" \"npm run personnel-start-prod\"",
+    "start-dev": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold\" \"npm run shell-start-dev\" \"npm run menu-start-dev\" \"npm run occupation-start-dev\" \"npm run personnel-start-dev\"",
     
-    "watch": "concurrently --kill-others \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\"",
+    "watch": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold\" \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\"",
     "start": "npm run backend-start && npm run start-prod"
   },
   "author": "",
