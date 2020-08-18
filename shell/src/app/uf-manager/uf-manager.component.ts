@@ -132,7 +132,7 @@ export class UFManagerComponent {
     }
 
     promises.push(this.prestartService.InitScripts(urlList));
-    promises.push(this.prestartService.InitLanguage());
+    //promises.push(this.prestartService.InitLanguage());
     return Promise.all(promises);
   }
 

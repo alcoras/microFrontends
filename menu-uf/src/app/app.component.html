@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" class="mat-elevation-z6 pos-fixed">
   <mat-toolbar-row>
-    <span><a mat-mini-fab (click)="Reload()">FOX</a></span>
+    <span><a (click)="Reload()">FORESTPATH</a></span>
     <div class="spacer"></div>
 
     <mat-form-field>
@@ -11,13 +11,13 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-select [(ngModel)]="selectedLang" (ngModelChange)="ChangeLanguage()" name="language">
         <mat-option *ngFor="let lang of langs" [value]="lang.value">
           {{lang.viewValue}}
         </mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
 
   </mat-toolbar-row>
 </mat-toolbar>

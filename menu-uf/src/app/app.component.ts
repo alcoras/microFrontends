@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { uEventsIds, UParts } from '@uf-shared-models/index';
 import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
 import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
+import { environment } from '../environments/environment'
 
 interface ISelector {
   value: string;
@@ -79,12 +80,12 @@ export class AppComponent {
     window.location.reload();
   }
 
-  // TODO: port should be configurable
   /**
    *  Prepares theme and language
    */
   private prepareThemeAndLang(): void {
-    const url = `${this.environmentService.Url}:3002/en/`;
+    const port = environment.microFrontendPort;
+    const url = `${this.environmentService.Url}:${port}/en/`;
     this.themes = [
       { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
       { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
