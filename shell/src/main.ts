@@ -10,7 +10,7 @@ if (environment.production) {
 }
 
 /**
- * Sets up global environemnt for shell and the rest of micro frontends
+ * Sets up global environment for shell and the rest of micro frontends
  */
 {
   const provider = new EnvironmentService();

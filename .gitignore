@@ -1,2 +1,4 @@
 .vs/
 startbackend.bat
+conf.js
+conf.prod.js
