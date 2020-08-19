@@ -67,6 +67,7 @@ export enum uEventsIds {
   OccupationNg9ButtonPressed = 1005,
   LanguageChange = 1006,
   ObserverButtonPressed = 1007,
+  MaterialsReceiptsButtonPressed = 1008,
 
   PingRequest = 2001,
   SubscribeToEvent = 2002,

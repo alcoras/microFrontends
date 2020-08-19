@@ -53,6 +53,10 @@ define("shared/models/UParts", ["require", "exports"], function (require, export
         SourceId: '1007',
         SourceName: 'Observer'
     };
+    UParts.MaterialsReceipts = {
+        SourceId: '1008',
+        SourceName: 'MaterialsReceipts'
+    };
 });
 define("shared/models/event", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -82,6 +86,7 @@ define("shared/models/event", ["require", "exports"], function (require, exports
         uEventsIds[uEventsIds["OccupationNg9ButtonPressed"] = 1005] = "OccupationNg9ButtonPressed";
         uEventsIds[uEventsIds["LanguageChange"] = 1006] = "LanguageChange";
         uEventsIds[uEventsIds["ObserverButtonPressed"] = 1007] = "ObserverButtonPressed";
+        uEventsIds[uEventsIds["MaterialsReceiptsButtonPressed"] = 1008] = "MaterialsReceiptsButtonPressed";
         uEventsIds[uEventsIds["PingRequest"] = 2001] = "PingRequest";
         uEventsIds[uEventsIds["SubscribeToEvent"] = 2002] = "SubscribeToEvent";
         uEventsIds[uEventsIds["EventProccessedSuccessfully"] = 2003] = "EventProccessedSuccessfully";
@@ -160,6 +165,7 @@ define("shared/events/helpers/ButtonIds", ["require", "exports"], function (requ
         ButtonIds[ButtonIds["PersonnelButtonPressed"] = 1001] = "PersonnelButtonPressed";
         ButtonIds[ButtonIds["OccupationNg9ButtonPressed"] = 1005] = "OccupationNg9ButtonPressed";
         ButtonIds[ButtonIds["ObserverButtonPressed"] = 1007] = "ObserverButtonPressed";
+        ButtonIds[ButtonIds["MaterialReceiptsButtonPressed"] = 1008] = "MaterialReceiptsButtonPressed";
     })(ButtonIds = exports.ButtonIds || (exports.ButtonIds = {}));
 });
 define("shared/events/EventButtonPressed", ["require", "exports", "shared/models/event", "shared/events/helpers/ButtonIds"], function (require, exports, event_3, ButtonIds_1) {

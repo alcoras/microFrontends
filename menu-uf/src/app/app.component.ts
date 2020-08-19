@@ -104,11 +104,13 @@ export class AppComponent {
 
   /**
    * Prepares placements for Micro Frontends
+   * which html element should they use
    */
   private preparePlacements(): void {
     this.placement[uEventsIds.PersonnelButtonPressed] = { elementId: 'personnel', loaded: false };
     this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
     this.placement[uEventsIds.ObserverButtonPressed] = { elementId: 'observer', loaded: false };
+    this.placement[uEventsIds.MaterialsReceiptsButtonPressed] = { elementId: 'materialReceipts', loaded: false };
   }
 
   private getElFromID(id: number): IUFState {

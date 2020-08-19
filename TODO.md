@@ -115,5 +115,6 @@
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
+49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
 
-49
+50. 

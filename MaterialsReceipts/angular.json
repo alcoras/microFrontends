@@ -15,9 +15,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/MaterialsReceipts",
+            "customWebpackConfig": { "path": "./extra-webpack.config.js",
+              "mergeStrategies": { "externals": "replace" } },
+            "outputPath": "dist/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -25,7 +27,8 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/scripts"
             ],
             "styles": [
               "src/styles.scss"
@@ -38,6 +41,10 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/scripts/conf.js",
+                  "with": "src/scripts/conf.prod.js"
                 }
               ],
               "optimization": true,
@@ -123,6 +130,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "MaterialsReceipts"
+    }
+  },
+  "defaultProject": "MaterialsReceipts",
+  "cli": {
+    "analytics": false
+  }
 }

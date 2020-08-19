@@ -54,6 +54,14 @@ export class UParts {
   };
 
   /**
+   * Micro frontend MaterialsReceipts. Used for 1C communication
+   */
+  public static MaterialsReceipts: MicroFrontendInfo = {
+    SourceId: '1008',
+    SourceName: 'MaterialsReceipts'
+  };
+
+  /**
    * Gets source name from source id
    * @param sourceId source id string
    * @returns source name

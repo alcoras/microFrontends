@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en">
+  <file original="ng.template" id="ngi18n">
+    <unit id="menu-personnel-button">
+      <notes>
+        <note category="description">menu button personnel</note>
+        <note category="location">src/app/app.component.html:29</note>
+      </notes>
+      <segment>
+        <source>Personnel</source>
+      </segment>
+    </unit>
+    <unit id="menu-occupation-button">
+      <notes>
+        <note category="description">menu button occupation</note>
+        <note category="location">src/app/app.component.html:32</note>
+      </notes>
+      <segment>
+        <source>Occupations</source>
+      </segment>
+    </unit>
+    <unit id="menu-observer-button">
+      <notes>
+        <note category="description">menu button observer</note>
+        <note category="location">src/app/app.component.html:35</note>
+      </notes>
+      <segment>
+        <source>Observer</source>
+      </segment>
+    </unit>
+  </file>
+</xliff>

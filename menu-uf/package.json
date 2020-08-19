@@ -8,6 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "generate-translation": "ng xi18n --output-path ./locales --format=xmb",
     "build-config": "tsc --project tsconfig.conf-builder.json",
     "ng_build_prod": "ng build --localize --prod --outputHashing=none --output-path prod/",
     "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8082 prod/",
