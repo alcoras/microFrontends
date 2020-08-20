@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 
-import { EventProxyLibService } from 'event-proxy-lib/event-proxy-lib';
+import { EventProxyLibService } from 'event-proxy-lib';
 import {
   IMicroFrontend,
   UParts,
