@@ -39,7 +39,6 @@ import { OccupationService } from './services/Occupation.service';
     EventBusService,
     OccupationAPIService,
     { provide: APP_INITIALIZER, useFactory: OccupationServiceFactory, deps: [OccupationService], multi: false}
-
   ],
   entryComponents: [AppComponent]
 })

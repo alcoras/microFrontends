@@ -37,7 +37,7 @@
     "backend-start":              "cd .. && startbackend.bat",
 
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod && npm run materialsReceipts-build-prod",
-    "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev &&& materialsReceipts-build-dev",
+    "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev && npm run materialsReceipts-build-dev",
 
     "start-prod": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run shell-start-prod\" \"npm run menu-start-prod\" \"npm run occupation-start-prod\" \"npm run personnel-start-prod\" \"npm run materialsReceipts-start-prod\"",
 

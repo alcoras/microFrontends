@@ -116,5 +116,4 @@
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
 49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
-
-50. 
+50. Write Library for Microservice (StartQNA, NewHttpResponseAsync)
