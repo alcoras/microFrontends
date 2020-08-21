@@ -117,3 +117,5 @@
 48. write integration tests for Authentication Service
 49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
 50. Write Library for Microservice (StartQNA, NewHttpResponseAsync)
+51. parse 2024
+52. change StartQNA to StartListeningBackend

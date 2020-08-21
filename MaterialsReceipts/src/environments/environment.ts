@@ -5,8 +5,20 @@
 export const environment = {
   production: false,
 
-  currentLanguage: 'en'
-};
+  currentLanguage: 'en',
+
+  oneLanguage: false,
+  version: '1.0.0',
+  defaultLanguage: 'en',
+  url: 'http://localhost',
+  apiGatewayUrl : 'http://localhost',
+  apiGatewayPort : '8001',
+
+  loggedIn : false,
+  authToken : null,
+  tokenBeginDate : null,
+  tokenExpirationDate : null,
+}
 
 /*
  * For easier debugging in development mode, you can import the following file
@@ -15,4 +27,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/dist/zone-error',  // Included with Angular CLI.

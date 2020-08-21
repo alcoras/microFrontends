@@ -44,7 +44,7 @@ Run backends:
 1. language, fake data `cd backend-occup && npm run data`  
 2. ~~Event/Api gateway mock `cd backend-mock && npm run dev:start`~~
 
-Remove after migration
+Adding eslint
 
 1. In VScode extensions remove Tslint and install Eslint (exact extension name: dbaeumer.vscode-eslint)
 2. In a project root remove tslint.json

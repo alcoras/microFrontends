@@ -102,3 +102,8 @@ situation when listening happening before subscriptions are completed)
 The application when selected in menu microservice holds all page space to avoid this:
 - install @angular/elements
 - update app.module.ts- AppModule and @NgModule
+
+For every microfrontend to work on their own we have to prepare environemnt variables (apigateway url):
+(assuming angular)
+1. <microfrotnendPath>/src/environemnts/environment.ts - we configure variables
+2. <microfrotnendPath>/src/main.ts - we initialize them
