@@ -32,7 +32,7 @@ describe('Personnel micro frontend component', () => {
   it('should init and have called functions', async (done) => {
     const spies: jasmine.Spy<any>[] = [];
     spies.push(spyOn<any>(service, 'preparePlacements').and.callThrough());
-    spies.push(spyOn<any>(service, 'subscribeToEventsAsync').and.callThrough());
+    spies.push(spyOn<any>(service, 'SubscribeToEventsAsync').and.callThrough());
 
     await service.InitAsync();
 
@@ -53,7 +53,7 @@ describe('Personnel micro frontend component', () => {
     event.Events.push(buttonEvent);
 
     const spies: jasmine.Spy<any>[] = [];
-    spies.push(spyOn<any>(service, 'parseNewEvent').and.callThrough());
+    spies.push(spyOn<any>(service, 'ParseNewEventAsync').and.callThrough());
     spies.push(spyOn<any>(service, 'processButtonPressed').and.callThrough());
     spies.push(spyOn<any>(eProxyService, 'GetLastEvents').and.returnValue(
       new Observable(

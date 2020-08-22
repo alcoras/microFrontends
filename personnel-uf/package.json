@@ -6,9 +6,11 @@
     "start": "ng serve --port 3004",
     "build": "ng build",
     "test": "ng test",
-    "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true",
     "lint": "ng lint",
     "e2e": "ng e2e",
+
+    "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true",
+
     "ng_build_prod": "ng build --prod --outputHashing=none --output-path prod/",
     "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8084 prod/",
     "ng_con_prod": "npm run ng_build_prod && npm run npm_serve_prod",

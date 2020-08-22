@@ -5,9 +5,9 @@ import { Product } from '../interfaces/Product';
 @Injectable()
 export class ProductService {
 
-  public status: string[] = ['OUTOFSTOCK', 'INSTOCK', 'LOWSTOCK'];
+  public static status: string[] = ['OUTOFSTOCK', 'INSTOCK', 'LOWSTOCK'];
 
-    public productNames: string[] = [
+    public static productNames: string[] = [
         "Bamboo Watch",
         "Black Watch",
         "Blue Band",
@@ -40,7 +40,7 @@ export class ProductService {
         "Yoga Set",
     ];
 
-    public generateProducts(amount: number): Product[] {
+    public static generateProducts(amount: number): Product[] {
       const products: Product[] = [];
 
       for (let i = 0; i < amount; i++) {
@@ -50,7 +50,7 @@ export class ProductService {
       return products;
     }
 
-    public generatePrduct(): Product {
+    public static generatePrduct(): Product {
         const product: Product =  {
             code: this.generateId(),
             id: this.generateId(),
@@ -67,7 +67,7 @@ export class ProductService {
         return product;
     }
 
-    public generateId() {
+    public static generateId() {
         let text = "";
         const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -78,23 +78,23 @@ export class ProductService {
         return text;
     }
 
-    public generateName() {
+    public static generateName() {
         return this.productNames[Math.floor(Math.random() * Math.floor(30))];
     }
 
-    public generatePrice() {
+    public static generatePrice() {
         return Math.floor(Math.random() * Math.floor(299)+1);
     }
 
-    public generateQuantity() {
+    public static generateQuantity() {
         return Math.floor(Math.random() * Math.floor(75)+1);
     }
 
-    public generateStatus() {
+    public static generateStatus() {
         return this.status[Math.floor(Math.random() * Math.floor(3))];
     }
 
-    public generateRating() {
+    public static generateRating() {
         return Math.floor(Math.random() * Math.floor(5)+1);
     }
 }

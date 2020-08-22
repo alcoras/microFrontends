@@ -8,6 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+
+    "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true",
+
     "generate-translation": "ng xi18n --output-path ./locales --format=xmb",
     "build-config": "tsc --project tsconfig.conf-builder.json",
     "ng_build_prod": "ng build --localize --prod --outputHashing=none --output-path prod/",

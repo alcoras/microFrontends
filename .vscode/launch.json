@@ -100,6 +100,25 @@
             }
         },
         {
+          "type": "chrome",
+          "request": "launch",
+          "name": "meterialReceipts",
+          "url": "http://localhost:3008",
+          "webRoot": "${workspaceFolder}/MaterialsReceipts"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "materialReceipts unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}/MaterialsReceipts",
+            "pathMapping": {
+              "/_karma_webpack_": "${workspaceFolder}/MaterialsReceipts"
+            }
+        },
+        {
             "type": "chrome",
             "request": "attach",
             "name": "event-proxy-lib unit tests",

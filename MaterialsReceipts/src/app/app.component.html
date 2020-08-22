@@ -1,4 +1,4 @@
-<p-table [columns]="cols" [value]="products"
+<!-- <p-table [columns]="cols" [value]="products"
   [paginator]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]">
   <ng-template pTemplate="header" let-columns>
       <tr>
@@ -15,8 +15,9 @@
   <ng-template pTemplate="body" let-rowData let-columns="columns">
       <tr>
           <td *ngFor="let col of columns">
-              {{rowData[col.field]&#125;&#125;
+              {{rowData[col.field]}};
           </td>
       </tr>
   </ng-template>
-</p-table>
+</p-table> -->
+<receipt-materials-table></receipt-materials-table>

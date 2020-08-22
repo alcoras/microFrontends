@@ -10,6 +10,9 @@ import { TranslatePipe } from './pipes/translate.pipe';
 
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+
 import { ProductService } from './services/ProductService';
 import { createCustomElement } from '@angular/elements';
 
@@ -17,10 +20,13 @@ import { MaterialReceiptsInitializeFactory }
 from './services/MaterialReceiptsFactory';
 
 import { MaterialReceiptsService } from './services/MaterialReceiptsService';
+import { MaterialsReceiptsAPI } from './services/MaterialsReceiptsAPI';
 
+import { TableComponent } from './table/TableComponent';
 @NgModule({
   declarations: [
     AppComponent,
+    TableComponent,
     TranslatePipe
   ],
   imports: [
@@ -29,10 +35,13 @@ import { MaterialReceiptsService } from './services/MaterialReceiptsService';
     ButtonModule,
     TableModule,
     FormsModule,
+    DialogModule,
+    InputTextModule,
     EventProxyLibModule
   ],
   providers: [
     ProductService,
+    MaterialsReceiptsAPI,
     EventProxyLibService,
     {
       provide: APP_INITIALIZER,

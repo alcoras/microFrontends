@@ -18,3 +18,5 @@ export * from './backend/Occupations/OccupationsCreateUpdate';
 export * from './backend/Occupations/OccupationsReadQuery';
 export * from './backend/Occupations/OccupationsReadResults';
 export * from './backend/Occupations/OccupationsDeleteEvent';
+
+export * from './backend/MaterialsReceipts/index';

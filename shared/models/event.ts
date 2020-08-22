@@ -98,4 +98,6 @@ export enum uEventsIds {
   TokenRenewSuccess = 2028,
   LoginSuccessWithTokenInformation = 2029,
   TokenRenewSuccessWithTokenInformation = 2030,
+  MaterialsReceiptsReadListQuery = 2031,
+  MaterialsReceiptsReadListResults = 2032,
 }

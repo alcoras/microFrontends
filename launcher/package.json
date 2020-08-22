@@ -9,32 +9,37 @@
     "shell-start-prod":           "cd ..\\shell && npm run ng_serve_prod",
     "shell-start-dev":            "cd ..\\shell && npm run ng_serve_dev",
     "shell-watch":                "cd ..\\shell && npm run ng_con",
+    "shell-test-once":            "cd ..\\shell && npm run test-once",
 
     "menu-build-prod":            "cd ..\\menu-uf && npm run ng_build_prod",
     "menu-build-dev":             "cd ..\\menu-uf && npm run ng_build_dev",
     "menu-start-prod":            "cd ..\\menu-uf && npm run ng_serve_prod",
     "menu-start-dev":             "cd ..\\menu-uf && npm run ng_serve_dev",
     "menu-watch":                 "cd ..\\menu-uf && npm run ng_con",
+    "menu-test-once":             "cd ..\\menu-uf && npm run test-once",
 
     "occupation-build-prod":      "cd ..\\occupation-uf && npm run ng_build_prod",
     "occupation-build-dev":       "cd ..\\occupation-uf && npm run ng_build_dev",
     "occupation-start-prod":      "cd ..\\occupation-uf && npm run ng_serve_prod",
     "occupation-start-dev":       "cd ..\\occupation-uf && npm run ng_serve_dev",
     "occupation-watch":           "cd ..\\occupation-uf && npm run ng_con",
+    "occupation-test-once":       "cd ..\\occupation-uf && npm run test-once",
 
     "personnel-build-prod":       "cd ..\\personnel-uf && npm run ng_build_prod",
     "personnel-build-dev":        "cd ..\\personnel-uf && npm run ng_build_dev",
     "personnel-start-prod":       "cd ..\\personnel-uf && npm run ng_serve_prod",
     "personnel-start-dev":        "cd ..\\personnel-uf && npm run ng_serve_dev",
     "personnel-watch":            "cd ..\\personnel-uf && npm run ng_con",
+    "personnel-test-once":        "cd ..\\personnel-uf && npm run test-once",
 
     "materialsReceipts-build-prod":       "cd ..\\MaterialsReceipts && npm run ng_build_prod",
     "materialsReceipts-build-dev":        "cd ..\\MaterialsReceipts && npm run ng_build_dev",
     "materialsReceipts-start-prod":       "cd ..\\MaterialsReceipts && npm run ng_serve_prod",
     "materialsReceipts-start-dev":        "cd ..\\MaterialsReceipts && npm run ng_serve_dev",
     "materialsReceipts-watch":            "cd ..\\MaterialsReceipts && npm run ng_con",
+    "materialsReceipts-test-once":        "cd ..\\MaterialsReceipts && npm run test-once",
 
-    "backend-start":              "cd .. && startbackend.bat",
+    "backend-start":                      "cd .. && startbackend.bat",
 
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod && npm run materialsReceipts-build-prod",
     "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev && npm run materialsReceipts-build-dev",
@@ -43,6 +48,8 @@
 
     "start-dev": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold, bgWhite.bold\" \"npm run shell-start-dev\" \"npm run menu-start-dev\" \"npm run occupation-start-dev\" \"npm run personnel-start-dev\" \"npm run materialsReceipts-start-dev\"",
     
+    "test": "npm run shell-test-once && npm run menu-test-once && npm run occupation-test-once && npm run personnel-test-once && npm run materialsReceipts-test-once",
+
     "watch": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\" \"npm run materialsReceipts-watch\"",
     "start": "npm run backend-start && npm run start-prod"
   },

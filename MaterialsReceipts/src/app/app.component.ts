@@ -23,7 +23,7 @@ import { ProductService } from './services/ProductService';
 })
 export class AppComponent {
 
-  public products: Product[] = this.productService.generateProducts(100);
+  public products: Product[] = ProductService.generateProducts(100);
   public cols = [
     { field: 'code', header: 'Code' },
     { field: 'name', header: 'Name' },
