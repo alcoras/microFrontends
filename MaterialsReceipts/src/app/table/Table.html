@@ -1,3 +1,8 @@
+<div style="margin-bottom: 1em">
+  <button type="button" pButton icon="pi pi-refresh"
+    (click)="RefreshTable()" style="margin-right:.5em">
+  </button>
+</div>
 <p-table
     styleClass="p-datatable-striped"
     [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"

@@ -45,6 +45,19 @@ export class TableComponent {
     this.DisplayDialog = true;
   }
 
+  public RefreshTable(): void {
+    this.Loading = true;
+
+    const res = this.materialsReceiptsAPI.Get(1, 10);
+
+    res.then( (data: GetMaterialsList) => {
+      this.MaterialsListData = data.Items;
+      this.TotalRecords = data.Total;
+    })
+
+    this.Loading = false;
+  }
+
   public LoadDataLazy(event: LazyLoadEvent): void {
     this.Loading = true;
 

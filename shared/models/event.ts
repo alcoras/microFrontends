@@ -92,6 +92,7 @@ export enum uEventsIds {
   LoginRequested = 2021,
   LoginFailed = 2022,
   LoginSuccess = 2023,
+  TokenFailure = 2024,
   SOneDokumentPrihodAnaliticheskiyProvedenie = 2025,
   SOneDokumentPrihodAnaliticheskiyOtmenaProvedeniya = 2026,
   RenewToken = 2027,
