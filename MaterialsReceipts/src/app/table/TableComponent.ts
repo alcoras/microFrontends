@@ -56,7 +56,7 @@ export class TableComponent {
     //filters: FilterMetadata object having field as key and filter value, filter matchMode as value
 
     // const res = this.materialsReceiptsAPI.Get(event.first, event.rows);
-    const res = this.materialsReceiptsAPI.MockGet(event.first, event.rows);
+    const res = this.materialsReceiptsAPI.Get(event.first + 1, event.rows);
 
     res.then( (data: GetMaterialsList) => {
       this.MaterialsListData = data.Items;

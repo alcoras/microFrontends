@@ -31,7 +31,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    // await this.SubscribeToEventsAsync();
+    await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
@@ -73,7 +73,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
-        case uEventsIds.OccupationsRead:
+        case uEventsIds.MaterialsReceiptsReadListResults:
             this.eventBus.EventBus.next(element);
             break;
         default:
@@ -85,7 +85,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
   public SubscribeToEventsAsync():  Promise<HttpResponse<APIGatewayResponse>> {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
-      [uEventsIds.OccupationsRead, 0, 0],
+      [uEventsIds.MaterialsReceiptsReadListResults, 0, 0],
     ], true);
 
     e.SourceName = this.SourceInfo.SourceName;

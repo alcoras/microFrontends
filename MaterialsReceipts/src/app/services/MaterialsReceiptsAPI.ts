@@ -101,8 +101,7 @@ export class MaterialsReceiptsAPI {
   private get(page: number, limit: number)
     :Observable<HttpResponse<APIGatewayResponse>> {
       const event = new MaterialsReceiptsReadListQuery(
-        this.sourceInfo,
-        null, null, null, page, limit);
+        this.sourceInfo);
 
       return this.eventProxyService.DispatchEvent(event);
   }
