@@ -7,9 +7,10 @@
   <mat-divider></mat-divider>
 
   <mat-card-actions>
+    <button mat-button (click)="Refresh()"><mat-icon>refresh</mat-icon><div >Refresh</div></button>
     <button mat-button (click)="openDialog()"><mat-icon>account_box</mat-icon><div >Add New</div></button>
     <button mat-button><mat-icon>assignment</mat-icon><div >Create Report</div></button>
   </mat-card-actions>
 </mat-card>
 
-<app-occup-table3></app-occup-table3>
+<app-occup-table3 [events]="RefreshEvent.asObservable()"></app-occup-table3>

@@ -134,8 +134,8 @@ export class AuthenticationService {
     }
 
     // https://docs.metamask.io/guide/getting-started.html#basic-considerations
-    const accounts = await MetamaskEthereumHandle.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
+    await MetamaskEthereumHandle.request({ method: 'eth_requestAccounts' });
+    const account = MetamaskEthereumHandle.selectedAddress;
 
     if (!account) {
       logRequest.Error = 'Please try to login to Metamask to resolve.';
@@ -158,7 +158,7 @@ export class AuthenticationService {
           resolve(logRequest);
         },
         (error: string) => {
-          logRequest.Error = 'Failed to login';
+          logRequest.Error = 'Failed to login. Try again by refreshing website.';
           logRequest.FullError = error;
           reject(logRequest);
         }

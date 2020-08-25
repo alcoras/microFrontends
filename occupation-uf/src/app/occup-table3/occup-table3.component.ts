@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
-import { merge, of as observableOf} from 'rxjs';
+import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { OccupationData } from '@uf-shared-models/';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
@@ -24,6 +24,7 @@ import { IGetResponse } from '../services/interfaces/IGetResponse';
 })
 export class OccupTable3Component implements OnInit, AfterViewInit {
 
+  @Input() private events: Observable<void>;
   @ViewChild(MatSort, {static: true}) private sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) private paginator: MatPaginator;
 
@@ -47,6 +48,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   public BackendError = false;
 
   private data: OccupationData[] = [];
+  private eventsSubscription: Subscription;
 
   public constructor(private occupationApiService: OccupationAPIService) { }
 
@@ -119,6 +121,11 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   public ngOnInit(): void {
     this.DataSource.paginator = this.paginator;
     this.DataSource.sort = this.sort;
+    this.eventsSubscription = this.events.subscribe(() => this.RefreshTable());
+  }
+
+  public ngOnDestroy(): void {
+    this.eventsSubscription.unsubscribe();
   }
 
   public ngAfterViewInit(): void {

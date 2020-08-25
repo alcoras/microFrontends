@@ -13,6 +13,7 @@ import { PrestartService } from '../services/prestart.service';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '../services/AuthenticationService';
 import { LoginRequest } from '../models/LoginRequest';
+import { environment } from 'src/environments/environment';
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -60,13 +61,15 @@ export class UFManagerComponent {
    */
   public async InitAsync(): Promise<void> {
 
-    await this.authService.LoginAsync().then(
-      () => { console.log('Logged In.')},
-      (error: LoginRequest) => {
-        alert(error.Error);
-        throw new Error(error.FullError);
-      }
-    );
+    if (environment.enableLogin) {
+      await this.authService.LoginAsync().then(
+        () => { console.log('Logged In.')},
+        (error: LoginRequest) => {
+          alert(error.Error);
+          throw new Error(error.FullError);
+        }
+      );
+    }
 
     await this.preloadScripts().then(
       () => { console.log(`${this.sourceName} preloadedScripts done. `)},

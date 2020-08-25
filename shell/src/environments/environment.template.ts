@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-
+  enableLogin: true,
   oneLanguage: false,
   version: '1.0.0',
   defaultLanguage: 'en',

@@ -110,12 +110,15 @@ define("shared/models/event", ["require", "exports"], function (require, exports
         uEventsIds[uEventsIds["LoginRequested"] = 2021] = "LoginRequested";
         uEventsIds[uEventsIds["LoginFailed"] = 2022] = "LoginFailed";
         uEventsIds[uEventsIds["LoginSuccess"] = 2023] = "LoginSuccess";
+        uEventsIds[uEventsIds["TokenFailure"] = 2024] = "TokenFailure";
         uEventsIds[uEventsIds["SOneDokumentPrihodAnaliticheskiyProvedenie"] = 2025] = "SOneDokumentPrihodAnaliticheskiyProvedenie";
         uEventsIds[uEventsIds["SOneDokumentPrihodAnaliticheskiyOtmenaProvedeniya"] = 2026] = "SOneDokumentPrihodAnaliticheskiyOtmenaProvedeniya";
         uEventsIds[uEventsIds["RenewToken"] = 2027] = "RenewToken";
         uEventsIds[uEventsIds["TokenRenewSuccess"] = 2028] = "TokenRenewSuccess";
         uEventsIds[uEventsIds["LoginSuccessWithTokenInformation"] = 2029] = "LoginSuccessWithTokenInformation";
         uEventsIds[uEventsIds["TokenRenewSuccessWithTokenInformation"] = 2030] = "TokenRenewSuccessWithTokenInformation";
+        uEventsIds[uEventsIds["MaterialsReceiptsReadListQuery"] = 2031] = "MaterialsReceiptsReadListQuery";
+        uEventsIds[uEventsIds["MaterialsReceiptsReadListResults"] = 2032] = "MaterialsReceiptsReadListResults";
     })(uEventsIds = exports.uEventsIds || (exports.uEventsIds = {}));
 });
 define("shared/events/helpers/ResourceSheme", ["require", "exports"], function (require, exports) {
@@ -366,7 +369,50 @@ define("shared/events/backend/Occupations/OccupationsDeleteEvent", ["require", "
     }
     exports.OccupationsDeleteEvent = OccupationsDeleteEvent;
 });
-define("shared/events/index", ["require", "exports", "shared/events/RequestToLoadScript", "shared/events/LoadedResource", "shared/events/EventButtonPressed", "shared/events/LanguageChange", "shared/events/InitializeMenuEvent", "shared/events/helpers/MicroFrontendData", "shared/events/helpers/ResourceSheme", "shared/events/backend/SubscibeToEvent", "shared/events/backend/LoginSuccess", "shared/events/backend/Personnel/ReadPersonDataQuery", "shared/events/backend/Personnel/CreateUpdatePersonData", "shared/events/backend/Personnel/RemoveEnterpisePersonData", "shared/events/backend/Occupations/OccupationsCreateUpdate", "shared/events/backend/Occupations/OccupationsReadQuery", "shared/events/backend/Occupations/OccupationsReadResults", "shared/events/backend/Occupations/OccupationsDeleteEvent"], function (require, exports, RequestToLoadScript_1, LoadedResource_1, EventButtonPressed_1, LanguageChange_1, InitializeMenuEvent_1, MicroFrontendData_1, ResourceSheme_1, SubscibeToEvent_1, LoginSuccess_1, ReadPersonDataQuery_1, CreateUpdatePersonData_1, RemoveEnterpisePersonData_1, OccupationsCreateUpdate_1, OccupationsReadQuery_1, OccupationsReadResults_1, OccupationsDeleteEvent_1) {
+define("shared/events/backend/MaterialsReceipts/MaterialsReceiptsReadListQuery", ["require", "exports", "shared/models/event"], function (require, exports, event_15) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class MaterialsReceiptsReadListQuery extends event_15.uEvent {
+        constructor(sourceInfo, IntervalFrom, IntervalUntil, Signed, Page, Limit) {
+            super();
+            this.IntervalFrom = IntervalFrom;
+            this.IntervalUntil = IntervalUntil;
+            this.Signed = Signed;
+            this.Page = Page;
+            this.Limit = Limit;
+            if (Page <= 0 || Limit <= 0)
+                throw new Error('Page or Limit cannot be 0 or below');
+            this.SourceId = sourceInfo.SourceId;
+            this.SourceName = sourceInfo.SourceName;
+            this.EventId = event_15.uEventsIds.MaterialsReceiptsReadListQuery;
+        }
+    }
+    exports.MaterialsReceiptsReadListQuery = MaterialsReceiptsReadListQuery;
+});
+define("shared/models/MaterialReceipts/MaterialsList", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class MaterialsList {
+    }
+    exports.MaterialsList = MaterialsList;
+});
+define("shared/events/backend/MaterialsReceipts/MaterialsReceiptsReadListResults", ["require", "exports", "shared/models/event"], function (require, exports, event_16) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class MaterialsReceiptsReadListResults extends event_16.uEvent {
+    }
+    exports.MaterialsReceiptsReadListResults = MaterialsReceiptsReadListResults;
+});
+define("shared/events/backend/MaterialsReceipts/index", ["require", "exports", "shared/events/backend/MaterialsReceipts/MaterialsReceiptsReadListQuery", "shared/events/backend/MaterialsReceipts/MaterialsReceiptsReadListResults"], function (require, exports, MaterialsReceiptsReadListQuery_1, MaterialsReceiptsReadListResults_1) {
+    "use strict";
+    function __export(m) {
+        for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __export(MaterialsReceiptsReadListQuery_1);
+    __export(MaterialsReceiptsReadListResults_1);
+});
+define("shared/events/index", ["require", "exports", "shared/events/RequestToLoadScript", "shared/events/LoadedResource", "shared/events/EventButtonPressed", "shared/events/LanguageChange", "shared/events/InitializeMenuEvent", "shared/events/helpers/MicroFrontendData", "shared/events/helpers/ResourceSheme", "shared/events/backend/SubscibeToEvent", "shared/events/backend/LoginSuccess", "shared/events/backend/Personnel/ReadPersonDataQuery", "shared/events/backend/Personnel/CreateUpdatePersonData", "shared/events/backend/Personnel/RemoveEnterpisePersonData", "shared/events/backend/Occupations/OccupationsCreateUpdate", "shared/events/backend/Occupations/OccupationsReadQuery", "shared/events/backend/Occupations/OccupationsReadResults", "shared/events/backend/Occupations/OccupationsDeleteEvent", "shared/events/backend/MaterialsReceipts/index"], function (require, exports, RequestToLoadScript_1, LoadedResource_1, EventButtonPressed_1, LanguageChange_1, InitializeMenuEvent_1, MicroFrontendData_1, ResourceSheme_1, SubscibeToEvent_1, LoginSuccess_1, ReadPersonDataQuery_1, CreateUpdatePersonData_1, RemoveEnterpisePersonData_1, OccupationsCreateUpdate_1, OccupationsReadQuery_1, OccupationsReadResults_1, OccupationsDeleteEvent_1, index_1) {
     "use strict";
     function __export(m) {
         for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -388,8 +434,9 @@ define("shared/events/index", ["require", "exports", "shared/events/RequestToLoa
     __export(OccupationsReadQuery_1);
     __export(OccupationsReadResults_1);
     __export(OccupationsDeleteEvent_1);
+    __export(index_1);
 });
-define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts", "shared/models/event", "shared/events/helpers/ResourceSheme", "shared/events/index"], function (require, exports, UParts_1, event_15, ResourceSheme_2, _uf_shared_events_1) {
+define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts", "shared/models/event", "shared/events/helpers/ResourceSheme", "shared/events/index"], function (require, exports, UParts_1, event_17, ResourceSheme_2, _uf_shared_events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     const srcId = UParts_1.UParts.Menu.SourceId;
@@ -403,7 +450,7 @@ define("menu-uf/src/config/config", ["require", "exports", "shared/models/UParts
     window['__env']['uf'][srcId] = window['__env']['uf'][srcId] || {};
     const uf = {};
     uf[srcId] = new _uf_shared_events_1.MicroFrontendData();
-    uf[srcId].events.push(event_15.uEventsIds.InitMenu);
+    uf[srcId].events.push(event_17.uEventsIds.InitMenu);
     const scriptList = ['runtime.js', 'polyfills.js', 'main.js', 'styles.js'];
     for (const script of scriptList) {
         const temp = new ResourceSheme_2.ResourceSheme();

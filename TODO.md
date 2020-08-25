@@ -69,6 +69,8 @@
 39. DONE Consider adding interfaces for microfrontends (sourceId sourceName and so on)
 24. DONE Debugging in tests
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
+54. DONE Make LoginAsync in shell to be parameterized
+55. DONE AuthenticationService should use selected address not address[0]
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -120,3 +122,5 @@
 51. parse 2024
 52. change StartQNA to StartListeningBackend
 53. UF should run fine isolated, in dev, in prod.
+
+56.

@@ -3,7 +3,7 @@
        *ngIf="IsLoadingResults || BackendError">
     <mat-spinner *ngIf="IsLoadingResults"></mat-spinner>
     <div class="example-rate-limit-reached" *ngIf="BackendError">
-      Can't Connect to backend
+      Connection timeout. Try refreshing.
     </div>
   </div>
 
@@ -11,7 +11,8 @@
   <input matInput (keyup)="ApplyFilter($event)">
 </mat-form-field>
 
-<mat-paginator [length]="ResultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons="true"></mat-paginator>
+<mat-paginator [length]="ResultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons="true">
+</mat-paginator>
 
 <table mat-table
        [dataSource]="DataSource"
