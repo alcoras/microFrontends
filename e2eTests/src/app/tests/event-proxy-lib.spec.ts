@@ -283,5 +283,5 @@ describe('EventProxyLibService', () => {
       }
 
       done();
-    }, 2000);
+    }, 20000);
 });
