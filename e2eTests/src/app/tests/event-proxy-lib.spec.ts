@@ -36,8 +36,8 @@ class TestEvent extends uEvent {
 describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
 
-    const backendURL = 'http://localhost:54366';
-    const backendPort = '54366';
+    const backendURL = 'http://localhost:8001';
+    const backendPort = '8001';
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
     const testinID = '1000';
@@ -140,7 +140,38 @@ describe('EventProxyLibService', () => {
 
     });
 
-    it('should subscribe to one event, fire it, and receive it', async (done) => {
+    for (let index = 0; index < 10; index++) {
+      it('subscribe to one event, fire it, start listening and receive it', async (done) => {
+        const waitForEventId = getRandomInt(99999);
+
+        // 1. Subscribe to event
+        const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], true);
+        subEvent.SourceName = testinName;
+        await service.DispatchEvent(subEvent).toPromise();
+
+        // TODO: eventually it should wait till someone subscribed to it.
+        await delay(50);
+        // 2. Fire event
+        tEvent.EventId = waitForEventId;
+        await service.DispatchEvent(tEvent).toPromise();
+
+        // 3. Listening to events
+        service.StartQNA(testinID).subscribe(
+          (res: HttpResponse<EventResponse>) => {
+            expect(res.status).toBe(200, 'Incorrect http status');
+            expect(res.body.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+
+            expect(res.body.Events.length).toBe(1, 'Incorrect lenght');
+
+            expect(res.body.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+
+            done();
+          }
+        );
+      }, 2000);
+    }
+
+    it('start listening, then should subscribe to one event, fire it, and receive it', async (done) => {
       const waitForEventId = getRandomInt(99999);
 
       // 1. Listening to events
@@ -170,7 +201,7 @@ describe('EventProxyLibService', () => {
     });
 
     it('should subscribe to many events, fire them, and receive them', async (done) => {
-      const randomAmount = 2;
+      const randomAmount = 8;
 
       const eventArray = [];
       const randomSubList = [];
@@ -188,11 +219,9 @@ describe('EventProxyLibService', () => {
       await service.DispatchEvent([subEvent]).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
-      await delay(1000);
+      await delay(100);
       // 3. Fire event
       await service.DispatchEvent(eventArray).toPromise();
-
-      await delay(1000);
 
       // 3. Listening to events
       service.StartQNA(testinID).subscribe(
@@ -205,9 +234,9 @@ describe('EventProxyLibService', () => {
         },
         () => { done.fail(httpErrorMsg); },
       );
-    });
+    }, 2000);
 
-    it('few sources subscribe to same event and they receive them', async (done) => {
+    fit('few sources subscribe to same event and they receive them', async (done) => {
       const sourceIdBegin = 41;
       const rndEventId = getRandomInt(1000);
       const sourceAmount = 2;
@@ -225,9 +254,9 @@ describe('EventProxyLibService', () => {
       }
 
       await service.DispatchEvent(subEventList).toPromise();
-      await delay(2000);
+      await delay(100);
       await service.DispatchEvent(fireEventList).toPromise();
-      await delay(2000);
+      await delay(100);
 
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
         await service.GetLastEvents(index.toString()).toPromise().then(
@@ -254,5 +283,5 @@ describe('EventProxyLibService', () => {
       }
 
       done();
-    });
+    }, 2000);
 });

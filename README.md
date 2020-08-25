@@ -51,3 +51,16 @@ Adding eslint
 3. copy .eslintrc.js
 4. run: npm i -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-jsdoc
 5. uninstall tslint, tslint-sonarts: npm un tslint tslint-sonarts
+
+
+Environment Table
+            I    Database       I  Backend      I   Login
+Production  |   Real            |   Real        |  Real
+Staging     |   Stage[1]        |   Stage       |  Stage
+Development |   Local           |   Local       |  Local
+Isolated    |   Local           |   Local       |  None[3]
+Solo        |   Mock Data[2]    |   None[2]     |  None[3]
+
+1. As close to real as possbile, maybe even copy with snapshots done constantly, to recover after tests or failures
+2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections)
+3. S

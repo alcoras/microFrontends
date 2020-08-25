@@ -4,6 +4,8 @@
 
 export const environment = {
   production: false,
+  // if isolated is true, micro frontend will be able to work alone with backend
+  isolated: true,
 
   currentLanguage: 'en',
 
