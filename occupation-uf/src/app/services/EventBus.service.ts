@@ -13,4 +13,6 @@ export class EventBusService {
    * Event bus for inter component/service communication in current module
    */
   public EventBus = new Subject<uEvent>();
+
+  public RefreshTable = new  Subject<void>();
 }

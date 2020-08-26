@@ -54,13 +54,13 @@ Adding eslint
 
 
 ### Environment Table
-    |             |    Database       |  Backend      |   Login   |   Shell |
-    | ----------- | ----------------- | ------------- | --------- | ------- |
-    | Production  |   Real            |   Real        |  Real     |   Yes   |
-    | Staging     |   Stage[1]        |   Stage       |  Stage    |   Yes   |
-    | Development |   Local           |   Local       |  Local    |   Yes   |
-    | Isolated    |   Local           |   Local       |  None[3]  |   No    |
-    | Solo        |   Mock Data[2]    |   None[2]     |  None[3]  |   No    |
+| Environment |    Database       |  Backend      |   Login   |  Shell  |
+| ----------- | ----------------- | ------------- | --------- | ------- |
+| Production  |   Real            |   Real        |  Real     |   Yes   |
+| Staging     |   Stage[1]        |   Stage       |  Stage    |   Yes   |
+| Development |   Local           |   Local       |  Local    |   Yes   |
+| Isolated    |   Local           |   Local       |  None[3]  |   No    |
+| Solo        |   Mock Data[2]    |   None[2]     |  None[3]  |   No    |
 
 > 1. As close to real as possbile, maybe even a copy with snapshots done periodically, to recover after tests or failures
 > 2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections) and instead of calling to real backend should use mocks which might as well be used by tests.

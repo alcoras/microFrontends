@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { OccupationData } from '@uf-shared-models/index';
+import { EventBusService } from '../services/EventBus.service';
 
 @Component({
   selector: 'app-new-occup',
@@ -13,7 +14,8 @@ export class NewOccupComponent {
   public constructor(
     private apiService: OccupationAPIService,
     public dialogRef: MatDialogRef<NewOccupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: OccupationData) {
+    @Inject(MAT_DIALOG_DATA) public data: OccupationData,
+    private eventBus: EventBusService) {
   }
 
   /**
@@ -32,7 +34,7 @@ export class NewOccupComponent {
     this.apiService.Create(this.data).then(
       () => {
         console.log('added');
-        window.location.reload();
+        this.eventBus.RefreshTable.next();
       },
       (rejected) => {
         console.error(rejected);

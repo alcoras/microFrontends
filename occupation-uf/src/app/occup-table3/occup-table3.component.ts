@@ -8,6 +8,7 @@ import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { OccupationData } from '@uf-shared-models/';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { IGetResponse } from '../services/interfaces/IGetResponse';
+import { EventBusService } from '../services/EventBus.service';
 
 @Component({
   selector: 'app-occup-table3',
@@ -48,9 +49,11 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   public BackendError = false;
 
   private data: OccupationData[] = [];
-  private eventsSubscription: Subscription;
+  private eventsSubscription: Subscription[];
 
-  public constructor(private occupationApiService: OccupationAPIService) { }
+  public constructor(
+    private occupationApiService: OccupationAPIService,
+    private eventBus: EventBusService) { }
 
   /**
    * Updates entry given id
@@ -121,11 +124,15 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
   public ngOnInit(): void {
     this.DataSource.paginator = this.paginator;
     this.DataSource.sort = this.sort;
-    this.eventsSubscription = this.events.subscribe(() => this.RefreshTable());
+    this.eventsSubscription = [];
+    this.eventsSubscription.push(this.events.subscribe(() => this.RefreshTable()));
+    this.eventsSubscription.push(this.eventBus.RefreshTable.subscribe(() => this.RefreshTable()));
   }
 
   public ngOnDestroy(): void {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription.forEach(element => {
+      element.unsubscribe();
+    });
   }
 
   public ngAfterViewInit(): void {

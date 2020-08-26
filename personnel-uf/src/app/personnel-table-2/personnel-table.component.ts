@@ -8,6 +8,7 @@ import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { IPersonnel } from '@uf-shared-models/';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { IGetResponse } from '../services/interfaces/IGetResponse';
+import { EventBusService } from '../services/EventBus.service';
 
 /**
  * Table component for Personnel micro frontend
@@ -59,21 +60,25 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   public BackendError = false;
 
   private data: IPersonnel[] = [];
-  private eventsSubscription: Subscription;
+  private eventsSubscription: Subscription[] = [];
 
   public constructor(
-    private personnelApiService: PersonnelAPIService) {
+    private personnelApiService: PersonnelAPIService,
+    private eventBusService: EventBusService) {
   }
 
   public ngOnInit(): void {
     this.DataSource.paginator = this.paginator;
     this.DataSource.sort = this.sort;
 
-    this.eventsSubscription = this.events.subscribe(() => this.RefreshTable());
+    this.eventsSubscription.push(this.events.subscribe(() => this.RefreshTable()));
+    this.eventsSubscription.push(this.eventBusService.RefreshTable.subscribe(()=> this.RefreshTable()));
   }
 
   public ngOnDestroy(): void {
-    this.eventsSubscription.unsubscribe();
+    this.eventsSubscription.forEach(element => {
+      element.unsubscribe();
+    });
   }
 
   public ngAfterViewInit(): void {

@@ -10,7 +10,7 @@ import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 })
 export class AppComponent {
 
-  public RefreshEvent: Subject<void> = new Subject<void>();
+  public RefreshEvent = new Subject<void>();
 
   public constructor(
     private dialog: MatDialog) {

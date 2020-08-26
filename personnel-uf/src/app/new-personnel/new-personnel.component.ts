@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpResponse } from '@angular/common/http';
 import { IPersonnel, APIGatewayResponse } from '@uf-shared-models/index';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
+import { EventBusService } from '../services/EventBus.service';
 
 @Component({
   selector: 'app-new-personnel',
@@ -14,7 +15,8 @@ export class NewPersonnelComponent {
   public constructor(
     private apiService: PersonnelAPIService,
     public dialogRef: MatDialogRef<NewPersonnelComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IPersonnel) { }
+    @Inject(MAT_DIALOG_DATA) public data: IPersonnel,
+    private eventBus: EventBusService) { }
 
 
   /**
@@ -34,7 +36,7 @@ export class NewPersonnelComponent {
       (ret: HttpResponse<APIGatewayResponse>) => {
         if (ret.status === 200) {
           console.log('added');
-          window.location.reload();
+          this.eventBus.RefreshTable.next();
         }
       },
     );
