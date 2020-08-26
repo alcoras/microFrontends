@@ -86,7 +86,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
       [uEventsIds.MaterialsReceiptsReadListResults, 0, 0],
-    ], true);
+    ]);
 
     e.SourceName = this.SourceInfo.SourceName;
 

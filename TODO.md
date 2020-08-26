@@ -71,6 +71,10 @@
     24. 1. Update: Debugging in browser works, but after hours of trying various ways to debug directly in vscode I leave it for the next time
 54. DONE Make LoginAsync in shell to be parameterized
 55. DONE AuthenticationService should use selected address not address[0]
+21. DONE Events still disappearing? YES?
+    21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
+    21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
+    21. 3. UPDATE SOLVED: Events are dissapearing because upon refreshing we are not terminating connection with backend 
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -96,9 +100,6 @@
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
 20. When loosing connection with backend there is no error or warning..
     20. 1. Expected behaviour: should try reconnect every T period
-21. Events still disappearing? YES?
-    21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
-    21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
 25. Check for type: any and convert to strong type (search and apply to all projects)
 28. Add SourceName to every event for Observer
 30. Fix warnings in event-proxy-lib when: ng build --prod:
@@ -122,5 +123,8 @@
 51. parse 2024
 52. change StartQNA to StartListeningBackend
 53. UF should run fine isolated, in dev, in prod.
+54. Make all uS run in parallel
+56. on refreshing disconnect every micro frontend
+57. check tests to avoid subscription collision with
 
-56.
+58

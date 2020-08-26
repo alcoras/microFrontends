@@ -70,7 +70,7 @@ export class PersonnelComponent implements IMicroFrontend {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
       [uEventsIds.ReadPersonData, 0, 0]
-    ], true);
+    ]);
 
     e.SourceName = this.SourceInfo.SourceName;
 

@@ -47,20 +47,33 @@ Run backends:
 Adding eslint
 
 1. In VScode extensions remove Tslint and install Eslint (exact extension name: dbaeumer.vscode-eslint)
-2. In a project root remove tslint.json
-3. copy .eslintrc.js
-4. run: npm i -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-jsdoc
-5. uninstall tslint, tslint-sonarts: npm un tslint tslint-sonarts
+2. In a project root remove `tslint.json`
+3. copy `.eslintrc.js`
+4. run: `npm i -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-jsdoc`
+5. uninstall tslint, tslint-sonarts: `npm un tslint tslint-sonarts`
 
 
-Environment Table
-            I    Database       I  Backend      I   Login
-Production  |   Real            |   Real        |  Real
-Staging     |   Stage[1]        |   Stage       |  Stage
-Development |   Local           |   Local       |  Local
-Isolated    |   Local           |   Local       |  None[3]
-Solo        |   Mock Data[2]    |   None[2]     |  None[3]
+### Environment Table
+    |             |    Database       |  Backend      |   Login   |   Shell |
+    | ----------- | ----------------- | ------------- | --------- | ------- |
+    | Production  |   Real            |   Real        |  Real     |   Yes   |
+    | Staging     |   Stage[1]        |   Stage       |  Stage    |   Yes   |
+    | Development |   Local           |   Local       |  Local    |   Yes   |
+    | Isolated    |   Local           |   Local       |  None[3]  |   No    |
+    | Solo        |   Mock Data[2]    |   None[2]     |  None[3]  |   No    |
 
-1. As close to real as possbile, maybe even copy with snapshots done constantly, to recover after tests or failures
-2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections)
-3. S
+> 1. As close to real as possbile, maybe even a copy with snapshots done periodically, to recover after tests or failures
+> 2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections) and instead of calling to real backend should use mocks which might as well be used by tests.
+> 3. Shell is responsible for login, thus disable login in `~/shell/src/environment.ts` (or prod.ts) add/set variable `enableLogin: false` to `environment`
+#### Production      
+The environment
+#### Staging
+environment for manual testing after unit and integration tests are done; this environemnt should be set up just as production 
+publically available for clients our testing team to try out features
+#### Development
+Same as production but set up locally for developing new features
+#### Isolated
+Used for testing microfrontend alone but with connection to development backend/database
+#### Solo
+Used for writing initial view which does not require anything else in the environment
+

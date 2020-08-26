@@ -160,7 +160,7 @@ export class UFManagerComponent {
       [uEventsIds.RequestToLoadScript, 0, 0],
       [uEventsIds.LanguageChange, 0, 0],
       [uEventsIds.InitMenu, 0, 0],
-    ], true);
+    ]);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
