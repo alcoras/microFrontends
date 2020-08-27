@@ -2,9 +2,10 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
+import { ResponseStatus } from "../ResponseStatus";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { uEventsIds, uEvent } from '../models/event';
-import { HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
 
@@ -56,7 +57,7 @@ describe('EventProxyLibService', () => {
   );
 
   afterEach(() => {
-    service.EndQNA();
+    service.EndListeningToBackend();
     httpTestingController.verify();
   });
 
@@ -68,25 +69,30 @@ describe('EventProxyLibService', () => {
 
     it('on StartQNA status should be true', (done) => {
 
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200});
+
       spyOn(service, 'GetLastEvents')
         .and
-        .returnValue(of(new HttpResponse({status: 200})));
+        .returnValue(of(tempStatus));
 
       service.StartQNA(TestSourceId).subscribe(
         () => {
           expect(service.Status).toBeTrue();
-          service.EndQNA();
+          service.EndListeningToBackend();
           done();
         }
       );
     });
 
-    it('after EndQNA status should be false', (done) => {
+    it('after EndListeningToBackend status should be false', (done) => {
 
-      function fakeGetLastEvents(): Observable<HttpResponse<any>> {
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200});
+      function fakeGetLastEvents(): Observable<ResponseStatus> {
         return new Observable( sub => {
           setTimeout(() => {
-            sub.next(new HttpResponse({status: 200}));
+            sub.next(tempStatus);
             sub.complete();
           }, 100);
         });
@@ -98,7 +104,7 @@ describe('EventProxyLibService', () => {
 
       service.StartQNA(TestSourceId).subscribe(
         () => {
-          service.EndQNA();
+          service.EndListeningToBackend();
           expect(service.Status).toBeFalse();
           done();
         }
@@ -116,10 +122,13 @@ describe('EventProxyLibService', () => {
       let doneParsing = 0;
       let launchedParsing = 0;
       // tslint:disable-next-line: completed-docs
-      function fakeGetLastEvents(): Observable<HttpResponse<any>> {
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200});
+
+      function fakeGetLastEvents(): Observable<ResponseStatus> {
         return new Observable(sub => {
           setTimeout(() => {
-            sub.next(new HttpResponse({status: 200}));
+            sub.next(tempStatus);
             requestsSent++;
             sub.complete();
           }, responseTimeMs);
@@ -149,19 +158,21 @@ describe('EventProxyLibService', () => {
       expect(requestsParsed).toBe(requestsSent, 'Parsed should equal reqeusts sent');
       expect(launchedParsing).toBe(requestsSent, 'launchedParsing should be 2');
       expect(doneParsing).toBe( (emulationTimeMs - responseTimeMs - parsingTimeMs) / responseTimeMs);
-      service.EndQNA();
+      service.EndListeningToBackend();
       done();
     });
 
-    it('testing startQNA', async (done) => {
+    it('testing StartQNA', async (done) => {
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200});
       const getLastEventsSpy = spyOn(service, 'GetLastEvents')
         .and
-        .returnValue( of (new HttpResponse({status: 200})) );
+        .returnValue( of (tempStatus) );
 
       service.StartQNA(TestSourceId).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
-          service.EndQNA();
+          expect(res.HttpResult.status).toBe(200);
+          service.EndListeningToBackend();
           expect(getLastEventsSpy).toHaveBeenCalled();
           done();
         }
@@ -182,19 +193,6 @@ describe('EventProxyLibService', () => {
       expect( () => service.DispatchEvent(null).toPromise() ).toThrow();
 
     });
-
-    it('handleErrors is triggered on error', () => {
-      const spies: jasmine.Spy<any>[] = [];
-      spies.push(spyOn<any>(service, 'handleErrors').and.callThrough());
-
-      service.DispatchEvent(null).toPromise();
-      httpTestingController.expectOne(URL).error(new ErrorEvent('Something went wrong'));
-
-      spies.forEach(spy => {
-        expect(spy).toHaveBeenCalled();
-      });
-    });
-
   });
 
   describe('common spec for all requests', () => {
@@ -202,7 +200,7 @@ describe('EventProxyLibService', () => {
     it('testing method', () => {
       service.ConfirmEvents(TestSourceId, [], true).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
@@ -214,11 +212,7 @@ describe('EventProxyLibService', () => {
     });
 
     it('testing headers', () => {
-      service.ConfirmEvents(TestSourceId, [], true).subscribe(
-        (res) => {
-          expect(res.status).toBe(200);
-        }
-      );
+      service.ConfirmEvents(TestSourceId, [], true).toPromise();
 
       const req = httpTestingController.expectOne(
         (res) => res.headers.has('Content-Type')
@@ -242,7 +236,7 @@ describe('EventProxyLibService', () => {
 
       service.ConfirmEvents(TestSourceId, [], true).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
@@ -263,7 +257,7 @@ describe('EventProxyLibService', () => {
 
       service.ConfirmEvents(TestSourceId, testBody.Ids).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
@@ -286,7 +280,7 @@ describe('EventProxyLibService', () => {
 
       service.DispatchEvent(new TestEvent()).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
@@ -306,7 +300,7 @@ describe('EventProxyLibService', () => {
 
       service.DispatchEvent([new TestEvent(), new TestEvent(), new TestEvent()]).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
@@ -329,7 +323,7 @@ describe('EventProxyLibService', () => {
     it('testing body', () => {
       service.GetLastEvents(TestSourceId).subscribe(
         (res) => {
-          expect(res.status).toBe(200);
+          expect(res.HttpResult.status).toBe(200);
         }
       );
 
