@@ -123,8 +123,8 @@
 51. parse 2024
 52. change StartQNA to StartListeningBackend
 53. UF should run fine isolated, in dev, in prod.
-54. Make all uS run in parallel
+54. Make all uS run in parallel in launcher
 56. on refreshing disconnect every micro frontend
-57. check tests to avoid subscription collision with
+57. check tests to avoid subscription collision with real microservices
 
 58
