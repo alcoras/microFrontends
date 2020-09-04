@@ -75,7 +75,10 @@
     21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
     21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
     21. 3. UPDATE SOLVED: Events are dissapearing because upon refreshing we are not terminating connection with backend 
-
+50. DONE Write Library for Microservice (StartQNA, NewHttpResponseAsync)
+    50. 1. parse 2024
+    50. 2. change StartQNA to StartListeningBackend
+    
 ## NOT DEMO
 22. Do conditional logging.
 41. Consider adding metric/performace/stress tests
@@ -119,9 +122,6 @@
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
 49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
-50. Write Library for Microservice (StartQNA, NewHttpResponseAsync)
-    50. 1. parse 2024
-    50. 2. change StartQNA to StartListeningBackend
 53. UF should run fine isolated, in dev, in prod.
 54. Make all uS run in parallel in launcher
 56. on refreshing disconnect every micro frontend
