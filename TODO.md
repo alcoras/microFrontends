@@ -120,8 +120,8 @@
 48. write integration tests for Authentication Service
 49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
 50. Write Library for Microservice (StartQNA, NewHttpResponseAsync)
-51. parse 2024
-52. change StartQNA to StartListeningBackend
+    50. 1. parse 2024
+    50. 2. change StartQNA to StartListeningBackend
 53. UF should run fine isolated, in dev, in prod.
 54. Make all uS run in parallel in launcher
 56. on refreshing disconnect every micro frontend
