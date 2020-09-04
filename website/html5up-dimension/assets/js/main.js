@@ -12,7 +12,8 @@
 		$header = $('#header'),
 		$footer = $('#footer'),
 		$main = $('#main'),
-		$main_articles = $main.children('article');
+		$main_articles = $main.children('article'),
+		$nav = $('#nav');
 
 	// Breakpoints.
 		breakpoints({
@@ -54,7 +55,7 @@
 		}
 
 	// Nav.
-		var $nav = $header.children('nav'),
+		/*var $nav = $header.children('nav'),
 			$nav_li = $nav.find('li');
 
 		// Add "middle" alignment classes if we're dealing with an even number of items.
@@ -63,7 +64,7 @@
 				$nav.addClass('use-middle');
 				$nav_li.eq( ($nav_li.length / 2) ).addClass('is-middle');
 
-			}
+			}*/
 
 	// Main.
 		var	delay = 325,
@@ -94,6 +95,7 @@
 
 							// Hide header, footer.
 								$header.hide();
+								$nav.hide();
 								$footer.hide();
 
 							// Show main, article.
@@ -168,6 +170,7 @@
 
 								// Hide header, footer.
 									$header.hide();
+									$nav.hide();
 									$footer.hide();
 
 								// Show main, article.
@@ -227,6 +230,7 @@
 
 							// Show footer, header.
 								$footer.show();
+								$nav.show();
 								$header.show();
 
 							// Unmark as visible.
@@ -262,6 +266,7 @@
 
 						// Show footer, header.
 							$footer.show();
+							$nav.show();
 							$header.show();
 
 						// Unmark as visible.
