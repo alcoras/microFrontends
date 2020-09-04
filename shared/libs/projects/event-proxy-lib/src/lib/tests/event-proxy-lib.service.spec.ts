@@ -8,6 +8,7 @@ import { uEventsIds, uEvent } from '../models/event';
 import { HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
+import { ErrorMessage } from '../Errors';
 
 /**
  * Returns promise after ms
@@ -45,7 +46,7 @@ describe('EventProxyLibService', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(
-    async () => {
+    () => {
       TestBed.configureTestingModule({
         providers: [EventProxyLibService, EnvironmentService],
         imports: [HttpClientTestingModule]
@@ -61,17 +62,23 @@ describe('EventProxyLibService', () => {
     httpTestingController.verify();
   });
 
-  fdescribe('InitializeConnectionToBackend', () => {
+  describe('InitializeConnectionToBackend', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
       return Promise.resolve();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function responseCheckMock(responseStatus: ResponseStatus): boolean {
+      return responseStatus.Failed;
+    }
+
     it('StartQNA should be called', () => {
       const spy = spyOn(service, 'StartQNA').and.callThrough();
 
-      service.InitializeConnectionToBackend('testSource', eventParserMockAsync);
+      service.InitializeConnectionToBackend('testSource',
+        eventParserMockAsync, responseCheckMock);
 
       const req = httpTestingController.expectOne(URL);
 
@@ -80,7 +87,34 @@ describe('EventProxyLibService', () => {
       req.flush('');
     });
 
-    it('does not fail if body is empty and not call event parser', () => {
+    it('passed events to provided function', async (done) => {
+      const eventId = 2020;
+      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+        expect([].concat(eventList)[0].EventId).toEqual(eventId);
+        service.EndListeningToBackend();
+        done();
+        return Promise.resolve();
+      }
+
+      const events = {
+        'EventId' : 2008,
+        'Events': {'EventId': eventId}
+      }
+      const tempStatus: ResponseStatus = {
+        Failed: true,
+        Error: '',
+        HttpResult: new HttpResponse({status: 200, body: events})
+      };
+
+      spyOn(service, 'GetLastEvents')
+      .and
+      .returnValue(of(tempStatus));
+
+      service.InitializeConnectionToBackend('t',
+      localEventParserMockAsync, responseCheckMock);
+    });
+
+    it('does not fail if body is empty and does not call event parser', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
         fail();
@@ -94,33 +128,36 @@ describe('EventProxyLibService', () => {
         .and
         .returnValue(of(tempStatus));
 
-      service.InitializeConnectionToBackend('test', localEventParserMockAsync);
+      service.InitializeConnectionToBackend('test',
+        localEventParserMockAsync, responseCheckMock);
 
       expect(spy).toHaveBeenCalled();
     });
 
-    fit('fail if EventId is not provided', async (done) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
-        fail();
-        return Promise.resolve();
-      }
+    it('fail if unregonized event id', () => {
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200, body:
+        { EventId: 'akunamatata'}});
 
+      expect(() => service.PerformResponseCheck(tempStatus))
+      .toThrowError(ErrorMessage.UnrecognizedEventId);
+    });
+
+    it('fail if token Failure', () => {
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200, body:
+        { EventId: uEventsIds.TokenFailure}});
+
+      expect(() => service.PerformResponseCheck(tempStatus))
+      .toThrowError(ErrorMessage.TokenFailure);
+    });
+
+    it('fail if EventId is not provided', () => {
       const tempStatus = new ResponseStatus();
       tempStatus.HttpResult = new HttpResponse({status: 200, body: { 'gg': 'gg'}});
 
-      spyOn(service, 'GetLastEvents')
-        .and
-        .returnValue(of(tempStatus));
-
-      try {
-        service.InitializeConnectionToBackend('test', localEventParserMockAsync);
-        await delay(1000);
-      } catch (e) {
-        expect(e).toEqual('EventId is not provided');
-      }
-
-      done();
+      expect(() => service.PerformResponseCheck(tempStatus))
+      .toThrowError(ErrorMessage.NoEventId);
     });
 
   });

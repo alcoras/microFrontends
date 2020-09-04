@@ -9,6 +9,9 @@ import { ResponseStatus } from './ResponseStatus';
 import { catchError, timeout } from 'rxjs/operators';
 import { ErrorMessage } from './Errors';
 
+export type EventParserDelegateAsync = (eventList: uEvent[] | uEvent) => Promise<void>;
+export type HttpResponseCheckDelegate = (responseStatus: ResponseStatus) => boolean;
+
 /**
  * Event Proxy service for communication with API gateway
  * micro service
@@ -103,33 +106,18 @@ export class EventProxyLibService {
    * Establishes communication with backend to receive new events (only listening).
    * It maintains it and if fails resets it.
    * @param sourceId Source ID, used for registering receiver.
-   * @param eventPerserFunctionAsync async function which will parse events
+   * @param parseEventAsync async function which will parse events
+   * @param httpResponseCheck (optional) method can be passed for custom event check
    */
   public InitializeConnectionToBackend(
     sourceId: string,
-    eventPerserFunctionAsync: (eventList: uEvent[] | uEvent) => Promise<void>): void {
+    parseEventAsync: EventParserDelegateAsync,
+    httpResponseCheck: HttpResponseCheckDelegate): void {
 
     this.StartQNA(sourceId).subscribe(
       (response: ResponseStatus) => {
-        if (!response.HttpResult.body) {
-          // Empty return (no new events)
-          return;
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(response.HttpResult.body, 'EventId')) {
-          this.EndListeningToBackend();
-          throw new Error(ErrorMessage.NoEventId);
-        }
-
-        if (response.HttpResult.body['EventId'] === uEventsIds.GetNewEvents) {
-          eventPerserFunctionAsync(response.HttpResult.body.Events);
-        } else if (response.HttpResult.body['EventId'] === uEventsIds.TokenFailure) {
-          this.EndListeningToBackend();
-          throw new Error("Token failure");
-        } else {
-          this.EndListeningToBackend();
-          console.error(response);
-          throw new Error("Unrecognized EventId");
+        if (httpResponseCheck(response)) {
+          parseEventAsync(response.HttpResult.body.Events);
         }
       },
       (error: ResponseStatus) => {
@@ -137,6 +125,36 @@ export class EventProxyLibService {
         throw new Error(error.Error);
       }
     )
+  }
+
+  /**
+   * Default implementation to check http response from backend
+   * @param responseStatus Performs default checks
+   * @returns error, or nothing if there is now new events
+   */
+  public PerformResponseCheck(
+    responseStatus: ResponseStatus): boolean {
+    if (!responseStatus.HttpResult.body) {
+      // Empty return (no new events)
+      return false;
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(responseStatus.HttpResult.body, 'EventId')) {
+      this.EndListeningToBackend();
+      throw new Error(ErrorMessage.NoEventId);
+    }
+
+    switch (+responseStatus.HttpResult.body['EventId']) {
+      case uEventsIds.GetNewEvents:
+        return true;
+      case uEventsIds.TokenFailure:
+        this.EndListeningToBackend();
+        throw new Error(ErrorMessage.TokenFailure);
+      default:
+        this.EndListeningToBackend();
+        console.error(responseStatus);
+        throw new Error(ErrorMessage.UnrecognizedEventId);
+    }
   }
 
   public StartQNA(sourceID: string): Observable<ResponseStatus> {
@@ -245,6 +263,7 @@ export class EventProxyLibService {
     return this.sendMessage('RenewToken', body);
   }
 
+
   /**
    * Sends http message to backend (APIGateway microservice)
    * @param caller function which called
@@ -255,7 +274,6 @@ export class EventProxyLibService {
   private sendMessage(caller: string, body: any, anonymous = false): Observable<ResponseStatus> {
 
     const result = new ResponseStatus();
-    result.Failed = true;
 
     if (!this.apiGatewayURL) {
       throw Error('ApiGateway URL is undefined');
