@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, Subject, Observer, Subscriber, of } from 'rxjs';
+import { Observable, Observer, Subscriber, of } from 'rxjs';
 import { uEvent, uEventsIds } from './models/event';
 import { EnvironmentService } from './services/EnvironmentService';
 import { retryWithBackoff } from './retry/retry.pipe';
 import { ResponseStatus } from './ResponseStatus';
 import { catchError, timeout } from 'rxjs/operators';
+import { ErrorMessage } from './Errors';
 
 /**
  * Event Proxy service for communication with API gateway
@@ -69,12 +70,6 @@ export class EventProxyLibService {
   }
 
   /**
-   * Stop is being used as a flag to stop QNA with backend
-   * when EndListeningToBackend is called
-   */
-  private stop = new Subject();
-
-  /**
    * status
    */
   private status = false;
@@ -110,30 +105,35 @@ export class EventProxyLibService {
    * @param sourceId Source ID, used for registering receiver.
    * @param eventPerserFunctionAsync async function which will parse events
    */
-  public InitializeConnection(
+  public InitializeConnectionToBackend(
     sourceId: string,
     eventPerserFunctionAsync: (eventList: uEvent[] | uEvent) => Promise<void>): void {
 
     this.StartQNA(sourceId).subscribe(
       (response: ResponseStatus) => {
-        if (!response.HttpResult) { throw new Error('Can\'t connect to backend'); }
-
-        if (!response.HttpResult.body) { return; }
+        if (!response.HttpResult.body) {
+          // Empty return (no new events)
+          return;
+        }
 
         if (!Object.prototype.hasOwnProperty.call(response.HttpResult.body, 'EventId')) {
-          throw new Error('No EventId in message');
+          this.EndListeningToBackend();
+          throw new Error(ErrorMessage.NoEventId);
         }
 
         if (response.HttpResult.body['EventId'] === uEventsIds.GetNewEvents) {
           eventPerserFunctionAsync(response.HttpResult.body.Events);
         } else if (response.HttpResult.body['EventId'] === uEventsIds.TokenFailure) {
+          this.EndListeningToBackend();
           throw new Error("Token failure");
         } else {
+          this.EndListeningToBackend();
           console.error(response);
-          throw new Error("Unrecognized eventId");
+          throw new Error("Unrecognized EventId");
         }
       },
       (error: ResponseStatus) => {
+        this.EndListeningToBackend();
         throw new Error(error.Error);
       }
     )
@@ -164,7 +164,6 @@ export class EventProxyLibService {
       return;
     }
     this.Status = false;
-    this.stop.next(true);
     console.log(`${this.sourceID} Ending listening.`);
   }
 
@@ -256,6 +255,8 @@ export class EventProxyLibService {
   private sendMessage(caller: string, body: any, anonymous = false): Observable<ResponseStatus> {
 
     const result = new ResponseStatus();
+    result.Failed = true;
+
     if (!this.apiGatewayURL) {
       throw Error('ApiGateway URL is undefined');
     }
@@ -271,7 +272,8 @@ export class EventProxyLibService {
 
     return new Observable( (res: Subscriber<ResponseStatus>) => {
 
-      this.httpClient.post(
+      this.httpClient
+      .post(
         url,
         body,
         { headers, observe: 'response' }
@@ -284,13 +286,14 @@ export class EventProxyLibService {
           result.Error = error;
           return of(error);
         })
-      ).toPromise().then( (resp: HttpResponse<any>) => {
+      )
+      .toPromise().then( (httpRespone: HttpResponse<any>) => {
         if (result.Failed) {
           res.error(result);
         }
         else {
           result.Failed = false;
-          result.HttpResult = resp;
+          result.HttpResult = httpRespone;
           res.next(result);
           res.complete();
         }

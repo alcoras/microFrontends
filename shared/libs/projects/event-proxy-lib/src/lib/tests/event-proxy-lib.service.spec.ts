@@ -5,7 +5,7 @@ import { EventProxyLibService } from '../event-proxy-lib.service';
 import { ResponseStatus } from "../ResponseStatus";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { uEventsIds, uEvent } from '../models/event';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
 
@@ -59,6 +59,70 @@ describe('EventProxyLibService', () => {
   afterEach(() => {
     service.EndListeningToBackend();
     httpTestingController.verify();
+  });
+
+  fdescribe('InitializeConnectionToBackend', () => {
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+      return Promise.resolve();
+    }
+
+    it('StartQNA should be called', () => {
+      const spy = spyOn(service, 'StartQNA').and.callThrough();
+
+      service.InitializeConnectionToBackend('testSource', eventParserMockAsync);
+
+      const req = httpTestingController.expectOne(URL);
+
+      expect(spy).toHaveBeenCalled();
+
+      req.flush('');
+    });
+
+    it('does not fail if body is empty and not call event parser', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+        fail();
+        return Promise.resolve();
+      }
+
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200});
+
+      const spy = spyOn(service, 'GetLastEvents')
+        .and
+        .returnValue(of(tempStatus));
+
+      service.InitializeConnectionToBackend('test', localEventParserMockAsync);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    fit('fail if EventId is not provided', async (done) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+        fail();
+        return Promise.resolve();
+      }
+
+      const tempStatus = new ResponseStatus();
+      tempStatus.HttpResult = new HttpResponse({status: 200, body: { 'gg': 'gg'}});
+
+      spyOn(service, 'GetLastEvents')
+        .and
+        .returnValue(of(tempStatus));
+
+      try {
+        service.InitializeConnectionToBackend('test', localEventParserMockAsync);
+        await delay(1000);
+      } catch (e) {
+        expect(e).toEqual('EventId is not provided');
+      }
+
+      done();
+    });
+
   });
 
   describe('StartQNA', () => {
