@@ -97,7 +97,7 @@ Connect to backend api
 - connect libraries in tsconfig.base.json - "paths" attribute
 - create services folder
 - app.module.ts- connect initialize module using provide:APP_INITIALIZER (it blocks async running to avoid
-situation when listening happening before subscriptions are completed)
+Situation when listening happening before subscriptions are completed)
 
 The application when selected in menu microservice holds all page space to avoid this:
 - install @angular/elements
