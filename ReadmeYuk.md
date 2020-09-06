@@ -117,3 +117,4 @@ To connect to git using Visual Studio Code:
 generate a ssh-key using ssh-keygen powershell command
 put public key into a git account
 copy public key to standart location (c/users/common/.ssh/id_rsa) (VS code search here)
+use in VS code git pull and git push commands to work with repository
