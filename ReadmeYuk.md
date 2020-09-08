@@ -111,4 +111,10 @@ For every microfrontend to work on their own we have to prepare environemnt vari
 Users accounts for testing purposes (pw borland2007):
 
 rubber orient excuse once enjoy device sudden scatter cup sugar piece style
-pond piece young maple clip spoil deposit human retreat zero elephant method
+pond piece young maple clip spoil deposit human retreat zero elephant method\
+
+To connect to git using Visual Studio Code:
+generate a ssh-key using ssh-keygen powershell command
+put public key into a git account
+copy public key to standart location (c/users/common/.ssh/id_rsa) (VS code search here)
+use in VS code git pull and git push commands to work with repository
