@@ -97,7 +97,7 @@ Connect to backend api
 - connect libraries in tsconfig.base.json - "paths" attribute
 - create services folder
 - app.module.ts- connect initialize module using provide:APP_INITIALIZER (it blocks async running to avoid
-situation when listening happening before subscriptions are completed)
+Situation when listening happening before subscriptions are completed)
 
 The application when selected in menu microservice holds all page space to avoid this:
 - install @angular/elements
@@ -107,3 +107,14 @@ For every microfrontend to work on their own we have to prepare environemnt vari
 (assuming angular)
 1. <microfrotnendPath>/src/environemnts/environment.ts - we configure variables
 2. <microfrotnendPath>/src/main.ts - we initialize them
+
+Users accounts for testing purposes (pw borland2007):
+
+rubber orient excuse once enjoy device sudden scatter cup sugar piece style
+pond piece young maple clip spoil deposit human retreat zero elephant method\
+
+To connect to git using Visual Studio Code:
+generate a ssh-key using ssh-keygen powershell command
+put public key into a git account
+copy public key to standart location (c/users/common/.ssh/id_rsa) (VS code search here)
+use in VS code git pull and git push commands to work with repository
