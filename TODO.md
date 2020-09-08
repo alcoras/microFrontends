@@ -75,6 +75,13 @@
     21. 1. ~~Update: Could be because event confimation is happening by default when it should only confirm it was parsed successfully?~~
     21. 2. Update: StartQNA on arrival of new http response should launch async task to parse it
     21. 3. UPDATE SOLVED: Events are dissapearing because upon refreshing we are not terminating connection with backend 
+57. DONE check tests to avoid subscription collision with
+50. DONE Write Library for Microservice (StartQNA, NewHttpResponseAsync)
+51. DONE parse 2024
+52. DONE change StartQNA to StartListeningBackend
+54. DONE Make all uS run in parallel
+20. DONE When loosing connection with backend there is no error or warning..
+    20. 1. DONE Expected behaviour: should try reconnect every T period
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -98,8 +105,7 @@
     17. 1. DONE Update: remove folder shared in libs and add links to external shared files
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
-20. When loosing connection with backend there is no error or warning..
-    20. 1. Expected behaviour: should try reconnect every T period
+    17. 4. UPDATE: I've decided to add all models which are shared (like event ids) to event-proxy-lib
 25. Check for type: any and convert to strong type (search and apply to all projects)
 28. Add SourceName to every event for Observer
 30. Fix warnings in event-proxy-lib when: ng build --prod:
@@ -118,13 +124,9 @@
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
-49. IMPORTNANT: add reverse proxy to solve CORS and having many ports
-50. Write Library for Microservice (StartQNA, NewHttpResponseAsync)
-51. parse 2024
-52. change StartQNA to StartListeningBackend
+49. add reverse proxy to solve CORS and having many ports
 53. UF should run fine isolated, in dev, in prod.
-54. Make all uS run in parallel
 56. on refreshing disconnect every micro frontend
-57. check tests to avoid subscription collision with
+
 
 58

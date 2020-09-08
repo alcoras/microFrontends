@@ -6,7 +6,8 @@ import { HttpResponse } from '@angular/common/http';
 import { uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
-import { genRandomNumber } from './helpers/helpers';
+import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  *
@@ -24,8 +25,8 @@ describe('PersonnelAPI service', () => {
   let eProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
   const sourceId = 'PersonnelAPI_testing';
-  const backendURL = 'http://localhost:54366';
-  const backendPort = '54366';
+  const backendURL = BackendURL;
+  const backendPort = BackendPort;
 
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
@@ -55,7 +56,7 @@ describe('PersonnelAPI service', () => {
   });
 
   afterEach(async () => {
-    eProxyService.EndQNA();
+    eProxyService.EndListeningToBackend();
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
   });
 
@@ -99,7 +100,7 @@ describe('PersonnelAPI service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => propogateEvent(res));
+        (res: ResponseStatus) => propogateEvent(res.HttpResult));
 
       // 3. Get entry
       let entryToUpdate: IPersonnel;
@@ -141,8 +142,8 @@ describe('PersonnelAPI service', () => {
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
-      (res: HttpResponse<EventResponse>) => {
-        propogateEvent(res);
+      (res: ResponseStatus) => {
+        propogateEvent(res.HttpResult);
     });
 
     // 3. Get current length
@@ -183,8 +184,8 @@ describe('PersonnelAPI service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          propogateEvent(res);
+        (res: ResponseStatus) => {
+          propogateEvent(res.HttpResult);
         },
         (err) => { done.fail(err); },
       );
@@ -219,8 +220,8 @@ describe('PersonnelAPI service', () => {
 
     // 2. Start listenting to events
     eProxyService.StartQNA(sourceId).subscribe(
-      (res: HttpResponse<EventResponse>) => {
-        propogateEvent(res);
+      (res: ResponseStatus) => {
+        propogateEvent(res.HttpResult);
     });
 
     // 3. Send ReadPersonDataQuery event

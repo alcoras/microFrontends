@@ -24,7 +24,7 @@ export class EventProxyLibService {
   /**
    * Connection timeout before retry
    */
-  public Timeout = 1000;
+  public Timeout = 5100;
   /**
    * delay before retry
    */

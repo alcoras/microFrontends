@@ -11,6 +11,7 @@ import {
   OccupationsReadResults } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 import { IGetResponse } from './interfaces/IGetResponse';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  * Occupation API service for CRUD operations
@@ -43,9 +44,9 @@ export class OccupationAPIService {
    */
   public Delete(id: number): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
-      this.delete(id).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.delete(id).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -61,9 +62,9 @@ export class OccupationAPIService {
   public Create(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(occupationData).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.create(occupationData).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -79,9 +80,9 @@ export class OccupationAPIService {
   public Update(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(occupationData).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.update(occupationData).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -104,11 +105,14 @@ export class OccupationAPIService {
 
     const getResponsePromise = new Promise<IGetResponse>(
       (resolve, reject) => {
-        this.get(page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
-          if (response.status !== 200) {
+        this.get(page, pageSize).toPromise().then( (response: ResponseStatus) => {
+          if (response.HttpResult.status !== 200) {
             reject('Failed to retrieve data');
           }
-          const uniqueId = response.body.Ids[0];
+
+          const responseBody = response.HttpResult.body as APIGatewayResponse;
+
+          const uniqueId = responseBody.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
             async (data: OccupationsReadResults) => {
@@ -146,7 +150,7 @@ export class OccupationAPIService {
    * @param pageSize entries' limit
    * @returns Observable with Http response
    */
-  private get(page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
+  private get(page: number, pageSize: number): Observable<ResponseStatus> {
     const e = new OccupationsReadQuery(this.sourceId, new Date().toISOString(), page, pageSize);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e);
@@ -157,7 +161,7 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Observable with HttpResponse
    */
-  private update(occupationData: OccupationData): Observable<HttpResponse<APIGatewayResponse>> {
+  private update(occupationData: OccupationData): Observable<ResponseStatus> {
     const e = new OccupationsCreateUpdate(
       this.sourceId,
       OccupationCreateUpdateFlag.Update,
@@ -173,7 +177,7 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Observable with HttpResponse
    */
-  private create(occupationData: OccupationData): Observable<HttpResponse<APIGatewayResponse>> {
+  private create(occupationData: OccupationData): Observable<ResponseStatus> {
     occupationData.DocReestratorId = 1; // TODO: for Demo purpose
     const e = new OccupationsCreateUpdate(
       this.sourceId,
@@ -190,7 +194,7 @@ export class OccupationAPIService {
    * @param id Occupation id to remove
    * @returns Observable with HttpResponse
    */
-  private delete(id: number): Observable<HttpResponse<APIGatewayResponse>> {
+  private delete(id: number): Observable<ResponseStatus> {
     const e = new OccupationsDeleteEvent(this.sourceId, id);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e);
