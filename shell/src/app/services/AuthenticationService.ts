@@ -6,6 +6,7 @@ import { HttpResponse } from '@angular/common/http';
 import { LoginSuccess } from '@uf-shared-events/';
 import { uEventsIds } from '@uf-shared-models/event';
 import { LoginRequest } from '../models/LoginRequest';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];
@@ -53,7 +54,8 @@ export class AuthenticationService {
 
     const ret = new Promise<LoginRequest>((resolve, reject) => {
       this.eventProxyService.LogIn(loginRequest.Timestamp, loginRequest.Signature).toPromise().then(
-        (response: HttpResponse<LoginSuccess>) => {
+        (responseStatus: ResponseStatus) => {
+          const response = responseStatus.HttpResult.body as HttpResponse<LoginSuccess>;
           if (response.status !== 200) {
             return new Error('Failed to retrieve data');
           }
@@ -64,9 +66,8 @@ export class AuthenticationService {
           } else if (response.body.EventId === uEventsIds.LoginSuccessWithTokenInformation) {
             const login = response.body as LoginSuccess;
             this.setSession(login);
-            resolve();
-          }
-          else {
+            resolve(loginRequest);
+          } else {
             loginRequest.Error = `EventID ${response.body.EventId} was not recognized`;
             reject(loginRequest);
           }
@@ -102,7 +103,7 @@ export class AuthenticationService {
           } else if (response.body.EventId === uEventsIds.TokenRenewSuccessWithTokenInformation) {
             const login = response.body as LoginSuccess;
             this.setUpcomingSession(login);
-            resolve();
+            resolve("");
           }
           else {
             reject(`EventID ${response.body.EventId} was not recognized`);

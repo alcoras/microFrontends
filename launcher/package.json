@@ -47,7 +47,7 @@
     "backend-PersonData":                 "cd .\\backends && PersonData.bat",
     "backend-SOneGateway":                "cd .\\backends && SOneGateway.bat",
 
-    "backend-start-config0" : "concurrently --kill-others --names \"APIGateway,EventBroker,MaterialsReceipts,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\" \"npm run materialsReceipts-watch\"",
+    "backend-start-config0" : "concurrently --kill-others --names \"APIGateway,EventBroker,MaterialsReceipts,PersonData,Occupations\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\" \"npm run backend-PersonData\" \"npm run backend-Occupations\"",
 
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod && npm run materialsReceipts-build-prod",
     "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev && npm run materialsReceipts-build-dev",

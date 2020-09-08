@@ -10,6 +10,7 @@ import {
   RemoveEnterpisePersonData } from '@uf-shared-events/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
 import { IGetResponse } from './interfaces/IGetResponse';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  * Personnel API service for CRUD operations
@@ -40,9 +41,9 @@ export class PersonnelAPIService {
    */
   public Delete(personDataId: number): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
-      this.delete(personDataId).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.delete(personDataId).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -58,9 +59,9 @@ export class PersonnelAPIService {
   public Create(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(personnel).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.create(personnel).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -76,9 +77,9 @@ export class PersonnelAPIService {
   public Update(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(personnel).toPromise().then( (val: HttpResponse<APIGatewayResponse>) => {
-        if (val.status === 200) {
-          resolve(val);
+      this.update(personnel).toPromise().then( (val: ResponseStatus) => {
+        if (val.HttpResult.status === 200) {
+          resolve(val.HttpResult);
         } else {
           reject(val);
         }
@@ -100,12 +101,14 @@ export class PersonnelAPIService {
     }
     return new Promise<IGetResponse>(
       (resolve) => {
-        this.get(multiSorting, page, pageSize).toPromise().then( (response: HttpResponse<APIGatewayResponse>) => {
-          if (response.status !== 200) {
+        this.get(multiSorting, page, pageSize).toPromise().then( (response: ResponseStatus) => {
+          if (response.HttpResult.status !== 200) {
             return new Error('Failed to retrieve data');
           }
 
-          const uniqueId = response.body.Ids[0];
+          const responseBody = response.HttpResult.body as APIGatewayResponse;
+
+          const uniqueId = responseBody.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
             async (data: PersonDataRead) => {
@@ -130,7 +133,7 @@ export class PersonnelAPIService {
    * @param pageSize page size
    * @returns Observable with HttpResponse
    */
-  private get(multiSorting: string[], page: number, pageSize: number): Observable<HttpResponse<APIGatewayResponse>> {
+  private get(multiSorting: string[], page: number, pageSize: number): Observable<ResponseStatus> {
     const e = new ReadPersonDataQuery(this.sourceId, multiSorting, page, pageSize);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e);
@@ -141,7 +144,7 @@ export class PersonnelAPIService {
    * @param personnel IPersonnel
    * @returns Observable with HttpResponse
    */
-  private update(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
+  private update(personnel: IPersonnel): Observable<ResponseStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Update,
@@ -155,7 +158,7 @@ export class PersonnelAPIService {
    * @param personnel IPersonnel
    * @returns Observable with HttpResponse
    */
-  private create(personnel: IPersonnel): Observable<HttpResponse<APIGatewayResponse>> {
+  private create(personnel: IPersonnel): Observable<ResponseStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Create,
@@ -169,7 +172,7 @@ export class PersonnelAPIService {
    * @param personDataId PersonDataId to remove
    * @returns Observable with HttpResponse
    */
-  private delete(personDataId: number): Observable<HttpResponse<APIGatewayResponse>> {
+  private delete(personDataId: number): Observable<ResponseStatus> {
     const e = new RemoveEnterpisePersonData(this.sourceName, personDataId);
     e.SourceName = this.sourceName;
     return this.eventProxyService.DispatchEvent(e);

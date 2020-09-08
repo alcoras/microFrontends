@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { uEventsIds, uEvent, UParts, EventResponse, APIGatewayResponse } from '@uf-shared-models/index';
+import { uEventsIds, uEvent, UParts, EventResponse, MicroFrontendInfo } from '@uf-shared-models/index';
 import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
 import {
   SubscibeToEvent,
@@ -14,6 +14,7 @@ import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '../services/AuthenticationService';
 import { LoginRequest } from '../models/LoginRequest';
 import { environment } from 'src/environments/environment';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -23,15 +24,8 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class UFManagerComponent {
-  /**
-   * Source id of ufmanager component
-   */
-  private sourceId: string = UParts.UFManager.SourceId;
 
-  /**
-   * Source name of ufmanager component
-   */
-  private sourceName: string = UParts.UFManager.SourceName;
+  public SourceInfo: MicroFrontendInfo = UParts.FrontendShell;
 
   /**
    * Resources dictionary to account which micro frontend is loaded
@@ -72,19 +66,19 @@ export class UFManagerComponent {
     }
 
     await this.preloadScripts().then(
-      () => { console.log(`${this.sourceName} preloadedScripts done. `)},
+      () => { console.log(`${this.SourceInfo.SourceName} preloadedScripts done. `)},
       () => { throw new Error('Failed to load scripts'); } );
 
     await this.subscribeToEventsAsync().then(
-      () => { console.log(`${this.sourceName} subscribeToEventsAsync done.`)}
+      () => { console.log(`${this.SourceInfo.SourceName} subscribeToEventsAsync done.`)}
     );
 
     await this.subscribeMicroFrontends().then(
-      () => { console.log(`${this.sourceName} subscribeMicroFrontends done.`)}
+      () => { console.log(`${this.SourceInfo.SourceName} subscribeMicroFrontends done.`)}
     );
 
     await this.preloadMenuMicroFrontend().then(
-      () => { console.log(`${this.sourceName} preloadMenuMicroFrontend done.`)}
+      () => { console.log(`${this.SourceInfo.SourceName} preloadMenuMicroFrontend done.`)}
     )
   }
 
@@ -92,12 +86,11 @@ export class UFManagerComponent {
    * Starts qna with backend
    */
   public StartQNA(): void {
-
-    this.eventProxyService.StartQNA(this.sourceId).subscribe(
-      (response: HttpResponse<EventResponse>) => {
-        this.newHttpResponseAsync(response);
+    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
+      (response: ResponseStatus) => {
+        this.newHttpResponseAsync(response.HttpResult);
       },
-      (error) => { console.log(this.sourceName, error); },
+      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
     );
   }
 
@@ -143,9 +136,9 @@ export class UFManagerComponent {
    * Sends event to backend to init Menu
    * @returns Promise
    */
-  private preloadMenuMicroFrontend(): Promise<HttpResponse<APIGatewayResponse>> {
-    const e = new InitializeMenuEvent(this.sourceId);
-    e.SourceName = this.sourceName;
+  private preloadMenuMicroFrontend(): Promise<ResponseStatus> {
+    const e = new InitializeMenuEvent(this.SourceInfo.SourceId);
+    e.SourceName = this.SourceInfo.SourceName;
 
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
@@ -154,14 +147,14 @@ export class UFManagerComponent {
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private subscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
-    const e = new SubscibeToEvent(this.sourceId, [
+  private subscribeToEventsAsync(): Promise<ResponseStatus> {
+    const e = new SubscibeToEvent(this.SourceInfo.SourceId, [
       [uEventsIds.LoadedResource, 0, 0],
       [uEventsIds.RequestToLoadScript, 0, 0],
       [uEventsIds.LanguageChange, 0, 0],
       [uEventsIds.InitMenu, 0, 0],
     ]);
-    e.SourceName = this.sourceName;
+    e.SourceName = this.SourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
@@ -174,7 +167,7 @@ export class UFManagerComponent {
   private async parseNewEventAsync(eventList: uEvent[]): Promise<void> {
     for (const element of eventList) {
 
-      console.log(`${this.sourceId} Parsing event:`, element);
+      console.log(`${this.SourceInfo.SourceId} Parsing event:`, element);
 
       const ufConfigs = window['__env']['uf'];
 
@@ -186,19 +179,19 @@ export class UFManagerComponent {
           if (Object.prototype.hasOwnProperty.call(ufConfigs, config)
             && ufConfigs[config].events.includes(el.ResourceEventId)) {
             this.resources[+config] = true;
-            await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           }
         }
       }
       else if (element.EventId === uEventsIds.RequestToLoadScript) {
         const event: RequestToLoadScripts  = element as RequestToLoadScripts;
         this.loadResourcesEvent(event);
-        await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
       else if (element.EventId === uEventsIds.LanguageChange) {
         const event: LanguageChange  = element as LanguageChange;
         this.changeLanguageEvent(event);
-        await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
       else {
         for (const config in ufConfigs) {
@@ -211,7 +204,7 @@ export class UFManagerComponent {
 
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-            await this.eventProxyService.ConfirmEvents(this.sourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           }
         }
       }
@@ -241,9 +234,9 @@ export class UFManagerComponent {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private subscribeMicroFrontends(): Promise<HttpResponse<APIGatewayResponse>[]> {
+  private subscribeMicroFrontends(): Promise<ResponseStatus[]> {
 
-    const promises: Promise<HttpResponse<APIGatewayResponse>>[] = [];
+    const promises: Promise<ResponseStatus>[] = [];
 
     const dic = window['__env']['uf'];
     for (const key in dic) {
@@ -260,8 +253,8 @@ export class UFManagerComponent {
         promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
-        event = new SubscibeToEvent(this.sourceId, subList);
-        event.SourceName = this.sourceName;
+        event = new SubscibeToEvent(this.SourceInfo.SourceId, subList);
+        event.SourceName = this.SourceInfo.SourceName;
         promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
       }
     }

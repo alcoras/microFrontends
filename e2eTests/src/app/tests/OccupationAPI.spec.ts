@@ -3,10 +3,11 @@ import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event
 import { EventBusService } from '@occupation-services/EventBus.service';
 import { TestBed } from '@angular/core/testing';
 import { OccupationData, uEventsIds, EventResponse } from '@uf-shared-models/index';
-import { genRandomNumber } from './helpers/helpers';
+import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { HttpResponse } from '@angular/common/http';
 import { IGetResponse } from '@occupation-services/interfaces/IGetResponse';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  *
@@ -34,8 +35,8 @@ describe('Occupation API service', () => {
   let eProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
   const sourceId = 'OccupationAPI_testing';
-  const backendURL = 'http://localhost:54366';
-  const backendPort = '54366';
+  const backendURL = BackendURL;
+  const backendPort = BackendPort;
 
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
@@ -66,7 +67,7 @@ describe('Occupation API service', () => {
   });
 
   afterEach(async () => {
-    eProxyService.EndQNA();
+    eProxyService.EndListeningToBackend();
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
   });
 
@@ -106,8 +107,8 @@ describe('Occupation API service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          propogateEvent(res);
+        (res: ResponseStatus) => {
+          propogateEvent(res.HttpResult);
         }
       );
 
@@ -136,8 +137,8 @@ describe('Occupation API service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          propogateEvent(res);
+        (res: ResponseStatus) => {
+          propogateEvent(res.HttpResult);
       });
 
       // 3. Get current length and id
@@ -180,8 +181,8 @@ describe('Occupation API service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          propogateEvent(res);
+        (res: ResponseStatus) => {
+          propogateEvent(res.HttpResult);
       });
 
       let entryToUpdate: OccupationData;
@@ -223,8 +224,8 @@ describe('Occupation API service', () => {
 
       // 2. Start listenting to events
       eProxyService.StartQNA(sourceId).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          propogateEvent(res);
+        (res: ResponseStatus) => {
+          propogateEvent(res.HttpResult);
       });
 
       // 3. Get current length

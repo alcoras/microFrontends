@@ -1,9 +1,10 @@
-import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { SubscibeToEvent } from '@uf-shared-events/index';
 import { uEvent, uEventsIds } from '@uf-shared-models/event';
 import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib/';
 import { APIGatewayResponse, EventResponse } from '@uf-shared-models/index';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+import { BackendPort, BackendURL } from './helpers/helpers';
 
 /**
  * generates random number
@@ -33,14 +34,15 @@ class TestEvent extends uEvent {
 }
 
 
-describe('EventProxyLibService', () => {
+fdescribe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
-
-    const backendURL = 'http://localhost:8001';
-    const backendPort = '8001';
+    const defaultEventsTimeoutMs = 5500;
+    const awaitAfterSendingEvent = 500;
+    const backendURL = BackendURL;
+    const backendPort = BackendPort;
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
-    const testinID = '1000';
+    const testinID = '10';
     const testinName = 'testing';
     let service: EventProxyLibService;
     const serviceList: EventProxyLibService[] = new Array(3);
@@ -64,6 +66,7 @@ describe('EventProxyLibService', () => {
 
         service = TestBed.inject(EventProxyLibService);
         service.ApiGatewayURL = backendURL;
+        service.Retries = 0;
         await service.ConfirmEvents(testinID, [], true).toPromise();
 
         serviceList.forEach(async element => {
@@ -77,11 +80,11 @@ describe('EventProxyLibService', () => {
     );
 
     afterEach(async () => {
-        service.EndQNA();
+        service.EndListeningToBackend();
         await service.ConfirmEvents(testinID, [], true).toPromise();
 
         serviceList.forEach(async (element) => {
-          element.EndQNA();
+          element.EndListeningToBackend();
           await element.ConfirmEvents(testinID, [], true).toPromise();
         });
       }
@@ -91,23 +94,82 @@ describe('EventProxyLibService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('Should respond with empty response', async (done) => {
+    describe("InitializeConnectionToBackend tests", () => {
+
+      it("should not be sent to parse events", async (done) => {
+
+        /**
+         * Test
+         * @param eventList Events
+         * @returns Promise
+         */
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+          done.fail();
+          return Promise.resolve();
+        }
+
+        service.InitializeConnectionToBackend(testinID,
+          eventParserMockAsync,
+          service.PerformResponseCheck);
+
+        await delay(200);
+        done();
+      });
+
+      it("should pass event", async (done) => {
+        const waitForEventId = getRandomInt(500);
+        /**
+         * Test
+         * @param eventList Events
+         * @returns Promise
+         */
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+          console.log(eventList);
+          expect([].concat(eventList)[0].EventId).toEqual(waitForEventId);
+          done();
+          return Promise.resolve();
+        }
+
+        // 1. Subscribe to event
+        const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], true);
+        subEvent.SourceName = testinName;
+        await service.DispatchEvent(subEvent).toPromise();
+
+        // TODO: eventually it should wait till someone subscribed to it.
+        await delay(awaitAfterSendingEvent);
+        // 2. Fire event
+        tEvent.EventId = waitForEventId;
+        await service.DispatchEvent(tEvent).toPromise();
+        await delay(awaitAfterSendingEvent);
+
+        service.InitializeConnectionToBackend(testinID,
+          eventParserMockAsync,
+          service.PerformResponseCheck);
+      })
+    });
+
+    it('should respond with empty response', async (done) => {
       service.StartQNA(testinID).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          expect(res.status).toBe(200, 'Status should be 200');
+        (res: ResponseStatus) => {
+          expect(res.Failed).toBeFalse();
+          expect(res.HttpResult.status).toBe(200, 'Status should be 200');
           done();
         },
         () => { done.fail(httpErrorMsg); },
       );
-    });
+    }, defaultEventsTimeoutMs);
 
-    it('should dispatchEvent and return list of id with one element', async (done) => {
+    it('should dispatchEvent and return list of ids with one element', async (done) => {
       service.DispatchEvent([tEvent]).subscribe(
-        (res: HttpResponse<APIGatewayResponse>) => {
-          expect(res.status).toEqual(200);
+        (res: ResponseStatus) => {
+          expect(res.HttpResult.status).toEqual(200);
 
-          expect(res.body.EventId).toEqual(uEventsIds.RegisterEventIds);
-          expect(res.body.Ids.length).toEqual(1);
+          const responseBody = res.HttpResult.body as APIGatewayResponse;
+
+          expect(responseBody.EventId).toEqual(uEventsIds.RegisterEventIds);
+          expect(responseBody.Ids.length).toEqual(1);
 
           done();
         },
@@ -127,11 +189,13 @@ describe('EventProxyLibService', () => {
       }
 
       service.DispatchEvent(array).subscribe(
-        (res: HttpResponse<APIGatewayResponse>) => {
-          expect(res.status).toEqual(200);
+        (res: ResponseStatus) => {
+          expect(res.HttpResult.status).toEqual(200);
 
-          expect(res.body.EventId).toEqual(uEventsIds.RegisterEventIds);
-          expect(res.body.Ids.length).toEqual(random);
+          const responseBody = res.HttpResult.body as APIGatewayResponse;
+
+          expect(responseBody.EventId).toEqual(uEventsIds.RegisterEventIds);
+          expect(responseBody.Ids.length).toEqual(random);
 
           done();
         },
@@ -140,9 +204,9 @@ describe('EventProxyLibService', () => {
 
     });
 
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 5; index++) {
       it('subscribe to one event, fire it, start listening and receive it', async (done) => {
-        const waitForEventId = getRandomInt(99999);
+        const waitForEventId = getRandomInt(500);
 
         // 1. Subscribe to event
         const subEvent = new SubscibeToEvent(testinID, [[waitForEventId, 0, 0]], true);
@@ -150,25 +214,32 @@ describe('EventProxyLibService', () => {
         await service.DispatchEvent(subEvent).toPromise();
 
         // TODO: eventually it should wait till someone subscribed to it.
-        await delay(50);
+        await delay(awaitAfterSendingEvent);
         // 2. Fire event
         tEvent.EventId = waitForEventId;
         await service.DispatchEvent(tEvent).toPromise();
+        await delay(awaitAfterSendingEvent);
 
         // 3. Listening to events
         service.StartQNA(testinID).subscribe(
-          (res: HttpResponse<EventResponse>) => {
-            expect(res.status).toBe(200, 'Incorrect http status');
-            expect(res.body.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+          (res: ResponseStatus) => {
+            expect(res.Failed).toBeFalse();
+            expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
-            expect(res.body.Events.length).toBe(1, 'Incorrect lenght');
+            const responseBody = res.HttpResult.body as EventResponse;
 
-            expect(res.body.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+            expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+
+            expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
+
+            expect(responseBody.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+
+            service.DispatchEvent(new SubscibeToEvent(testinID, [], true)).toPromise();
 
             done();
           }
         );
-      }, 2000);
+      });
     }
 
     it('start listening, then should subscribe to one event, fire it, and receive it', async (done) => {
@@ -176,13 +247,20 @@ describe('EventProxyLibService', () => {
 
       // 1. Listening to events
       service.StartQNA(testinID).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          expect(res.status).toBe(200, 'Incorrect http status');
-          expect(res.body.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+        (res: ResponseStatus) => {
+          expect(res.Failed).toBeFalse();
+          expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
-          expect(res.body.Events.length).toBe(1, 'Incorrect lenght');
+          const responseBody = res.HttpResult.body as EventResponse;
 
-          expect(res.body.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+          expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+
+
+          expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
+
+          expect(responseBody.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+
+          service.DispatchEvent(new SubscibeToEvent(testinID, [], true)).toPromise();
 
           done();
         }
@@ -194,7 +272,7 @@ describe('EventProxyLibService', () => {
       await service.DispatchEvent(subEvent).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
-      await delay(1000);
+      await delay(awaitAfterSendingEvent);
       // 3. Fire event
       tEvent.EventId = waitForEventId;
       await service.DispatchEvent(tEvent).toPromise();
@@ -215,28 +293,36 @@ describe('EventProxyLibService', () => {
       }
 
       // 1. Subscribe to events
-      const subEvent = new SubscibeToEvent(testinID, randomSubList, false);
-      await service.DispatchEvent([subEvent]).toPromise();
+      const subEvent = new SubscibeToEvent(testinID, randomSubList, true);
+      await service.DispatchEvent(subEvent).toPromise();
 
       // TODO: eventually it should wait till someone subscribed to it.
-      await delay(100);
+      await delay(awaitAfterSendingEvent);
       // 3. Fire event
       await service.DispatchEvent(eventArray).toPromise();
+      await delay(awaitAfterSendingEvent);
 
       // 3. Listening to events
       service.StartQNA(testinID).subscribe(
-        (res: HttpResponse<EventResponse>) => {
-          expect(res.status).toEqual(200);
-          expect(res.body.EventId).toEqual(uEventsIds.GetNewEvents);
+        (res: ResponseStatus) => {
+          console.log(res);
+          expect(res.Failed).toBeFalse();
+          expect(res.HttpResult.status).toEqual(200);
 
-          expect(res.body.Events.length).toEqual(randomAmount);
+          const responseBody = res.HttpResult.body as EventResponse;
+
+          expect(responseBody.EventId).toEqual(uEventsIds.GetNewEvents);
+
+          expect(responseBody.Events.length).toEqual(randomAmount);
+
+          service.DispatchEvent(new SubscibeToEvent(testinID, [], true)).toPromise();
           done();
         },
         () => { done.fail(httpErrorMsg); },
       );
-    }, 2000);
+    });
 
-    fit('few sources subscribe to same event and they receive them', async (done) => {
+    it('few sources subscribe to same event and they receive them', async (done) => {
       const sourceIdBegin = 41;
       const rndEventId = getRandomInt(1000);
       const sourceAmount = 2;
@@ -254,30 +340,35 @@ describe('EventProxyLibService', () => {
       }
 
       await service.DispatchEvent(subEventList).toPromise();
-      await delay(100);
+      await delay(awaitAfterSendingEvent);
       await service.DispatchEvent(fireEventList).toPromise();
-      await delay(100);
+      await delay(awaitAfterSendingEvent);
 
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
         await service.GetLastEvents(index.toString()).toPromise().then(
-          async (res: HttpResponse<EventResponse>) => {
-            expect(res.body.EventId === uEventsIds.GetNewEvents);
+          async (res: ResponseStatus) => {
 
-            expect(res.body.Events[0].EventId === rndEventId);
+            const responseBody = res.HttpResult.body as EventResponse;
+
+            expect(responseBody.EventId === uEventsIds.GetNewEvents);
+
+            expect(responseBody.Events[0].EventId === rndEventId);
 
             const idList = [];
 
-            res.body.Events.forEach(element => {
+            responseBody.Events.forEach(element => {
               idList.push(element.AggregateId);
             });
 
             await service.ConfirmEvents(index.toString(), idList).toPromise();
 
             await service.GetLastEvents(index.toString()).toPromise().then(
-              (res2: HttpResponse<EventResponse>) => {
-                expect(res2.body).toBeNull();
+              (res2: ResponseStatus) => {
+                expect(res2.HttpResult.body).toBeNull();
               }
             );
+
+            await service.DispatchEvent(new SubscibeToEvent(index.toString(), [], true)).toPromise();
           }
         );
       }

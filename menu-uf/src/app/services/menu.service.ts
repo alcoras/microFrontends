@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IMicroFrontend, EventResponse, uEventsIds, uEvent, UParts, MicroFrontendInfo } from '@uf-shared-models/index';
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { HttpResponse } from '@angular/common/http';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,10 @@ export class MenuService implements IMicroFrontend {
 
   public StartQNA(): void {
     this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
-      (response: HttpResponse<EventResponse>) => {
-        this.NewHttpResponseAsync(response);
+      (response: ResponseStatus) => {
+        this.NewHttpResponseAsync(response.HttpResult);
       },
-      (error) => { console.error(this.SourceInfo.SourceName, error); },
+      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
     );
   }
 

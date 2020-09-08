@@ -11,6 +11,7 @@ import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { HttpResponse } from '@angular/common/http';
 import { SubscibeToEvent, EventButtonPressed } from '@uf-shared-events/index';
 import { EventBusService } from './EventBus.service';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 @Injectable({
   providedIn: 'root'
@@ -35,11 +36,10 @@ export class OccupationService implements IMicroFrontend {
 
   public StartQNA(): void {
     this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
-      (response: HttpResponse<EventResponse>) => {
-        console.log(response);
-        this.NewHttpResponseAsync(response);
+      (response: ResponseStatus) => {
+        this.NewHttpResponseAsync(response.HttpResult);
       },
-      (error) => { console.error(this.SourceInfo.SourceName, error); },
+      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
     );
   }
 
@@ -60,7 +60,7 @@ export class OccupationService implements IMicroFrontend {
     }
   }
 
-  public SubscribeToEventsAsync():  Promise<HttpResponse<APIGatewayResponse>> {
+  public SubscribeToEventsAsync(): Promise<ResponseStatus> {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
       [uEventsIds.OccupationsRead, 0, 0],

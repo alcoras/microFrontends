@@ -11,6 +11,7 @@ import {
 import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { EventButtonPressed, SubscibeToEvent } from '@uf-shared-events/index';
 import { EventBusService } from '../services/EventBus.service';
+import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  * Component for personnel micro frontend to connect to backend
@@ -38,10 +39,10 @@ export class PersonnelComponent implements IMicroFrontend {
 
   public StartQNA(): void {
     this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
-      (response: HttpResponse<EventResponse>) => {
-        this.NewHttpResponseAsync(response);
+      (response: ResponseStatus) => {
+        this.NewHttpResponseAsync(response.HttpResult);
       },
-      (error) => { console.error(this.SourceInfo.SourceName, error); },
+      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
     );
   }
 
@@ -66,7 +67,7 @@ export class PersonnelComponent implements IMicroFrontend {
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  public async SubscribeToEventsAsync(): Promise<HttpResponse<APIGatewayResponse>> {
+  public async SubscribeToEventsAsync(): Promise<ResponseStatus> {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
       [uEventsIds.ReadPersonData, 0, 0]
