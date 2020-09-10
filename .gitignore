@@ -3,3 +3,4 @@ startbackend.bat
 conf.js
 conf.prod.js
 node_modules/*
+other/*
