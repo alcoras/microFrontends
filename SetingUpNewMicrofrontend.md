@@ -39,11 +39,12 @@ In files:<br>
     1. Install package: 
     > `npm i @angular-builders/custom-webpack`
     2. Copy `extra-webpack.config` from `~/shared/` and change name in `extra-webpack.config` to something unique [SCRIPT]
-    3. Add it to `angular.json` under `architect/build/builder` add option like this:
+    3. Add it to `angular.json` under `architect/build` add option like this:
     ```json
-    "options": {
-        "customWebpackConfig": { "path": "./extra-webpack.config.js",
-        "mergeStrategies": { "externals": "replace" } },
+        "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": { "path": "./extra-webpack.config.js",
+            "mergeStrategies": { "externals": "replace" } },
     ```
 5. Adding configuration files so that shell knows which resources to load upon request.
     1. Copy twice `conf.template.js` from `~/shared/` and change to `<yourproject>/src/scripts/conf.js` for development and `<yourproject>/src/scripts/conf.js` for production

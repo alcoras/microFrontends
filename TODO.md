@@ -82,6 +82,7 @@
 54. DONE Make all uS run in parallel
 20. DONE When loosing connection with backend there is no error or warning..
     20. 1. DONE Expected behaviour: should try reconnect every T period
+49. DONE add reverse proxy to solve CORS and having many ports
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -124,9 +125,11 @@
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
-49. add reverse proxy to solve CORS and having many ports
 53. UF should run fine isolated, in dev, in prod.
 56. on refreshing disconnect every micro frontend
 58. in environment.ts add variables (like URL and APIGATEWAYURL)
+59. if backend does not work show some message in shell or show trying to connect
+60. for some reason some files (polyfills.js) takes 2 seconds when using nginx as reverse proxy
+61. add info to event-proxy-lib, like what it is, more info, how to run tests
 
-59.
+62.

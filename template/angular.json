@@ -3,15 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "menu": {
-      "i18n": {
-        "sourceLocale": "en",
-        "locales": {
-          "lt": "src/locales/messages.lt.xlf",
-          "ru": "src/locales/messages.ru.xlf",
-          "uk": "src/locales/messages.uk.xlf"
-        }
-      },
+    "template": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -22,8 +14,8 @@
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "customWebpackConfig": { "path": "./extra-webpack.config.js",
-              "mergeStrategies": { "externals": "replace" } },
-            "outputPath": "dist/menu",
+            "mergeStrategies": { "externals": "replace" } },
+            "outputPath": "dist/<project_name>",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -49,7 +41,7 @@
                 {
                   "replace": "src/scripts/conf.js",
                   "with": "src/scripts/conf.prod.js"
-                }
+              }
               ],
               "optimization": true,
               "outputHashing": "all",
@@ -77,18 +69,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "menu:build"
+            "browserTarget": "template:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "menu:build:production"
+              "browserTarget": "template:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "menu:build"
+            "browserTarget": "template:build"
           }
         },
         "test": {
@@ -125,19 +117,15 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "menu:serve"
+            "devServerTarget": "template:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "menu:serve:production"
+              "devServerTarget": "template:serve:production"
             }
           }
         }
       }
-    }
-  },
-  "defaultProject": "menu",
-  "cli": {
-    "analytics": false
-  }
+    }},
+  "defaultProject": "template"
 }

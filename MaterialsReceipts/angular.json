@@ -19,7 +19,7 @@
           "options": {
             "customWebpackConfig": { "path": "./extra-webpack.config.js",
               "mergeStrategies": { "externals": "replace" } },
-            "outputPath": "dist/",
+            "outputPath": "dist/materialReceipts",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",

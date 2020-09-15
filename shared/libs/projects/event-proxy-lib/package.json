@@ -3,7 +3,7 @@
   "scripts": {
     "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true"
   },
-  "version": "1.1.1",
+  "version": "1.1.2",
   "peerDependencies": {
     "@angular/common": "^9.0.5",
     "@angular/core": "^9.0.5"

@@ -17,7 +17,7 @@
     "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8082 prod/",
     "ng_start": "npm run ng_build_prod && npm run npm_serve_prod",
 
-    "ng_serve_dev": "serve --cors -l tcp://0.0.0.0:3002 dist/",
+    "ng_serve_dev": "serve -l tcp://0.0.0.0:3002 dist/",
     "ng_build_dev": "ng build --localize --commonChunk=false --outputHashing=none --vendorChunk=false",
     "ng_watch": "ng build --localize --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
     "ng_con": "npm run build-config && concurrently --kill-others -n \"ANGULAR,SERVER\" \"npm run ng_watch\"  \"npm run ng_serve_dev\" "
