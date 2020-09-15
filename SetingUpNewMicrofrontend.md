@@ -12,7 +12,7 @@
 1. Add microservice id and source name to
 `~/shared/models/UParts.ts` [SCRIPT]
 2. Add button activation ID to `~/shared/events/event.ts` like `<YourMicrofrontendName>ButtonPressed = <uniqueID>`
-3. In `~/shared/models/helpers/ButtonsIds` add your button event `<YouMicrofrontend>ButtonPressed = uEventsIds.<YourMicrofrontendName>ButtonPressed`
+3. In `~/shared/events/helpers/ButtonsIds` add your button event `<YouMicrofrontend>ButtonPressed = uEventsIds.<YourMicrofrontendName>ButtonPressed`
 
 ## Shell
 1. Adding configuration file with resources which shell will load upon micro frontend was requested to load.
@@ -21,7 +21,7 @@ In files:<br>
 [JSON]
 ---
 ## New Microfrontend
-1. `.browserslistrc` (ng10) `.browserslistrc` (ng9) change to support only chrome so we don't have many polyfills.
+1. `.browserslistrc` (ng10) `.browserslist` (ng9) change to support only chrome so we don't have many polyfills.
 2. In `package.json` set up launching commands
 ```json
     "ng_build_prod": "ng build --prod --outputHashing=none --output-path prod/",
@@ -78,7 +78,7 @@ In files:<br>
     1. > `npm i @angular/elements`
     2. Update `~/<YourMicrofrontend>/src/app/app.module.ts` like `~/occupation-uf/src/app/app.module.ts`
     3. Don't forget to set up unique id in `customElements.define` and add `APP_INITIALIZER` facotry to `providers` in `app.module.ts`
-9. For every microfrontend to work on their own we have to prepare environemnt variables (apigateway url):
+9. For every microfrontend to work on their own we have to prepare environemnt variables (apigateway, url):
     1. `~/<YourMicrofrontend>/src/environemnts/environment.ts` - we configure variables
     2. `~/<YourMicrofrontend>/src/main.ts` - we initialize them
     3. Check other projects for reference

@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import Web3 from 'web3';
 import * as Eth from 'ethjs';
 import { EnvironmentService, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { HttpResponse } from '@angular/common/http';
 import { LoginSuccess } from '@uf-shared-events/';
 import { uEventsIds } from '@uf-shared-models/event';
 import { LoginRequest } from '../models/LoginRequest';
 import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+import { uEvent } from '@uf-shared-libs/event-proxy-lib/lib/models/event';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];
@@ -55,25 +55,29 @@ export class AuthenticationService {
     const ret = new Promise<LoginRequest>((resolve, reject) => {
       this.eventProxyService.LogIn(loginRequest.Timestamp, loginRequest.Signature).toPromise().then(
         (responseStatus: ResponseStatus) => {
-          const response = responseStatus.HttpResult.body as HttpResponse<LoginSuccess>;
-          if (response.status !== 200) {
-            return new Error('Failed to retrieve data');
+          if (responseStatus.HttpResult.status !== 200) {
+            loginRequest.Error = "Failed to communicate with backend";
+            loginRequest.FullError = "Failed to communicate with backend";
+            return reject(loginRequest);
           }
 
-          if (response.body.EventId === uEventsIds.LoginFailed) {
+          const response = responseStatus.HttpResult.body as LoginSuccess;
+
+          if (response.EventId === uEventsIds.LoginFailed) {
             loginRequest.Error = 'Failed to login';
-            reject(loginRequest);
-          } else if (response.body.EventId === uEventsIds.LoginSuccessWithTokenInformation) {
-            const login = response.body as LoginSuccess;
-            this.setSession(login);
+            loginRequest.FullError = 'Failed to login';
+            return reject(loginRequest);
+          } else if (response.EventId === uEventsIds.LoginSuccessWithTokenInformation) {
+            this.setSession(response);
             resolve(loginRequest);
           } else {
-            loginRequest.Error = `EventID ${response.body.EventId} was not recognized`;
-            reject(loginRequest);
+            loginRequest.Error = `EventID ${response.EventId} was not recognized`;
+            return reject(loginRequest);
           }
         },
-        (reject) => {
-          return new Error(reject);
+        (responseStatusRejected: ResponseStatus) => {
+          loginRequest.Error = responseStatusRejected.Error;
+          return reject(loginRequest);
         }
       );
     });
@@ -93,20 +97,22 @@ export class AuthenticationService {
 
     const ret = new Promise<string>((resolve, reject) => {
       this.eventProxyService.RenewToken().toPromise().then(
-        (response: HttpResponse<LoginSuccess>) => {
-          if (response.status !== 200) {
-            return new Error('Failed to retrieve data');
+        (responseStatus: ResponseStatus) => {
+          if (responseStatus.HttpResult.status !== 200) {
+            reject("Failed to communicate with backend");
           }
 
-          if (response.body.EventId === uEventsIds.LoginFailed) {
+          const response = responseStatus.HttpResult.body as uEvent;
+
+          if (response.EventId === uEventsIds.LoginFailed) {
             reject('Failed to login');
-          } else if (response.body.EventId === uEventsIds.TokenRenewSuccessWithTokenInformation) {
-            const login = response.body as LoginSuccess;
+          } else if (response.EventId === uEventsIds.TokenRenewSuccessWithTokenInformation) {
+            const login = response as LoginSuccess;
             this.setUpcomingSession(login);
             resolve("");
           }
           else {
-            reject(`EventID ${response.body.EventId} was not recognized`);
+            reject(`EventID ${response.EventId} was not recognized`);
           }
         },
         (reject) => {
@@ -215,7 +221,8 @@ export class AuthenticationService {
     if (typeof WindowWeb3Context.currentProvider === 'undefined')
       return false;
 
-    this.web3 = new Web3(WindowWeb3Context.currentProvider); // Web3 should be provided by metamask
+    this.web3 = new Web3(WindowWeb3Context.currentProvider); // Web3 should be provided by metamask or maybe no logner
+    // https://medium.com/metamask/no-longer-injecting-web3-js-4a899ad6e59e
 
     if (typeof this.web3 === 'undefined')
       return false;

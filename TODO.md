@@ -127,6 +127,6 @@
 49. add reverse proxy to solve CORS and having many ports
 53. UF should run fine isolated, in dev, in prod.
 56. on refreshing disconnect every micro frontend
+58. in environment.ts add variables (like URL and APIGATEWAYURL)
 
-
-58
+59.

@@ -4,7 +4,6 @@ import {
   UParts,
   uEventsIds,
   EventResponse,
-  APIGatewayResponse,
   IMicroFrontend,
   uEvent,
   MicroFrontendInfo } from '@uf-shared-models/index';
@@ -47,8 +46,6 @@ export class PersonnelComponent implements IMicroFrontend {
   }
 
   public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) { throw new Error('Can\'t connect to backend'); }
-
     if (!response.body) { return; }
 
     if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {

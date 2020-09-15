@@ -106,6 +106,8 @@ export class UFManagerComponent {
 
     if (response.body['EventId'] === uEventsIds.GetNewEvents) {
       this.parseNewEventAsync(response.body.Events);
+    } else if (response.body['EventId'] === uEventsIds.TokenFailure ) {
+      throw new Error('Token failure');
     }
   }
 
