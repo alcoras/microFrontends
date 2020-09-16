@@ -61,6 +61,14 @@ export class UParts {
     SourceName: 'MaterialsReceipts'
   };
 
+  // /**
+  //  * Micro frontend Template.
+  //  */
+  // public static Template: MicroFrontendInfo = {
+  //   SourceId: '<source_id>',
+  //   SourceName: '<project_name>'
+  // };
+
   /**
    * Gets source name from source id
    * @param sourceId source id string

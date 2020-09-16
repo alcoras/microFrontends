@@ -29,7 +29,9 @@
     "document-register-element": "^1.7.2",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "concurrently": "^5.3.0",
+    "serve": "^11.3.2"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^9.0.0",
@@ -43,7 +45,6 @@
     "@typescript-eslint/eslint-plugin": "^2.32.0",
     "@typescript-eslint/parser": "^2.32.0",
     "codelyzer": "^5.1.2",
-    "concurrently": "^5.2.0",
     "eslint": "^7.0.0",
     "eslint-plugin-jsdoc": "^25.2.0",
     "jasmine-core": "~3.5.0",
@@ -54,7 +55,6 @@
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
     "protractor": "~5.4.3",
-    "serve": "^11.3.0",
     "ts-node": "~8.3.0",
     "typescript": "~3.7.5"
   }

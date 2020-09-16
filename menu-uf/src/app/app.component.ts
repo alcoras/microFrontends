@@ -111,6 +111,7 @@ export class AppComponent {
     this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
     this.placement[uEventsIds.ObserverButtonPressed] = { elementId: 'observer', loaded: false };
     this.placement[uEventsIds.MaterialsReceiptsButtonPressed] = { elementId: 'materialReceipts', loaded: false };
+    // this.placement[uEventsIds.<project_name>ButtonPressed] = { elementId: '<project_name>', loaded: false };
   }
 
   private getElFromID(id: number): IUFState {

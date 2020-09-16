@@ -68,6 +68,7 @@ export enum uEventsIds {
   LanguageChange = 1006,
   ObserverButtonPressed = 1007,
   MaterialsReceiptsButtonPressed = 1008,
+  // TemplateButtonPressed = 1009
 
   PingRequest = 2001,
   SubscribeToEvent = 2002,

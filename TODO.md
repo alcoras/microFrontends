@@ -83,6 +83,7 @@
 20. DONE When loosing connection with backend there is no error or warning..
     20. 1. DONE Expected behaviour: should try reconnect every T period
 49. DONE add reverse proxy to solve CORS and having many ports
+36. DONE add concurrently and serve to projects
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -121,7 +122,6 @@
     33. 5. observer-uf
     33. 6. occupation-uf
     33. 7. shared
-36. add concurrently and serve to projects
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
@@ -129,7 +129,8 @@
 56. on refreshing disconnect every micro frontend
 58. in environment.ts add variables (like URL and APIGATEWAYURL)
 59. if backend does not work show some message in shell or show trying to connect
-60. for some reason some files (polyfills.js) takes 2 seconds when using nginx as reverse proxy
+60. for some reason some files (polyfills.js most of the times) takes 2 seconds when using nginx as reverse proxy
 61. add info to event-proxy-lib, like what it is, more info, how to run tests
+62. business events and core events (in shared/models shared/events) should be separated
 
-62.
+63.
