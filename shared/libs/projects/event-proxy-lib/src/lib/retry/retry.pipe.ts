@@ -12,7 +12,7 @@ const BACKOFFMS = 1000;
  * @param delayMs delay before retry
  * @param maxRetry maximum tries before giving up
  * @param backoffMS add to delay before retry
- * @returns Observable Pip
+ * @returns Observable Pipe
  */
 export function retryWithBackoff(delayMs: number, maxRetry = MAX_RETRIES, backoffMS = BACKOFFMS):
 (src: Observable<any>) => Observable<any> {

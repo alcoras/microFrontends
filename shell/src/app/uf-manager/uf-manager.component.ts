@@ -120,13 +120,13 @@ export class UFManagerComponent {
     const url: string = this.environmentService.Url;
 
     if (!url) {
-      throw new Error('Url is not defined in environment (env.js)');
+      throw new Error('Url is not defined in environment');
     }
 
     const urlList = this.environmentService.ConfigUrlList;
 
     if (urlList.length == 0) {
-      console.warn('Config list is not defined in environment (env.js)');
+      console.warn('Config list is not defined in environment');
     }
 
     promises.push(this.prestartService.InitScripts(urlList));

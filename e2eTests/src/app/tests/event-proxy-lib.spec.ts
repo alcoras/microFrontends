@@ -9,10 +9,11 @@ import { BackendPort, BackendURL } from './helpers/helpers';
 /**
  * generates random number
  * @param max max value
+ * @param min min value (default 1)
  * @returns random number
  */
-function getRandomInt(max: number): number {
-  return Math.floor(Math.random() * Math.floor(max));
+function getRandomInt(max: number, min = 1): number {
+  return Math.floor(Math.random() * Math.floor(max-min) + min);
 }
 
 /**
@@ -33,8 +34,8 @@ function delay(ms: number): Promise<void> {
 class TestEvent extends uEvent {
 }
 
-
-fdescribe('EventProxyLibService', () => {
+for (let i = 0; i < 1; i++) {
+describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
     const defaultEventsTimeoutMs = 5500;
     const awaitAfterSendingEvent = 500;
@@ -96,8 +97,7 @@ fdescribe('EventProxyLibService', () => {
 
     describe("InitializeConnectionToBackend tests", () => {
 
-      it("should not be sent to parse events", async (done) => {
-
+      xit("should not be sent to parse events", async (done) => {
         /**
          * Test
          * @param eventList Events
@@ -117,7 +117,7 @@ fdescribe('EventProxyLibService', () => {
         done();
       });
 
-      it("should pass event", async (done) => {
+      xit("should pass event", async (done) => {
         const waitForEventId = getRandomInt(500);
         /**
          * Test
@@ -230,7 +230,7 @@ fdescribe('EventProxyLibService', () => {
 
             expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
 
-            expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
+            expect(responseBody.Events.length).toBe(1, 'Incorrect length');
 
             expect(responseBody.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
 
@@ -254,7 +254,6 @@ fdescribe('EventProxyLibService', () => {
           const responseBody = res.HttpResult.body as EventResponse;
 
           expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
-
 
           expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
 
@@ -376,3 +375,4 @@ fdescribe('EventProxyLibService', () => {
       done();
     });
 });
+}

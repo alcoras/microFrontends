@@ -12,19 +12,19 @@ if (environment.production) {
 /**
  * Sets up global environment for shell and the rest of micro frontends
  */
-{
-  const provider = new EnvironmentService();
-  window['__env'] = window['__env'] || {};
-  provider.Language = environment.defaultLanguage;
-  provider.OneLanguage = environment.oneLanguage;
-  provider.Url = environment.url;
-  provider.APIGatewayUrl = environment.apiGatewayUrl;
-  provider.APIGatewayPort = environment.apiGatewayPort;
-  provider.AuthorizationToken = '';
-  provider.TokenBeginDate = '';
-  provider.TokenExpirationDate = '';
-  console.log(`Environment prepared (Production?): ${environment.production} `);
-}
+// {
+//   const provider = new EnvironmentService();
+//   window['__env'] = window['__env'] || {};
+//   provider.Language = environment.defaultLanguage;
+//   provider.OneLanguage = environment.oneLanguage;
+//   provider.Url = environment.url;
+//   provider.APIGatewayUrl = environment.apiGatewayUrl;
+//   provider.APIGatewayPort = environment.apiGatewayPort;
+//   provider.AuthorizationToken = '';
+//   provider.TokenBeginDate = '';
+//   provider.TokenExpirationDate = '';
+//   console.log(`Environment prepared (Production?): ${environment.production} `);
+// }
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

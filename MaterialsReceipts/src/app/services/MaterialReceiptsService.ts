@@ -38,7 +38,6 @@ export class MaterialReceiptsService implements IMicroFrontend {
   public StartQNA(): void {
     this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
       (response: HttpResponse<EventResponse>) => {
-        console.log(response);
         this.NewHttpResponseAsync(response);
       },
       (error) => { console.error(this.SourceInfo.SourceName, error); },

@@ -160,30 +160,14 @@ define("shared/events/LoadedResource", ["require", "exports", "shared/models/eve
     }
     exports.LoadedResource = LoadedResource;
 });
-define("shared/events/helpers/ButtonIds", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ButtonIds;
-    (function (ButtonIds) {
-        ButtonIds[ButtonIds["PersonnelButtonPressed"] = 1001] = "PersonnelButtonPressed";
-        ButtonIds[ButtonIds["OccupationNg9ButtonPressed"] = 1005] = "OccupationNg9ButtonPressed";
-        ButtonIds[ButtonIds["ObserverButtonPressed"] = 1007] = "ObserverButtonPressed";
-        ButtonIds[ButtonIds["MaterialReceiptsButtonPressed"] = 1008] = "MaterialReceiptsButtonPressed";
-    })(ButtonIds = exports.ButtonIds || (exports.ButtonIds = {}));
-});
-define("shared/events/EventButtonPressed", ["require", "exports", "shared/models/event", "shared/events/helpers/ButtonIds"], function (require, exports, event_3, ButtonIds_1) {
+define("shared/events/EventButtonPressed", ["require", "exports", "shared/models/event"], function (require, exports, event_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class EventButtonPressed extends event_3.uEvent {
         constructor(buttonPressedEventId, UniqueElementId) {
             super();
             this.UniqueElementId = UniqueElementId;
-            if (Object.values(ButtonIds_1.ButtonIds).includes(buttonPressedEventId)) {
-                this.EventId = buttonPressedEventId;
-            }
-            else {
-                throw new Error('Provided ButtonPressed Id is unsupported.');
-            }
+            this.EventId = buttonPressedEventId;
         }
     }
     exports.EventButtonPressed = EventButtonPressed;

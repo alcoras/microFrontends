@@ -64,12 +64,12 @@ Adding eslint
 
 > 1. As close to real as possbile, maybe even a copy with snapshots done periodically, to recover after tests or failures
 > 2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections) and instead of calling to real backend should use mocks which might as well be used by tests.
-> 3. Shell is responsible for login, thus disable login in `~/shell/src/environment.ts` (or prod.ts) add/set variable `enableLogin: false` to `environment`
+> 3. Shell is responsible for login, thus disable login in `~/shell/src/environment.ts` (or prod.ts) add/set variable `enableLogin: false`
 #### Production      
 The environment
-#### Staging
-environment for manual testing after unit and integration tests are done; this environemnt should be set up just as production 
-publically available for clients our testing team to try out features
+#### Staging (not implemented)
+Environment for manual testing after unit and integration tests are done; this environment should be set up just as production one:
+publically available for clients and our testing team to do regression tests
 #### Development
 Same as production but set up locally for developing new features
 #### Isolated
