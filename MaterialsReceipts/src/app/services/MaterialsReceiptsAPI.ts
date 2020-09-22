@@ -9,11 +9,12 @@ import { Observable } from 'rxjs';
 import { EventBusService } from './EventBus.service';
 import { GetMaterialsList } from '../interfaces/GetMaterialsList';
 import { ProductService } from './ProductService';
+import { IMaterialsReceiptsAPI } from '../interfaces/IMaterialsReceiptsAPI';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MaterialsReceiptsAPI {
+export class MaterialsReceiptsAPI implements IMaterialsReceiptsAPI {
   private sourceInfo = UParts.MaterialsReceipts;
 
   private timeoutForRequestsInMiliseconds = 5000;
@@ -98,6 +99,7 @@ export class MaterialsReceiptsAPI {
    * @param limit entries's limit
    * @returns Observable with Http response from API gateway
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private get(page: number, limit: number)
     :Observable<HttpResponse<APIGatewayResponse>> {
       const event = new MaterialsReceiptsReadListQuery(

@@ -86,6 +86,8 @@
 36. DONE add concurrently and serve to projects
 58. DONE: in environment.ts add variables (like URL and APIGATEWAYURL)
     58. 1. UPDATE: because of task 49. URL's are obsolete
+60. DONE for some reason some files (polyfills.js most of the times) takes 2 seconds when using nginx as reverse proxy
+    61. 1. UPDATE: solution 64.
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -128,12 +130,14 @@
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
 53. UF should run fine isolated, in dev, in prod.
+    53. 1. UPDATE: add solo and isolated to environment.ts and work using them
+    53. 2. Change all micro frontends accodingly
 56. on refreshing disconnect every micro frontend
 59. if backend does not work show some message in shell or show trying to connect
-60. DONE for some reason some files (polyfills.js most of the times) takes 2 seconds when using nginx as reverse proxy
 61. add info to event-proxy-lib, like what it is, more info, how to run tests
 62. business events and core events (in shared/models shared/events) should be separated
 63. consider adding loading indication (console or otherwise when event-proxy-lib is retries)
-64. nginx will be the server, so remove serve in all micro services
+64. nginx will be the server, so remove serve in all micro frontends
+65. add solo mocks to template like in MaterialReceipts
 
-65.
+66.

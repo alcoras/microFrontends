@@ -1,0 +1,45 @@
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 10px;
+}
+
+@media screen and (max-width: 64em) {
+  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+      top: 99px;
+  }
+}
+
+:host ::ng-deep .tabview-custom {
+i, span {
+    vertical-align: middle;
+}
+
+span {
+    margin: 0 .5rem;
+}
+}
+
+:host ::ng-deep .p-button {
+margin-right: .25rem;
+}
+
+:host ::ng-deep .p-tabview p {
+line-height: 1.5;
+margin: 0;
+}
+
+.sizes {
+  .p-inputtext {
+      display: block;
+      margin-bottom: .5rem;
+
+      &:last-child {
+          margin-bottom: 0;
+      }
+  }
+}
+
+.p-field * {
+  display: block;
+}

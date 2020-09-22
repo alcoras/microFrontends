@@ -7,19 +7,7 @@ import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
 @Component({
   selector: 'receipt-materials-table',
   templateUrl: './Table.html',
-  styles: [`
-    :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 10px;
-    }
-
-    @media screen and (max-width: 64em) {
-        :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-            top: 99px;
-        }
-    }
-  `]
+  styleUrls: ['./Table.scss']
 })
 export class TableComponent {
   public Loading: boolean;
@@ -27,6 +15,8 @@ export class TableComponent {
   public DisplayDialog: boolean;
 
   public SelectedRecord: MaterialsList;
+
+  public BarCode;
 
   public Cols = [
     { field: 'Number', header: 'Number'},
@@ -39,7 +29,6 @@ export class TableComponent {
 
   public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI)
   { }
-
 
   public OnRowSelect(): void {
     this.DisplayDialog = true;

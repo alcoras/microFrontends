@@ -1,5 +1,7 @@
+import { EnvironmentTypes } from "./EnvironmentTypes";
+
 export const environment = {
-  production: true,
+  EnvironmentTypes: EnvironmentTypes.Production,
 
   currentLanguage: 'en',
 

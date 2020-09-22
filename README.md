@@ -54,17 +54,16 @@ Adding eslint
 
 
 ### Environment Table
-| Environment |    Database       |  Backend      |   Login   |  Shell  |
-| ----------- | ----------------- | ------------- | --------- | ------- |
-| Production  |   Real            |   Real        |  Real     |   Yes   |
-| Staging     |   Stage[1]        |   Stage       |  Stage    |   Yes   |
-| Development |   Local           |   Local       |  Local    |   Yes   |
-| Isolated    |   Local           |   Local       |  None[3]  |   No    |
-| Solo        |   Mock Data[2]    |   None[2]     |  None[3]  |   No    |
+| Environment |    Database-Backend   |   Login   |  Shell  |
+| ----------- | --------------------- | --------- | ------- |
+| Production  |   Real                |  Real     |   Yes   |
+| Staging     |   Stage[1]            |  Stage    |   Yes   |
+| Development |   Local               |  Local    |   Yes   |
+| Isolated    |   Local               |  None     |   No    |
+| Solo        |   Mock[2]             |  None     |   No    |
 
 > 1. As close to real as possbile, maybe even a copy with snapshots done periodically, to recover after tests or failures
 > 2. Solo is intended to check for visual feel only, thus microfrontend should be self sustained (no connections) and instead of calling to real backend should use mocks which might as well be used by tests.
-> 3. Shell is responsible for login, thus disable login in `~/shell/src/environment.ts` (or prod.ts) add/set variable `enableLogin: false`
 #### Production      
 The environment
 #### Staging (not implemented)
@@ -75,5 +74,5 @@ Same as production but set up locally for developing new features
 #### Isolated
 Used for testing microfrontend alone but with connection to development backend/database
 #### Solo
-Used for writing initial view which does not require anything else in the environment
+Used for writing initial view which does not require anything else in the environment. In order for it to work after you get to Isolated stage, mock service should conditionally injected instead of real one.
 

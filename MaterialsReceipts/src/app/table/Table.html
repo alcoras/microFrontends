@@ -10,7 +10,6 @@
     [paginator]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [totalRecords]="TotalRecords"
-    [scrollable]="true" scrollHeight="500px" [virtualScroll]="true" [virtualRowHeight]="34"
     selectionMode="single" (onRowSelect)="OnRowSelect()" [(selection)]="SelectedRecord">
   <ng-template pTemplate="caption">
     Materials Receipts List
@@ -31,32 +30,61 @@
   </ng-template>
 </p-table>
 
+
 <p-dialog header="Material Receipt Details"
   [(visible)]="DisplayDialog" [focusOnShow]="false" showEffect="fade" [modal]="true">
-  <div class="p-grid ui-fluid" *ngIf="SelectedRecord">
-      <div class="p-col-4">
-          <label for="Number">Number</label>
+  <br>
+  <p-tabView>
+    <br>
+    <p-tabPanel header="Item">
+
+      <div class="p-field">
+        <label for="username1">Product Bar Code</label>
+        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
       </div>
-      <div class="p-col-8">
-          <input pInputText id="Number" [(ngModel)]="SelectedRecord.Number" autofocus />
+
+      <div class="p-field">
+        <label for="username1">Quantity</label>
+        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
       </div>
-      <div class="p-col-4">
-          <label for="year">RegisterDateTime</label>
+
+      <div class="p-field">
+        <label for="username1">Item placement</label>
+        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
       </div>
-      <div class="p-col-8">
-          <input pInputText id="RegisterDateTime" [(ngModel)]="SelectedRecord.RegisterDateTime" />
-      </div>
-      <div class="p-col-4">
-          <label for="brand">SignMark</label>
-      </div>
-      <div class="p-col-8">
-          <input pInputText id="SignMark" [(ngModel)]="SelectedRecord.SignMark" />
-      </div>
-      <div class="p-col-4">
-          <label for="color">Signee</label>
-      </div>
-      <div class="p-col-8">
-          <input pInputText id="SignPerson" [(ngModel)]="SelectedRecord.SignPerson" />
-      </div>
-  </div>
+      <br>
+
+      <button pButton type="button" label="Update"></button>
+    </p-tabPanel>
+    <p-tabPanel header="Other">
+      <div class="p-grid ui-fluid" *ngIf="SelectedRecord">
+        <div class="p-col-4">
+            <label for="Number">Number</label>
+        </div>
+        <div class="p-col-8">
+            <input pInputText id="Number" [(ngModel)]="SelectedRecord.Number" autofocus />
+        </div>
+        <div class="p-col-4">
+            <label for="year">RegisterDateTime</label>
+        </div>
+        <div class="p-col-8">
+            <input pInputText id="RegisterDateTime" [(ngModel)]="SelectedRecord.RegisterDateTime" />
+        </div>
+        <div class="p-col-4">
+            <label for="brand">SignMark</label>
+        </div>
+        <div class="p-col-8">
+            <input pInputText id="SignMark" [(ngModel)]="SelectedRecord.SignMark" />
+        </div>
+        <div class="p-col-4">
+            <label for="color">Signee</label>
+        </div>
+        <div class="p-col-8">
+            <input pInputText id="SignPerson" [(ngModel)]="SelectedRecord.SignPerson" />
+        </div>
+    </div>
+    </p-tabPanel>
+  </p-tabView>
+
+
 </p-dialog>
