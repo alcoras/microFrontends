@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
-import { IMaterialsReceiptsAPI } from '../../interfaces/IMaterialsReceiptsAPI';
 import { GetMaterialsList } from '../../interfaces/GetMaterialsList';
 import { MaterialsList } from '@uf-shared-models/index';
 import { ProductService } from '../ProductService';
+import { ReadListQueryParams } from 'src/app/helpers/ReadListQueryParams';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MaterialsReceiptsAPIMock implements IMaterialsReceiptsAPI {
-
+export class MaterialsReceiptsAPIMock {
 
   private data: MaterialsList[];
 
   public constructor() {
     this.data = [];
 
-    for (let index = 0; index < 1000; index++) {
+    for (let index = 0; index < 10; index++) {
       const temp: MaterialsList = {
         Number: ProductService.generateQuantity(),
         RegisterDateTime: ProductService.generateName(),
@@ -26,8 +25,8 @@ export class MaterialsReceiptsAPIMock implements IMaterialsReceiptsAPI {
     }
   }
 
-  public Get(page: number, limit: number): Promise<GetMaterialsList> {
-    const items = this.data.slice(page, (page + limit));
+  public Get(queryParams: ReadListQueryParams): Promise<GetMaterialsList> {
+    const items = this.data.slice(queryParams.Page, (queryParams.Page + queryParams.Limit));
     return Promise.resolve({Items: items, Total: this.data.length})
   }
 

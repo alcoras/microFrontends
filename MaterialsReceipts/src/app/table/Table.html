@@ -1,8 +1,3 @@
-<div style="margin-bottom: 1em">
-  <button type="button" pButton icon="pi pi-refresh"
-    (click)="RefreshTable()" style="margin-right:.5em">
-  </button>
-</div>
 <p-table
     styleClass="p-datatable-striped"
     [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
@@ -12,8 +7,43 @@
     [totalRecords]="TotalRecords"
     selectionMode="single" (onRowSelect)="OnRowSelect()" [(selection)]="SelectedRecord">
   <ng-template pTemplate="caption">
-    Materials Receipts List
+
+    <!-- Refresh button -->
+    <div style="margin-bottom: 1em">
+      <button type="button" pButton icon="pi pi-refresh"
+        (click)="RefreshTable()" style="margin-right:.5em">
+      </button>
+    </div>
+
+    <!-- All, Signed, Unsigned -->
+    <div class="p-formgroup-inline">
+      <div *ngFor="let category of Categories" class="p-field-checkbox">
+        <p-radioButton
+          (onClick)="RefreshTable()"
+          inputId="category.key"
+          name="category"
+          [value]="category"
+          [(ngModel)]="SelectedCategory"></p-radioButton>
+        <label [for]="category.key">{{category.name}}</label>
+      </div>
+    </div>
+
+    <!-- Date selection -->
+    <div class="p-field">
+      <label for="spanish">Select date range </label>
+      <p-calendar
+        (onClose)="RefreshTable()"
+        [showIcon]="true"
+        [(ngModel)]="DateRange"
+        [touchUI]="true"
+        showButtonBar="true"
+        selectionMode="range"
+        [locale]="UkrainianDate" dateFormat="yy-mm-dd"
+        inputId="ukrianian"></p-calendar>
+    </div>
+
   </ng-template>
+  <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
       <tr>
           <th *ngFor="let col of columns">
@@ -21,6 +51,8 @@
           </th>
       </tr>
   </ng-template>
+
+  <!-- Fields -->
   <ng-template pTemplate="body" let-rowData let-columns="columns">
       <tr [pSelectableRow]="rowData">
           <td *ngFor="let col of columns">
@@ -30,7 +62,7 @@
   </ng-template>
 </p-table>
 
-
+<!-- Dialog on click -->
 <p-dialog header="Material Receipt Details"
   [(visible)]="DisplayDialog" [focusOnShow]="false" showEffect="fade" [modal]="true">
   <br>

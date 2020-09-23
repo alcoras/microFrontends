@@ -8,13 +8,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-
     "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true",
-
     "ng_build_prod": "ng build --prod --outputHashing=none --output-path prod/",
     "ng_serve_prod": "serve -C -l tcp://0.0.0.0:8088 prod/",
     "ng_start_prod": "npm run ng_build_prod && npm run npm_serve_prod",
-
     "ng_build_dev": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false",
     "ng_serve_dev": "serve -C -l tcp://0.0.0.0:3008 dist/",
     "ng_watch": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
@@ -33,14 +30,15 @@
     "@angular/platform-browser": "~10.0.6",
     "@angular/platform-browser-dynamic": "~10.0.6",
     "@angular/router": "~10.0.6",
+    "concurrently": "^5.3.0",
     "event-proxy-lib": "^1.0.1",
+    "primeflex": "^2.0.0",
     "primeicons": "^4.0.0",
     "primeng": "~10.0.0-rc.3",
     "rxjs": "~6.5.5",
+    "serve": "^11.3.2",
     "tslib": "~2.0.0",
-    "zone.js": "~0.10.3",
-    "concurrently": "^5.3.0",
-    "serve": "^11.3.2"
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.5",

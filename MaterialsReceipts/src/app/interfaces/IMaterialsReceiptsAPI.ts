@@ -1,5 +1,6 @@
 import { GetMaterialsList } from "./GetMaterialsList";
+import { ReadListQueryParams } from '../helpers/ReadListQueryParams';
 
 export interface IMaterialsReceiptsAPI {
-  Get(page: number, limit: number): Promise<GetMaterialsList>;
+  Get(queryParams: ReadListQueryParams): Promise<GetMaterialsList>;
 }

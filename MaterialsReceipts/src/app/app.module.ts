@@ -19,14 +19,17 @@ import { createCustomElement } from '@angular/elements';
 import { MaterialReceiptsService } from './services/MaterialReceiptsService';
 import { MaterialsReceiptsAPI } from './services/MaterialsReceiptsAPI';
 import { MaterialsReceiptsAPIMock } from './services/mocks/MaterialReceiptsAPIMock';
+import { IMaterialsReceiptsAPI } from './interfaces/IMaterialsReceiptsAPI';
 import { TableComponent } from './table/TableComponent';
 import { EventBusService } from './services/EventBus.service';
-import { IMaterialsReceiptsAPI } from './interfaces/IMaterialsReceiptsAPI';
 import { EnvironmentTypes } from 'src/environments/EnvironmentTypes';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { EventProxyLibServiceMock } from './services/mocks/EventProxyLibServiceMock';
 import { TabViewModule } from 'primeng/tabview';
+import { CalendarModule } from 'primeng/calendar';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 /**
  * Materials Receipts factory
@@ -89,8 +92,11 @@ function MaterialReceiptsInitializeFactory(provider: MaterialReceiptsService): P
     TableModule,
     FormsModule,
     DialogModule,
+    CalendarModule,
     TabViewModule,
     ButtonModule,
+    CheckboxModule,
+    RadioButtonModule,
     InputTextModule,
     EventProxyLibModule
   ],

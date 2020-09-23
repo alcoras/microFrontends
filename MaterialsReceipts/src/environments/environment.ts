@@ -1,15 +1,15 @@
 import { EnvironmentTypes } from './EnvironmentTypes';
 
 export const environment = {
-  EnvironmentTypes: EnvironmentTypes.Solo,
+  EnvironmentTypes: EnvironmentTypes.Isolated,
 
   currentLanguage: 'en',
 
   oneLanguage: false,
   version: '1.0.0',
   defaultLanguage: 'en',
-  url: 'http://localhost',
-  apiGatewayUrl : 'http://localhost',
+  url: 'http://192.168.0.112',
+  apiGatewayUrl : 'http://192.168.0.112',
   apiGatewayPort : '7001',
 
   loggedIn : false,

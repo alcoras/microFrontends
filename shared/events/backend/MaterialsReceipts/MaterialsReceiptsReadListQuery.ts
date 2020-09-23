@@ -19,7 +19,7 @@ export class MaterialsReceiptsReadListQuery extends uEvent {
     sourceInfo: MicroFrontendInfo,
     public IntervalFrom?: string,
     public IntervalUntil?: string,
-    public Signed?: string,
+    public Signed?: boolean,
     public Page?: number,
     public Limit?: number,
   ) {

@@ -1,57 +1,34 @@
-import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import {
   MaterialsReceiptsReadListQuery,
-  MaterialsReceiptsReadListResults } from '@uf-shared-events/index';
-import { APIGatewayResponse, MaterialsList, UParts } from '@uf-shared-models/index';
+  MaterialsReceiptsReadListResults
+} from '@uf-shared-events/index';
+import { APIGatewayResponse, UParts } from '@uf-shared-models/index';
 import { EventProxyLibService } from 'event-proxy-lib';
 import { Observable } from 'rxjs';
-import { EventBusService } from './EventBus.service';
 import { GetMaterialsList } from '../interfaces/GetMaterialsList';
-import { ProductService } from './ProductService';
-import { IMaterialsReceiptsAPI } from '../interfaces/IMaterialsReceiptsAPI';
+import { EventBusService } from './EventBus.service';
+import { ReadListQueryParams } from '../helpers/ReadListQueryParams';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MaterialsReceiptsAPI implements IMaterialsReceiptsAPI {
+export class MaterialsReceiptsAPI {
   private sourceInfo = UParts.MaterialsReceipts;
-
-  private timeoutForRequestsInMiliseconds = 5000;
-
-  private data: MaterialsList[];
 
   public constructor(
     private eventProxyService: EventProxyLibService,
-    private eventBusService: EventBusService) {
-      this.data = [];
+    private eventBusService: EventBusService) { }
 
-      for (let index = 0; index < 1000; index++) {
-        const temp: MaterialsList = {
-          Number: ProductService.generateQuantity(),
-          RegisterDateTime: ProductService.generateName(),
-          SignMark: true,
-          SignPerson: ProductService.generateName()
-        }
-        this.data.push(temp);
-      }
-    }
-
-  public MockGet(page: number, pageSize: number): Promise<GetMaterialsList> {
-
-    const items = this.data.slice(page, (page + pageSize));
-    return Promise.resolve({Items: items, Total: this.data.length})
-  }
-
-  public Get(page: number, limit: number): Promise<GetMaterialsList> {
-    if (page < 1 || limit < 1) {
+  public Get(queryParams: ReadListQueryParams): Promise<GetMaterialsList> {
+    if (queryParams.Page < 1 || queryParams.Limit < 1) {
       throw new Error('page or pagesize is less than 1');
     }
 
-    const getResponsePromise = new Promise<GetMaterialsList>(
-      (resolve, reject) => {
+    return new Promise<GetMaterialsList>((resolve, reject) => {
 
-        const getResponse = this.get(page, limit).toPromise();
+        const getResponse = this.get(queryParams).toPromise();
 
         getResponse.then( (response: HttpResponse<APIGatewayResponse>) => {
           if (response.status !== 200) {
@@ -79,44 +56,25 @@ export class MaterialsReceiptsAPI implements IMaterialsReceiptsAPI {
 
       }
     );
-
-    return new Promise((resolve, reject) => {
-      const race = this.promiseTimeout(
-        this.timeoutForRequestsInMiliseconds, getResponsePromise);
-
-      race.then((response: GetMaterialsList) => {
-        resolve(response);
-      })
-
-      race.catch((error) => {
-        reject(error);
-      })
-    })
   }
+
+
   /**
-   * Quaries for MaterialsReceipts Data
-   * @param page page to get
-   * @param limit entries's limit
-   * @returns Observable with Http response from API gateway
+   * Gets Material Lists
+   * @param queryParams Query Class params
+   * @returns Http Response
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private get(page: number, limit: number)
+  private get(queryParams: ReadListQueryParams)
     :Observable<HttpResponse<APIGatewayResponse>> {
       const event = new MaterialsReceiptsReadListQuery(
-        this.sourceInfo);
+        this.sourceInfo,
+        queryParams.DateFrom,
+        queryParams.DateUntil,
+        queryParams.Signed,
+        queryParams.Page,
+        queryParams.Limit);
 
       return this.eventProxyService.DispatchEvent(event);
-  }
-
-  private promiseTimeout(timeoutMiliseconds: number, promise: Promise<unknown>)
-    :Promise<unknown> {
-    const timeout = new Promise((resolve, reject) => {
-      const id = setTimeout(() => {
-        clearTimeout(id);
-        reject("Timeout in " + timeoutMiliseconds);
-      }, timeoutMiliseconds);
-    })
-
-    return Promise.race([promise, timeout]);
   }
 }
