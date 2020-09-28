@@ -16,6 +16,7 @@ export class MaterialsReceiptsAPIMock {
 
     for (let index = 0; index < 10; index++) {
       const temp: MaterialsList = {
+        Id: +ProductService.generateId(),
         Number: ProductService.generateQuantity(),
         RegisterDateTime: ProductService.generateName(),
         SignMark: true,

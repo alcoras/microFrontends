@@ -140,3 +140,6 @@
 64. nginx will be the server, so remove serve in all micro frontends
 65. add solo mocks to template like in MaterialReceipts
 66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
+67. in uEvents change UserID and ParentID to UserId and ParentId, event-proxy-lib needs to change aswell
+
+68

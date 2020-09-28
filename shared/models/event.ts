@@ -37,12 +37,12 @@ export abstract class uEvent {
   /**
    * User id
    */
-  public UserId = 0;
+  public UserID = 0;
 
   /**
    * Parent id used to indicate which event launched this event
    */
-  public ParentId = 0;
+  public ParentID = 0;
 
   /**
    * Protocol version event
