@@ -10,3 +10,4 @@ export * from './Interfaces/IMicroFrontend';
 export * from './Interfaces/IPersonnel';
 
 export * from './MaterialReceipts/MaterialsList';
+export * from './MaterialReceipts/MaterialsListTablePart';

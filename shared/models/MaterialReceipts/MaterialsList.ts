@@ -1,8 +1,10 @@
 /**
  * Material List data
  */
-
  export class MaterialsList {
+
+    public Id: number;
+
     /**
      * Receipt number
      */

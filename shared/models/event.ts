@@ -37,12 +37,12 @@ export abstract class uEvent {
   /**
    * User id
    */
-  public UserID = 0;
+  public UserId = 0;
 
   /**
    * Parent id used to indicate which event launched this event
    */
-  public ParentID = 0;
+  public ParentId = 0;
 
   /**
    * Protocol version event
@@ -102,4 +102,6 @@ export enum uEventsIds {
   TokenRenewSuccessWithTokenInformation = 2030,
   MaterialsReceiptsReadListQuery = 2031,
   MaterialsReceiptsReadListResults = 2032,
+  MaterialsReceiptsTablePartReadListQuery = 2033,
+  MaterialsReceiptsTablePartReadListResults = 2034
 }

@@ -17,7 +17,7 @@ import { EventBusService } from './EventBus.service';
 @Injectable({
   providedIn: 'root'
 })
-export class MaterialReceiptsService implements IMicroFrontend {
+export class MaterialsReceiptsService implements IMicroFrontend {
 
   public SourceInfo: MicroFrontendInfo = UParts.MaterialsReceipts;
 
@@ -73,6 +73,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
             }
             break;
         case uEventsIds.MaterialsReceiptsReadListResults:
+        case uEventsIds.MaterialsReceiptsTablePartReadListResults:
             this.eventBus.EventBus.next(element);
             break;
         default:
@@ -85,6 +86,7 @@ export class MaterialReceiptsService implements IMicroFrontend {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
       [uEventsIds.MaterialsReceiptsReadListResults, 0, 0],
+      [uEventsIds.MaterialsReceiptsTablePartReadListResults, 0, 0]
     ]);
 
     e.SourceName = this.SourceInfo.SourceName;

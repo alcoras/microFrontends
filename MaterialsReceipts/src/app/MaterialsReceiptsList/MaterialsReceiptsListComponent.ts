@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { MaterialsList } from '@uf-shared-models/';
+import { MaterialsList } from '@uf-shared-models/index';
 import { LazyLoadEvent } from 'primeng/api';
 import { GetMaterialsList } from '../interfaces/GetMaterialsList';
 import { ReadListQueryParams } from '../helpers/ReadListQueryParams';
 import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
+import { EventBusService } from '../services/EventBus.service';
 
 interface IPrimeNgDate {
   firstDayOfWeek: number;
@@ -28,11 +29,11 @@ interface Category {
 }
 
 @Component({
-  selector: 'receipt-materials-table',
-  templateUrl: './Table.html',
-  styleUrls: ['./Table.scss']
+  selector: 'materials-receipts-list-table',
+  templateUrl: './View.html',
+  styleUrls: ['./Styles.scss']
 })
-export class TableComponent {
+export class MaterialsReceiptsListComponent {
 
   public DateRange: Date[];
   public UkrainianDate: IPrimeNgDate;
@@ -48,6 +49,7 @@ export class TableComponent {
   public DisplayDialog: boolean;
 
   public SelectedRecord: MaterialsList;
+  public SelectedMaterialReceiptId: number;
 
   public BarCode: string;
 
@@ -63,7 +65,9 @@ export class TableComponent {
   private currentLimit = 0;
   private currentPage = 0;
 
-  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI)
+  public constructor(
+    private eventBus: EventBusService,
+    private materialsReceiptsAPI: MaterialsReceiptsAPI)
   { }
 
   public ngOnInit(): void {
@@ -82,7 +86,7 @@ export class TableComponent {
   }
 
   public OnRowSelect(): void {
-    this.DisplayDialog = true;
+    this.eventBus.OnMaterialReceiptSelected.next();
   }
 
   public RefreshTable(): void {

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Product } from './interfaces/Product';
-import { ProductService } from './services/ProductService';
+import { EventBusService } from './services/EventBus.service';
 
 @Component({
   selector: 'app-root',
@@ -21,18 +21,24 @@ import { ProductService } from './services/ProductService';
     }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
 
-  public products: Product[] = ProductService.generateProducts(100);
-  public cols = [
-    { field: 'code', header: 'Code' },
-    { field: 'name', header: 'Name' },
-    { field: 'category', header: 'Category' },
-    { field: 'quantity', header: 'Quantity' }
-  ];
-
+  public MaterialReceiptsDataTabDisabled = true;
+  public ActiveTabIndex = 0;
   public languages = ['en', 'lt', 'ru', 'ua'];
-  public constructor(private productService: ProductService) {}
+
+  private subscriptionList = new Subscription();
+
+  public constructor(private eventBus: EventBusService) {
+    this.subscriptionList.add(this.eventBus.OnMaterialReceiptSelected.subscribe(() => {
+      this.ActiveTabIndex = 1;
+      this.MaterialReceiptsDataTabDisabled = false;
+    }));
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptionList.unsubscribe();
+  }
 
   public onLanguageSelected(languageSelected: string): void {
     environment.currentLanguage = languageSelected;

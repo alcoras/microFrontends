@@ -139,5 +139,4 @@
 63. consider adding loading indication (console or otherwise when event-proxy-lib is retries)
 64. nginx will be the server, so remove serve in all micro frontends
 65. add solo mocks to template like in MaterialReceipts
-
-66.
+66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component

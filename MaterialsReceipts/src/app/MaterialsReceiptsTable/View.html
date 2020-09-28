@@ -1,0 +1,26 @@
+<p-table
+    styleClass="p-datatable-striped"
+    [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
+    [columns]="ColumnsRelation" [value]="MaterialsListTableData"
+    [paginator]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [totalRecords]="TotalRecords">
+    <!-- selectionMode="single" (onRowSelect)="OnRowSelect()" [(selection)]="SelectedRecord"> -->
+  <!-- Headers -->
+  <ng-template pTemplate="header" let-columns>
+      <tr>
+          <th *ngFor="let col of columns">
+              {{col.header}}
+          </th>
+      </tr>
+  </ng-template>
+
+  <!-- Fields -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns">
+              {{rowData[col.field]}}
+          </td>
+      </tr>
+  </ng-template>
+</p-table>

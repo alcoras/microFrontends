@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { EnvironmentService, EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib';
 
 import { AppComponent } from './app.component';
-import { TranslatePipe } from './pipes/translate.pipe';
+import { TranslatePipe } from './pipes/TranslatePipe';
 
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -16,11 +16,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProductService } from './services/ProductService';
 import { createCustomElement } from '@angular/elements';
 
-import { MaterialReceiptsService } from './services/MaterialReceiptsService';
+import { MaterialsReceiptsService } from './services/MaterialsReceiptsService';
 import { MaterialsReceiptsAPI } from './services/MaterialsReceiptsAPI';
 import { MaterialsReceiptsAPIMock } from './services/mocks/MaterialReceiptsAPIMock';
 import { IMaterialsReceiptsAPI } from './interfaces/IMaterialsReceiptsAPI';
-import { TableComponent } from './table/TableComponent';
+import { MaterialsReceiptsListComponent } from './MaterialsReceiptsList/MaterialsReceiptsListComponent';
 import { EventBusService } from './services/EventBus.service';
 import { EnvironmentTypes } from 'src/environments/EnvironmentTypes';
 import { environment } from 'src/environments/environment';
@@ -30,7 +30,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
-
+import { MaterialsReceiptsTableComponent } from './MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
 /**
  * Materials Receipts factory
  * @param eventProxyLibService env service
@@ -68,7 +68,7 @@ const EventProxyLibFacotry =
  * @param provider Class/Service/Component to create
  * @returns Promise
  */
-function MaterialReceiptsInitializeFactory(provider: MaterialReceiptsService): Promise<void> {
+function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): Promise<void> {
   if (environment.EnvironmentTypes == EnvironmentTypes.Solo)
     return Promise.resolve();
 
@@ -83,8 +83,9 @@ function MaterialReceiptsInitializeFactory(provider: MaterialReceiptsService): P
 @NgModule({
   declarations: [
     AppComponent,
-    TableComponent,
-    TranslatePipe
+    MaterialsReceiptsListComponent,
+    TranslatePipe,
+    MaterialsReceiptsTableComponent
   ],
   imports: [
     BrowserModule,
@@ -117,7 +118,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialReceiptsService): P
     {
       provide: APP_INITIALIZER,
       useFactory: MaterialReceiptsInitializeFactory,
-      deps: [MaterialReceiptsService],
+      deps: [MaterialsReceiptsService],
       multi: false
     }
   ],
