@@ -23,6 +23,7 @@ export function retryWithBackoff(delayMs: number, maxRetry = MAX_RETRIES, backof
       mergeMap(error => {
         if (retries-- > 0) {
           const backoffTime = delayMs + (maxRetry - retries) * backoffMS;
+          console.log("backing off " + retries + " " + backoffTime);
           return of(error).pipe(delay(backoffTime));
         }
         return throwError(errorMsg(maxRetry));

@@ -1,17 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { APIGatewayResponse, EventIds, EventProxyLibService } from 'event-proxy-lib-src'
+;
 import { EventBusService } from '../services/EventBus.service';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
-import { IPersonnel, PersonDataRead, APIGatewayResponse, uEventsIds } from '@uf-shared-models/index';
 import { HttpResponse } from '@angular/common/http';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { delay, genRandomNumber, TestEvent } from './helpers/helpers';
-import { IGetResponse } from '../services/interfaces/IGetResponse';
+import { PersonData, PersonDataDTO, PersonDataRead } from '../Models/index';
 
 /**
  * Test personnel data
  */
-const newPersonnelData: IPersonnel = {
+const newPersonnelData: PersonData = {
   PersonDataID: 0,
   DateValue: new Date().toISOString(),
   DocReestratorID: genRandomNumber(100),
@@ -114,7 +114,7 @@ describe('PersonnelAPI service', () => {
     it('testing content', (done) => {
       service.Update(newPersonnelData).then(
         (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].EventId).toBe(uEventsIds.UpdatePersonData);
+          expect(res.body.Events[0].EventId).toBe(EventIds.UpdatePersonData);
           expect(res.body.Events[0].KodDRFO).toBe(newPersonnelData.KodDRFO);
           expect(res.body.Events[0].PIP).toBe(newPersonnelData.PIP);
           done();
@@ -154,7 +154,7 @@ describe('PersonnelAPI service', () => {
 
     it('get passed data, then get response', async (done) => {
       service.Get(null, 1, 1).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newPersonnelData);
           done();
@@ -175,7 +175,7 @@ describe('PersonnelAPI service', () => {
     it('get passed data many times', async (done) => {
       let resp = 0;
       service.Get(null, 1, 1).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newPersonnelData);
           resp++;
@@ -183,7 +183,7 @@ describe('PersonnelAPI service', () => {
       );
 
       service.Get(null, 1, 1).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           resp++;
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newPersonnelData);
@@ -191,7 +191,7 @@ describe('PersonnelAPI service', () => {
       );
 
       service.Get(null, 1, 1).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newPersonnelData);
           resp++;

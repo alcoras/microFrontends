@@ -1,9 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpResponse } from '@angular/common/http';
-import { IPersonnel, APIGatewayResponse } from '@uf-shared-models/index';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { EventBusService } from '../services/EventBus.service';
+import { PersonData } from '../Models/index';
+import { APIGatewayResponse } from 'event-proxy-lib-src'
+;
 
 @Component({
   selector: 'app-new-personnel',
@@ -15,7 +17,7 @@ export class NewPersonnelComponent {
   public constructor(
     private apiService: PersonnelAPIService,
     public dialogRef: MatDialogRef<NewPersonnelComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IPersonnel,
+    @Inject(MAT_DIALOG_DATA) public data: PersonData,
     private eventBus: EventBusService) { }
 
 

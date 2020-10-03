@@ -1,5 +1,8 @@
+import { EnvironmentTypes } from 'event-proxy-lib-src'
+;
+
 export const environment = {
-  production: false,
+  EnvironmentTypes: EnvironmentTypes.Production,
 
   currentLanguage: 'en',
 
@@ -14,4 +17,4 @@ export const environment = {
   authToken : null,
   tokenBeginDate : null,
   tokenExpirationDate : null,
-}
+};

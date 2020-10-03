@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { MaterialsListTablePart } from '@uf-shared-models/index';
+import { MaterialsListTablePart, MaterialsTableListDTO } from '../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
-import { GetMaterialsTableList } from '../interfaces/GetMaterialsTableList';
 import { MaterialsReceiptsAPI } from '../services/MaterialsReceiptsAPI';
 
 @Component({
@@ -54,7 +53,7 @@ export class MaterialsReceiptsTableComponent {
     const res = this.materialsReceiptsAPI
        .GetMaterialsReceiptsTable(this.MaterialsReceiptId, page, limit);
 
-    res.then( (data: GetMaterialsTableList) => {
+    res.then( (data: MaterialsTableListDTO) => {
       this.MaterialsListTableData = data.Items;
       this.TotalRecords = data.Total;
       this.Loading = false;

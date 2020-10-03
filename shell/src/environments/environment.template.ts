@@ -17,7 +17,7 @@ export const environment = {
   tokenExpirationDate : null,
 
   microfrontendConfigPathList : [
-    'menu/en/scripts/conf.js',            // Menu
+    'menu/scripts/conf.js',            // Menu
     'personnel/scripts/conf.js',     // Personnel
     'occupations/scripts/conf.js',     // Occupation
     'materialReceipts/scripts/conf.js',     // MaterialReceipts

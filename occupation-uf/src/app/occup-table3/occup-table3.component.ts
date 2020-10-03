@@ -5,10 +5,10 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { OccupationData } from '@uf-shared-models/';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
-import { IGetResponse } from '../services/interfaces/IGetResponse';
+import { OccupationDataDTO } from '../Models/DTOs/OccupationDataDTO';
 import { EventBusService } from '../services/EventBus.service';
+import { OccupationData } from '../Models/OccupationData';
 
 @Component({
   selector: 'app-occup-table3',
@@ -148,7 +148,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
 
           return await this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
-        map((data: IGetResponse) => {
+        map((data: OccupationDataDTO) => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
           this.ResultsLength = data.total;

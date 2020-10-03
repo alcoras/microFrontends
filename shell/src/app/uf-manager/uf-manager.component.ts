@@ -1,20 +1,25 @@
 import { Injectable } from '@angular/core';
-import { uEventsIds, uEvent, UParts, EventResponse, MicroFrontendInfo } from '@uf-shared-models/index';
-import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
 import {
+  EventProxyLibService,
+  EnvironmentService,
+  ResponseStatus,
   SubscibeToEvent,
+  CoreEvent,
   RequestToLoadScripts,
   LoadedResource,
   LanguageChange,
-  InitializeMenuEvent } from '@uf-shared-events/index';
+  InitializeMenuEvent,
+  MicroFrontendParts,
+  MicroFrontendInfo,
+  EnvironmentTypes,
+  EventIds } from 'event-proxy-lib-src'
+;
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';
-import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '../services/AuthenticationService';
 import { LoginRequest } from '../models/LoginRequest';
 import { environment } from 'src/environments/environment';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -25,7 +30,7 @@ import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStat
 })
 export class UFManagerComponent {
 
-  public SourceInfo: MicroFrontendInfo = UParts.FrontendShell;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.FrontendShell;
 
   /**
    * Resources dictionary to account which micro frontend is loaded
@@ -55,7 +60,17 @@ export class UFManagerComponent {
    */
   public async InitAsync(): Promise<void> {
 
-    if (environment.enableLogin) {
+    // We confirm all events because otherwise upon errors from other microservices, we start to accumulate
+    // unconfirmed events, because shell subscribe to them aswell
+    // It's fine because no one should call shell, as it's an entry point
+    await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [], true).toPromise().then(
+      () => { console.log(`${this.SourceInfo.SourceName} events are preconfirmed`)},
+      () => { throw new Error('Failed to confirm events'); }
+    );
+
+    // only in development and above (staging, prod)
+    // we should not login in isolated regimes
+    if (environment.EnvironmentTypes <= EnvironmentTypes.Development && environment.enableLogin) {
       await this.authService.LoginAsync().then(
         () => { console.log('Logged In.')},
         (error: LoginRequest) => {
@@ -67,7 +82,8 @@ export class UFManagerComponent {
 
     await this.preloadScripts().then(
       () => { console.log(`${this.SourceInfo.SourceName} preloadedScripts done. `)},
-      () => { throw new Error('Failed to load scripts'); } );
+      () => { throw new Error('Failed to load scripts'); }
+    );
 
     await this.subscribeToEventsAsync().then(
       () => { console.log(`${this.SourceInfo.SourceName} subscribeToEventsAsync done.`)}
@@ -83,32 +99,22 @@ export class UFManagerComponent {
   }
 
   /**
-   * Starts qna with backend
+   * Initialize Connection to backend (API gateway)
    */
-  public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
+  public InitializeConnectionWithBackend(): void {
+
+    this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
       (response: ResponseStatus) => {
-        this.newHttpResponseAsync(response.HttpResult);
+        if (this.eventProxyService.PerformResponseCheck(response)) {
+          this.parseNewEventAsync(response.HttpResult.body.Events);
+        }
       },
-      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
+      (error: ResponseStatus) => {
+        this.eventProxyService.EndListeningToBackend();
+        throw new Error(error.Error);
+      }
     );
-  }
 
-
-  private async newHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) { throw new Error('Can\'t connect to backend'); }
-
-    if (!response.body) { return; }
-
-    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
-      throw new Error('No EventId in message');
-    }
-
-    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-      this.parseNewEventAsync(response.body.Events);
-    } else if (response.body['EventId'] === uEventsIds.TokenFailure ) {
-      throw new Error('Token failure');
-    }
   }
 
   /**
@@ -123,7 +129,11 @@ export class UFManagerComponent {
       throw new Error('Url is not defined in environment');
     }
 
-    const urlList = this.environmentService.ConfigUrlList;
+    // only in development and above (staging, prod)
+    // we load other micro frontends
+    let urlList = [];
+    if (environment.EnvironmentTypes <= EnvironmentTypes.Development)
+      urlList = this.environmentService.ConfigUrlList;
 
     if (urlList.length == 0) {
       console.warn('Config list is not defined in environment');
@@ -151,10 +161,10 @@ export class UFManagerComponent {
    */
   private subscribeToEventsAsync(): Promise<ResponseStatus> {
     const e = new SubscibeToEvent(this.SourceInfo.SourceId, [
-      [uEventsIds.LoadedResource, 0, 0],
-      [uEventsIds.RequestToLoadScript, 0, 0],
-      [uEventsIds.LanguageChange, 0, 0],
-      [uEventsIds.InitMenu, 0, 0],
+      [EventIds.LoadedResource, 0, 0],
+      [EventIds.RequestToLoadScript, 0, 0],
+      [EventIds.LanguageChange, 0, 0],
+      [EventIds.InitMenu, 0, 0],
     ]);
     e.SourceName = this.SourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e).toPromise();
@@ -166,7 +176,7 @@ export class UFManagerComponent {
    * event with request to load resources for that micro frontend.
    * @param eventList - Event array
    */
-  private async parseNewEventAsync(eventList: uEvent[]): Promise<void> {
+  private async parseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
 
       console.log(`${this.SourceInfo.SourceId} Parsing event:`, element);
@@ -174,7 +184,7 @@ export class UFManagerComponent {
       const ufConfigs = window['__env']['uf'];
 
       // check if event is LoadedResource
-      if (element.EventId === uEventsIds.LoadedResource) {
+      if (element.EventId === EventIds.LoadedResource) {
         const el: LoadedResource = element as LoadedResource;
 
         for (const config in ufConfigs) {
@@ -185,13 +195,13 @@ export class UFManagerComponent {
           }
         }
       }
-      else if (element.EventId === uEventsIds.RequestToLoadScript) {
-        const event: RequestToLoadScripts  = element as RequestToLoadScripts;
+      else if (element.EventId === EventIds.RequestToLoadScript) {
+        const event: RequestToLoadScripts = element as RequestToLoadScripts;
         this.loadResourcesEvent(event);
         await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
-      else if (element.EventId === uEventsIds.LanguageChange) {
-        const event: LanguageChange  = element as LanguageChange;
+      else if (element.EventId === EventIds.LanguageChange) {
+        const event: LanguageChange = element as LanguageChange;
         this.changeLanguageEvent(event);
         await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
@@ -206,7 +216,8 @@ export class UFManagerComponent {
 
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEvents(
+              this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           }
         }
       }
@@ -236,9 +247,9 @@ export class UFManagerComponent {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private subscribeMicroFrontends(): Promise<ResponseStatus[]> {
+  private subscribeMicroFrontends(): Promise<ResponseStatus> {
 
-    const promises: Promise<ResponseStatus>[] = [];
+    const subscribeEventsList: SubscibeToEvent[] = [];
 
     const dic = window['__env']['uf'];
     for (const key in dic) {
@@ -251,15 +262,18 @@ export class UFManagerComponent {
 
         // Subscribe designated micro frontend
         let event = new SubscibeToEvent(key, subList);
-        event.SourceName = UParts.GetSourceNameFromSourceID(event.SourceId);
-        promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
+        event.SourceName = MicroFrontendParts.GetSourceNameFromSourceID(event.SourceId);
+        subscribeEventsList.push(event);
+        // promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(this.SourceInfo.SourceId, subList);
         event.SourceName = this.SourceInfo.SourceName;
-        promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
+        subscribeEventsList.push(event);
+        // promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
       }
     }
-    return Promise.all(promises);
+    const promise = this.eventProxyService.DispatchEvent(subscribeEventsList).toPromise();
+    return Promise.resolve(promise);
   }
 }

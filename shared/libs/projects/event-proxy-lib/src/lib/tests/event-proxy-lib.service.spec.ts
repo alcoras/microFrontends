@@ -2,13 +2,12 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
-import { ResponseStatus } from "../ResponseStatus";
+import { ResponseStatus } from "../models/ResponseStatus";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { uEventsIds, uEvent } from '../models/event';
+import { EventIds, CoreEvent, EventResponse, ErrorMessage } from '../models/index';
 import { HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
-import { ErrorMessage } from '../Errors';
 
 /**
  * Returns promise after ms
@@ -35,12 +34,10 @@ window[envPrefix].url = 'http://' + backendURL;
 window[envPrefix].apiGatewayUrl = window[envPrefix].url;
 window[envPrefix].apiGatewayPort = backendPort;
 
-class TestEvent extends uEvent {
+class TestEvent extends CoreEvent {
 
 }
-/* tslint:enable */
 
-// tslint:disable-next-line: no-big-function
 describe('EventProxyLibService', () => {
   let service: EventProxyLibService;
   let httpTestingController: HttpTestingController;
@@ -62,113 +59,72 @@ describe('EventProxyLibService', () => {
     httpTestingController.verify();
   });
 
-  describe('InitializeConnectionToBackend', () => {
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
-      return Promise.resolve();
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function responseCheckMock(responseStatus: ResponseStatus): boolean {
-      return responseStatus.Failed;
-    }
-
-    it('StartQNA should be called', () => {
-      const spy = spyOn(service, 'StartQNA').and.callThrough();
-
-      service.InitializeConnectionToBackend('testSource',
-        eventParserMockAsync, responseCheckMock);
-
-      const req = httpTestingController.expectOne(URL);
-
-      expect(spy).toHaveBeenCalled();
-
-      req.flush('');
-    });
-
-    it('passed events to provided function', async (done) => {
-      const eventId = 2020;
-      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
-        expect([].concat(eventList)[0].EventId).toEqual(eventId);
-        service.EndListeningToBackend();
-        done();
-        return Promise.resolve();
-      }
-
-      const events = {
-        'EventId' : 2008,
-        'Events': {'EventId': eventId}
-      }
-      const tempStatus: ResponseStatus = {
-        Failed: true,
-        Error: '',
-        HttpResult: new HttpResponse({status: 200, body: events})
-      };
-
-      spyOn(service, 'GetLastEvents')
-      .and
-      .returnValue(of(tempStatus));
-
-      service.InitializeConnectionToBackend('t',
-      localEventParserMockAsync, responseCheckMock);
-    });
-
-    it('does not fail if body is empty and does not call event parser', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      function localEventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
-        fail();
-        return Promise.resolve();
-      }
-
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200});
-
-      const spy = spyOn(service, 'GetLastEvents')
-        .and
-        .returnValue(of(tempStatus));
-
-      service.InitializeConnectionToBackend('test',
-        localEventParserMockAsync, responseCheckMock);
-
-      expect(spy).toHaveBeenCalled();
-    });
+  describe('PerformResponseCheck', () => {
 
     it('fail if unregonized event id', () => {
+      const testEvent = new TestEvent();
+
+      const events: EventResponse = {
+        'EventId' : 4987997879,
+        'Events': [ testEvent ]
+      }
+
       const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200, body:
-        { EventId: 'akunamatata'}});
+      tempStatus.HttpResult = new HttpResponse(
+        {status: 200, body: events});
 
       expect(() => service.PerformResponseCheck(tempStatus))
       .toThrowError(ErrorMessage.UnrecognizedEventId);
     });
 
     it('fail if token Failure', () => {
+      const testEvent = new TestEvent();
+
+      const events: EventResponse = {
+        'EventId' : EventIds.TokenFailure,
+        'Events': [ testEvent ]
+      }
+
       const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200, body:
-        { EventId: uEventsIds.TokenFailure}});
+      tempStatus.HttpResult = new HttpResponse(
+        {status: 200, body: events});
 
       expect(() => service.PerformResponseCheck(tempStatus))
       .toThrowError(ErrorMessage.TokenFailure);
     });
-
-    it('fail if EventId is not provided', () => {
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200, body: { 'gg': 'gg'}});
-
-      expect(() => service.PerformResponseCheck(tempStatus))
-      .toThrowError(ErrorMessage.NoEventId);
-    });
-
   });
 
-  describe('StartQNA', () => {
+  describe('InitializeConnectionToBackend', () => {
 
     it('on init status should be false', () => {
       expect(service.Status).toBeFalse();
     });
 
-    it('on StartQNA status should be true', (done) => {
+    it('testing sendMessage fail states', async (done) => {
+      const eventProxyLibService = TestBed.inject(EventProxyLibService);
+      eventProxyLibService.Timeout = 10;
+      eventProxyLibService.DelayMs = 0;
+      eventProxyLibService.BackOffMS = 0;
+      eventProxyLibService.Retries = 0;
+
+      const url = "http://akunamatata";
+      eventProxyLibService.ApiGatewayURL = url;
+      eventProxyLibService.InitializeConnectionToBackend(TestSourceId).subscribe(
+        // we should fail by connecting nowhere
+        () => {
+          fail();
+        },
+        (error: ResponseStatus) => {
+          expect(error.Failed).toBeTrue();
+          done();
+        }
+      );
+
+      const req = httpTestingController.expectOne(url + "/newEvents");
+      req.error(new ErrorEvent("gg"));
+    });
+
+    it('on InitializeConnectionToBackend status should be true', (done) => {
 
       const tempStatus = new ResponseStatus();
       tempStatus.HttpResult = new HttpResponse({status: 200});
@@ -177,7 +133,7 @@ describe('EventProxyLibService', () => {
         .and
         .returnValue(of(tempStatus));
 
-      service.StartQNA(TestSourceId).subscribe(
+      service.InitializeConnectionToBackend(TestSourceId).subscribe(
         () => {
           expect(service.Status).toBeTrue();
           service.EndListeningToBackend();
@@ -203,7 +159,7 @@ describe('EventProxyLibService', () => {
         .and
         .callFake(() => fakeGetLastEvents());
 
-      service.StartQNA(TestSourceId).subscribe(
+      service.InitializeConnectionToBackend(TestSourceId).subscribe(
         () => {
           service.EndListeningToBackend();
           expect(service.Status).toBeFalse();
@@ -246,7 +202,7 @@ describe('EventProxyLibService', () => {
         .and
         .callFake(() => fakeGetLastEvents());
 
-      service.StartQNA(TestSourceId).subscribe(
+      service.InitializeConnectionToBackend(TestSourceId).subscribe(
         () => {
           parseAsync();
           requestsParsed++;
@@ -263,14 +219,14 @@ describe('EventProxyLibService', () => {
       done();
     });
 
-    it('testing StartQNA', async (done) => {
+    it('testing InitializeConnectionToBackend', async (done) => {
       const tempStatus = new ResponseStatus();
       tempStatus.HttpResult = new HttpResponse({status: 200});
       const getLastEventsSpy = spyOn(service, 'GetLastEvents')
         .and
         .returnValue( of (tempStatus) );
 
-      service.StartQNA(TestSourceId).subscribe(
+      service.InitializeConnectionToBackend(TestSourceId).subscribe(
         (res) => {
           expect(res.HttpResult.status).toBe(200);
           service.EndListeningToBackend();
@@ -310,6 +266,7 @@ describe('EventProxyLibService', () => {
       expect(req.request.method).toEqual('POST');
 
       req.flush('');
+
     });
 
     it('testing headers', () => {
@@ -328,8 +285,8 @@ describe('EventProxyLibService', () => {
 
     it('testing content MarkAllReceived=true Ids:[] ', () => {
       const testBody = {
-        EventID: uEventsIds.FrontEndEventReceived,
-        SourceID: TestSourceId,
+        EventId: EventIds.FrontEndEventReceived,
+        SourceId: TestSourceId,
         Ids: [],
         MarkAllReceived: true,
         Token: undefined
@@ -349,8 +306,8 @@ describe('EventProxyLibService', () => {
 
     it('testing content MarkAllReceived=false Ids:[10, 20] ', () => {
       const testBody = {
-        EventID: uEventsIds.FrontEndEventReceived,
-        SourceID: TestSourceId,
+        EventId: EventIds.FrontEndEventReceived,
+        SourceId: TestSourceId,
         Ids: [10, 20, 30],
         MarkAllReceived: false,
         Token: undefined
@@ -374,8 +331,8 @@ describe('EventProxyLibService', () => {
     it('sending one event ', () => {
 
       const testBody = {
-        EventID: uEventsIds.RegisterNewEvent,
-        events: [new TestEvent()],
+        EventId: EventIds.RegisterNewEvent,
+        Events: [new TestEvent()],
         Token: undefined
       };
 
@@ -394,8 +351,8 @@ describe('EventProxyLibService', () => {
     it('sending many events', () => {
 
       const testBody = {
-        EventID: uEventsIds.RegisterNewEvent,
-        events: [new TestEvent(), new TestEvent(), new TestEvent() ],
+        EventId: EventIds.RegisterNewEvent,
+        Events: [new TestEvent(), new TestEvent(), new TestEvent() ],
         Token: undefined
       };
 
@@ -416,7 +373,7 @@ describe('EventProxyLibService', () => {
   describe('GetLastEvents', () => {
 
     const testBody = {
-      EventID: uEventsIds.GetNewEvents,
+      EventId: EventIds.GetNewEvents,
       SourceId: TestSourceId,
       Token: undefined
     };

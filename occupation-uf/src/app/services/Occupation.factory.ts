@@ -8,7 +8,7 @@ import { OccupationService } from './Occupation.service';
 export function OccupationServiceFactory(provider: OccupationService): Promise<void> {
   return new Promise( (res) => {
     provider.InitAsync().then( () => {
-      provider.StartQNA();
+      provider.InitializeConnectionWithBackend();
       res();
     });
   });

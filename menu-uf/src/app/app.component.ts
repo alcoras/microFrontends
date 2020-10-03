@@ -1,8 +1,15 @@
 import { Component } from '@angular/core';
-import { uEventsIds, UParts } from '@uf-shared-models/index';
-import { EventButtonPressed, LanguageChange } from '@uf-shared-events/index';
-import { EventProxyLibService, EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
-import { environment } from '../environments/environment'
+import {
+  EventProxyLibService,
+  EnvironmentService,
+  MicroFrontendParts,
+  LanguageChange,
+  EventButtonPressed,
+  EnvironmentTypes,
+  EventIds} from 'event-proxy-lib-src'
+;
+
+import { environment } from 'src/environments/environment';
 
 interface ISelector {
   value: string;
@@ -26,8 +33,8 @@ export class AppComponent {
 
   public langs: ISelector[];
   public selectedLang: string;
-  private sourceId: string = UParts.Menu.SourceId;
-  private sourceName: string = UParts.Menu.SourceName;
+  private sourceId: string = MicroFrontendParts.Menu.SourceId;
+  private sourceName: string = MicroFrontendParts.Menu.SourceName;
 
   private placement: { [id: number]: IUFState } = {};
 
@@ -84,8 +91,12 @@ export class AppComponent {
    *  Prepares theme and language
    */
   private prepareThemeAndLang(): void {
-    const port = environment.microFrontendPort;
-    const url = `${this.environmentService.Url}:${port}/en/`;
+    let url = '';
+    // only in development and above (staging, prod) additional path needs to be added
+    // so nginx can take care of redirections
+    if (environment.EnvironmentTypes <= EnvironmentTypes.Development)
+      url = `menu/`;
+
     this.themes = [
       { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
       { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
@@ -107,11 +118,19 @@ export class AppComponent {
    * which html element should they use
    */
   private preparePlacements(): void {
-    this.placement[uEventsIds.PersonnelButtonPressed] = { elementId: 'personnel', loaded: false };
-    this.placement[uEventsIds.OccupationNg9ButtonPressed] = { elementId: 'occupationsNg9', loaded: false };
-    this.placement[uEventsIds.ObserverButtonPressed] = { elementId: 'observer', loaded: false };
-    this.placement[uEventsIds.MaterialsReceiptsButtonPressed] = { elementId: 'materialReceipts', loaded: false };
-    // this.placement[uEventsIds.<project_name>ButtonPressed] = { elementId: '<project_name>', loaded: false };
+    this.placement[EventIds.PersonnelButtonPressed] =
+      { elementId: 'personnel', loaded: false };
+
+    this.placement[EventIds.OccupationNg9ButtonPressed] =
+      { elementId: 'occupationsNg9', loaded: false };
+
+    this.placement[EventIds.ObserverButtonPressed] =
+      { elementId: 'observer', loaded: false };
+
+    this.placement[EventIds.MaterialsReceiptsButtonPressed] =
+      { elementId: 'materialReceipts', loaded: false };
+    // this.placement[EventIds.<project_name>ButtonPressed] =
+    // { elementId: '<project_name>', loaded: false };
   }
 
   private getElFromID(id: number): IUFState {

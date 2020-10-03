@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
 
-import { EventProxyLibService } from 'event-proxy-lib';
 import {
+  EventProxyLibService,
+  SubscibeToEvent,
+  CoreEvent,
+  ResponseStatus,
   IMicroFrontend,
-  UParts,
-  uEventsIds,
-  EventResponse,
-  APIGatewayResponse,
-  uEvent,
-  MicroFrontendInfo } from '@uf-shared-models/index';
+  EventButtonPressed,
+  MicroFrontendInfo,
+  MicroFrontendParts,
+  EventIds} from 'event-proxy-lib-src'
+;
 
-import { SubscibeToEvent, EventButtonPressed } from '@uf-shared-events/index';
 import { EventBusService } from './EventBus.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ import { EventBusService } from './EventBus.service';
 })
 export class MaterialsReceiptsService implements IMicroFrontend {
 
-  public SourceInfo: MicroFrontendInfo = UParts.MaterialsReceipts;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.MaterialsReceipts;
 
   /**
    * Element to place dictionary
@@ -35,58 +35,53 @@ export class MaterialsReceiptsService implements IMicroFrontend {
     this.preparePlacements();
   }
 
-  public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
-      (response: HttpResponse<EventResponse>) => {
-        this.NewHttpResponseAsync(response);
+  /**
+   * Initialize Connection to backend (API gateway)
+   */
+  public InitializeConnectionWithBackend(): void {
+
+    this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
+      (response: ResponseStatus) => {
+        if (this.eventProxyService.PerformResponseCheck(response)) {
+          this.ParseNewEventAsync(response.HttpResult.body.Events);
+        }
       },
-      (error) => { console.error(this.SourceInfo.SourceName, error); },
+      (error: ResponseStatus) => {
+        this.eventProxyService.EndListeningToBackend();
+        throw new Error(error.Error);
+      }
     );
+
   }
 
-  public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) { throw new Error('Can\'t connect to backend'); }
-
-    if (!response.body) { return; }
-
-    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
-      throw new Error('No EventId in message');
-    }
-
-    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-      this.ParseNewEventAsync(response.body.Events);
-    } else {
-      console.error(response);
-      throw new Error('EventId is not recognized');
-    }
-  }
-
-  public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
-    for (const element of eventList) {
-      switch (element.EventId) {
-        case uEventsIds.MaterialsReceiptsButtonPressed:
-            if (this.processButtonPressed(element)) {
-              await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
-            } else {
-              console.error(element);
-              throw new Error('Did not proccess after processButtonPressed');
-            }
-            break;
-        case uEventsIds.MaterialsReceiptsReadListResults:
-        case uEventsIds.MaterialsReceiptsTablePartReadListResults:
-            this.eventBus.EventBus.next(element);
-            break;
+  public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
+    for (const event of eventList) {
+      switch (event.EventId) {
+        case EventIds.MaterialsReceiptsButtonPressed:
+          if (this.processButtonPressed(event)) {
+            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+          } else {
+            console.error(event);
+            throw new Error('Did not proccess after processButtonPressed');
+          }
+          break;
+        case EventIds.MaterialsReceiptsReadListResults:
+        case EventIds.MaterialsReceiptsTablePartReadListResults:
+          await this.eventProxyService.ConfirmEvents(
+            this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+          this.eventBus.EventBus.next(event);
+          break;
         default:
-            throw new Error(`Event ${element.EventId} not implemented.`);
+          throw new Error(`Event ${event.EventId} not implemented.`);
       }
     }
   }
 
-  public SubscribeToEventsAsync():  Promise<HttpResponse<APIGatewayResponse>> {
+  public SubscribeToEventsAsync(): Promise<ResponseStatus> {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
-      [uEventsIds.MaterialsReceiptsReadListResults, 0, 0],
-      [uEventsIds.MaterialsReceiptsTablePartReadListResults, 0, 0]
+      [EventIds.MaterialsReceiptsReadListResults, 0, 0],
+      [EventIds.MaterialsReceiptsTablePartReadListResults, 0, 0]
     ]);
 
     e.SourceName = this.SourceInfo.SourceName;
@@ -99,11 +94,11 @@ export class MaterialsReceiptsService implements IMicroFrontend {
    * @param element EventButtonPressed
    * @returns True if successful
    */
-  private processButtonPressed(element: uEvent): boolean {
+  private processButtonPressed(element: CoreEvent): boolean {
     const e = element as EventButtonPressed;
 
     switch (e.EventId) {
-      case uEventsIds.MaterialsReceiptsButtonPressed:
+      case EventIds.MaterialsReceiptsButtonPressed:
         if (e.UniqueElementId) {
           this.putToElement(e.UniqueElementId, this.getElFromID(element.EventId));
           return true;
@@ -118,7 +113,8 @@ export class MaterialsReceiptsService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[uEventsIds.MaterialsReceiptsButtonPressed] = '<material-receipts></material-receipts>';
+    this.elToPlace[EventIds.MaterialsReceiptsButtonPressed] =
+      '<material-receipts></material-receipts>';
   }
 
   /**

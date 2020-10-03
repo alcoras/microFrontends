@@ -4,7 +4,7 @@ import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
+import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
 
 import { AppComponent } from './app.component';
 

@@ -1,17 +1,26 @@
-import { HttpResponse, } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
+
+import {
+  EventProxyLibService,
+  ResponseStatus,
+  APIGatewayResponse,
+  MicroFrontendParts
+} from 'event-proxy-lib-src';
+
+import {
+  OccupationData,
+  OccupationDataDTO } from '../Models/index';
+
 import { EventBusService } from './EventBus.service';
-import { APIGatewayResponse, UParts, OccupationData } from '@uf-shared-models/index';
 import {
   OccupationsDeleteEvent,
   OccupationsCreateUpdate,
   OccupationCreateUpdateFlag,
   OccupationsReadQuery,
-  OccupationsReadResults } from '@uf-shared-events/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
-import { IGetResponse } from './interfaces/IGetResponse';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+  OccupationsReadResults } from '../Models/BackendEvents/index';
+
 
 /**
  * Occupation API service for CRUD operations
@@ -21,17 +30,7 @@ import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStat
 })
 export class OccupationAPIService {
 
-  /**
-   * Source id of occupation microfrontend
-   */
-  private sourceId = UParts.Occupations.SourceId;
-
-  /**
-   * Source name of occupation microfrontend
-   */
-  private sourceName = UParts.Occupations.SourceName;
-
-  private timeoutForRequestsInMiliseconds = 5000;
+  private sourceInfo = MicroFrontendParts.Occupations;
 
   public constructor(
     private eventProxyService: EventProxyLibService,
@@ -97,13 +96,12 @@ export class OccupationAPIService {
    * @param pageSize entries' limit
    * @returns Promise with response
    */
-  // TODO: add reject and timeout
-  public Get(page: number, pageSize: number): Promise<unknown> {
+  public Get(page: number, pageSize: number): Promise<OccupationDataDTO> {
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
 
-    const getResponsePromise = new Promise<IGetResponse>(
+    return new Promise<OccupationDataDTO>(
       (resolve, reject) => {
         this.get(page, pageSize).toPromise().then( (response: ResponseStatus) => {
           if (response.HttpResult.status !== 200) {
@@ -117,7 +115,6 @@ export class OccupationAPIService {
           this.eventBusService.EventBus.subscribe(
             async (data: OccupationsReadResults) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                await this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.OccupationDataList,
                   total: data.TotalRecordsAmount
@@ -130,17 +127,6 @@ export class OccupationAPIService {
       }
     );
 
-    return new Promise((resolve, reject) => {
-      const race = this.promiseTimeout(this.timeoutForRequestsInMiliseconds, getResponsePromise);
-
-      race.then((response) => {
-        resolve(response);
-      })
-
-      race.catch((error) => {
-        reject(error);
-      })
-    })
   }
 
   /**
@@ -151,8 +137,8 @@ export class OccupationAPIService {
    * @returns Observable with Http response
    */
   private get(page: number, pageSize: number): Observable<ResponseStatus> {
-    const e = new OccupationsReadQuery(this.sourceId, new Date().toISOString(), page, pageSize);
-    e.SourceName = this.sourceName;
+    const e = new OccupationsReadQuery(this.sourceInfo.SourceId, new Date().toISOString(), page, pageSize);
+    e.SourceName = this.sourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e);
   }
 
@@ -163,12 +149,12 @@ export class OccupationAPIService {
    */
   private update(occupationData: OccupationData): Observable<ResponseStatus> {
     const e = new OccupationsCreateUpdate(
-      this.sourceId,
+      this.sourceInfo.SourceId,
       OccupationCreateUpdateFlag.Update,
       new Date().toISOString(),
       occupationData);
 
-    e.SourceName = this.sourceName;
+    e.SourceName = this.sourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e);
   }
 
@@ -180,12 +166,12 @@ export class OccupationAPIService {
   private create(occupationData: OccupationData): Observable<ResponseStatus> {
     occupationData.DocReestratorId = 1; // TODO: for Demo purpose
     const e = new OccupationsCreateUpdate(
-      this.sourceId,
+      this.sourceInfo.SourceId,
       OccupationCreateUpdateFlag.Create,
       new Date().toISOString(),
       occupationData);
 
-    e.SourceName = this.sourceName;
+    e.SourceName = this.sourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e);
   }
 
@@ -195,25 +181,8 @@ export class OccupationAPIService {
    * @returns Observable with HttpResponse
    */
   private delete(id: number): Observable<ResponseStatus> {
-    const e = new OccupationsDeleteEvent(this.sourceId, id);
-    e.SourceName = this.sourceName;
+    const e = new OccupationsDeleteEvent(this.sourceInfo.SourceId, id);
+    e.SourceName = this.sourceInfo.SourceName;
     return this.eventProxyService.DispatchEvent(e);
-  }
-
-  /**
-   * sets a race against a promise
-   * @param timeoutMiliseconds miliseconds before error
-   * @param promise promise to race against
-   * @returns Timeout or finished promise
-   */
-  private promiseTimeout(timeoutMiliseconds: number, promise: Promise<unknown>): Promise<unknown> {
-    const timeout = new Promise((resolve, reject) => {
-      const id = setTimeout(() => {
-        clearTimeout(id);
-        reject("Timeout in " + timeoutMiliseconds);
-      }, timeoutMiliseconds);
-    })
-
-    return Promise.race([promise, timeout]);
   }
 }

@@ -1,6 +1,8 @@
-export const environment = {
-  production: false,
+import { EnvironmentTypes } from 'event-proxy-lib-src'
+;
 
+export const environment = {
+  EnvironmentTypes: EnvironmentTypes.Isolated,
   currentLanguage: 'en',
 
   oneLanguage: false,
@@ -8,7 +10,7 @@ export const environment = {
   defaultLanguage: 'en',
   url: 'http://localhost',
   apiGatewayUrl : 'http://localhost',
-  apiGatewayPort : '8001',
+  apiGatewayPort : '7001',
 
   loggedIn : false,
   authToken : null,

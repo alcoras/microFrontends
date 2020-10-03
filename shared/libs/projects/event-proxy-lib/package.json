@@ -1,14 +1,15 @@
 {
   "name": "event-proxy-lib",
+  "version": "2.1.0",
   "scripts": {
+    "build": "ng build --prod",
     "test-once": "ng test --watch=false --browsers=ChromeHeadless --codeCoverage=true"
   },
-  "version": "1.1.2",
   "peerDependencies": {
     "@angular/common": "^9.0.5",
     "@angular/core": "^9.0.5"
   },
   "devDependencies": {
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.1"
   }
 }

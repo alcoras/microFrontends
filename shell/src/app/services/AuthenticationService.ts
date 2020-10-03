@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import Web3 from 'web3';
 import * as Eth from 'ethjs';
-import { EnvironmentService, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { LoginSuccess } from '@uf-shared-events/';
-import { uEventsIds } from '@uf-shared-models/event';
+import {
+  CoreEvent,
+  EnvironmentService,
+  EventIds,
+  EventProxyLibService,
+  LoginSuccess,
+  ResponseStatus } from 'event-proxy-lib-src'
+;
 import { LoginRequest } from '../models/LoginRequest';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
-import { uEvent } from '@uf-shared-libs/event-proxy-lib/lib/models/event';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];
@@ -63,11 +66,11 @@ export class AuthenticationService {
 
           const response = responseStatus.HttpResult.body as LoginSuccess;
 
-          if (response.EventId === uEventsIds.LoginFailed) {
+          if (response.EventId === EventIds.LoginFailed) {
             loginRequest.Error = 'Failed to login';
             loginRequest.FullError = 'Failed to login';
             return reject(loginRequest);
-          } else if (response.EventId === uEventsIds.LoginSuccessWithTokenInformation) {
+          } else if (response.EventId === EventIds.LoginSuccessWithTokenInformation) {
             this.setSession(response);
             resolve(loginRequest);
           } else {
@@ -102,11 +105,11 @@ export class AuthenticationService {
             reject("Failed to communicate with backend");
           }
 
-          const response = responseStatus.HttpResult.body as uEvent;
+          const response = responseStatus.HttpResult.body as CoreEvent;
 
-          if (response.EventId === uEventsIds.LoginFailed) {
+          if (response.EventId === EventIds.LoginFailed) {
             reject('Failed to login');
-          } else if (response.EventId === uEventsIds.TokenRenewSuccessWithTokenInformation) {
+          } else if (response.EventId === EventIds.TokenRenewSuccessWithTokenInformation) {
             const login = response as LoginSuccess;
             this.setUpcomingSession(login);
             resolve("");

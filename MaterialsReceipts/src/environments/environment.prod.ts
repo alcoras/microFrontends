@@ -1,4 +1,5 @@
-import { EnvironmentTypes } from "./EnvironmentTypes";
+import { EnvironmentTypes } from 'event-proxy-lib-src'
+;
 
 export const environment = {
   EnvironmentTypes: EnvironmentTypes.Production,

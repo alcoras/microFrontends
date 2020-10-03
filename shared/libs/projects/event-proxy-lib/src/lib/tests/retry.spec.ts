@@ -1,13 +1,13 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
-import { ResponseStatus } from "../ResponseStatus";
+import { ResponseStatus } from "../models/ResponseStatus";
 import { EnvironmentService } from '../services/EnvironmentService';
-import { uEvent } from '../models/event';
+import { CoreEvent } from '../models/CoreEvent';
 import { retryWithBackoff, errorMsg } from '../retry/retry.pipe';
 import { timeout } from 'rxjs/operators';
 
-class TestEvent extends uEvent {
+class TestEvent extends CoreEvent {
 
 }
 
@@ -30,7 +30,7 @@ describe('rety with Backoff', () => {
     }
   );
 
-  it('retry with backoff withing httpclient', async (done) => {
+  it('retry with backoff within httpclient', async (done) => {
     const retries = 2;
     const spy = spyOn(httpClient, 'post').and.callThrough();
 
@@ -48,7 +48,7 @@ describe('rety with Backoff', () => {
     })
   });
 
-  it('Retry with backoff withing event proxy lib', async (done) => {
+  it('Retry with backoff within event proxy lib', async (done) => {
     const retries = 2;
 
     eventProxyLibService.Timeout = 10;

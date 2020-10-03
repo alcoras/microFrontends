@@ -1,7 +1,8 @@
-import { EnvironmentTypes } from './EnvironmentTypes';
+import { EnvironmentTypes } from 'event-proxy-lib-src'
+;
 
 export const environment = {
-  EnvironmentTypes: EnvironmentTypes.Isolated,
+  EnvironmentTypes: EnvironmentTypes.Development,
 
   currentLanguage: 'en',
 

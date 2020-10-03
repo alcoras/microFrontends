@@ -1,4 +1,4 @@
-import { PersonDataRead } from '@uf-shared-models/index';
+import { PersonDataRead } from 'src/app/Models/index';
 
 /**
  * Returns promise after ms

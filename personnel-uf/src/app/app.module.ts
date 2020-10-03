@@ -4,15 +4,15 @@ import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import { EventProxyLibModule, EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
+import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
 
 import { AppComponent } from './app.component';
 import { MaterialModule } from './meterial-module';
 import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 import { EventBusService } from './services/EventBus.service';
 import { PersonnelAPIService } from './services/PersonnelAPI.service';
-import { PersonnelComponent } from './personnel/personnel.component';
-import { PersonnelComponentFactory } from './personnel/personnel.factory';
+import { PersonnelComponent } from './services/personnel.component';
+import { PersonnelComponentFactory } from './services/personnel.factory';
 import { PersonnelTable2Component } from './personnel-table-2/personnel-table.component';
 
 @NgModule({
@@ -33,7 +33,12 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
     EventProxyLibService,
     EventBusService,
     PersonnelAPIService,
-    { provide: APP_INITIALIZER, useFactory: PersonnelComponentFactory, deps: [PersonnelComponent], multi: false}
+    {
+      provide: APP_INITIALIZER,
+      useFactory: PersonnelComponentFactory,
+      deps: [PersonnelComponent],
+      multi: false
+    }
   ],
   entryComponents: [AppComponent],
 })

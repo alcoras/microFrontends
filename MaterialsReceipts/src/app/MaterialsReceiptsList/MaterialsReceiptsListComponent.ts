@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { MaterialsList } from '@uf-shared-models/index';
+import { MaterialsList, MaterialsListDTO, ReadListQueryParams } from '../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
-import { GetMaterialsList } from '../interfaces/GetMaterialsList';
-import { ReadListQueryParams } from '../helpers/ReadListQueryParams';
 import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
 import { EventBusService } from '../services/EventBus.service';
 
@@ -110,7 +108,7 @@ export class MaterialsReceiptsListComponent {
 
     const res = this.materialsReceiptsAPI.Get(queryParams);
 
-    res.then( (data: GetMaterialsList) => {
+    res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;
       this.TotalRecords = data.Total;
       this.Loading = false;
@@ -135,7 +133,7 @@ export class MaterialsReceiptsListComponent {
 
     const res = this.materialsReceiptsAPI.Get(queryParams);
 
-    res.then( (data: GetMaterialsList) => {
+    res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;
       this.TotalRecords = data.Total;
       this.Loading = false;

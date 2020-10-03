@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { LanguageService, ILanguageSettings } from './lang.service';
 import { HttpResponse } from '@angular/common/http';
-import { EnvironmentService } from '@uf-shared-libs/event-proxy-lib';
-import { ResourceSheme } from '@uf-shared-events/helpers/ResourceSheme';
 import { ResourceLoaderService } from './resource-loader.service';
+import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src'
+;
 
 /**
  * Preloads default language and scripts

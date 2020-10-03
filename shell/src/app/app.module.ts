@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 
-import {  EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
+import {  EventProxyLibModule } from 'event-proxy-lib-src'
+;
 
 import { UFManagerComponent } from './uf-manager/uf-manager.component';
 import { PrestartService } from './services/prestart.service';

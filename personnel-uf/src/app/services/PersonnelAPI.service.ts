@@ -2,15 +2,19 @@ import { HttpResponse, } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { EventBusService } from './EventBus.service';
-import { IPersonnel, APIGatewayResponse, PersonDataRead, UParts } from '@uf-shared-models/index';
 import {
   ReadPersonDataQuery,
   CreateUpdatePersonData,
   PersonDataCreateUpdateFlag,
-  RemoveEnterpisePersonData } from '@uf-shared-events/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib/';
-import { IGetResponse } from './interfaces/IGetResponse';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+  RemoveEnterpisePersonData,
+  PersonDataRead,
+  PersonData,
+  PersonDataDTO } from '../Models/index';
+import {
+  APIGatewayResponse,
+  EventProxyLibService,
+  MicroFrontendParts,
+  ResponseStatus } from 'event-proxy-lib-src';
 
 /**
  * Personnel API service for CRUD operations
@@ -23,12 +27,12 @@ export class PersonnelAPIService {
   /**
    * Source id of personnel apiservice
    */
-  private sourceId = UParts.Personnel.SourceId;
+  private sourceId = MicroFrontendParts.Personnel.SourceId;
 
   /**
    * Source name of personnel apiservice
    */
-  private sourceName = UParts.Personnel.SourceName;
+  private sourceName = MicroFrontendParts.Personnel.SourceName;
 
   public constructor(
     private eventProxyService: EventProxyLibService,
@@ -53,10 +57,10 @@ export class PersonnelAPIService {
 
   /**
    * Craetes new personnel entry
-   * @param personnel IPersonnel
+   * @param personnel PersonData
    * @returns Promise
    */
-  public Create(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
+  public Create(personnel: PersonData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.create(personnel).toPromise().then( (val: ResponseStatus) => {
@@ -71,10 +75,10 @@ export class PersonnelAPIService {
 
   /**
    * Craetes new personnel entry
-   * @param personnel IPersonnel
+   * @param personnel PersonData
    * @returns Promise
    */
-  public Update(personnel: IPersonnel): Promise<HttpResponse<APIGatewayResponse>> {
+  public Update(personnel: PersonData): Promise<HttpResponse<APIGatewayResponse>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.update(personnel).toPromise().then( (val: ResponseStatus) => {
@@ -95,11 +99,11 @@ export class PersonnelAPIService {
    * @returns Promise with Personnel data
    */
   // TODO: add timeout and reject
-  public Get(multiSorting: string[], page: number, pageSize: number): Promise<IGetResponse> {
+  public Get(multiSorting: string[], page: number, pageSize: number): Promise<PersonDataDTO> {
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
-    return new Promise<IGetResponse>(
+    return new Promise<PersonDataDTO>(
       (resolve) => {
         this.get(multiSorting, page, pageSize).toPromise().then( (response: ResponseStatus) => {
           if (response.HttpResult.status !== 200) {
@@ -113,7 +117,6 @@ export class PersonnelAPIService {
           this.eventBusService.EventBus.subscribe(
             async (data: PersonDataRead) => {
               if (data.ParentSourceEventUniqueId === uniqueId) {
-                await this.eventProxyService.ConfirmEvents(this.sourceId, [data.AggregateId]).toPromise();
                 resolve({
                   items: data.ListOutputEnterprisePersonData,
                   total: data.CommonNumberRecords
@@ -141,10 +144,10 @@ export class PersonnelAPIService {
 
   /**
    * Update existing PersonData entry
-   * @param personnel IPersonnel
+   * @param personnel PersonData
    * @returns Observable with HttpResponse
    */
-  private update(personnel: IPersonnel): Observable<ResponseStatus> {
+  private update(personnel: PersonData): Observable<ResponseStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Update,
@@ -155,10 +158,10 @@ export class PersonnelAPIService {
 
   /**
    * Creates new PersonData entry
-   * @param personnel IPersonnel
+   * @param personnel PersonData
    * @returns Observable with HttpResponse
    */
-  private create(personnel: IPersonnel): Observable<ResponseStatus> {
+  private create(personnel: PersonData): Observable<ResponseStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Create,

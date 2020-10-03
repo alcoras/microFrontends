@@ -1,16 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { catchError, timeout } from 'rxjs/operators';
 import { Observable, Observer, Subscriber, of } from 'rxjs';
-import { uEvent, uEventsIds } from './models/event';
+import { CoreEvent, EventIds, ErrorMessage, ResponseStatus, MicroFrontendParts } from './models/index';
 import { EnvironmentService } from './services/EnvironmentService';
 import { retryWithBackoff } from './retry/retry.pipe';
-import { ResponseStatus } from './ResponseStatus';
-import { catchError, timeout } from 'rxjs/operators';
-import { ErrorMessage } from './Errors';
 
-export type EventParserDelegateAsync = (eventList: uEvent[] | uEvent) => Promise<void>;
-export type HttpResponseCheckDelegate = (responseStatus: ResponseStatus) => boolean;
+class FrontendToBackendEvent {
+  public EventId: number;
+  public SourceId?: string;
+  public Ids?: number[];
+  public MarkAllReceived?: boolean;
+  public Events?: CoreEvent[];
+}
+
+class BackendToFrontendEvent {
+  public EventId: number;
+  public Ids?: number[];
+  public Events?: CoreEvent[];
+}
 
 /**
  * Event Proxy service for communication with API gateway
@@ -22,20 +30,29 @@ export type HttpResponseCheckDelegate = (responseStatus: ResponseStatus) => bool
 export class EventProxyLibService {
 
   /**
-   * Connection timeout before retry
+   * Status which true if there QNA (connection for new events) with backend.
    */
-  public Timeout = 5100;
+  public Status = false;
+
+  public ApiGatewayURL: string;
+
   /**
-   * delay before retry
+   * Connection timeout before retry;
+   * ideally ApiGateway should respond within 5 seconds with an empty (if no events)
+   * but there is delay in network + apigateway logic
+   */
+  public Timeout = 6000;
+  /**
+   * Delay before each retry when connection fails
    */
   public DelayMs = 1000;
   /**
-   * maximum tries before giving up
+   * Maximum tries before giving up
    */
   public Retries = 10;
 
   /**
-   * add to delay before each retry
+   * Add to delay before each consecutive retry
    */
   public BackOffMS = 1000;
 
@@ -55,42 +72,6 @@ export class EventProxyLibService {
   private sourceID = '';
 
   /**
-   * Api gateway's URL
-   */
-  private apiGatewayURL: string;
-
-
-  /**
-   * Gets/Sets api gateway url
-   * @returns api gateway url
-   */
-  public get ApiGatewayURL(): string {
-    return this.apiGatewayURL;
-  }
-
-  public set ApiGatewayURL(value: string) {
-    this.apiGatewayURL = value;
-  }
-
-  /**
-   * status
-   */
-  private status = false;
-
-  /**
-   * Gets/Sets status which true if there QNA (connection with constant request for new
-   * events) with backend.
-   * @returns status
-   */
-  public get Status(): boolean {
-    return this.status;
-  }
-
-  public set Status(val: boolean) {
-    this.status = val;
-  }
-
-  /**
    * Creates an instance of event proxy lib service.
    * @param environmentService Injects Environment settings
    * @param httpClient Injects Angular HttpClient
@@ -101,30 +82,25 @@ export class EventProxyLibService {
       this.ApiGatewayURL = `${this.environmentService.APIGatewayUrl}:${this.environmentService.APIGatewayPort}`;
   }
 
-
   /**
-   * Establishes communication with backend to receive new events (only listening).
-   * It maintains it and if fails resets it.
-   * @param sourceId Source ID, used for registering receiver.
-   * @param parseEventAsync async function which will parse events
-   * @param httpResponseCheck (optional) method can be passed for custom event check
+   * Starts recursive communication with API gateway (backend)
+   * @param sourceId Source id, used letting know which part is asking for new events
+   * @returns ResponseStatus with success (and result) or failure (error)
    */
-  public InitializeConnectionToBackend(
-    sourceId: string,
-    parseEventAsync: EventParserDelegateAsync,
-    httpResponseCheck: HttpResponseCheckDelegate): void {
+  public InitializeConnectionToBackend(sourceId: string): Observable<ResponseStatus> {
 
-    this.StartQNA(sourceId).subscribe(
-      (response: ResponseStatus) => {
-        if (httpResponseCheck(response)) {
-          parseEventAsync(response.HttpResult.body.Events);
-        }
-      },
-      (error: ResponseStatus) => {
-        this.EndListeningToBackend();
-        throw new Error(error.Error);
-      }
-    )
+    if (!sourceId) {
+      throw new Error('SourceID was not provided in StartListeningToBackend');
+    }
+
+    this.sourceID = sourceId;
+    this.Status = true;
+
+    console.log(`${this.sourceID} starts listening to events on ${this.ApiGatewayURL}`);
+
+    return new Observable<ResponseStatus>( sub => {
+      this.push(sub);
+    });
   }
 
   /**
@@ -132,8 +108,7 @@ export class EventProxyLibService {
    * @param responseStatus Performs default checks
    * @returns error, or nothing if there is now new events
    */
-  public PerformResponseCheck(
-    responseStatus: ResponseStatus): boolean {
+  public PerformResponseCheck(responseStatus: ResponseStatus): boolean {
     if (!responseStatus.HttpResult.body) {
       // Empty return (no new events)
       return false;
@@ -145,9 +120,9 @@ export class EventProxyLibService {
     }
 
     switch (+responseStatus.HttpResult.body['EventId']) {
-      case uEventsIds.GetNewEvents:
+      case EventIds.GetNewEvents:
         return true;
-      case uEventsIds.TokenFailure:
+      case EventIds.TokenFailure:
         this.EndListeningToBackend();
         throw new Error(ErrorMessage.TokenFailure);
       default:
@@ -155,22 +130,6 @@ export class EventProxyLibService {
         console.error(responseStatus);
         throw new Error(ErrorMessage.UnrecognizedEventId);
     }
-  }
-
-  public StartQNA(sourceID: string): Observable<ResponseStatus> {
-
-    if (!sourceID) {
-      throw new Error('SourceID was not provided in StartListeningToBackend');
-    }
-
-    this.sourceID = sourceID;
-    this.Status = true;
-
-    console.log(`${this.sourceID} starts listening to events on ${this.apiGatewayURL}`);
-
-    return new Observable<ResponseStatus>( sub => {
-      this.push(sub);
-    });
   }
 
   /**
@@ -190,12 +149,12 @@ export class EventProxyLibService {
    * @param srcId Source Id
    * @param [idList] Array of ids to confirm specific events
    * @param [confirmAll] if set true will confirm all outstanding events
-   * @returns HttpResponse observable
+   * @returns ResponseStatus observable
    */
   public ConfirmEvents(srcId: string, idList?: number[], confirmAll = false): Observable<ResponseStatus> {
-    const body = {
-      EventID: uEventsIds.FrontEndEventReceived,
-      SourceID: srcId,
+    const body: FrontendToBackendEvent = {
+      EventId: EventIds.FrontEndEventReceived,
+      SourceId: srcId,
       Ids: idList,
       MarkAllReceived: confirmAll,
     };
@@ -208,11 +167,11 @@ export class EventProxyLibService {
    * @param event array of events one wish to register
    * @returns Observable with response or error
    */
-  public DispatchEvent(event: | uEvent | uEvent[]): Observable<ResponseStatus> {
+  public DispatchEvent(event: | CoreEvent | CoreEvent[]): Observable<ResponseStatus> {
     const eventList = [].concat(event);
-    const body = {
-      EventID: uEventsIds.RegisterNewEvent,
-      events: eventList
+    const body: FrontendToBackendEvent = {
+      EventId: EventIds.RegisterNewEvent,
+      Events: eventList
     };
 
     return this.sendMessage('DispatchEvent', body);
@@ -221,12 +180,12 @@ export class EventProxyLibService {
   /**
    * Gets all unconfirmed events from backend
    * @param srcId SourceID
-   * @returns HTTPResponse (or error) with events
+   * @returns ResponseStatus
    */
   public GetLastEvents(srcId: string): Observable<ResponseStatus> {
 
-    const body = {
-      EventID: uEventsIds.GetNewEvents,
+    const body: FrontendToBackendEvent = {
+      EventId: EventIds.GetNewEvents,
       SourceId: srcId,
     };
 
@@ -237,12 +196,12 @@ export class EventProxyLibService {
    * Tries to log in into system
    * @param timestamp ISO formatted time string
    * @param signature Signature
-   * @returns HTTPResponse (or error) with events
+   * @returns ResponseStatus
    */
   public LogIn(timestamp: string, signature: string): Observable<ResponseStatus> {
 
     const body = {
-      EventId: uEventsIds.LoginRequested,
+      EventId: EventIds.LoginRequested,
       LoginTimestamp: timestamp,
       LoginSignature: signature
     }
@@ -252,41 +211,42 @@ export class EventProxyLibService {
 
   /**
    * Sends existing token to get new token
-   * @returns  HTTPResponse (or error) with events
+   * @returns ResponseStatus
    */
-  public RenewToken(): Observable<any> {
+  public RenewToken(): Observable<ResponseStatus> {
 
     const body = {
-      EventId: uEventsIds.RenewToken
+      EventId: EventIds.RenewToken
     }
 
     return this.sendMessage('RenewToken', body);
   }
-
 
   /**
    * Sends http message to backend (APIGateway microservice)
    * @param caller function which called
    * @param body message body
    * @param anonymous (default false) if set to true will not include LoginToken field
-   * @returns HttpResponse observable
+   * @returns ResponseStatus
    */
-  private sendMessage(caller: string, body: any, anonymous = false): Observable<ResponseStatus> {
+  private sendMessage(caller: string, body: FrontendToBackendEvent, anonymous = false): Observable<ResponseStatus> {
 
     const result = new ResponseStatus();
 
-    if (!this.apiGatewayURL) {
+    if (!this.ApiGatewayURL) {
       throw Error('ApiGateway URL is undefined');
     }
 
     const headers = this.jsonHeaders;
-    const url = this.apiGatewayURL + this.endpoint;
+    const url = this.ApiGatewayURL + this.endpoint;
 
     if (!anonymous) {
       body['Token'] = this.environmentService.AuthorizationToken;
     }
 
-    console.log(`${caller}, source:${this.sourceID} sends to ${url} body: ${JSON.stringify(body)}`);
+    const sourceName = MicroFrontendParts.GetSourceNameFromSourceID(this.sourceID);
+    console.log(`
+    ${caller}, source:${this.sourceID} ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
 
     return new Observable( (res: Subscriber<ResponseStatus>) => {
 
@@ -297,6 +257,8 @@ export class EventProxyLibService {
         { headers, observe: 'response' }
       )
       .pipe(
+        // if no repsonse within Timeout, retryWithBackoff will kick in and will try
+        // to connect depending on parameters, if it fails, then we return failed result
         timeout(this.Timeout),
         retryWithBackoff(this.DelayMs, this.Retries, this.BackOffMS),
         catchError(error => {
@@ -305,17 +267,17 @@ export class EventProxyLibService {
           return of(error);
         })
       )
-      .toPromise().then( (httpRespone: HttpResponse<any>) => {
+      .toPromise().then( (httpRespone: HttpResponse<BackendToFrontendEvent>) => {
         if (result.Failed) {
           res.error(result);
-        }
-        else {
+        } else {
           result.Failed = false;
           result.HttpResult = httpRespone;
           res.next(result);
           res.complete();
         }
       })
+
     })
   }
 
@@ -323,22 +285,22 @@ export class EventProxyLibService {
    * Recursive push for infinite (or until stopped) event requesting from backend
    * @param sub Observer
    */
-  private push(sub: Observer<any>): void {
+  private push(sub: Observer<ResponseStatus>): void {
+
     if (!this.Status) {
       sub.complete();
       return;
     }
+
     this.GetLastEvents(this.sourceID).toPromise().then(
       (resolve: ResponseStatus) => {
         sub.next(resolve);
         this.push(sub);
       },
       (reject: ResponseStatus) => {
-        setTimeout(() => {
-          sub.next(reject);
-          this.push(sub);
-        }, 1000);
+        sub.error(reject);
       }
     );
+
   }
 }

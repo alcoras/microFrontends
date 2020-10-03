@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GetMaterialsList } from '../../interfaces/GetMaterialsList';
-import { MaterialsList } from '@uf-shared-models/index';
+import { MaterialsListDTO, ReadListQueryParams, MaterialsList } from '../../Models/index';
 import { ProductService } from '../ProductService';
-import { ReadListQueryParams } from 'src/app/helpers/ReadListQueryParams';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +24,7 @@ export class MaterialsReceiptsAPIMock {
     }
   }
 
-  public Get(queryParams: ReadListQueryParams): Promise<GetMaterialsList> {
+  public Get(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
     const items = this.data.slice(queryParams.Page, (queryParams.Page + queryParams.Limit));
     return Promise.resolve({Items: items, Total: this.data.length})
   }

@@ -4,14 +4,6 @@
   "newProjectRoot": "projects",
   "projects": {
     "menu": {
-      "i18n": {
-        "sourceLocale": "en",
-        "locales": {
-          "lt": "src/locales/messages.lt.xlf",
-          "ru": "src/locales/messages.ru.xlf",
-          "uk": "src/locales/messages.uk.xlf"
-        }
-      },
       "projectType": "application",
       "schematics": {},
       "root": "",

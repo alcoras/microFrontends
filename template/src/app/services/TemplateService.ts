@@ -1,23 +1,26 @@
 import { Injectable } from '@angular/core';
+
 import {
+  EventProxyLibService,
+  SubscibeToEvent,
+  CoreEvent,
+  ResponseStatus,
+  EventIds,
   IMicroFrontend,
-  UParts,
-  uEventsIds,
-  EventResponse,
-  uEvent,
-  MicroFrontendInfo } from '@uf-shared-models/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { HttpResponse } from '@angular/common/http';
-import { SubscibeToEvent, EventButtonPressed } from '@uf-shared-events/index';
+  EventButtonPressed,
+  MicroFrontendInfo,
+  MicroFrontendParts} from 'event-proxy-lib-src'
+;
+
 import { EventBusService } from './EventBus.service';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class TemplateService implements IMicroFrontend {
 
-  public SourceInfo: MicroFrontendInfo = UParts.<template_data>;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.<template_data>;
 
   /**
    * Element to place dictionary
@@ -34,13 +37,22 @@ export class TemplateService implements IMicroFrontend {
   }
 
   /**
-   * InitializeConnectionWithBackend
+   * Initialize Connection to backend (API gateway)
    */
-  public InitializeConnectionWithBackend() {
-    this.eventProxyService.InitializeConnectionToBackend(
-      this.SourceInfo.SourceId,
-      ParseNewEventAsync,
-      eventProxyService.PerformResponseCheck);
+  public InitializeConnectionWithBackend(): void {
+
+    this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
+      (response: ResponseStatus) => {
+        if (this.eventProxyService.PerformResponseCheck(response)) {
+          this.ParseNewEventAsync(response.HttpResult.body.Events);
+        }
+      },
+      (error: ResponseStatus) => {
+        this.eventProxyService.EndListeningToBackend();
+        throw new Error(error.Error);
+      }
+    );
+
   }
 
   public SubscribeToEventsAsync(): Promise<ResponseStatus> {
@@ -54,10 +66,10 @@ export class TemplateService implements IMicroFrontend {
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
-  public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
+  public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
-        case uEventsIds.<button_pressed_id>:
+        case EventIds.<button_pressed_id>:
             if (this.processButtonPressed(element)) {
               await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
@@ -65,7 +77,7 @@ export class TemplateService implements IMicroFrontend {
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
-        case uEventsIds.<TemplateRead>:
+        case EventIds.<TemplateRead>:
             this.eventBus.EventBus.next(element);
             break;
         default:
@@ -78,7 +90,7 @@ export class TemplateService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[uEventsIds.<button_pressed_id>] = '<team-<project_name>></team-<project_name>>';
+    this.elToPlace[EventIds.<button_pressed_id>] = '<team-<project_name>></team-<project_name>>';
   }
 
   /**
@@ -86,11 +98,11 @@ export class TemplateService implements IMicroFrontend {
    * @param element EventButtonPressed
    * @returns True if successful
    */
-  private processButtonPressed(element: uEvent): boolean {
+  private processButtonPressed(element: CoreEvent): boolean {
     const e = element as EventButtonPressed;
 
     switch (e.EventId) {
-      case uEventsIds.OccupationNg9ButtonPressed:
+      case EventIds.<button_pressed_id>:
         if (e.UniqueElementId) {
           this.putToElement(e.UniqueElementId, this.getElFromID(element.EventId));
           return true;

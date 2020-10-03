@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { CoreEvent } from 'event-proxy-lib-src'
+;
 import { Subject } from 'rxjs';
-import { uEvent } from '@uf-shared-models/index';
 
 /**
  * Event bus for inter component/service communication in current module
@@ -12,7 +13,7 @@ export class EventBusService {
   /**
    * Event bus for inter component/service communication in current module
    */
-  public EventBus = new Subject<uEvent>();
+  public EventBus = new Subject<CoreEvent>();
 
   public RefreshTable = new  Subject<void>();
 }

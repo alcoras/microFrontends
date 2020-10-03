@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
-import { IMicroFrontend, EventResponse, uEventsIds, uEvent, UParts, MicroFrontendInfo } from '@uf-shared-models/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { HttpResponse } from '@angular/common/http';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+
+import {
+  EventProxyLibService,
+  CoreEvent,
+  ResponseStatus,
+  IMicroFrontend,
+  MicroFrontendInfo,
+  MicroFrontendParts,
+  EventIds } from 'event-proxy-lib-src'
+;
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService implements IMicroFrontend {
 
-  public SourceInfo: MicroFrontendInfo = UParts.Menu;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.Menu;
 
   public constructor(private eventProxyService: EventProxyLibService) {}
 
@@ -17,35 +23,31 @@ export class MenuService implements IMicroFrontend {
     return Promise.resolve();
   }
 
-  public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
+  /**
+   * Initialize Connection to backend (API gateway)
+   */
+  public InitializeConnectionWithBackend(): void {
+
+    this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
       (response: ResponseStatus) => {
-        this.NewHttpResponseAsync(response.HttpResult);
+        if (this.eventProxyService.PerformResponseCheck(response)) {
+          this.ParseNewEventAsync(response.HttpResult.body.Events);
+        }
       },
-      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
+      (error: ResponseStatus) => {
+        this.eventProxyService.EndListeningToBackend();
+        throw new Error(error.Error);
+      }
     );
+
   }
 
-  public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) { throw new Error('Can\'t connect to backend'); }
-
-    if (!response.body) { return; }
-
-    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
-      throw new Error('No EventId in message');
-    }
-
-    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-      this.ParseNewEventAsync(response.body.Events);
-    }
-  }
-
-  public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
+  public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       /**
        * Init menu event
        */
-      if (element.EventId === uEventsIds.InitMenu) {
+      if (element.EventId === EventIds.InitMenu) {
         this.putToElement('menu-team', '<menu-team></menu-team>');
         await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       } else {

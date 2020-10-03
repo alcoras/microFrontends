@@ -1,39 +1,44 @@
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
+import { CoreEvent, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src'
+;
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { uEvent } from '@uf-shared-models/event';
 
-/* tslint:disable */
-export let eProxyServiceMock: Partial<EventProxyLibService>;
-const currentLang = 'en';
-const currentURL = 'localhost';
-/* tslint:enable */
+export const eProxyServiceMock: Partial<EventProxyLibService> = {
 
-eProxyServiceMock = {
-
-  StartQNA(sourceID: string) {
+  InitializeConnectionToBackend(sourceID: string) {
     return this.GetLastEvents(sourceID);
   },
 
+  PerformResponseCheck(responseStatus: ResponseStatus) {
+    return true;
+  },
+
   GetLastEvents(sourceID: string) {
+
+    const responseStatus = new ResponseStatus();
+    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: {
+      Events: [ ],
+      Ids: [123]
+    }});
+
     return new Observable(
       (val) => {
-        val.next(new HttpResponse<any>({status: 200, body: {
-          Events: [],
-          Ids: [123]
-        }}));
+        val.next(responseStatus);
         val.complete();
       }
     );
   },
 
-  DispatchEvent(event: uEvent | uEvent[]) {
+  DispatchEvent(event: CoreEvent | CoreEvent[]) {
+    const responseStatus = new ResponseStatus();
+    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: {
+      Events: [event ],
+      Ids: [123]
+    }});
+
     return new Observable(
       (val) => {
-        val.next(new HttpResponse<any>({status: 200, body: {
-          Events: [event],
-          Ids: [123]
-        }}));
+        val.next(responseStatus);
         val.complete();
       }
     );

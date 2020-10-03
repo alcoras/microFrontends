@@ -88,13 +88,11 @@
     58. 1. UPDATE: because of task 49. URL's are obsolete
 60. DONE for some reason some files (polyfills.js most of the times) takes 2 seconds when using nginx as reverse proxy
     61. 1. UPDATE: solution 64.
-
-## NOT DEMO
-22. Do conditional logging.
-41. Consider adding metric/performace/stress tests
-
-## UNDONE
-1. Languages
+32. DUPLICATE with 12 find every promise or observable and handle errors
+30. DONE Fix warnings in event-proxy-lib when: ng build --prod:
+    30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
+    31. 2. UPDATE: HttpResponse is used, but compiler does not see it
+1. IGNORE Languages
     1. 1. DONE Do a select for language selector in uf Menu
     1. 2. DONE(through window) Make a way to refresh (through navigation)
     1. 3. DONE (reads from env.js) Setup configs (conf.js) for languages which are supported (EN, RU, UA, LT)
@@ -102,44 +100,46 @@
     1. 5. DONE In uf-manager (shell) load language configs
     1. 6. DONE (only in menu) Create locales in projects
     1. 7. Translate other micro frontends
-12. Think about adding all observables into one for logging, debugging, visualising purposes
-13. Set to load all icons from disk
-14. Make sure that shell can load any combination of ufs (does not fail if one failed)
-15. Consider requiring sourceId for all events
+    Why IGNORE? I don't like how angular does translations, it builds new project for each language, for now translate pipe should suffice
+12. IGNORE Think about adding all observables into one for logging, debugging, visualising purposes
+    Why IGNORE? currently all failures just throw to detect issues faster, with time reaction to faulure will be set up in accord to situation
+15. DONE Consider requiring sourceId for all events
     15. 1. Seems like a good idea, thus go through all backend events and add sourceId
-17. In libs and tests I cant directly add models from external folders
+61. DONE add info to event-proxy-lib, like what it is, more info, how to run tests
+65. DONE add solo mocks to template like in MaterialReceipts
+62. DONE business events and core events (in shared/models shared/events) should be separated
+    65. 1. UPDATE: should be done only with new projects
+67. DONE in uEvents change UserID and ParentID to UserId and ParentId, event-proxy-lib needs to change aswell
+68. DONE change Get*** names, because Get implies actions (MaterialsReceipts/src/app/interfaces/)
+53. DONE UF should run fine isolated, in dev, in prod.
+    53. 1. UPDATE: add solo and isolated to environment.ts and work using them
+    53. 2. Change all micro frontends accodingly
+    53. 3. Add only to new projects
+17. DONE In libs and tests I cant directly add models from external folders
     17. 1. DONE Update: remove folder shared in libs and add links to external shared files
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
     17. 4. UPDATE: I've decided to add all models which are shared (like event ids) to event-proxy-lib
+
+## NOT DEMO
+22. Do conditional logging.
+41. Consider adding metric/performace/stress tests
+
+## UNDONE
+13. Set to load all icons from disk
+14. Make sure that shell can load any combination of ufs (does not fail if one failed)
 25. Check for type: any and convert to strong type (search and apply to all projects)
 28. Add SourceName to every event for Observer
-30. Fix warnings in event-proxy-lib when: ng build --prod:
-    30. 1. Bundling to FESM2015 WARNING: 'HttpResponse' is imported from external module '@angular/common/http' but never used
-32. find every promise or observable and handle errors
 33. add config builder to all micro services like in observer-uf (tsconfig.conf-builder.json)
-    33. 0. !!!!! optimize output, so it extracts static values without including whole class
-    33. 1. personnel-uf
-    33. 2. shell
-    33. 3. menu-uf
-    33. 4. e2eTests
-    33. 5. observer-uf
-    33. 6. occupation-uf
-    33. 7. shared
+    33. 1. !!!!! optimize output, so it extracts static values without including whole class
+    33. 2. UPDATE: test if production mode does anything
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
-53. UF should run fine isolated, in dev, in prod.
-    53. 1. UPDATE: add solo and isolated to environment.ts and work using them
-    53. 2. Change all micro frontends accodingly
 56. on refreshing disconnect every micro frontend
 59. if backend does not work show some message in shell or show trying to connect
-61. add info to event-proxy-lib, like what it is, more info, how to run tests
-62. business events and core events (in shared/models shared/events) should be separated
-63. consider adding loading indication (console or otherwise when event-proxy-lib is retries)
+63. consider adding loading indication (console or otherwise when event-proxy-lib is retrying)
 64. nginx will be the server, so remove serve in all micro frontends
-65. add solo mocks to template like in MaterialReceipts
 66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
-67. in uEvents change UserID and ParentID to UserId and ParentId, event-proxy-lib needs to change aswell
-
-68
+69. clean up package.json scripts in projects (remove serve)
+70.

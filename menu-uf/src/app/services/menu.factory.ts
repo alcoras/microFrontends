@@ -8,7 +8,7 @@ import { MenuService } from './menu.service';
 export function MenuServiceFactory(provider: MenuService): Promise<void> {
   return new Promise( (res) => {
     provider.InitAsync().then( () => {
-      provider.StartQNA();
+      provider.InitializeConnectionWithBackend();
       res();
     });
   });

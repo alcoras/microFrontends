@@ -1,9 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { SubscibeToEvent } from '@uf-shared-events/index';
-import { uEvent, uEventsIds } from '@uf-shared-models/event';
-import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib/';
-import { APIGatewayResponse, EventResponse } from '@uf-shared-models/index';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+import {
+  APIGatewayResponse,
+  CoreEvent,
+  EventIds,
+  EventProxyLibModule,
+  EventProxyLibService,
+  EventResponse,
+  ResponseStatus,
+  SubscibeToEvent } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL } from './helpers/helpers';
 
 /**
@@ -25,17 +29,14 @@ function delay(ms: number): Promise<void> {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-// TODO: these tests should be in backend or these are integration tests
-// TODO: test with angular tests too (httpTestModule, to test requests)
-
 /**
  * Test event
  */
-class TestEvent extends uEvent {
+class TestEvent extends CoreEvent {
 }
 
 for (let i = 0; i < 1; i++) {
-describe('EventProxyLibService', () => {
+fdescribe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
     const defaultEventsTimeoutMs = 5500;
     const awaitAfterSendingEvent = 500;
@@ -97,27 +98,7 @@ describe('EventProxyLibService', () => {
 
     describe("InitializeConnectionToBackend tests", () => {
 
-      xit("should not be sent to parse events", async (done) => {
-        /**
-         * Test
-         * @param eventList Events
-         * @returns Promise
-         */
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
-          done.fail();
-          return Promise.resolve();
-        }
-
-        service.InitializeConnectionToBackend(testinID,
-          eventParserMockAsync,
-          service.PerformResponseCheck);
-
-        await delay(200);
-        done();
-      });
-
-      xit("should pass event", async (done) => {
+      it("should pass event", async (done) => {
         const waitForEventId = getRandomInt(500);
         /**
          * Test
@@ -125,7 +106,7 @@ describe('EventProxyLibService', () => {
          * @returns Promise
          */
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        function eventParserMockAsync(eventList: uEvent[] | uEvent): Promise<void> {
+        function eventParserMockAsync(eventList: CoreEvent[] | CoreEvent): Promise<void> {
           console.log(eventList);
           expect([].concat(eventList)[0].EventId).toEqual(waitForEventId);
           done();
@@ -144,14 +125,24 @@ describe('EventProxyLibService', () => {
         await service.DispatchEvent(tEvent).toPromise();
         await delay(awaitAfterSendingEvent);
 
-        service.InitializeConnectionToBackend(testinID,
-          eventParserMockAsync,
-          service.PerformResponseCheck);
+        service.InitializeConnectionToBackend(testinID).subscribe(
+          (response: ResponseStatus) => {
+            if (service.PerformResponseCheck(response)) {
+              eventParserMockAsync(response.HttpResult.body.Events);
+            }
+          },
+          (error: ResponseStatus) => {
+            fail();
+            service.EndListeningToBackend();
+            throw new Error(error.Error);
+          }
+        );
+
       })
     });
 
     it('should respond with empty response', async (done) => {
-      service.StartQNA(testinID).subscribe(
+      service.InitializeConnectionToBackend(testinID).subscribe(
         (res: ResponseStatus) => {
           expect(res.Failed).toBeFalse();
           expect(res.HttpResult.status).toBe(200, 'Status should be 200');
@@ -168,7 +159,7 @@ describe('EventProxyLibService', () => {
 
           const responseBody = res.HttpResult.body as APIGatewayResponse;
 
-          expect(responseBody.EventId).toEqual(uEventsIds.RegisterEventIds);
+          expect(responseBody.EventId).toEqual(EventIds.RegisterEventIds);
           expect(responseBody.Ids.length).toEqual(1);
 
           done();
@@ -194,7 +185,7 @@ describe('EventProxyLibService', () => {
 
           const responseBody = res.HttpResult.body as APIGatewayResponse;
 
-          expect(responseBody.EventId).toEqual(uEventsIds.RegisterEventIds);
+          expect(responseBody.EventId).toEqual(EventIds.RegisterEventIds);
           expect(responseBody.Ids.length).toEqual(random);
 
           done();
@@ -221,14 +212,14 @@ describe('EventProxyLibService', () => {
         await delay(awaitAfterSendingEvent);
 
         // 3. Listening to events
-        service.StartQNA(testinID).subscribe(
+        service.InitializeConnectionToBackend(testinID).subscribe(
           (res: ResponseStatus) => {
             expect(res.Failed).toBeFalse();
             expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
             const responseBody = res.HttpResult.body as EventResponse;
 
-            expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+            expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
 
             expect(responseBody.Events.length).toBe(1, 'Incorrect length');
 
@@ -246,14 +237,14 @@ describe('EventProxyLibService', () => {
       const waitForEventId = getRandomInt(99999);
 
       // 1. Listening to events
-      service.StartQNA(testinID).subscribe(
+      service.InitializeConnectionToBackend(testinID).subscribe(
         (res: ResponseStatus) => {
           expect(res.Failed).toBeFalse();
           expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
           const responseBody = res.HttpResult.body as EventResponse;
 
-          expect(responseBody.EventId).toBe(uEventsIds.GetNewEvents, 'EventId incorrect');
+          expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
 
           expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
 
@@ -302,7 +293,7 @@ describe('EventProxyLibService', () => {
       await delay(awaitAfterSendingEvent);
 
       // 3. Listening to events
-      service.StartQNA(testinID).subscribe(
+      service.InitializeConnectionToBackend(testinID).subscribe(
         (res: ResponseStatus) => {
           console.log(res);
           expect(res.Failed).toBeFalse();
@@ -310,7 +301,7 @@ describe('EventProxyLibService', () => {
 
           const responseBody = res.HttpResult.body as EventResponse;
 
-          expect(responseBody.EventId).toEqual(uEventsIds.GetNewEvents);
+          expect(responseBody.EventId).toEqual(EventIds.GetNewEvents);
 
           expect(responseBody.Events.length).toEqual(randomAmount);
 
@@ -349,7 +340,7 @@ describe('EventProxyLibService', () => {
 
             const responseBody = res.HttpResult.body as EventResponse;
 
-            expect(responseBody.EventId === uEventsIds.GetNewEvents);
+            expect(responseBody.EventId === EventIds.GetNewEvents);
 
             expect(responseBody.Events[0].EventId === rndEventId);
 

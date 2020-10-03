@@ -1,13 +1,17 @@
 import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { EventBusService } from '../services/EventBus.service';
 import { TestBed } from '@angular/core/testing';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { HttpResponse } from '@angular/common/http';
 import { genRandomNumber, delay } from './helpers/helpers';
-import { OccupationData, uEventsIds, APIGatewayResponse } from '@uf-shared-models/index';
-import { OccupationsReadResults } from '@uf-shared-events/index';
-import { IGetResponse } from '../services/interfaces/IGetResponse';
+
+import {
+  EventProxyLibService,
+  APIGatewayResponse,
+  EventIds
+} from 'event-proxy-lib-src';
+
+import { OccupationData, OccupationDataDTO, OccupationsReadResults } from '../Models/index';
 
 /**
  * Test Occupation data
@@ -77,7 +81,7 @@ describe('Occupation API service', () => {
     it('testing content', (done) => {
       service.Update(newOccupationData).then(
         (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].EventId).toBe(uEventsIds.OccupationsUpdate);
+          expect(res.body.Events[0].EventId).toBe(EventIds.OccupationsUpdate);
           expect(res.body.Events[0].Name).toBe(newOccupationData.Name);
           expect(res.body.Events[0].TariffCategory).toBe(newOccupationData.TariffCategory);
           done();
@@ -107,7 +111,7 @@ describe('Occupation API service', () => {
     it('testing content', (done) => {
       service.Create(newOccupationData).then(
         (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].EventId).toBe(uEventsIds.OccupationsCreate);
+          expect(res.body.Events[0].EventId).toBe(EventIds.OccupationsCreate);
           expect(res.body.Events[0].Name).toBe(newOccupationData.Name);
           expect(res.body.Events[0].TariffCategory).toBe(newOccupationData.TariffCategory);
           done();
@@ -147,7 +151,7 @@ describe('Occupation API service', () => {
 
     it('get passed data, then get response', async (done) => {
       service.Get(1, 1).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
           done();
@@ -168,7 +172,7 @@ describe('Occupation API service', () => {
     it('get passed data many times', async (done) => {
       let resp = 0;
       service.Get(1, 1).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
           resp++;
@@ -176,7 +180,7 @@ describe('Occupation API service', () => {
       );
 
       service.Get(1, 1).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           resp++;
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
@@ -184,7 +188,7 @@ describe('Occupation API service', () => {
       );
 
       service.Get(1, 1).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.items.length).toBe(1);
           expect(res.items[0]).toBe(newOccupationData);
           resp++;

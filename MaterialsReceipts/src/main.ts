@@ -1,10 +1,10 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { EnvironmentService } from 'event-proxy-lib';
+import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src'
+;
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import { EnvironmentTypes } from './environments/EnvironmentTypes';
 
 if (environment.EnvironmentTypes == EnvironmentTypes.Production) {
   enableProdMode();

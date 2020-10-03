@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
+
 import {
+  EventProxyLibService,
+  SubscibeToEvent,
+  CoreEvent,
+  ResponseStatus,
   IMicroFrontend,
-  UParts,
-  uEventsIds,
-  EventResponse,
-  APIGatewayResponse,
-  uEvent,
-  MicroFrontendInfo } from '@uf-shared-models/index';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
-import { HttpResponse } from '@angular/common/http';
-import { SubscibeToEvent, EventButtonPressed } from '@uf-shared-events/index';
+  EventButtonPressed,
+  MicroFrontendInfo,
+  MicroFrontendParts,
+  EventIds } from 'event-proxy-lib-src';
+
 import { EventBusService } from './EventBus.service';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OccupationService implements IMicroFrontend {
 
-  public SourceInfo: MicroFrontendInfo = UParts.Occupations;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.Occupations;
 
   /**
    * Element to place dictionary
@@ -34,36 +34,29 @@ export class OccupationService implements IMicroFrontend {
     this.preparePlacements();
   }
 
-  public StartQNA(): void {
-    this.eventProxyService.StartQNA(this.SourceInfo.SourceId).subscribe(
+  /**
+   * Initialize Connection to backend (API gateway)
+   */
+  public InitializeConnectionWithBackend(): void {
+
+    this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
       (response: ResponseStatus) => {
-        this.NewHttpResponseAsync(response.HttpResult);
+        if (this.eventProxyService.PerformResponseCheck(response)) {
+          this.ParseNewEventAsync(response.HttpResult.body.Events);
+        }
       },
-      (error: ResponseStatus) => { console.error(this.SourceInfo.SourceName, error.Error); },
+      (error: ResponseStatus) => {
+        this.eventProxyService.EndListeningToBackend();
+        throw new Error(error.Error);
+      }
     );
-  }
 
-  public async NewHttpResponseAsync(response: HttpResponse<EventResponse>): Promise<void> {
-    if (!response) { throw new Error('Can\'t connect to backend'); }
-
-    if (!response.body) { return; }
-
-    if (!Object.prototype.hasOwnProperty.call(response.body, 'EventId')) {
-      throw new Error('No EventId in message');
-    }
-
-    if (response.body['EventId'] === uEventsIds.GetNewEvents) {
-      this.ParseNewEventAsync(response.body.Events);
-    } else {
-      console.error(response);
-      throw new Error('EventId is not recognized');
-    }
   }
 
   public SubscribeToEventsAsync(): Promise<ResponseStatus> {
     const e = new SubscibeToEvent(
       this.SourceInfo.SourceId, [
-      [uEventsIds.OccupationsRead, 0, 0],
+      [EventIds.OccupationsRead, 0, 0],
     ]);
 
     e.SourceName = this.SourceInfo.SourceName;
@@ -71,10 +64,10 @@ export class OccupationService implements IMicroFrontend {
     return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
-  public async ParseNewEventAsync(eventList: uEvent[]): Promise<void> {
+  public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
-        case uEventsIds.OccupationNg9ButtonPressed:
+        case EventIds.OccupationNg9ButtonPressed:
             if (this.processButtonPressed(element)) {
               await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
@@ -82,7 +75,9 @@ export class OccupationService implements IMicroFrontend {
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
-        case uEventsIds.OccupationsRead:
+        case EventIds.OccupationsRead:
+            await this.eventProxyService.ConfirmEvents(
+              this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             this.eventBus.EventBus.next(element);
             break;
         default:
@@ -95,7 +90,8 @@ export class OccupationService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[uEventsIds.OccupationNg9ButtonPressed] = '<team-occupation-ng9></team-occupation-ng9>';
+    this.elToPlace[EventIds.OccupationNg9ButtonPressed]
+      = '<team-occupation-ng9></team-occupation-ng9>';
   }
 
   /**
@@ -103,11 +99,11 @@ export class OccupationService implements IMicroFrontend {
    * @param element EventButtonPressed
    * @returns True if successful
    */
-  private processButtonPressed(element: uEvent): boolean {
+  private processButtonPressed(element: CoreEvent): boolean {
     const e = element as EventButtonPressed;
 
     switch (e.EventId) {
-      case uEventsIds.OccupationNg9ButtonPressed:
+      case EventIds.OccupationNg9ButtonPressed:
         if (e.UniqueElementId) {
           this.putToElement(e.UniqueElementId, this.getElFromID(element.EventId));
           return true;

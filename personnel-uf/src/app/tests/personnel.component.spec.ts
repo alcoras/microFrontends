@@ -1,13 +1,12 @@
-import { PersonnelComponent } from '../personnel/personnel.component';
+import { PersonnelComponent } from '../services/personnel.component';
 import { EventBusService } from '../services/EventBus.service';
-import { EventProxyLibService } from '@uf-shared-libs/event-proxy-lib';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { TestBed } from '@angular/core/testing';
-import { EventResponse, uEventsIds, uEvent } from '@uf-shared-models/index';
-import { EventButtonPressed } from '@uf-shared-events/index';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TestEvent, genRandomNumber } from './helpers/helpers';
+import { CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, EventResponse, ResponseStatus } from 'event-proxy-lib-src'
+;
 
 describe('Personnel micro frontend component', () => {
   let service: PersonnelComponent;
@@ -46,19 +45,22 @@ describe('Personnel micro frontend component', () => {
 
   it('testing PerssonelButtonPressed should trigger some actions', async (done) => {
     const event = new EventResponse();
-    const buttonEvent = new EventButtonPressed(uEventsIds.PersonnelButtonPressed, 'gg');
+    const buttonEvent = new EventButtonPressed(EventIds.PersonnelButtonPressed, 'gg');
 
-    event.EventId = uEventsIds.GetNewEvents;
+    event.EventId = EventIds.GetNewEvents;
     event.Events = [];
     event.Events.push(buttonEvent);
 
+    const responseStatus = new ResponseStatus();
+    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: event});
+
     const spies: jasmine.Spy<any>[] = [];
-    spies.push(spyOn<any>(service, 'ParseNewEventAsync').and.callThrough());
+    spies.push(spyOn<any>(eProxyService, 'PerformResponseCheck').and.callThrough());
     spies.push(spyOn<any>(service, 'processButtonPressed').and.callThrough());
     spies.push(spyOn<any>(eProxyService, 'GetLastEvents').and.returnValue(
       new Observable(
         (val) => {
-          val.next(new HttpResponse<any>({status: 200, body: event}));
+          val.next(responseStatus);
           val.complete();
         }
       )
@@ -66,7 +68,7 @@ describe('Personnel micro frontend component', () => {
     spies.push(spyOn<any>(service, 'putToElement'));
 
     await service.InitAsync();
-    service.StartQNA();
+    service.InitializeConnectionWithBackend();
 
     spies.forEach(spy => {
       expect(spy).toHaveBeenCalled();
@@ -81,31 +83,34 @@ describe('Personnel micro frontend component', () => {
 
     const shouldNumber = genRandomNumber(1000).toString();
 
-    event.EventId = uEventsIds.GetNewEvents;
+    event.EventId = EventIds.GetNewEvents;
     event.Events = [];
-    personDataEvent.EventId = uEventsIds.ReadPersonData;
+    personDataEvent.EventId = EventIds.ReadPersonData;
     personDataEvent.Comment = shouldNumber;
 
     event.Events.push(personDataEvent);
 
+    const responseStatus = new ResponseStatus();
+    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: event});
+
     spyOn<any>(eProxyService, 'GetLastEvents').and.returnValue(
       new Observable(
         (val) => {
-          val.next(new HttpResponse<any>({status: 200, body: event}));
+          val.next(responseStatus);
           val.complete();
         }
       )
     );
 
     eventBus.EventBus.subscribe(
-      (data: uEvent) => {
+      (data: CoreEvent) => {
         expect(data.Comment).toBe(shouldNumber);
         done();
       }
     );
 
     await service.InitAsync();
-    service.StartQNA();
+    service.InitializeConnectionWithBackend();
   });
 
 });

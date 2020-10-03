@@ -7,6 +7,9 @@ import { UFManagerComponent } from './uf-manager.component';
  */
 export function UFManagerFactory(provider: UFManagerComponent): Promise<void> {
   return new Promise( (resolve) => {
-    provider.InitAsync().then( () => {provider.StartQNA(); resolve(); })
+    provider.InitAsync().then( () => {
+      provider.InitializeConnectionWithBackend();
+      resolve();
+    })
   })
 }

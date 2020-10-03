@@ -1,8 +1,8 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OccupationAPIService } from '../services/OccupationAPI.service';
-import { OccupationData } from '@uf-shared-models/index';
 import { EventBusService } from '../services/EventBus.service';
+import { OccupationData } from '../Models/OccupationData';
 
 @Component({
   selector: 'app-new-occup',

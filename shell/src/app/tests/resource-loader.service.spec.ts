@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { ResourceSheme } from 'event-proxy-lib-src'
+;
 
 import { ResourceLoaderService } from '../services/resource-loader.service';
-import { ResourceSheme } from '@uf-shared-events/helpers/ResourceSheme';
 
 describe('ResourceLoaderService', () => {
   let service: ResourceLoaderService;
@@ -22,7 +23,7 @@ describe('ResourceLoaderService', () => {
     const envHolder = '__env';
     const elType = 'script';
     const attrToCheck = 'src';
-    const source = 'assets/test.js';
+    const source = 'assets/FileUsedInTests.js';
 
     resource.Element = elType;
     resource.setAttribute(attrToCheck, source);

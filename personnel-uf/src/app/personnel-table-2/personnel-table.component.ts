@@ -5,10 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { IPersonnel } from '@uf-shared-models/';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
-import { IGetResponse } from '../services/interfaces/IGetResponse';
 import { EventBusService } from '../services/EventBus.service';
+import { PersonData, PersonDataDTO } from '../Models';
 
 /**
  * Table component for Personnel micro frontend
@@ -36,7 +35,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   /**
    * Placeholder for View
    */
-  public ExpandedElement: IPersonnel | null;
+  public ExpandedElement: PersonData | null;
 
   /**
    * List of Collumns to be displayed
@@ -59,7 +58,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   public DataSource = new MatTableDataSource();
   public BackendError = false;
 
-  private data: IPersonnel[] = [];
+  private data: PersonData[] = [];
   private eventsSubscription: Subscription[] = [];
 
   public constructor(
@@ -105,12 +104,12 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
           return this.personnelApiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
 
         }),
-        map((data: IGetResponse) => {
+        map((data: PersonDataDTO) => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
           this.ResultsLength = data.total;
 
-          const ic: IPersonnel[] = data.items;
+          const ic: PersonData[] = data.items;
           this.DataSource = new MatTableDataSource(data.items);
           return ic;
         }),
@@ -138,7 +137,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
     const PosadaEl = document.querySelector(`[personnel_Posada="${id}"]`) as HTMLTextAreaElement;
     const PodatkovaPilga = document.querySelector(`[personnel_PodatkovaPilga="${id}"]`) as HTMLTextAreaElement;
 
-    const up: IPersonnel = {
+    const up: PersonData = {
       PersonDataID: id,
       DateValue: (new Date(DateValueEl.value)).toISOString(),
       DocReestratorID: +DocReestratorIDEl.value,
