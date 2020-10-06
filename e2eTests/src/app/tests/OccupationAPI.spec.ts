@@ -1,13 +1,16 @@
-import { OccupationAPIService } from '@occupation-services/OccupationAPI.service';
-import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
-import { EventBusService } from '@occupation-services/EventBus.service';
-import { TestBed } from '@angular/core/testing';
-import { OccupationData, uEventsIds, EventResponse } from '@uf-shared-models/index';
-import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
-import { SubscibeToEvent } from '@uf-shared-events/index';
 import { HttpResponse } from '@angular/common/http';
-import { IGetResponse } from '@occupation-services/interfaces/IGetResponse';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
+import { TestBed } from '@angular/core/testing';
+import {
+  EventIds,
+  EventProxyLibModule,
+  EventProxyLibService,
+  EventResponse,
+  ResponseStatus,
+  SubscibeToEvent } from 'event-proxy-lib-src';
+import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
+import { OccupationData, OccupationDataDTO } from 'occupation-uf/Models';
+import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI.service';
+import { EventBusService } from 'occupation-uf/services/EventBus.service';
 
 /**
  *
@@ -15,7 +18,7 @@ import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStat
  * @param eProxyService event proxy service
  */
 async function subscribeToOccupationsRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
-  const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.OccupationsRead, 0, 0]]);
+  const subEvent = new SubscibeToEvent(sourceId, [[EventIds.OccupationsRead, 0, 0]]);
   await eProxyService.DispatchEvent(subEvent).toPromise();
 }
 
@@ -78,7 +81,7 @@ describe('Occupation API service', () => {
   function propogateEvent(res: HttpResponse<EventResponse>): void {
     if (res.body) {
       res.body.Events.forEach(element => {
-        if (element.EventId === uEventsIds.OccupationsRead) {
+        if (element.EventId === EventIds.OccupationsRead) {
           eventBusService.EventBus.next(element);
           eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
         }
@@ -106,7 +109,7 @@ describe('Occupation API service', () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res.HttpResult);
         }
@@ -116,7 +119,7 @@ describe('Occupation API service', () => {
       const page = 1;
       const limit = 3;
       service.Get(page, limit).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.items.length).toBeLessThanOrEqual(limit);
           res.items.forEach(element => {
             expect(element.DocReestratorId).toBeDefined();
@@ -136,7 +139,7 @@ describe('Occupation API service', () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res.HttpResult);
       });
@@ -146,7 +149,7 @@ describe('Occupation API service', () => {
       let id: number;
 
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           id = res.items[0].OccupationAggregateIdHolderId;
           currentLen = res.total;
         }
@@ -156,7 +159,7 @@ describe('Occupation API service', () => {
       await service.Create(newEntry);
 
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.total).toBeGreaterThan(currentLen);
         }
       );
@@ -165,7 +168,7 @@ describe('Occupation API service', () => {
       await service.Delete(id);
 
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           expect(res.total).toEqual(currentLen);
           done();
         }
@@ -180,7 +183,7 @@ describe('Occupation API service', () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res.HttpResult);
       });
@@ -188,7 +191,7 @@ describe('Occupation API service', () => {
       let entryToUpdate: OccupationData;
       // 3. Get entry
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           if (res.total === 0) {
             done.fail('no entries found');
           }
@@ -203,7 +206,7 @@ describe('Occupation API service', () => {
 
       // 5. compare entry
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           for (const iterator of res.items) {
             if (entryToUpdate.OccupationAggregateIdHolderId === iterator.OccupationAggregateIdHolderId) {
               expect(entryToUpdate.Name).toBe(newName);
@@ -223,7 +226,7 @@ describe('Occupation API service', () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res.HttpResult);
       });
@@ -232,7 +235,7 @@ describe('Occupation API service', () => {
       let currentLen: number;
 
       await service.Get(1, 1000).then(
-        (res: IGetResponse) => {
+        (res: OccupationDataDTO) => {
           currentLen = res.total;
       });
 
@@ -240,7 +243,7 @@ describe('Occupation API service', () => {
       await service.Create(newOccupationData).then(() => {
         // 5. compare length
         service.Get(1, 1000).then(
-          (res: IGetResponse) => {
+          (res: OccupationDataDTO) => {
             expect(res.total).toBeGreaterThan(currentLen);
             done();
           }

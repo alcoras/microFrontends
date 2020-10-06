@@ -4,6 +4,13 @@ import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
 import { EventBusService } from '../services/EventBus.service';
 
+interface OnRowSelectedEvent {
+  originalEvent?: UIEvent,
+  data: MaterialsList,
+  type?: string,
+  index?: unknown,
+}
+
 interface IPrimeNgDate {
   firstDayOfWeek: number;
   dayNames: string[];
@@ -83,8 +90,8 @@ export class MaterialsReceiptsListComponent {
     this.SelectedCategory = this.Categories[0];
   }
 
-  public OnRowSelect(): void {
-    this.eventBus.OnMaterialReceiptSelected.next();
+  public OnRowSelect(event: OnRowSelectedEvent): void {
+    this.eventBus.MaterialReceiptSelected(event.data.Id);
   }
 
   public RefreshTable(): void {

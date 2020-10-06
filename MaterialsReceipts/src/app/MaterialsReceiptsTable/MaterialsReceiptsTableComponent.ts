@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { MaterialsListTablePart, MaterialsTableListDTO } from '../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI } from '../services/MaterialsReceiptsAPI';
+import { EventBusService } from '../services/EventBus.service';
 
 @Component({
   selector: 'materials-receipts-list-table-table',
@@ -10,7 +11,6 @@ import { MaterialsReceiptsAPI } from '../services/MaterialsReceiptsAPI';
 })
 export class MaterialsReceiptsTableComponent {
 
-  @Input()
   public MaterialsReceiptId: number;
 
   public Loading: boolean ;
@@ -30,8 +30,11 @@ export class MaterialsReceiptsTableComponent {
     { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
   ];
 
-  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI)
-  { }
+  public constructor(
+    private materialsReceiptsAPI: MaterialsReceiptsAPI,
+    private eventBus: EventBusService) {
+      this.MaterialsReceiptId = this.eventBus.LastSelectedMaterialsReceiptId;
+  }
 
   public LoadDataLazy(event: LazyLoadEvent): void {
     this.Loading = true;

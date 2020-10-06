@@ -1,21 +1,23 @@
-import { TestBed } from '@angular/core/testing';
-import { PersonnelAPIService } from '@personnel-services/PersonnelAPI.service';
-import { EventProxyLibService, EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib';
-import { EventBusService } from '@personnel-services/EventBus.service';
 import { HttpResponse } from '@angular/common/http';
-import { uEventsIds, EventResponse, IPersonnel } from '@uf-shared-models/index';
-import { SubscibeToEvent } from '@uf-shared-events/index';
-import { IGetResponse } from '@personnel-services/interfaces/IGetResponse';
+import { TestBed } from '@angular/core/testing';
+import {
+  EventIds,
+  EventProxyLibModule,
+  EventProxyLibService,
+  EventResponse,
+  ResponseStatus,
+  SubscibeToEvent } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
-import { ResponseStatus } from '@uf-shared-libs/event-proxy-lib/lib/ResponseStatus';
-
+import { PersonnelAPIService } from 'personnel-uf/services/PersonnelAPI.service';
+import { EventBusService } from 'personnel-uf/services/EventBus.service';
+import { PersonData, PersonDataDTO } from 'personnel-uf/Models';
 /**
  *
  * @param sourceId source id
  * @param eProxyService event proxy service
  */
 async function subscribeToPersonDataRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
-  const subEvent = new SubscibeToEvent(sourceId, [[uEventsIds.ReadPersonData, 0, 0]]);
+  const subEvent = new SubscibeToEvent(sourceId, [[EventIds.ReadPersonData, 0, 0]]);
   await eProxyService.DispatchEvent(subEvent).toPromise();
 }
 
@@ -67,7 +69,7 @@ describe('PersonnelAPI service', () => {
   function propogateEvent(res: HttpResponse<EventResponse>): void {
     if (res.body) {
       res.body.Events.forEach(element => {
-        if (element.EventId === uEventsIds.ReadPersonData) {
+        if (element.EventId === EventIds.ReadPersonData) {
           eventBusService.EventBus.next(element);
           eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
         }
@@ -79,7 +81,7 @@ describe('PersonnelAPI service', () => {
    * Creates Personnel entry for testing
    * @returns Personnel with filled random data
    */
-  function createPersonnelEntry(): IPersonnel {
+  function createPersonnelEntry(): PersonData {
     return {
       PersonDataID: 0,
       DateValue: new Date().toISOString(),
@@ -99,14 +101,14 @@ describe('PersonnelAPI service', () => {
       // 1. Sub to ReadPersonData
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => propogateEvent(res.HttpResult));
 
       // 3. Get entry
-      let entryToUpdate: IPersonnel;
+      let entryToUpdate: PersonData;
 
       await service.Get([], 1, 1000).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           if (res.total === 0) {
             done.fail('no entries found');
           }
@@ -122,7 +124,7 @@ describe('PersonnelAPI service', () => {
 
       // 5. compare entry
       await service.Get([], 1, 1000).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           for (const iterator of res.items) {
             if (entryToUpdate.PersonDataID === iterator.PersonDataID) {
               expect(entryToUpdate.KodDRFO).toBe(newField);
@@ -141,7 +143,7 @@ describe('PersonnelAPI service', () => {
     // 1. Subscription is happening before tests in beforeAll
 
     // 2. Start listenting to events
-    eProxyService.StartQNA(sourceId).subscribe(
+    eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ResponseStatus) => {
         propogateEvent(res.HttpResult);
     });
@@ -151,7 +153,7 @@ describe('PersonnelAPI service', () => {
     let id: number;
 
     await service.Get([], 1, 1000).then(
-      (res: IGetResponse) => {
+      (res: PersonDataDTO) => {
         id = res.items[0].PersonDataID;
         currentLen = res.total;
       }
@@ -161,7 +163,7 @@ describe('PersonnelAPI service', () => {
     await service.Create(newPersonnelData);
 
     await service.Get([], 1, 1000).then(
-      (res: IGetResponse) => {
+      (res: PersonDataDTO) => {
         expect(res.total).toBeGreaterThan(currentLen);
       }
     );
@@ -170,7 +172,7 @@ describe('PersonnelAPI service', () => {
     await service.Delete(id);
 
     await service.Get([], 1, 1000).then(
-      (res: IGetResponse) => {
+      (res: PersonDataDTO) => {
         expect(res.total).toEqual(currentLen);
         done();
       }
@@ -183,7 +185,7 @@ describe('PersonnelAPI service', () => {
       // 1. Subscription is happening before tests in beforeAll
 
       // 2. Start listenting to events
-      eProxyService.StartQNA(sourceId).subscribe(
+      eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res.HttpResult);
         },
@@ -193,7 +195,7 @@ describe('PersonnelAPI service', () => {
       // 3. Get current length
       let currentLen;
       await service.Get([], 1, 1000).then(
-        (res: IGetResponse) => {
+        (res: PersonDataDTO) => {
           currentLen = res.items.length;
         }
       );
@@ -202,7 +204,7 @@ describe('PersonnelAPI service', () => {
       await service.Create(newPersonnelData).then(() => {
           // 5. compare length
           service.Get([], 1, 1000).then(
-            (res: IGetResponse) => {
+            (res: PersonDataDTO) => {
               expect(res.total).toBeGreaterThan(currentLen);
               done();
             }
@@ -219,14 +221,14 @@ describe('PersonnelAPI service', () => {
     // 1. Subscription is happening before tests in beforeAll
 
     // 2. Start listenting to events
-    eProxyService.StartQNA(sourceId).subscribe(
+    eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ResponseStatus) => {
         propogateEvent(res.HttpResult);
     });
 
     // 3. Send ReadPersonDataQuery event
     service.Get([], 1, 5).then(
-      (res: IGetResponse) => {
+      (res: PersonDataDTO) => {
         res.items.forEach(element => {
           expect(element.PersonDataID).toBeDefined();
           expect(element.DataPriyomu).toBeDefined();

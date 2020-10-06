@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'event-proxy-lib-src'
-;
+import { CoreEvent } from 'event-proxy-lib-src';
 
 /**
  * Event bus for inter component/service communication in current module
@@ -10,6 +9,9 @@ import { CoreEvent } from 'event-proxy-lib-src'
   providedIn: 'root'
 })
 export class EventBusService {
+
+  public LastSelectedMaterialsReceiptId: number;
+
   /**
    * Event bus for inter component/service communication in current module
    */
@@ -17,7 +19,16 @@ export class EventBusService {
 
   /**
    * Invoked by MaterialsReceiptsList component when a record is selected
-   * passed to parent to active tab for MaterialsReceiptsTable
+   * passed to parent to active tab MaterialsReceiptsTable
    */
-  public OnMaterialReceiptSelected = new Subject();
+  public OnMaterialReceiptSelected = new Subject<number>();
+
+  /**
+   * Component MaterialsReceiptsList calls when a record is selected
+   * @param idSelected Materials Receipt Id
+   */
+  public MaterialReceiptSelected(idSelected: number): void {
+    this.OnMaterialReceiptSelected.next(idSelected);
+    this.LastSelectedMaterialsReceiptId = idSelected;
+  }
 }

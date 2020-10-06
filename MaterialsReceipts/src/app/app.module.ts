@@ -5,7 +5,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { createCustomElement } from '@angular/elements';
 
-import { EnvironmentService, EnvironmentTypes, EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
+import {
+  EnvironmentService,
+  EnvironmentTypes,
+  EventProxyLibModule,
+  EventProxyLibService } from 'event-proxy-lib-src';
 
 import { AppComponent } from './app.component';
 import { TranslatePipe } from './pipes/TranslatePipe';

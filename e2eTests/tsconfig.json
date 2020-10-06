@@ -22,11 +22,9 @@
       "@angular/*": [ "./node_modules/@angular/*" ],
       "event-proxy-lib-src":["../shared/libs/projects/event-proxy-lib/src/public-api"],
 
-      "@personnel-services/":["../personnel-uf/src/app/services"],
-      "@personnel-services/*":["../personnel-uf/src/app/services/*"],
-
-      "@occupation-services/":["../occupation-uf/src/app/services"],
-      "@occupation-services/*":["../occupation-uf/src/app/services/*"],
+      "personnel-uf/*":["../personnel-uf/src/app/*"],
+      "occupation-uf/*":["../occupation-uf/src/app/*"],
+      "materialsReceipts-uf":["../MaterialsReceipts/src/app/*"]
     }
   },
   "angularCompilerOptions": {

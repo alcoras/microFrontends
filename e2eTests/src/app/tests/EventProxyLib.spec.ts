@@ -36,7 +36,7 @@ class TestEvent extends CoreEvent {
 }
 
 for (let i = 0; i < 1; i++) {
-fdescribe('EventProxyLibService', () => {
+describe('EventProxyLibService', () => {
     const httpErrorMsg = 'HTTP response with failure.';
     const defaultEventsTimeoutMs = 5500;
     const awaitAfterSendingEvent = 500;
