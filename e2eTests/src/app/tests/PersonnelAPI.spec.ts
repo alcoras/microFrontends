@@ -1,10 +1,8 @@
-import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  EventResponse,
   ResponseStatus,
   SubscibeToEvent } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
@@ -21,8 +19,7 @@ async function subscribeToPersonDataRead(sourceId: string, eProxyService: EventP
   await eProxyService.DispatchEvent(subEvent).toPromise();
 }
 
-
-describe('PersonnelAPI service', () => {
+fdescribe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -63,18 +60,19 @@ describe('PersonnelAPI service', () => {
   });
 
   /**
-   *
-   * @param res http response to propogate
+   * sends events to event bus
+   * @param res response to propogate
    */
-  function propogateEvent(res: HttpResponse<EventResponse>): void {
-    if (res.body) {
-      res.body.Events.forEach(element => {
-        if (element.EventId === EventIds.ReadPersonData) {
-          eventBusService.EventBus.next(element);
-          eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
-        }
-      });
-    }
+  function propogateEvent(res: ResponseStatus): void {
+
+    if (!res.HttpResult.body) return;
+
+    res.HttpResult.body.Events.forEach(element => {
+      if (element.EventId === EventIds.ReadPersonData) {
+        eventBusService.EventBus.next(element);
+        eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+      }
+    });
   }
 
   /**
@@ -102,7 +100,7 @@ describe('PersonnelAPI service', () => {
 
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res.HttpResult));
+        (res: ResponseStatus) => propogateEvent(res));
 
       // 3. Get entry
       let entryToUpdate: PersonData;
@@ -145,7 +143,7 @@ describe('PersonnelAPI service', () => {
     // 2. Start listenting to events
     eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ResponseStatus) => {
-        propogateEvent(res.HttpResult);
+        propogateEvent(res);
     });
 
     // 3. Get current length
@@ -187,7 +185,7 @@ describe('PersonnelAPI service', () => {
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
-          propogateEvent(res.HttpResult);
+          propogateEvent(res);
         },
         (err) => { done.fail(err); },
       );
@@ -223,7 +221,7 @@ describe('PersonnelAPI service', () => {
     // 2. Start listenting to events
     eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ResponseStatus) => {
-        propogateEvent(res.HttpResult);
+        propogateEvent(res);
     });
 
     // 3. Send ReadPersonDataQuery event

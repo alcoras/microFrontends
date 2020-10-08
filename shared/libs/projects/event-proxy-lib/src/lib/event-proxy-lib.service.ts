@@ -5,20 +5,8 @@ import { Observable, Observer, Subscriber, of } from 'rxjs';
 import { CoreEvent, EventIds, ErrorMessage, ResponseStatus, MicroFrontendParts } from './models/index';
 import { EnvironmentService } from './services/EnvironmentService';
 import { retryWithBackoff } from './retry/retry.pipe';
-
-class FrontendToBackendEvent {
-  public EventId: number;
-  public SourceId?: string;
-  public Ids?: number[];
-  public MarkAllReceived?: boolean;
-  public Events?: CoreEvent[];
-}
-
-class BackendToFrontendEvent {
-  public EventId: number;
-  public Ids?: number[];
-  public Events?: CoreEvent[];
-}
+import { BackendToFrontendEvent } from './models/BackendEvents/BackendToFrontendEvent';
+import { FrontendToBackendEvent } from './models/FrontendEvents/FrontendToBackendEvent';
 
 /**
  * Event Proxy service for communication with API gateway

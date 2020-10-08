@@ -24,7 +24,7 @@
 
       "personnel-uf/*":["../personnel-uf/src/app/*"],
       "occupation-uf/*":["../occupation-uf/src/app/*"],
-      "materialsReceipts-uf":["../MaterialsReceipts/src/app/*"]
+      "materialsReceipts-uf/*":["../MaterialsReceipts/src/app/*"],
     }
   },
   "angularCompilerOptions": {

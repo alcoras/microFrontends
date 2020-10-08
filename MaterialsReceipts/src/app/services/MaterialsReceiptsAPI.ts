@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import {
   EventProxyLibService,
   ResponseStatus,
-  APIGatewayResponse,
   MicroFrontendParts
 } from 'event-proxy-lib-src'
 ;
@@ -58,9 +57,7 @@ export class MaterialsReceiptsAPI {
               reject('Failed to retrieve data');
             }
 
-            const responseBody = responseStatus.HttpResult.body as APIGatewayResponse;
-
-            const uniqueId = responseBody.Ids[0];
+            const uniqueId = responseStatus.HttpResult.body.Ids[0];
 
             this.eventBusService.EventBus.subscribe(
               async (data: MaterialsReceiptsTablePartReadListResults) => {
@@ -98,9 +95,7 @@ export class MaterialsReceiptsAPI {
             reject('Failed to retrieve data');
           }
 
-          const responseBody = responseStatus.HttpResult.body as APIGatewayResponse;
-
-          const uniqueId = responseBody.Ids[0];
+          const uniqueId = responseStatus.HttpResult.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
             async (data: MaterialsReceiptsReadListResults) => {

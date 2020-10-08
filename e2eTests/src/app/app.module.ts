@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { EventProxyLibModule } from '@uf-shared-libs/event-proxy-lib/public-api';
+import { EventProxyLibModule } from 'event-proxy-lib-src';
 
 @NgModule({
   declarations: [

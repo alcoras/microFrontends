@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import {
-  APIGatewayResponse,
   CoreEvent,
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  EventResponse,
   ResponseStatus,
   SubscibeToEvent } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL } from './helpers/helpers';
@@ -107,7 +105,6 @@ describe('EventProxyLibService', () => {
          */
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         function eventParserMockAsync(eventList: CoreEvent[] | CoreEvent): Promise<void> {
-          console.log(eventList);
           expect([].concat(eventList)[0].EventId).toEqual(waitForEventId);
           done();
           return Promise.resolve();
@@ -157,7 +154,7 @@ describe('EventProxyLibService', () => {
         (res: ResponseStatus) => {
           expect(res.HttpResult.status).toEqual(200);
 
-          const responseBody = res.HttpResult.body as APIGatewayResponse;
+          const responseBody = res.HttpResult.body;
 
           expect(responseBody.EventId).toEqual(EventIds.RegisterEventIds);
           expect(responseBody.Ids.length).toEqual(1);
@@ -183,7 +180,7 @@ describe('EventProxyLibService', () => {
         (res: ResponseStatus) => {
           expect(res.HttpResult.status).toEqual(200);
 
-          const responseBody = res.HttpResult.body as APIGatewayResponse;
+          const responseBody = res.HttpResult.body;
 
           expect(responseBody.EventId).toEqual(EventIds.RegisterEventIds);
           expect(responseBody.Ids.length).toEqual(random);
@@ -217,7 +214,7 @@ describe('EventProxyLibService', () => {
             expect(res.Failed).toBeFalse();
             expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
-            const responseBody = res.HttpResult.body as EventResponse;
+            const responseBody = res.HttpResult.body;
 
             expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
 
@@ -242,7 +239,7 @@ describe('EventProxyLibService', () => {
           expect(res.Failed).toBeFalse();
           expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
-          const responseBody = res.HttpResult.body as EventResponse;
+          const responseBody = res.HttpResult.body;
 
           expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
 
@@ -295,11 +292,10 @@ describe('EventProxyLibService', () => {
       // 3. Listening to events
       service.InitializeConnectionToBackend(testinID).subscribe(
         (res: ResponseStatus) => {
-          console.log(res);
           expect(res.Failed).toBeFalse();
           expect(res.HttpResult.status).toEqual(200);
 
-          const responseBody = res.HttpResult.body as EventResponse;
+          const responseBody = res.HttpResult.body;
 
           expect(responseBody.EventId).toEqual(EventIds.GetNewEvents);
 
@@ -338,7 +334,7 @@ describe('EventProxyLibService', () => {
         await service.GetLastEvents(index.toString()).toPromise().then(
           async (res: ResponseStatus) => {
 
-            const responseBody = res.HttpResult.body as EventResponse;
+            const responseBody = res.HttpResult.body;
 
             expect(responseBody.EventId === EventIds.GetNewEvents);
 

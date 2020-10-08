@@ -136,10 +136,10 @@
 37. if microfrontend fails to putToElement because some event was not parsed it throws and blocks workflow: try with try..catch
 47. write unit/static tests micro frontend prelaunch services
 48. write integration tests for Authentication Service
-56. on refreshing disconnect every micro frontend
+56. on refreshing/closing tab disconnect every micro frontend
 59. if backend does not work show some message in shell or show trying to connect
 63. consider adding loading indication (console or otherwise when event-proxy-lib is retrying)
 64. nginx will be the server, so remove serve in all micro frontends
 66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
-69. clean up package.json scripts in projects (remove serve)
+69. clean up package.json scripts in projects (remove serve and serve scripts)
 70.

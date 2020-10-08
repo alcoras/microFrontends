@@ -11,7 +11,7 @@ import {
   PersonData,
   PersonDataDTO } from '../Models/index';
 import {
-  APIGatewayResponse,
+  BackendToFrontendEvent,
   EventProxyLibService,
   MicroFrontendParts,
   ResponseStatus } from 'event-proxy-lib-src';
@@ -43,7 +43,7 @@ export class PersonnelAPIService {
    * @param personDataId PersonDataId to remove by
    * @returns Promise
    */
-  public Delete(personDataId: number): Promise<HttpResponse<APIGatewayResponse>> {
+  public Delete(personDataId: number): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
       this.delete(personDataId).toPromise().then( (val: ResponseStatus) => {
         if (val.HttpResult.status === 200) {
@@ -60,7 +60,7 @@ export class PersonnelAPIService {
    * @param personnel PersonData
    * @returns Promise
    */
-  public Create(personnel: PersonData): Promise<HttpResponse<APIGatewayResponse>> {
+  public Create(personnel: PersonData): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.create(personnel).toPromise().then( (val: ResponseStatus) => {
@@ -78,7 +78,7 @@ export class PersonnelAPIService {
    * @param personnel PersonData
    * @returns Promise
    */
-  public Update(personnel: PersonData): Promise<HttpResponse<APIGatewayResponse>> {
+  public Update(personnel: PersonData): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.update(personnel).toPromise().then( (val: ResponseStatus) => {
@@ -98,11 +98,12 @@ export class PersonnelAPIService {
    * @param pageSize page size
    * @returns Promise with Personnel data
    */
-  // TODO: add timeout and reject
   public Get(multiSorting: string[], page: number, pageSize: number): Promise<PersonDataDTO> {
+
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
+
     return new Promise<PersonDataDTO>(
       (resolve) => {
         this.get(multiSorting, page, pageSize).toPromise().then( (response: ResponseStatus) => {
@@ -110,9 +111,7 @@ export class PersonnelAPIService {
             return new Error('Failed to retrieve data');
           }
 
-          const responseBody = response.HttpResult.body as APIGatewayResponse;
-
-          const uniqueId = responseBody.Ids[0];
+          const uniqueId = response.HttpResult.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
             async (data: PersonDataRead) => {
@@ -127,6 +126,7 @@ export class PersonnelAPIService {
         });
       }
     );
+
   }
 
   /**

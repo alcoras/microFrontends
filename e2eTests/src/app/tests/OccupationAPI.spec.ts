@@ -1,10 +1,8 @@
-import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  EventResponse,
   ResponseStatus,
   SubscibeToEvent } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
@@ -75,18 +73,20 @@ describe('Occupation API service', () => {
   });
 
   /**
-   *
-   * @param res http response to propogate
+   * sends events to event bus
+   * @param res response to propogate
    */
-  function propogateEvent(res: HttpResponse<EventResponse>): void {
-    if (res.body) {
-      res.body.Events.forEach(element => {
-        if (element.EventId === EventIds.OccupationsRead) {
-          eventBusService.EventBus.next(element);
-          eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
-        }
-      });
-    }
+  function propogateEvent(res: ResponseStatus): void {
+
+  // ignoring empty responses
+    if (!res.HttpResult.body) return;
+
+    res.HttpResult.body.Events.forEach(element => {
+      if (element.EventId === EventIds.OccupationsRead) {
+        eventBusService.EventBus.next(element);
+        eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+      }
+    });
   }
 
   it('test service creation', () => {
@@ -111,7 +111,7 @@ describe('Occupation API service', () => {
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
-          propogateEvent(res.HttpResult);
+          propogateEvent(res);
         }
       );
 
@@ -130,7 +130,7 @@ describe('Occupation API service', () => {
           done();
         }
       );
-    }, 6000);
+    }, 1000);
   });
 
   describe('Combination', () => {
@@ -141,7 +141,7 @@ describe('Occupation API service', () => {
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
-          propogateEvent(res.HttpResult);
+          propogateEvent(res);
       });
 
       // 3. Get current length and id
@@ -185,7 +185,7 @@ describe('Occupation API service', () => {
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
-          propogateEvent(res.HttpResult);
+          propogateEvent(res);
       });
 
       let entryToUpdate: OccupationData;
@@ -228,7 +228,7 @@ describe('Occupation API service', () => {
       // 2. Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
-          propogateEvent(res.HttpResult);
+          propogateEvent(res);
       });
 
       // 3. Get current length

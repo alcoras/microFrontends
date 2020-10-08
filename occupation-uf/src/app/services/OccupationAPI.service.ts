@@ -5,7 +5,6 @@ import { HttpResponse } from '@angular/common/http';
 import {
   EventProxyLibService,
   ResponseStatus,
-  APIGatewayResponse,
   MicroFrontendParts
 } from 'event-proxy-lib-src';
 
@@ -41,11 +40,11 @@ export class OccupationAPIService {
    * @param id Occupation to remove by
    * @returns Promise
    */
-  public Delete(id: number): Promise<HttpResponse<APIGatewayResponse>> {
+  public Delete(id: number): Promise<ResponseStatus> {
     return new Promise( (resolve, reject) => {
       this.delete(id).toPromise().then( (val: ResponseStatus) => {
-        if (val.HttpResult.status === 200) {
-          resolve(val.HttpResult);
+        if (!val.Failed) {
+          resolve(val);
         } else {
           reject(val);
         }
@@ -58,12 +57,12 @@ export class OccupationAPIService {
    * @param occupationData new OccupationData
    * @returns Promise
    */
-  public Create(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
+  public Create(occupationData: OccupationData): Promise<ResponseStatus> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.create(occupationData).toPromise().then( (val: ResponseStatus) => {
-        if (val.HttpResult.status === 200) {
-          resolve(val.HttpResult);
+        if (!val.Failed) {
+          resolve(val);
         } else {
           reject(val);
         }
@@ -76,12 +75,12 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Promise
    */
-  public Update(occupationData: OccupationData): Promise<HttpResponse<APIGatewayResponse>> {
+  public Update(occupationData: OccupationData): Promise<ResponseStatus> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
       this.update(occupationData).toPromise().then( (val: ResponseStatus) => {
-        if (val.HttpResult.status === 200) {
-          resolve(val.HttpResult);
+        if (!val.Failed) {
+          resolve(val);
         } else {
           reject(val);
         }
@@ -108,9 +107,7 @@ export class OccupationAPIService {
             reject('Failed to retrieve data');
           }
 
-          const responseBody = response.HttpResult.body as APIGatewayResponse;
-
-          const uniqueId = responseBody.Ids[0];
+          const uniqueId = response.HttpResult.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe(
             async (data: OccupationsReadResults) => {

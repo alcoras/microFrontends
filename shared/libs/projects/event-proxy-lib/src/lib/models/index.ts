@@ -7,8 +7,7 @@ export * from './MicroFrontendInfo';
 export * from './MicroFrontendParts';
 export * from './ResponseStatus';
 
-export * from './BackendEvents/APIGatewayResponse';
-export * from './BackendEvents/EventResponse';
+export * from './BackendEvents/BackendToFrontendEvent';
 export * from './BackendEvents/LoginSuccess';
 export * from './BackendEvents/SubscibeToEvent';
 

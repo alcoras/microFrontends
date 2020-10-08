@@ -3,6 +3,7 @@ export * from './InitializeMenuEvent';
 export * from './LanguageChange';
 export * from './LoadedResource';
 export * from './RequestToLoadScript';
+export * from './FrontendToBackendEvent';
 
 export * from './helpers/ButtonIds';
 export * from './helpers/MicroFrontendData';

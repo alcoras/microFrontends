@@ -1,7 +1,8 @@
 import { HttpResponse } from '@angular/common/http';
+import { BackendToFrontendEvent } from "./BackendEvents/BackendToFrontendEvent";
 
 export class ResponseStatus {
-  public HttpResult: HttpResponse<any>;
+  public HttpResult: HttpResponse<BackendToFrontendEvent>;
 
   public Failed: boolean;
 
