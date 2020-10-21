@@ -55,7 +55,7 @@ const readingResultIds = [
   EventIds.MaterialsReceiptsReadListResults,
   EventIds.MaterialsReceiptsTablePartReadListResults ];
 
-describe('MaterialsReceipts API service', () => {
+xdescribe('MaterialsReceipts API service', () => {
   let service: MaterialsReceiptsAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -126,7 +126,7 @@ describe('MaterialsReceipts API service', () => {
 
   describe('Material Receipt List Table', () => {
 
-    fit('Getting some data', async (done) => {
+    it('Getting some data', async (done) => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events

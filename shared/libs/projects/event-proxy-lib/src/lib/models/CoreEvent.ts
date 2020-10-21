@@ -45,12 +45,17 @@ export abstract class CoreEvent {
   public ParentId = 0;
 
   /**
-   * Protocol version event
+   * Event's Protocol version
    */
-  public ProtocolVersion = '';
+  public ProtocolVersion = '2.1.0';
 
   /**
    * Comment for additional information
    */
   public Comment = '';
+
+  /**
+   * Event broker register date and time stamp
+   */
+  public DateTimeStampEventBroker = '';
 }

@@ -35,8 +35,9 @@ class TestEvent extends CoreEvent {
 
 for (let i = 0; i < 1; i++) {
 describe('EventProxyLibService', () => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
     const httpErrorMsg = 'HTTP response with failure.';
-    const defaultEventsTimeoutMs = 5500;
+    const defaultEventsTimeoutMs = 6000;
     const awaitAfterSendingEvent = 500;
     const backendURL = BackendURL;
     const backendPort = BackendPort;
@@ -49,7 +50,6 @@ describe('EventProxyLibService', () => {
 
     beforeEach(
       async () => {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20 * 1000;
         window['__env'] = window['__env'] || {};
 
         // eslint-disable-next-line @typescript-eslint/camelcase
@@ -72,6 +72,7 @@ describe('EventProxyLibService', () => {
         serviceList.forEach(async element => {
           element = TestBed.inject(EventProxyLibService);
           element.ApiGatewayURL = backendURL;
+          service.Retries = 0;
           await element.ConfirmEvents(testinID, [], true).toPromise();
         });
 
@@ -202,15 +203,16 @@ describe('EventProxyLibService', () => {
         await service.DispatchEvent(subEvent).toPromise();
 
         // TODO: eventually it should wait till someone subscribed to it.
-        await delay(awaitAfterSendingEvent);
+        // it does and it's 2003 event
         // 2. Fire event
+        await delay(awaitAfterSendingEvent);
         tEvent.EventId = waitForEventId;
         await service.DispatchEvent(tEvent).toPromise();
         await delay(awaitAfterSendingEvent);
 
         // 3. Listening to events
         service.InitializeConnectionToBackend(testinID).subscribe(
-          (res: ResponseStatus) => {
+          async (res: ResponseStatus) => {
             expect(res.Failed).toBeFalse();
             expect(res.HttpResult.status).toBe(200, 'Incorrect http status');
 
@@ -308,9 +310,9 @@ describe('EventProxyLibService', () => {
       );
     });
 
-    it('few sources subscribe to same event and they receive them', async (done) => {
+   it('few sources subscribe to same event and they receive them', async (done) => {
       const sourceIdBegin = 41;
-      const rndEventId = getRandomInt(1000);
+      const rndEventId = getRandomInt(500) + 1;
       const sourceAmount = 2;
 
       const subEventList = [];
@@ -319,20 +321,23 @@ describe('EventProxyLibService', () => {
           // 1. Subscribe to them
           const subEvent = new SubscibeToEvent(index.toString(), [[rndEventId, 0, 0]], true);
           subEventList.push(subEvent);
-
-          // 2. Fire event
-          tEvent.EventId = rndEventId;
-          fireEventList.push(tEvent);
       }
+
+      // 2. Fire event
+      tEvent.EventId = rndEventId;
+      fireEventList.push(tEvent);
 
       await service.DispatchEvent(subEventList).toPromise();
       await delay(awaitAfterSendingEvent);
+
       await service.DispatchEvent(fireEventList).toPromise();
       await delay(awaitAfterSendingEvent);
 
+      //
+      let sourceCount = 0;
       for (let index = sourceIdBegin; index < sourceIdBegin + sourceAmount; index++) {
-        await service.GetLastEvents(index.toString()).toPromise().then(
-          async (res: ResponseStatus) => {
+        const test = service.GetLastEvents(index.toString()).toPromise().then(
+          (res: ResponseStatus) => {
 
             const responseBody = res.HttpResult.body;
 
@@ -346,20 +351,18 @@ describe('EventProxyLibService', () => {
               idList.push(element.AggregateId);
             });
 
-            await service.ConfirmEvents(index.toString(), idList).toPromise();
+            service.ConfirmEvents(index.toString(), idList).toPromise();
 
-            await service.GetLastEvents(index.toString()).toPromise().then(
-              (res2: ResponseStatus) => {
-                expect(res2.HttpResult.body).toBeNull();
-              }
-            );
+            service.DispatchEvent(new SubscibeToEvent(index.toString(), [], true)).toPromise();
 
-            await service.DispatchEvent(new SubscibeToEvent(index.toString(), [], true)).toPromise();
+            sourceCount++;
+
+            if (sourceCount == sourceAmount)
+              done();
           }
         );
+        expectAsync(test).toBeResolved();
       }
-
-      done();
     });
 });
 }

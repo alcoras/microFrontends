@@ -19,7 +19,7 @@ async function subscribeToPersonDataRead(sourceId: string, eProxyService: EventP
   await eProxyService.DispatchEvent(subEvent).toPromise();
 }
 
-fdescribe('PersonnelAPI service', () => {
+describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
   let eProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
