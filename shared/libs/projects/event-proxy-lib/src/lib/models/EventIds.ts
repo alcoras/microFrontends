@@ -50,4 +50,6 @@ export enum EventIds {
   TokenRenewSuccess = 2028,
   LoginSuccessWithTokenInformation = 2029,
   TokenRenewSuccessWithTokenInformation = 2030,
+  ObserverSnapshotQuery = 2051,
+  ObserverSnapshotResult = 2052,
 }
