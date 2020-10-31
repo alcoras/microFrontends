@@ -5,7 +5,11 @@
   "projects": {
     "observer-uf": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -15,7 +19,7 @@
           "options": {
             "customWebpackConfig": { "path": "./extra-webpack.config.js",
               "mergeStrategies": { "externals": "replace" } },
-            "outputPath": "dist/",
+            "outputPath": "dist/observer",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -27,7 +31,10 @@
               "src/scripts"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -38,6 +45,10 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/scripts/conf.js",
+                  "with": "src/scripts/conf.prod.js"
                 }
               ],
               "optimization": true,

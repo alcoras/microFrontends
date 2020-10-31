@@ -1,0 +1,31 @@
+<p-table
+  [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
+  [columns]="Cols" [value]="ParentEvents"
+>
+  <ng-template pTemplate="caption">
+    <!-- Refresh button -->
+    <div style="margin-bottom: 1em">
+      <button type="button" pButton icon="pi pi-refresh"
+        (click)="RefreshTable()" style="margin-right:.5em">
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Headers -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+        <th *ngFor="let col of columns">
+            {{col.header}}
+        </th>
+    </tr>
+  </ng-template>
+
+  <!-- Fields -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+        <td *ngFor="let col of columns">
+            {{rowData.ParentEventData[col.field]}}
+        </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -10,10 +10,8 @@ import {
   MicroFrontendInfo,
   MicroFrontendParts,
   EventIds } from 'event-proxy-lib-src';
-import { ObserverSnapshotResultDTO } from '../models/DTOs/ObserverSnapshotResultDTO';
 
 import { EventBusService } from './EventBus.service';
-import { ObserverAPI } from './ObserverAPI';
 
 @Injectable({
   providedIn: 'root'
@@ -29,18 +27,11 @@ export class ObserverService implements IMicroFrontend {
 
   public constructor(
     private eventBus: EventBusService,
-    private eventProxyService: EventProxyLibService,
-    private observerService: ObserverAPI) {}
+    private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
     await this.SubscribeToEventsAsync();
     this.preparePlacements();
-
-    const response = this.observerService.RequestSnapshot();
-
-    response.then((data: ObserverSnapshotResultDTO) => {
-      console.log(data);
-    });
   }
 
   /**

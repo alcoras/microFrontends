@@ -1,1 +1,8 @@
-hellow
+<p-tabView [(activeIndex)]="ActiveTabIndex">
+  <p-tabPanel header="Event Traces">
+    <trace-component></trace-component>
+  </p-tabPanel>
+  <p-tabPanel header="Map">
+    <map-component></map-component>
+  </p-tabPanel>
+</p-tabView>
