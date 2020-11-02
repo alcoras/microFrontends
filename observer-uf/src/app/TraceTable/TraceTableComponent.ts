@@ -1,18 +1,33 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { ObserverSnapshotResultDTO } from '../models/DTOs/ObserverSnapshotResultDTO';
-import { EventDataForTracing } from '../models/EventDataForTracing';
+import { EventParent } from '../models/EventParent';
 import { ObserverAPI } from '../services/ObserverAPI';
 
 @Component({
   selector: 'trace-component',
   templateUrl: './View.html',
-  styleUrls: ['./Styles.scss']
+  styleUrls: ['./Styles.scss'],
+  animations: [
+    trigger('rowExpansionTrigger', [
+        state('void', style({
+            transform: 'translateX(-10%)',
+            opacity: 0
+        })),
+        state('active', style({
+            transform: 'translateX(0)',
+            opacity: 1
+        })),
+        transition('* <=> *', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
+    ])
+]
 })
 export class TraceTableComponent {
   public Loading: boolean;
-  public ParentEvents: EventDataForTracing[];
-  public ParentlessEvents: EventDataForTracing[];
+  public Data: ObserverSnapshotResultDTO;
+
+  public ParentEvents: EventParent[];
 
   public Cols = [
     { field: 'EventId', header: 'EventId'},
@@ -20,36 +35,30 @@ export class TraceTableComponent {
     { field: 'SourceId', header: 'SourceId'},
     { field: 'SourceName', header: 'SourceName'},
     { field: 'DestinationId', header: 'DestinationId'},
+    //{ field: 'BodyJson', header: 'BodyJson'},
     { field: 'Timestamp', header: 'Timestamp'},
   ];
 
   public constructor(private observerService: ObserverAPI) {}
 
   public RefreshTable(): void {
-    this.Loading = true;
-
-    const response = this.observerService.RequestSnapshot();
-
-    response.then( (data: ObserverSnapshotResultDTO) => {
-      this.ParentEvents = data.EventParentList;
-      this.ParentlessEvents = data.EventParentlessList;
-
-      console.log(this.ParentEvents);
-      this.Loading = false;
-    })
+    this.requestSnapshotAndPopulateData();
   }
 
   public LoadDataLazy(event: LazyLoadEvent): void {
+    this.requestSnapshotAndPopulateData();
+  }
+
+  private requestSnapshotAndPopulateData(data: ObserverSnapshotResultDTO = this.Data): void {
     this.Loading = true;
 
     const response = this.observerService.RequestSnapshot();
 
-    response.then( (data: ObserverSnapshotResultDTO) => {
+    response.then( (newData: ObserverSnapshotResultDTO) => {
+      data = newData;
+      console.log(data);
       this.ParentEvents = data.EventParentList;
-      this.ParentlessEvents = data.EventParentlessList;
-
-      console.log(this.ParentEvents);
       this.Loading = false;
-    })
+    });
   }
 }

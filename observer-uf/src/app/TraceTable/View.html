@@ -1,6 +1,6 @@
 <p-table
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
-  [columns]="Cols" [value]="ParentEvents"
+  [columns]="Cols" [value]="ParentEvents" dataKey="ParentEventData.AggregateId"
 >
   <ng-template pTemplate="caption">
     <!-- Refresh button -->
@@ -14,6 +14,7 @@
   <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
     <tr>
+        <th style="width: 3rem"></th>
         <th *ngFor="let col of columns">
             {{col.header}}
         </th>
@@ -21,11 +22,49 @@
   </ng-template>
 
   <!-- Fields -->
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr [pSelectableRow]="rowData">
+  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+    <tr>
+        <td>
+          <button
+            type="button" pButton pRipple [pRowToggler]="rowData"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+          </button>
+        </td>
         <td *ngFor="let col of columns">
             {{rowData.ParentEventData[col.field]}}
         </td>
+    </tr>
+  </ng-template>
+
+  <!-- Row Expansion -->
+  <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+    <tr>
+      <td colspan="7">
+          <div class="p-p-3">
+              <p-table [value]="rowData.ChildrenEventData" dataKey="AggregateId">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td *ngFor="let col of columns">
+                      {{rowData[col.field]}}
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                      <td colspan="6">No Children events</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+          </div>
+      </td>
     </tr>
   </ng-template>
 </p-table>

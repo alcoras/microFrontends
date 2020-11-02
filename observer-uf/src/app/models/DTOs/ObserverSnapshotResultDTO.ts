@@ -1,12 +1,13 @@
 import { CoreEvent } from "event-proxy-lib-src";
 import { EventDataForTracing } from "../EventDataForTracing";
+import { EventParent } from "../EventParent";
 
 /**
- * Response for Get
+ * Response for ObserverSnapshotQuery event
  */
 export class ObserverSnapshotResultDTO extends CoreEvent {
 
-  public EventParentList: EventDataForTracing[];
+  public EventParentList: EventParent[];
   public EventParentlessList: EventDataForTracing[];
 
   public ParentSourceEventUniqueId: number;
