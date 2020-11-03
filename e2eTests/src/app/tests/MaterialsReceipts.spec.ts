@@ -55,7 +55,7 @@ const readingResultIds = [
   EventIds.MaterialsReceiptsReadListResults,
   EventIds.MaterialsReceiptsTablePartReadListResults ];
 
-xdescribe('MaterialsReceipts API service', () => {
+describe('MaterialsReceipts API service', () => {
   let service: MaterialsReceiptsAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;

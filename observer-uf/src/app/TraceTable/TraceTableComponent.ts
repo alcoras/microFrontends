@@ -29,13 +29,15 @@ export class TraceTableComponent {
 
   public ParentEvents: EventParent[];
 
+  public DisplayJsonBodyForm: boolean;
+  public CurrentJsonBody: string;
+
   public Cols = [
     { field: 'EventId', header: 'EventId'},
+    { field: 'EventInfo', header: 'EventInfo'},
     { field: 'AggregateId', header: 'AggregateId'},
     { field: 'SourceId', header: 'SourceId'},
     { field: 'SourceName', header: 'SourceName'},
-    { field: 'DestinationId', header: 'DestinationId'},
-    //{ field: 'BodyJson', header: 'BodyJson'},
     { field: 'Timestamp', header: 'Timestamp'},
   ];
 
@@ -49,6 +51,11 @@ export class TraceTableComponent {
     this.requestSnapshotAndPopulateData();
   }
 
+  public ShowJsonBody(data: string): void {
+    this.CurrentJsonBody = JSON.stringify(JSON.parse(data), null, 4);
+    this.DisplayJsonBodyForm = true;
+  }
+
   private requestSnapshotAndPopulateData(data: ObserverSnapshotResultDTO = this.Data): void {
     this.Loading = true;
 
@@ -56,7 +63,6 @@ export class TraceTableComponent {
 
     response.then( (newData: ObserverSnapshotResultDTO) => {
       data = newData;
-      console.log(data);
       this.ParentEvents = data.EventParentList;
       this.Loading = false;
     });
