@@ -3,6 +3,7 @@ import { MaterialsList, MaterialsListDTO, ReadListQueryParams } from '../Models/
 import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
 import { EventBusService } from '../services/EventBus.service';
+import { MaterialReceiptSelectedData } from '../Models/MaterialReceiptSelectedData';
 
 interface OnRowSelectedEvent {
   originalEvent?: UIEvent,
@@ -91,7 +92,13 @@ export class MaterialsReceiptsListComponent {
   }
 
   public OnRowSelect(event: OnRowSelectedEvent): void {
-    this.eventBus.MaterialReceiptSelected(event.data.Id);
+    const eventData: MaterialReceiptSelectedData = {
+      Id: event.data.Id,
+      ReceiptNumber: event.data.Number,
+      ReceiptDate: event.data.RegisterDateTime
+    };
+
+    this.eventBus.MaterialReceiptSelected(eventData);
   }
 
   public RefreshTable(): void {
@@ -113,7 +120,7 @@ export class MaterialsReceiptsListComponent {
     else if (this.SelectedCategory.name == Categories.Unsigned)
       queryParams.Signed = false;
 
-    const res = this.materialsReceiptsAPI.Get(queryParams);
+    const res = this.materialsReceiptsAPI.GetMaterialsReceiptsList(queryParams);
 
     res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;
@@ -138,7 +145,7 @@ export class MaterialsReceiptsListComponent {
     this.currentPage = queryParams.Page;
     this.currentLimit = event.rows;
 
-    const res = this.materialsReceiptsAPI.Get(queryParams);
+    const res = this.materialsReceiptsAPI.GetMaterialsReceiptsList(queryParams);
 
     res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;

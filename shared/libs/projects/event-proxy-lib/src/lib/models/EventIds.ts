@@ -31,6 +31,18 @@ export enum EventIds {
   MaterialsReceiptsReadListResults = 2032,
   MaterialsReceiptsTablePartReadListQuery = 2033,
   MaterialsReceiptsTablePartReadListResults = 2034,
+  MaterialsReceiptsScanTableAdd = 2039,
+  MaterialsReceiptsScanTableRemove = 2040,
+  MaterialsReceiptsScanTableReadListQuery = 2041,
+  MaterialsReceiptsScanTableReadListResults = 2042,
+  MaterialsReceiptsLocationsAdd = 2043,
+  MaterialsReceiptsLocationsRemove = 2044,
+  MaterialsReceiptsLocationsReadListQuery = 2045,
+  MaterialsReceiptsLocationsReadListResults = 2046,
+  MaterialsReceiptsMaterialsAtLocationAdd = 2047,
+  MaterialsReceiptsMaterialsAtLocationsRemove = 2048,
+  MaterialsReceiptsMaterialsAtLocationsReadListQuery = 2049,
+  MaterialsReceiptsMaterialsAtLocationsReadListResults = 2050,
 
   // Core events
   PingRequest = 2001,

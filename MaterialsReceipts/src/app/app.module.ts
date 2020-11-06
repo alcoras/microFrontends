@@ -13,6 +13,7 @@ import {
 
 import { AppComponent } from './app.component';
 import { TranslatePipe } from './pipes/TranslatePipe';
+import { ScanTableComponent } from './ScanTable/ScanTableComponent';
 
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -22,6 +23,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { CardModule } from 'primeng/card';
 
 import { ProductService } from './services/ProductService';
 import { MaterialsReceiptsService } from './services/MaterialsReceiptsService';
@@ -90,7 +92,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     AppComponent,
     MaterialsReceiptsListComponent,
     TranslatePipe,
-    MaterialsReceiptsTableComponent
+    MaterialsReceiptsTableComponent,
+    ScanTableComponent
   ],
   imports: [
     BrowserModule,
@@ -104,6 +107,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     CheckboxModule,
     RadioButtonModule,
     InputTextModule,
+    CardModule,
     EventProxyLibModule
   ],
   providers: [

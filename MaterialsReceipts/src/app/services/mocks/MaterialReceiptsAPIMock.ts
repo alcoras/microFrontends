@@ -24,7 +24,7 @@ export class MaterialsReceiptsAPIMock {
     }
   }
 
-  public Get(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
+  public GetMaterialsReceiptsList(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
     const items = this.data.slice(queryParams.Page, (queryParams.Page + queryParams.Limit));
     return Promise.resolve({Items: items, Total: this.data.length})
   }

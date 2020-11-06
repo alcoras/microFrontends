@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'event-proxy-lib-src'
-;
+import { CoreEvent } from 'event-proxy-lib-src';
 import { Subject } from 'rxjs';
 
 /**

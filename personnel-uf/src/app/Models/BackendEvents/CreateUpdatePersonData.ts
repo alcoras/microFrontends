@@ -1,5 +1,4 @@
-import { CoreEvent, EventIds } from 'event-proxy-lib-src'
-;
+import { CoreEvent, EventIds } from 'event-proxy-lib-src';
 import { PersonData } from '../PersonData';
 
 /**

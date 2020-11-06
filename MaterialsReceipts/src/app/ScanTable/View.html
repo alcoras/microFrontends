@@ -1,0 +1,26 @@
+<p-table
+  styleClass="p-datatable-striped"
+  [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
+  [columns]="ColumnsRelation" [value]="ScanTableData"
+  [totalRecords]="TotalRecords"
+>
+
+  <!-- Headers -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+        <th *ngFor="let col of columns">
+            {{col.header}}
+        </th>
+    </tr>
+  </ng-template>
+
+  <!-- Fields -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+        <td *ngFor="let col of columns">
+            {{rowData[col.field]}}
+        </td>
+    </tr>
+  </ng-template>
+
+</p-table>

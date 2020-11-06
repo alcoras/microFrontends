@@ -1,11 +1,12 @@
 import { CoreEvent } from 'event-proxy-lib-src';
-import { MaterialsListTablePart } from '../MaterialsListTablePart';
+import { ScanTableData } from '../ScanTableData';
 
-export class MaterialsReceiptsTablePartReadListResults extends CoreEvent {
+export class MaterialsReceiptsScanTableReadListResults extends CoreEvent {
+
   /**
    * List of data records
    */
-  public MaterialsDataTablePartList: MaterialsListTablePart[];
+  public ScanTableDataList: ScanTableData[];
 
   /**
    * Parent source event unique id - matches id

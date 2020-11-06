@@ -1,6 +1,5 @@
 import { MaterialsList } from '../MaterialsList';
-import { CoreEvent } from 'event-proxy-lib-src'
-;
+import { CoreEvent } from 'event-proxy-lib-src';
 
 export class MaterialsReceiptsReadListResults extends CoreEvent {
   /**

@@ -1,5 +1,4 @@
-import { CoreEvent, EventIds, MicroFrontendInfo } from 'event-proxy-lib-src'
-;
+import { CoreEvent, EventIds, MicroFrontendInfo } from 'event-proxy-lib-src';
 
 /**
  * Event for reading MaterialsReceiptsTable entries

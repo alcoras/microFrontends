@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { MaterialReceiptSelectedData } from '../Models/MaterialReceiptSelectedData';
 import { CoreEvent } from 'event-proxy-lib-src';
 
 /**
@@ -10,7 +11,7 @@ import { CoreEvent } from 'event-proxy-lib-src';
 })
 export class EventBusService {
 
-  public LastSelectedMaterialsReceiptId: number;
+  public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
 
   /**
    * Event bus for inter component/service communication in current module
@@ -21,14 +22,14 @@ export class EventBusService {
    * Invoked by MaterialsReceiptsList component when a record is selected
    * passed to parent to active tab MaterialsReceiptsTable
    */
-  public OnMaterialReceiptSelected = new Subject<number>();
+  public OnMaterialReceiptSelected = new Subject<void>();
 
   /**
-   * Component MaterialsReceiptsList calls when a record is selected
-   * @param idSelected Materials Receipt Id
+   * Event called when in Material Receipt List a record is selected
+   * @param data Materials Receipt Data
    */
-  public MaterialReceiptSelected(idSelected: number): void {
-    this.OnMaterialReceiptSelected.next(idSelected);
-    this.LastSelectedMaterialsReceiptId = idSelected;
+  public MaterialReceiptSelected(data: MaterialReceiptSelectedData): void {
+    this.LastSelectedMaterialsReceiptData = data;
+    this.OnMaterialReceiptSelected.next();
   }
 }
