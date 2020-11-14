@@ -120,7 +120,7 @@ export class MaterialsReceiptsListComponent {
     else if (this.SelectedCategory.name == Categories.Unsigned)
       queryParams.Signed = false;
 
-    const res = this.materialsReceiptsAPI.GetMaterialsReceiptsList(queryParams);
+    const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
 
     res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;
@@ -145,7 +145,7 @@ export class MaterialsReceiptsListComponent {
     this.currentPage = queryParams.Page;
     this.currentLimit = event.rows;
 
-    const res = this.materialsReceiptsAPI.GetMaterialsReceiptsList(queryParams);
+    const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
 
     res.then( (data: MaterialsListDTO) => {
       this.MaterialsListData = data.Items;

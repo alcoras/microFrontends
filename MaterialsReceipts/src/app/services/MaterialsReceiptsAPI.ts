@@ -44,7 +44,7 @@ export class MaterialsReceiptsAPI {
    * @param limit limit
    * @returns Http Response
    */
-  public GetMaterialsReceiptsTable(
+  public MaterialsReceiptsTableQuery(
     materialsReceiptId?: number,
     page?: number,
     limit?: number): Promise<MaterialsTableListDTO> {
@@ -55,7 +55,7 @@ export class MaterialsReceiptsAPI {
       return new Promise<MaterialsTableListDTO>((resolve, reject) => {
 
           const getResponse =
-            this.getMaterialsReceiptsTable(materialsReceiptId, page, limit).toPromise();
+            this.materialsReceiptsTableQuery(materialsReceiptId, page, limit).toPromise();
 
           getResponse.then( (responseStatus: ResponseStatus) => {
             if (responseStatus.Failed) {
@@ -89,7 +89,7 @@ export class MaterialsReceiptsAPI {
       }
 
       return new Promise<MaterialsReceiptsScanTableReadListResults>((resolve, reject) => {
-        const getResponse = this.scanDataQuery(queryParams).toPromise();
+        const getResponse = this.scanTableQuery(queryParams).toPromise();
 
         getResponse.then( (responseStatus: ResponseStatus) => {
           if (responseStatus.Failed) reject('Failed to retrieve data');
@@ -108,18 +108,18 @@ export class MaterialsReceiptsAPI {
   }
 
   /**
-   * Gets Material Receipt List
+   * Queries Material Receipt List
    * @param queryParams Query Class params
    * @returns Http Response
    */
-  public GetMaterialsReceiptsList(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
+  public MaterialsReceiptsListQuery(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
     if (queryParams.Page < 1 || queryParams.Limit < 1) {
       throw new Error('page or pagesize is less than 1');
     }
 
     return new Promise<MaterialsListDTO>((resolve, reject) => {
 
-        const getResponse = this.getMaterialsReceiptsList(queryParams).toPromise();
+        const getResponse = this.materialsReceiptsListQuery(queryParams).toPromise();
 
         getResponse.then( (responseStatus: ResponseStatus) => {
           if (responseStatus.Failed) {
@@ -151,7 +151,7 @@ export class MaterialsReceiptsAPI {
    * @param queryParams Query Class params
    * @returns Http Response
    */
-  private getMaterialsReceiptsList(queryParams: ReadListQueryParams)
+  private materialsReceiptsListQuery(queryParams: ReadListQueryParams)
     : Observable<ResponseStatus> {
 
       const event = new MaterialsReceiptsReadListQuery(
@@ -172,7 +172,7 @@ export class MaterialsReceiptsAPI {
    * @param limit limit
    * @returns ResponseStatus
    */
-  private getMaterialsReceiptsTable(
+  private materialsReceiptsTableQuery(
     materialsReceiptId?: number,
     page?: number,
     limit?: number): Observable<ResponseStatus> {
@@ -184,11 +184,11 @@ export class MaterialsReceiptsAPI {
   }
 
   /**
-   * Queries scam
+   * Queries scan table
    * @param queryParams query parameteres
    * @returns ResponseStatus
    */
-  private scanDataQuery(queryParams: ScanTableQueryParams): Observable<ResponseStatus> {
+  private scanTableQuery(queryParams: ScanTableQueryParams): Observable<ResponseStatus> {
 
       const event = new MaterialsReceiptsScanTableReadListQuery(
         this.sourceInfo,

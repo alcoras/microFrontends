@@ -73,7 +73,7 @@ export class MaterialsReceiptsTableComponent {
     }
 
     const res = this.materialsReceiptsAPI
-       .GetMaterialsReceiptsTable(materialsReceiptData.Id, page, limit);
+       .MaterialsReceiptsTableQuery(materialsReceiptData.Id, page, limit);
 
     res.then( (data: MaterialsTableListDTO) => {
       this.MaterialsListTableData = data.Items;

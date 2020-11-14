@@ -152,7 +152,7 @@ describe('MaterialsReceipts API service', () => {
       // TODO: real id should be got
       const materialsReceiptId = 11;
 
-      service.GetMaterialsReceiptsTable(materialsReceiptId, page, limit)
+      service.MaterialsReceiptsTableQuery(materialsReceiptId, page, limit)
       .then((response: MaterialsTableListDTO) => {
         expect(response.Items.length).toBeLessThanOrEqual(limit);
 
@@ -220,7 +220,7 @@ describe('MaterialsReceipts API service', () => {
         Limit: limit
       };
 
-      service.GetMaterialsReceiptsList(queryParams).then((response: MaterialsListDTO) => {
+      service.MaterialsReceiptsListQuery(queryParams).then((response: MaterialsListDTO) => {
         expect(response.Items.length).toBeLessThanOrEqual(limit);
 
         const fields = Object.getOwnPropertyNames(tempMaterialList);
