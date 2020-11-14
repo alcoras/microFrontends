@@ -6,8 +6,7 @@ import { langServiceMock } from './mocks/lang.mock';
 import { eventProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { resourceLoaderMock } from './mocks/resource-loader.mock';
-import { EnvironmentService } from 'event-proxy-lib-src'
-;
+import { EnvironmentService } from 'event-proxy-lib-src';
 
 describe('PrestartService', () => {
   let service: PrestartService;

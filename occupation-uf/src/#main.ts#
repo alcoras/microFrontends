@@ -1,13 +1,14 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
 if (environment.EnvironmentTypes == EnvironmentTypes.Production) {
   enableProdMode();
 }
+
 /**
  * Sets up global environment for shell and the rest of micro frontends
  */
@@ -23,7 +24,4 @@ if (environment.EnvironmentTypes == EnvironmentTypes.Isolated) {
   provider.TokenBeginDate = '';
   provider.TokenExpirationDate = '';
 }
-
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.error(err));

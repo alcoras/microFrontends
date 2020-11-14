@@ -9,8 +9,7 @@ import {
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds} from 'event-proxy-lib-src'
-;
+  EventIds} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBus.service';
 

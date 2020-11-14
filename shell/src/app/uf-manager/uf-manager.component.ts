@@ -12,8 +12,7 @@ import {
   MicroFrontendParts,
   MicroFrontendInfo,
   EnvironmentTypes,
-  EventIds } from 'event-proxy-lib-src'
-;
+  EventIds } from 'event-proxy-lib-src';
 import { ResourceLoaderService } from '../services/resource-loader.service';
 import { LanguageService } from '../services/lang.service';
 import { PrestartService } from '../services/prestart.service';

@@ -5,8 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TestEvent, genRandomNumber } from './helpers/helpers';
-import { CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, EventResponse, ResponseStatus } from 'event-proxy-lib-src'
-;
+import { CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, EventResponse, ResponseStatus } from 'event-proxy-lib-src';
 
 describe('Personnel micro frontend component', () => {
   let service: PersonnelComponent;

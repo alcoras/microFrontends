@@ -6,8 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import { EventProxyLibModule } from 'event-proxy-lib-src'
-;
+import { EventProxyLibModule } from 'event-proxy-lib-src';
 import { MaterialModule } from './material-modules';
 import { MenuService } from './services/menu.service';
 import { MenuServiceFactory } from './services/menu.factory';

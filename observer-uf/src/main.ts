@@ -24,5 +24,6 @@ if (environment.EnvironmentTypes == EnvironmentTypes.Isolated) {
   provider.TokenBeginDate = '';
   provider.TokenExpirationDate = '';
 }
+
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

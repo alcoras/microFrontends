@@ -1,11 +1,19 @@
 export class ScanTableData {
   /**
-   * Material item name
+   * Reference to Materials by Id
    */
-  public Name: string;
+  public MaterialsId?: number;
 
   /**
-   * Receipt number
+   * Reference to MaterialsReceiptsList by Id
    */
-  public Number: string;
+  public MaterialsReceiptsListId?: number;
+
+  /**
+   * Reference to MaterialsReceiptsTable by Id
+   */
+  public MaterialsReceiptsTableId?: number;
+
+  public Quantity?: number;
+  public Unit?: string;
 }

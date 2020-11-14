@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { APIGatewayResponse, EventIds, EventProxyLibService } from 'event-proxy-lib-src'
-;
+import { APIGatewayResponse, EventIds, EventProxyLibService } from 'event-proxy-lib-src';
 import { EventBusService } from '../services/EventBus.service';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { HttpResponse } from '@angular/common/http';

@@ -7,8 +7,7 @@ import {
   EventIds,
   EventProxyLibService,
   LoginSuccess,
-  ResponseStatus } from 'event-proxy-lib-src'
-;
+  ResponseStatus } from 'event-proxy-lib-src';
 import { LoginRequest } from '../models/LoginRequest';
 
 const WindowWeb3Context = window['web3'] as Web3;

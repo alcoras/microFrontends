@@ -1,7 +1,6 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src'
-;
+import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
@@ -26,6 +25,6 @@ if (environment.EnvironmentTypes == EnvironmentTypes.Isolated) {
   provider.TokenExpirationDate = '';
 }
 
-
-platformBrowserDynamic().bootstrapModule(AppModule)
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
   .catch(err => console.error(err));

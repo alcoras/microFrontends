@@ -1,5 +1,4 @@
-import { ResourceSheme } from 'event-proxy-lib-src'
-;
+import { ResourceSheme } from 'event-proxy-lib-src';
 import { ResourceLoaderService } from 'src/app/services/resource-loader.service';
 
 export const resourceLoaderMock: Partial<ResourceLoaderService> = {

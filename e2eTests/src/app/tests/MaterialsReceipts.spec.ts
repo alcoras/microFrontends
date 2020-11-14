@@ -13,7 +13,10 @@ import {
   MaterialsListDTO,
   MaterialsListTablePart,
   MaterialsTableListDTO,
-  ReadListQueryParams } from 'materialsReceipts-uf/Models';
+  ReadListQueryParams,
+  ScanTableData,
+  ScanTableQueryParams} from 'materialsReceipts-uf/Models';
+import { MaterialsReceiptsScanTableReadListResults } from 'materialsReceipts-uf/Models/BackendEvents';
 
 /**
  * Subscribe to event
@@ -51,9 +54,18 @@ const tempMaterialListTable: MaterialsListTablePart = {
   MaterialsReceiptsListId: 0
 }
 
+const tempScanDataTable: ScanTableData = {
+  MaterialsId: 0,
+  MaterialsReceiptsListId: 0,
+  MaterialsReceiptsTableId: 0,
+  Quantity: 0,
+  Unit: "",
+};
+
 const readingResultIds = [
   EventIds.MaterialsReceiptsReadListResults,
-  EventIds.MaterialsReceiptsTablePartReadListResults ];
+  EventIds.MaterialsReceiptsTablePartReadListResults,
+  EventIds.MaterialsReceiptsScanTableReadListResults];
 
 describe('MaterialsReceipts API service', () => {
   let service: MaterialsReceiptsAPI;
@@ -156,6 +168,40 @@ describe('MaterialsReceipts API service', () => {
     });
   });
 
+  describe('Material Receipt ScanTable', () => {
+    it('Getting some data', async (done) => {
+      // 1. Subscription happens before tests in readingResultIds
+
+      // 2. Start listening to events
+      eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
+        (res: ResponseStatus) => propogateEvent(res)
+      );
+
+      // 3. Sending query
+      // TODO: real id should be got
+      const limit = 3;
+      const queryParams: ScanTableQueryParams = {
+        Page: 1,
+        Limit: limit,
+        MaterialReceiptsListId: 20,
+      };
+
+      service.ScanTableQuery(queryParams)
+      .then((response: MaterialsReceiptsScanTableReadListResults) => {
+        expect(response.ScanTableDataList.length).toBeLessThanOrEqual(limit);
+
+        const fields = Object.getOwnPropertyNames(tempScanDataTable);
+
+        response.ScanTableDataList.forEach(element => {
+          expect(Object.getOwnPropertyNames(element)).toEqual(fields);
+        });
+
+        done();
+      });
+
+    });
+  });
+
   describe('Material Receipt List', () => {
 
     it('Getting some data', async (done) => {
@@ -174,7 +220,7 @@ describe('MaterialsReceipts API service', () => {
         Limit: limit
       };
 
-      service.Get(queryParams).then((response: MaterialsListDTO) => {
+      service.GetMaterialsReceiptsList(queryParams).then((response: MaterialsListDTO) => {
         expect(response.Items.length).toBeLessThanOrEqual(limit);
 
         const fields = Object.getOwnPropertyNames(tempMaterialList);

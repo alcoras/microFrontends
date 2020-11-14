@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { LanguageService, ILanguageSettings } from './lang.service';
 import { HttpResponse } from '@angular/common/http';
 import { ResourceLoaderService } from './resource-loader.service';
-import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src'
-;
+import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src';
 
 /**
  * Preloads default language and scripts

@@ -7,8 +7,7 @@ import {
   IMicroFrontend,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds } from 'event-proxy-lib-src'
-;
+  EventIds } from 'event-proxy-lib-src';
 
 @Injectable({
   providedIn: 'root'

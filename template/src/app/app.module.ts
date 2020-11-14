@@ -3,8 +3,7 @@ import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
-import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src'
-;
+import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
 
 import { AppComponent } from './app.component';
 import { createCustomElement } from '@angular/elements';

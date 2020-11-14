@@ -1,5 +1,4 @@
-import { CoreEvent, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src'
-;
+import { CoreEvent, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 

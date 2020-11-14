@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResourceSheme } from 'event-proxy-lib-src'
-;
+import { ResourceSheme } from 'event-proxy-lib-src';
 
 /**
  * Script and link loader service

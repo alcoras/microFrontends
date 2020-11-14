@@ -4,8 +4,7 @@ import { HttpResponse } from '@angular/common/http';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { EventBusService } from '../services/EventBus.service';
 import { PersonData } from '../Models/index';
-import { APIGatewayResponse } from 'event-proxy-lib-src'
-;
+import { APIGatewayResponse } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'app-new-personnel',

@@ -3,8 +3,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src'
-;
+import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
 if (environment.EnvironmentTypes == EnvironmentTypes.Production) {
   enableProdMode();

@@ -6,8 +6,7 @@ import {
   LanguageChange,
   EventButtonPressed,
   EnvironmentTypes,
-  EventIds} from 'event-proxy-lib-src'
-;
+  EventIds} from 'event-proxy-lib-src';
 
 import { environment } from 'src/environments/environment';
 

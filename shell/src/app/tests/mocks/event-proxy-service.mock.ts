@@ -1,8 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
-import { EventIds, EventProxyLibService, LoginSuccess, ResponseStatus } from 'event-proxy-lib-src'
-;
+import { EventIds, EventProxyLibService, LoginSuccess, ResponseStatus } from 'event-proxy-lib-src';
 
 export const tokenConst = '0x125';
 

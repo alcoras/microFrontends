@@ -5,8 +5,7 @@ import {
   EventProxyLibService,
   ResponseStatus,
   MicroFrontendParts
-} from 'event-proxy-lib-src'
-;
+} from 'event-proxy-lib-src';
 
 import {
   MaterialsReceiptsReadListQuery,
