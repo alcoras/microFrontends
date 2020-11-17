@@ -76,7 +76,7 @@ export class ScanTableComponent {
       .ScanTableQuery(queryParams);
 
     res.then( (data: MaterialsReceiptsScanTableReadListResults) => {
-      // this.MaterialsListScanTableData = data.ScanTableDataList;
+      this.ScanTableData = data.ScanTableDataList;
       this.TotalRecords = data.TotalRecordsAmount;
       this.Loading = false;
     });
