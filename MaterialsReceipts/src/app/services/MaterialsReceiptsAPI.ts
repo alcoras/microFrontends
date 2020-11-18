@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-
 import {
   EventProxyLibService,
-  ResponseStatus,
-  MicroFrontendParts
-} from 'event-proxy-lib-src';
 
+  MicroFrontendParts, ResponseStatus
+} from 'event-proxy-lib-src';
+import { Observable } from 'rxjs';
 import {
   MaterialsReceiptsReadListQuery,
   MaterialsReceiptsReadListResults,
@@ -17,14 +15,13 @@ import {
   MaterialsReceiptsTablePartReadListQuery,
   MaterialsReceiptsTablePartReadListResults
 } from '../Models/BackendEvents/index';
-
 import {
   MaterialsListDTO,
-  MaterialsReceiptsScanTable,
   MaterialsTableListDTO,
   ReadListQueryParams,
-  ScanTableQueryParams} from '../Models/index';
-
+  ScanTableData,
+  ScanTableQueryParams
+} from '../Models/index';
 import { EventBusService } from './EventBus.service';
 
 @Injectable({
@@ -81,6 +78,41 @@ export class MaterialsReceiptsAPI {
       );
   }
 
+  /**
+   * Creates new material scan
+   * @param data MaterialsReceiptsScanTable
+   * @returns ResponseStatus
+   */
+  public ScanTableCreate(data: ScanTableData): Observable<ResponseStatus> {
+
+    const event = new MaterialsReceiptsScanTableAddRemove(
+      this.sourceInfo,
+      data,
+      MaterialsReceiptsScanTableAddRemoveFlag.Create);
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
+   * Deletes material scan
+   * @param data MaterialsReceiptsScanTable
+   * @returns ResponseStatus
+   */
+  public ScanTableDelete(data: ScanTableData): Observable<ResponseStatus> {
+
+    const event = new MaterialsReceiptsScanTableAddRemove(
+      this.sourceInfo,
+      data,
+      MaterialsReceiptsScanTableAddRemoveFlag.Delete);
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
+   * Queries scan table
+   * @param queryParams scan table query params
+   * @returns Promise with MaterialsReceiptsScanTableReadListResults
+   */
   public ScanTableQuery(queryParams: ScanTableQueryParams)
     : Promise<MaterialsReceiptsScanTableReadListResults> {
 
@@ -137,8 +169,7 @@ export class MaterialsReceiptsAPI {
                   Total: data.TotalRecordsAmount
                 });
               }
-            }
-          );
+            });
 
         });
       }
@@ -200,35 +231,5 @@ export class MaterialsReceiptsAPI {
         queryParams.Limit);
 
       return this.eventProxyService.DispatchEvent(event);
-  }
-
-  /**
-   * Add new material scan
-   * @param data MaterialsReceiptsScanTable
-   * @returns ResponseStatus
-   */
-  private scanDataAdd(data: MaterialsReceiptsScanTable): Observable<ResponseStatus> {
-
-    const event = new MaterialsReceiptsScanTableAddRemove(
-      this.sourceInfo,
-      data,
-      MaterialsReceiptsScanTableAddRemoveFlag.Add);
-
-    return this.eventProxyService.DispatchEvent(event);
-  }
-
-  /**
-   * Removes material scan
-   * @param data MaterialsReceiptsScanTable
-   * @returns ResponseStatus
-   */
-  private scanDataRemove(data: MaterialsReceiptsScanTable): Observable<ResponseStatus> {
-
-    const event = new MaterialsReceiptsScanTableAddRemove(
-      this.sourceInfo,
-      data,
-      MaterialsReceiptsScanTableAddRemoveFlag.Remove);
-
-    return this.eventProxyService.DispatchEvent(event);
   }
 }

@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TestEvent, genRandomNumber } from './helpers/helpers';
-import { CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, EventResponse, ResponseStatus } from 'event-proxy-lib-src';
+import { BackendToFrontendEvent, CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
 
 describe('Personnel micro frontend component', () => {
   let service: PersonnelComponent;
@@ -43,7 +43,7 @@ describe('Personnel micro frontend component', () => {
   });
 
   it('testing PerssonelButtonPressed should trigger some actions', async (done) => {
-    const event = new EventResponse();
+    const event = new BackendToFrontendEvent();
     const buttonEvent = new EventButtonPressed(EventIds.PersonnelButtonPressed, 'gg');
 
     event.EventId = EventIds.GetNewEvents;
@@ -51,7 +51,7 @@ describe('Personnel micro frontend component', () => {
     event.Events.push(buttonEvent);
 
     const responseStatus = new ResponseStatus();
-    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: event});
+    responseStatus.HttpResult = new HttpResponse<BackendToFrontendEvent>({status: 200, body: event});
 
     const spies: jasmine.Spy<any>[] = [];
     spies.push(spyOn<any>(eProxyService, 'PerformResponseCheck').and.callThrough());
@@ -77,7 +77,7 @@ describe('Personnel micro frontend component', () => {
   });
 
   it('testing ReadPersonData should trigger some actions', async (done) => {
-    const event = new EventResponse();
+    const event = new BackendToFrontendEvent();
     const personDataEvent = new TestEvent();
 
     const shouldNumber = genRandomNumber(1000).toString();
@@ -90,7 +90,7 @@ describe('Personnel micro frontend component', () => {
     event.Events.push(personDataEvent);
 
     const responseStatus = new ResponseStatus();
-    responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: event});
+    responseStatus.HttpResult = new HttpResponse<BackendToFrontendEvent>({status: 200, body: event});
 
     spyOn<any>(eProxyService, 'GetLastEvents').and.returnValue(
       new Observable(

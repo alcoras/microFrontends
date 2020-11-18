@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
 import { Subscription } from "rxjs";
-import { MaterialsReceiptsScanTable, ScanTableQueryParams } from "../Models";
+import { ScanTableData, ScanTableQueryParams } from "../Models";
 import { MaterialsReceiptsScanTableReadListResults } from "../Models/BackendEvents";
 import { MaterialReceiptSelectedData } from "../Models/MaterialReceiptSelectedData";
 import { EventBusService } from "../services/EventBus.service";
@@ -15,7 +15,7 @@ export class ScanTableComponent {
   public Loading: boolean;
   public TotalRecords: number;
 
-  public ScanTableData: MaterialsReceiptsScanTable[];
+  public ScanTableData: ScanTableData[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
 
   public ColumnsRelation = [
@@ -30,8 +30,8 @@ export class ScanTableComponent {
 
   public constructor(
     private materialsReceiptsAPI: MaterialsReceiptsAPI,
-    private eventBus: EventBusService
-  ) {
+    private eventBus: EventBusService) {
+
     this.Loading = true;
 
     this.subscriptions = [];
@@ -45,6 +45,19 @@ export class ScanTableComponent {
     this.subscriptions.forEach(element => {
       element.unsubscribe();
     });
+  }
+
+  public RefreshTable(): void {
+    this.requestMaterialsScanTableData();
+  }
+
+  public AddNewScan(): void {
+    // show dialog or something for new scan
+  }
+
+  public DeleteScan(data: ScanTableData): void {
+    this.materialsReceiptsAPI.ScanTableDelete(data).toPromise();
+    this.requestMaterialsScanTableData();
   }
 
   public LoadDataLazy(event: LazyLoadEvent): void {

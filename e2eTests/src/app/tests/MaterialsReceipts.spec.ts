@@ -5,7 +5,7 @@ import {
   EventProxyLibService,
   ResponseStatus,
   SubscibeToEvent } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL } from './helpers/helpers';
+import { BackendPort, BackendURL, delay, genRandomNumber } from './helpers/helpers';
 import { MaterialsReceiptsAPI } from 'materialsReceipts-uf/services/MaterialsReceiptsAPI';
 import { EventBusService } from 'materialsReceipts-uf/services/EventBus.service';
 import {
@@ -169,7 +169,64 @@ describe('MaterialsReceipts API service', () => {
   });
 
   describe('Material Receipt ScanTable', () => {
-    it('Getting some data', async (done) => {
+
+    it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async (done) => {
+      // 1. Subscription happens before tests in readingResultIds
+
+      // 2. Start listening to events
+        eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
+        (res: ResponseStatus) => propogateEvent(res)
+      );
+
+      // 3. adding new scan
+      const randomQuantity = genRandomNumber(100) + 1;
+      const randomId = 99999 + genRandomNumber(100) + 1;
+      const unit = "cm";
+
+      const newScan: ScanTableData = {
+        MaterialsReceiptsListId: randomId,
+        MaterialsReceiptsTableId: randomId,
+        MaterialsId: randomId,
+        Quantity: randomQuantity,
+        Unit: unit,
+      };
+
+      service.ScanTableCreate(newScan).toPromise();
+      await delay(1000);
+
+      // 4. checking wheter it was added
+      const limit = 1;
+      const queryParams: ScanTableQueryParams = {
+        Page: 1,
+        Limit: limit,
+        MaterialReceiptsListId: randomId,
+        MaterialReceiptsTableId: randomId,
+        MaterialsId: randomId,
+      };
+
+      service.ScanTableQuery(queryParams)
+      .then((response: MaterialsReceiptsScanTableReadListResults) => {
+
+        expect(response.ScanTableDataList.length).toBeGreaterThan(0);
+        expect(response.ScanTableDataList[0].Quantity).toBe(randomQuantity);
+        expect(response.ScanTableDataList[0].Unit).toBe(unit);
+      });
+
+      // 5. deleting that entry
+      service.ScanTableDelete(newScan).toPromise();
+      await delay(1000);
+
+      // 6. checking it does not exist no more
+      service.ScanTableQuery(queryParams)
+      .then((response: MaterialsReceiptsScanTableReadListResults) => {
+
+        expect(response.ScanTableDataList.length).toBe(0);
+        done();
+      });
+
+    });
+
+    it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async (done) => {
       // 1. Subscription happens before tests in readingResultIds
 
       // 2. Start listening to events

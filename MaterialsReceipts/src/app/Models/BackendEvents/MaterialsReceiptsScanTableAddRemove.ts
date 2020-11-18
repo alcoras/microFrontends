@@ -1,12 +1,12 @@
 import { CoreEvent, EventIds, MicroFrontendInfo } from 'event-proxy-lib-src';
-import { MaterialsReceiptsScanTable } from '../MaterialsReceiptsScanTable';
+import { ScanTableData } from '../ScanTableData';
 
 /**
  * Enum to indicate whether event is of type update or craete
  */
 export enum MaterialsReceiptsScanTableAddRemoveFlag {
-  Add = EventIds.MaterialsReceiptsScanTableAdd,
-  Remove = EventIds.MaterialsReceiptsScanTableRemove
+  Create = EventIds.MaterialsReceiptsScanTableAdd,
+  Delete = EventIds.MaterialsReceiptsScanTableRemove
 }
 
 export class MaterialsReceiptsScanTableAddRemove extends CoreEvent {
@@ -31,7 +31,7 @@ export class MaterialsReceiptsScanTableAddRemove extends CoreEvent {
 
   public constructor(
     sourceInfo: MicroFrontendInfo,
-    scanTableData: MaterialsReceiptsScanTable,
+    scanTableData: ScanTableData,
     addRemoveFlag: MaterialsReceiptsScanTableAddRemoveFlag) {
 
       super();

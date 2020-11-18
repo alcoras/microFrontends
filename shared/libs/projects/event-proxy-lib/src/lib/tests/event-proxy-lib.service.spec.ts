@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { EventProxyLibService } from '../event-proxy-lib.service';
 import { ResponseStatus } from "../models/ResponseStatus";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { EventIds, CoreEvent, EventResponse, ErrorMessage } from '../models/index';
+import { EventIds, CoreEvent, ErrorMessage, BackendToFrontendEvent } from '../models/index';
 import { HttpResponse } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
@@ -64,7 +64,7 @@ describe('EventProxyLibService', () => {
     it('fail if unregonized event id', () => {
       const testEvent = new TestEvent();
 
-      const events: EventResponse = {
+      const events: BackendToFrontendEvent = {
         'EventId' : 4987997879,
         'Events': [ testEvent ]
       }
@@ -80,7 +80,7 @@ describe('EventProxyLibService', () => {
     it('fail if token Failure', () => {
       const testEvent = new TestEvent();
 
-      const events: EventResponse = {
+      const events: BackendToFrontendEvent = {
         'EventId' : EventIds.TokenFailure,
         'Events': [ testEvent ]
       }

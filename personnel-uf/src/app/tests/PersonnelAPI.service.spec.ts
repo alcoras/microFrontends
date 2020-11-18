@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { APIGatewayResponse, EventIds, EventProxyLibService } from 'event-proxy-lib-src';
+import { BackendToFrontendEvent, EventIds, EventProxyLibService } from 'event-proxy-lib-src';
 import { EventBusService } from '../services/EventBus.service';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { HttpResponse } from '@angular/common/http';
@@ -42,7 +42,7 @@ describe('PersonnelAPI service', () => {
 
     it('testing response', (done) => {
       service.Delete(19).then(
-        (res: HttpResponse<APIGatewayResponse>) => {
+        (res: HttpResponse<BackendToFrontendEvent>) => {
           expect(res.status).toBe(200);
           done();
         },
@@ -71,7 +71,7 @@ describe('PersonnelAPI service', () => {
 
     it('testing response', (done) => {
       service.Create(newPersonnelData).then(
-        (res: HttpResponse<APIGatewayResponse>) => {
+        (res: HttpResponse<BackendToFrontendEvent>) => {
           expect(res.status).toBe(200);
           done();
         },

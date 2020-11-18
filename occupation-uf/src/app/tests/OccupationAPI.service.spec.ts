@@ -2,16 +2,15 @@ import { OccupationAPIService } from '../services/OccupationAPI.service';
 import { EventBusService } from '../services/EventBus.service';
 import { TestBed } from '@angular/core/testing';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
-import { HttpResponse } from '@angular/common/http';
 import { genRandomNumber, delay } from './helpers/helpers';
 
 import {
   EventProxyLibService,
-  APIGatewayResponse,
-  EventIds
+  EventIds,
+  ResponseStatus
 } from 'event-proxy-lib-src';
 
-import { OccupationData, OccupationDataDTO, OccupationsReadResults } from '../Models/index';
+import { OccupationData, OccupationDataDTO, OccupationsCreateUpdate, OccupationsReadResults } from '../Models/index';
 
 /**
  * Test Occupation data
@@ -40,8 +39,8 @@ describe('Occupation API service', () => {
   describe('Delete', () => {
     it('testing response', (done) => {
       service.Delete(19).then(
-        (res: HttpResponse<APIGatewayResponse>) => {
-          expect(res.status).toBe(200);
+        (res: ResponseStatus) => {
+          expect(res.HttpResult.status).toBe(200);
           done();
         },
         (rej) => {
@@ -53,8 +52,8 @@ describe('Occupation API service', () => {
     it('testing content', (done) => {
       const id = genRandomNumber(200);
       service.Delete(id).then(
-        (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].ObjectAggregateId).toBe(id);
+        (res: any) => {
+          expect(res.HttpResult.body.Events[0].ObjectAggregateId).toBe(id);
           done();
         },
         (rej) => {
@@ -68,8 +67,8 @@ describe('Occupation API service', () => {
 
     it('testing response', (done) => {
       service.Update(newOccupationData).then(
-        (res: HttpResponse<APIGatewayResponse>) => {
-          expect(res.status).toBe(200);
+        (res: ResponseStatus) => {
+          expect(res.HttpResult.status).toBe(200);
           done();
         },
         (rej) => {
@@ -80,10 +79,12 @@ describe('Occupation API service', () => {
 
     it('testing content', (done) => {
       service.Update(newOccupationData).then(
-        (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].EventId).toBe(EventIds.OccupationsUpdate);
-          expect(res.body.Events[0].Name).toBe(newOccupationData.Name);
-          expect(res.body.Events[0].TariffCategory).toBe(newOccupationData.TariffCategory);
+        (res: ResponseStatus) => {
+          const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
+
+          expect(tempEvent.EventId).toBe(EventIds.OccupationsUpdate);
+          expect(tempEvent.Name).toBe(newOccupationData.Name);
+          expect(tempEvent.TariffCategory).toBe(newOccupationData.TariffCategory);
           done();
         },
         (rej) => {
@@ -98,8 +99,8 @@ describe('Occupation API service', () => {
 
     it('testing response', (done) => {
       service.Create(newOccupationData).then(
-        (res: HttpResponse<any>) => {
-          expect(res.status).toBe(200);
+        (res: ResponseStatus) => {
+          expect(res.HttpResult.status).toBe(200);
           done();
         },
         (rej) => {
@@ -110,10 +111,13 @@ describe('Occupation API service', () => {
 
     it('testing content', (done) => {
       service.Create(newOccupationData).then(
-        (res: HttpResponse<any>) => {
-          expect(res.body.Events[0].EventId).toBe(EventIds.OccupationsCreate);
-          expect(res.body.Events[0].Name).toBe(newOccupationData.Name);
-          expect(res.body.Events[0].TariffCategory).toBe(newOccupationData.TariffCategory);
+        (res: ResponseStatus) => {
+
+          const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
+
+          expect(tempEvent.EventId).toBe(EventIds.OccupationsCreate);
+          expect(tempEvent.Name).toBe(newOccupationData.Name);
+          expect(tempEvent.TariffCategory).toBe(newOccupationData.TariffCategory);
           done();
         },
         (rej) => {
