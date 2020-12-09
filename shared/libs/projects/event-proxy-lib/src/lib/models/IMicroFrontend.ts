@@ -21,11 +21,6 @@ export interface IMicroFrontend {
   InitializeConnectionWithBackend(): void;
 
   /**
-   * Subscribes to events which this micro frontend is responsible for
-   */
-  SubscribeToEventsAsync(): Promise<any>;
-
-  /**
    * Parses new events
    * @param event Http resposne with event list
    */

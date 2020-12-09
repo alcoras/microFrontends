@@ -3,22 +3,11 @@ import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  ResponseStatus,
-  SubscibeToEvent } from 'event-proxy-lib-src';
+  ResponseStatus } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
 import { OccupationData, OccupationDataDTO } from 'occupation-uf/Models';
 import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI.service';
 import { EventBusService } from 'occupation-uf/services/EventBus.service';
-
-/**
- *
- * @param sourceId source id
- * @param eProxyService event proxy service
- */
-async function subscribeToOccupationsRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
-  const subEvent = new SubscibeToEvent(sourceId, [[EventIds.OccupationsRead, 0, 0]]);
-  await eProxyService.DispatchEvent(subEvent).toPromise();
-}
 
 /**
  * @returns new occupation entry for testing
@@ -40,7 +29,6 @@ describe('Occupation API service', () => {
   const backendPort = BackendPort;
 
   beforeEach(async () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
     window['__env'] = window['__env'] || {};
 
     // eslint-disable-next-line @typescript-eslint/camelcase
@@ -64,7 +52,6 @@ describe('Occupation API service', () => {
     eProxyService.ApiGatewayURL = backendURL;
 
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
-    await subscribeToOccupationsRead(sourceId, eProxyService);
   });
 
   afterEach(async () => {
@@ -97,25 +84,27 @@ describe('Occupation API service', () => {
 
   describe('Get', () => {
 
-    it('should throw if page is less than 1', () => {
-      expect( () => service.Get(0, 1).then() ).toThrow();
+    it('should throw if page is less than 1', async (done) => {
+      service.Get(0, 1)
+        .then( () => fail() )
+        .catch( (data) => { expect(data).toBeTruthy(); done(); } );
     });
 
-    it('should throw if limit is less than 1', () => {
-      expect( () => service.Get(1, 0).then() ).toThrow();
+    it('should throw if limit is less than 1', async (done) => {
+      service.Get(1, 0)
+      .then( () => fail() )
+      .catch( (data) => { expect(data).toBeTruthy(); done(); } );
     });
 
     it('should get events after Occupation query', async (done) => {
-      // 1. Subscription happens before tests
-
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res);
         }
       );
 
-      // 3. Send OccupationReadDataQuery event
+      // Send OccupationReadDataQuery event
       const page = 1;
       const limit = 3;
       service.Get(page, limit).then(
@@ -136,26 +125,24 @@ describe('Occupation API service', () => {
   describe('Combination', () => {
     it('should create and then delete entry', async (done) => {
       const newEntry = createOccupationEntry();
-      // 1. Subscription happens before tests
-
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res);
       });
 
-      // 3. Get current length and id
+      // Get current length and id
       let currentLen: number;
       let id: number;
 
-      await service.Get(1, 1000).then(
+      await service.Get(1, 1).then(
         (res: OccupationDataDTO) => {
           id = res.items[0].OccupationAggregateIdHolderId;
           currentLen = res.total;
         }
       );
 
-      // 4. create new occupation entry
+      // create new occupation entry
       await service.Create(newEntry);
 
       await service.Get(1, 1000).then(
@@ -164,10 +151,10 @@ describe('Occupation API service', () => {
         }
       );
 
-      // 5. delete an entry
+      //  delete an entry
       await service.Delete(id);
 
-      await service.Get(1, 1000).then(
+      await service.Get(1, 1).then(
         (res: OccupationDataDTO) => {
           expect(res.total).toEqual(currentLen);
           done();
@@ -180,17 +167,15 @@ describe('Occupation API service', () => {
 
     it('should update existing Occupation entry', async (done) => {
 
-      // 1. Subscription happens before tests
-
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res);
       });
 
       let entryToUpdate: OccupationData;
-      // 3. Get entry
-      await service.Get(1, 1000).then(
+      // Get entry
+      await service.Get(1, 1).then(
         (res: OccupationDataDTO) => {
           if (res.total === 0) {
             done.fail('no entries found');
@@ -198,14 +183,14 @@ describe('Occupation API service', () => {
           entryToUpdate = res.items[0];
       });
 
-      // 4. change name
+      // change name
       const newName = `new Name (${genRandomNumber(100)})`;
       entryToUpdate.Name = newName;
       entryToUpdate.DocReestratorId = 1; // TODO: for demo purposes
       await service.Update(entryToUpdate);
 
-      // 5. compare entry
-      await service.Get(1, 1000).then(
+      // compare entry
+      await service.Get(1, 5).then(
         (res: OccupationDataDTO) => {
           for (const iterator of res.items) {
             if (entryToUpdate.OccupationAggregateIdHolderId === iterator.OccupationAggregateIdHolderId) {
@@ -223,26 +208,24 @@ describe('Occupation API service', () => {
     it('should create new Occupation entry', async (done) => {
       const newOccupationData = createOccupationEntry();
 
-      // 1. Subscription happens before tests
-
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res);
       });
 
-      // 3. Get current length
+      // Get current length
       let currentLen: number;
 
-      await service.Get(1, 1000).then(
+      await service.Get(1, 1).then(
         (res: OccupationDataDTO) => {
           currentLen = res.total;
       });
 
-      // 4. create new occupation entry
+      // create new occupation entry
       await service.Create(newOccupationData).then(() => {
-        // 5. compare length
-        service.Get(1, 1000).then(
+        // compare length
+        service.Get(1, 1).then(
           (res: OccupationDataDTO) => {
             expect(res.total).toBeGreaterThan(currentLen);
             done();

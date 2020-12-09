@@ -95,30 +95,28 @@ export class OccupationAPIService {
    * @returns Promise with response
    */
   public Get(page: number, pageSize: number): Promise<OccupationDataDTO> {
-    if (page < 1 || pageSize < 1) {
-      throw new Error('page or pagesize was less than 1');
-    }
 
     return new Promise<OccupationDataDTO>(
       (resolve, reject) => {
-        this.get(page, pageSize).toPromise().then( (response: ResponseStatus) => {
-          if (response.HttpResult.status !== 200) {
-            reject('Failed to retrieve data');
-          }
-
-          const uniqueId = response.HttpResult.body.Ids[0];
-
-          this.eventBusService.EventBus.subscribe(
-            async (data: OccupationsReadResults) => {
-              if (data.ParentSourceEventUniqueId === uniqueId) {
-                resolve({
-                  items: data.OccupationDataList,
-                  total: data.TotalRecordsAmount
-                });
-              }
+        this.get(page, pageSize)
+          .toPromise()
+          .then( (response: ResponseStatus) => {
+            if (response.Failed) {
+              reject('Failed to retrieve data');
             }
-          );
 
+            const uniqueId = response.HttpResult.body.Ids[0];
+
+            this.eventBusService.EventBus.subscribe(
+              async (data: OccupationsReadResults) => {
+                if (data.ParentId === uniqueId) {
+                  resolve({
+                    items: data.OccupationDataList,
+                    total: data.TotalRecordsAmount
+                  });
+                }
+              }
+            );
         });
       }
     );

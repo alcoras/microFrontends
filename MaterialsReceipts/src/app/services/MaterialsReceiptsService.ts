@@ -9,7 +9,8 @@ import {
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds} from 'event-proxy-lib-src';
+  EventIds,
+  UnsubscibeToEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBus.service';
 
@@ -30,7 +31,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    await this.SubscribeToEventsAsync();
+    // await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
@@ -69,8 +70,19 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         case EventIds.MaterialsReceiptsTablePartReadListResults:
           await this.eventProxyService.ConfirmEvents(
             this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+
+          await this.eventProxyService.DispatchEvent(
+            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]])).toPromise();
+
           this.eventBus.EventBus.next(event);
           break;
+        case EventIds.EventProccessedSuccessfully:
+          await this.eventProxyService.ConfirmEvents(
+            this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+          break;
+        case EventIds.EventProccessedWithFails:
+          console.error(event);
+          throw new Error(`Event sroccessed with error(s)`);
         default:
           throw new Error(`Event ${event.EventId} not implemented.`);
       }

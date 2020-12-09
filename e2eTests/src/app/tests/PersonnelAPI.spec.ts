@@ -3,21 +3,11 @@ import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  ResponseStatus,
-  SubscibeToEvent } from 'event-proxy-lib-src';
+  ResponseStatus } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
 import { PersonnelAPIService } from 'personnel-uf/services/PersonnelAPI.service';
 import { EventBusService } from 'personnel-uf/services/EventBus.service';
 import { PersonData, PersonDataDTO } from 'personnel-uf/Models';
-/**
- *
- * @param sourceId source id
- * @param eProxyService event proxy service
- */
-async function subscribeToPersonDataRead(sourceId: string, eProxyService: EventProxyLibService): Promise<void> {
-  const subEvent = new SubscibeToEvent(sourceId, [[EventIds.ReadPersonData, 0, 0]]);
-  await eProxyService.DispatchEvent(subEvent).toPromise();
-}
 
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
@@ -28,7 +18,6 @@ describe('PersonnelAPI service', () => {
   const backendPort = BackendPort;
 
   beforeEach(async () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
     window['__env'] = window['__env'] || {};
 
     // eslint-disable-next-line @typescript-eslint/camelcase
@@ -51,7 +40,6 @@ describe('PersonnelAPI service', () => {
     eProxyService.ApiGatewayURL = backendURL;
 
     await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
-    await subscribeToPersonDataRead(sourceId, eProxyService);
   });
 
   afterEach(async () => {
@@ -69,8 +57,9 @@ describe('PersonnelAPI service', () => {
 
     res.HttpResult.body.Events.forEach(element => {
       if (element.EventId === EventIds.ReadPersonData) {
-        eventBusService.EventBus.next(element);
+        console.log(element);
         eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+        eventBusService.EventBus.next(element);
       }
     });
   }
@@ -96,16 +85,16 @@ describe('PersonnelAPI service', () => {
 
   describe('Update', () => {
     it('should update existing PersonData entry', async (done) => {
-      // 1. Sub to ReadPersonData
+      // Sub to ReadPersonData
 
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => propogateEvent(res));
 
-      // 3. Get entry
+      // Get entry
       let entryToUpdate: PersonData;
 
-      await service.Get([], 1, 1000).then(
+      await service.Get([], 1, 5).then(
         (res: PersonDataDTO) => {
           if (res.total === 0) {
             done.fail('no entries found');
@@ -114,14 +103,14 @@ describe('PersonnelAPI service', () => {
         }
       );
 
-      // 4. change something
+      // change something
       const newField = `new field (${genRandomNumber(100)})`;
       entryToUpdate.KodDRFO = newField;
       entryToUpdate.PIP = newField;
       await service.Update(entryToUpdate);
 
       // 5. compare entry
-      await service.Get([], 1, 1000).then(
+      await service.Get([], 1, 5).then(
         (res: PersonDataDTO) => {
           for (const iterator of res.items) {
             if (entryToUpdate.PersonDataID === iterator.PersonDataID) {
@@ -150,7 +139,7 @@ describe('PersonnelAPI service', () => {
     let currentLen: number;
     let id: number;
 
-    await service.Get([], 1, 1000).then(
+    await service.Get([], 1, 5).then(
       (res: PersonDataDTO) => {
         id = res.items[0].PersonDataID;
         currentLen = res.total;
@@ -160,7 +149,7 @@ describe('PersonnelAPI service', () => {
     // 4. create new persondata
     await service.Create(newPersonnelData);
 
-    await service.Get([], 1, 1000).then(
+    await service.Get([], 1, 5).then(
       (res: PersonDataDTO) => {
         expect(res.total).toBeGreaterThan(currentLen);
       }
@@ -169,7 +158,7 @@ describe('PersonnelAPI service', () => {
     // 5. delete an entry
     await service.Delete(id);
 
-    await service.Get([], 1, 1000).then(
+    await service.Get([], 1, 5).then(
       (res: PersonDataDTO) => {
         expect(res.total).toEqual(currentLen);
         done();
@@ -180,9 +169,8 @@ describe('PersonnelAPI service', () => {
   for (let index = 0; index < 1; index++) {
     it('should create new PersonData entry', async (done) => {
       const newPersonnelData = createPersonnelEntry();
-      // 1. Subscription is happening before tests in beforeAll
 
-      // 2. Start listenting to events
+      // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => {
           propogateEvent(res);
@@ -190,18 +178,18 @@ describe('PersonnelAPI service', () => {
         (err) => { done.fail(err); },
       );
 
-      // 3. Get current length
-      let currentLen;
-      await service.Get([], 1, 1000).then(
+      // Get current length
+      let currentLen: number;
+      await service.Get([], 1, 1).then(
         (res: PersonDataDTO) => {
-          currentLen = res.items.length;
+          currentLen = res.total;
         }
       );
 
       // 4. create new persondata
       await service.Create(newPersonnelData).then(() => {
           // 5. compare length
-          service.Get([], 1, 1000).then(
+          service.Get([], 1, 10).then(
             (res: PersonDataDTO) => {
               expect(res.total).toBeGreaterThan(currentLen);
               done();
@@ -212,19 +200,18 @@ describe('PersonnelAPI service', () => {
           done.fail(rejected);
         }
       );
+
     }, 6000);
   }
 
   it('should get events after ReadPersonDataQuery', async (done) => {
-    // 1. Subscription is happening before tests in beforeAll
-
-    // 2. Start listenting to events
+    // Start listenting to events
     eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ResponseStatus) => {
         propogateEvent(res);
     });
 
-    // 3. Send ReadPersonDataQuery event
+    // Send ReadPersonDataQuery event
     service.Get([], 1, 5).then(
       (res: PersonDataDTO) => {
         res.items.forEach(element => {
@@ -236,6 +223,6 @@ describe('PersonnelAPI service', () => {
       }
     );
 
-  });
+  }, 5000);
 });
 

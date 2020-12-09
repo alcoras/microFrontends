@@ -51,27 +51,26 @@ export class MaterialsReceiptsAPI {
 
       return new Promise<MaterialsTableListDTO>((resolve, reject) => {
 
-          const getResponse =
-            this.materialsReceiptsTableQuery(materialsReceiptId, page, limit).toPromise();
+        this.materialsReceiptsTableQuery(materialsReceiptId, page, limit)
+        .toPromise()
+        .then( (responseStatus: ResponseStatus) => {
+          if (responseStatus.Failed) {
+            reject('Failed to retrieve data');
+          }
 
-          getResponse.then( (responseStatus: ResponseStatus) => {
-            if (responseStatus.Failed) {
-              reject('Failed to retrieve data');
-            }
+          const uniqueId = responseStatus.HttpResult.body.Ids[0];
 
-            const uniqueId = responseStatus.HttpResult.body.Ids[0];
+          this.eventBusService.EventBus.subscribe(
+            async (data: MaterialsReceiptsTablePartReadListResults) => {
+              if (data.ParentId === uniqueId) {
 
-            this.eventBusService.EventBus.subscribe(
-              async (data: MaterialsReceiptsTablePartReadListResults) => {
-                if (data.ParentSourceEventUniqueId === uniqueId) {
-
-                  resolve({
-                    Items: data.MaterialsDataTablePartList,
-                    Total: data.TotalRecordsAmount
-                  });
-                }
+                resolve({
+                  Items: data.MaterialsDataTablePartList,
+                  Total: data.TotalRecordsAmount
+                });
               }
-            );
+            }
+          );
 
           });
         }
@@ -105,6 +104,7 @@ export class MaterialsReceiptsAPI {
       data,
       MaterialsReceiptsScanTableAddRemoveFlag.Delete);
 
+
     return this.eventProxyService.DispatchEvent(event);
   }
 
@@ -130,7 +130,7 @@ export class MaterialsReceiptsAPI {
 
           this.eventBusService.EventBus.subscribe(
             (data: MaterialsReceiptsScanTableReadListResults) => {
-              if (data.ParentSourceEventUniqueId === uniqueId)
+              if (data.ParentId === uniqueId)
                 resolve(data);
             }
           );
@@ -162,7 +162,7 @@ export class MaterialsReceiptsAPI {
 
           this.eventBusService.EventBus.subscribe(
             async (data: MaterialsReceiptsReadListResults) => {
-              if (data.ParentSourceEventUniqueId === uniqueId) {
+              if (data.ParentId === uniqueId) {
 
                 resolve({
                   Items: data.MaterialsDataList,
@@ -193,6 +193,8 @@ export class MaterialsReceiptsAPI {
         queryParams.Page,
         queryParams.Limit);
 
+      event.SubscribeToChildren = true;
+
       return this.eventProxyService.DispatchEvent(event);
   }
 
@@ -210,6 +212,8 @@ export class MaterialsReceiptsAPI {
 
       const event = new MaterialsReceiptsTablePartReadListQuery(
         this.sourceInfo, materialsReceiptId, page, limit);
+
+      event.SubscribeToChildren = true;
 
       return this.eventProxyService.DispatchEvent(event);
   }
@@ -229,6 +233,8 @@ export class MaterialsReceiptsAPI {
         queryParams.MaterialReceiptsTableId,
         queryParams.Page,
         queryParams.Limit);
+
+      event.SubscribeToChildren = true;
 
       return this.eventProxyService.DispatchEvent(event);
   }

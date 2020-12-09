@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 
 import {
   EventProxyLibService,
-  SubscibeToEvent,
   CoreEvent,
   ResponseStatus,
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds } from 'event-proxy-lib-src';
+  EventIds,
+  UnsubscibeToEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBus.service';
 
@@ -30,7 +30,6 @@ export class ObserverService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
@@ -53,17 +52,6 @@ export class ObserverService implements IMicroFrontend {
 
   }
 
-  public SubscribeToEventsAsync(): Promise<ResponseStatus> {
-    const e = new SubscibeToEvent(
-      this.SourceInfo.SourceId, [
-      [EventIds.ObserverSnapshotResult, 0, 0],
-    ]);
-
-    e.SourceName = this.SourceInfo.SourceName;
-
-    return this.eventProxyService.DispatchEvent(e).toPromise();
-  }
-
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
@@ -78,6 +66,10 @@ export class ObserverService implements IMicroFrontend {
         case EventIds.ObserverSnapshotResult:
             await this.eventProxyService.ConfirmEvents(
               this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+
+            await this.eventProxyService.DispatchEvent(
+                new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
+
             this.eventBus.EventBus.next(element);
             break;
         default:

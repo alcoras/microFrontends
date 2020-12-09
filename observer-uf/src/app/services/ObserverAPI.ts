@@ -28,7 +28,7 @@ export class ObserverAPI {
           const uniqueId = response.HttpResult.body.Ids[0];
 
           this.eventBusService.EventBus.subscribe((data: ObserverSnapshotResultDTO) => {
-            if (data.ParentSourceEventUniqueId === uniqueId)
+            if (data.ParentId === uniqueId)
               resolve(data);
           });
 

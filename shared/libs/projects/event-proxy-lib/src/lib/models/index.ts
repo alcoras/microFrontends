@@ -10,6 +10,7 @@ export * from './ResponseStatus';
 export * from './BackendEvents/BackendToFrontendEvent';
 export * from './BackendEvents/LoginSuccess';
 export * from './BackendEvents/SubscibeToEvent';
+export * from './BackendEvents/UnsubscibeToEvent';
 
 export * from './FrontendEvents';
 

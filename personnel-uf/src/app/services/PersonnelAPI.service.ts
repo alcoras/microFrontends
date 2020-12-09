@@ -113,9 +113,11 @@ export class PersonnelAPIService {
 
           const uniqueId = response.HttpResult.body.Ids[0];
 
+          console.log(uniqueId);
+
           this.eventBusService.EventBus.subscribe(
             async (data: PersonDataRead) => {
-              if (data.ParentSourceEventUniqueId === uniqueId) {
+              if (data.ParentId === uniqueId) {
                 resolve({
                   items: data.ListOutputEnterprisePersonData,
                   total: data.CommonNumberRecords

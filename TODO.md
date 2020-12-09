@@ -143,5 +143,5 @@
 66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
 69. clean up package.json scripts in projects (remove serve and serve scripts)
 70. write unit/static tests for MaterialsReceipts
-
-71.
+71. remove all subscriptions in all micro frontends
+72. in every micro frontend unsub after getting desired event

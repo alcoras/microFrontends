@@ -3,8 +3,7 @@ import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
-  ResponseStatus,
-  SubscibeToEvent } from 'event-proxy-lib-src';
+  ResponseStatus } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, delay, genRandomNumber } from './helpers/helpers';
 import { MaterialsReceiptsAPI } from 'materialsReceipts-uf/services/MaterialsReceiptsAPI';
 import { EventBusService } from 'materialsReceipts-uf/services/EventBus.service';
@@ -17,22 +16,6 @@ import {
   ScanTableData,
   ScanTableQueryParams} from 'materialsReceipts-uf/Models';
 import { MaterialsReceiptsScanTableReadListResults } from 'materialsReceipts-uf/Models/BackendEvents';
-
-/**
- * Subscribe to event
- * @param sourceId source id
- * @param eProxyService event proxy service
- * @param eventId event id we want to subscribe to
- */
-async function subscribeToEventAsync(
-    sourceId: string,
-    eProxyService: EventProxyLibService,
-    eventId: EventIds): Promise<void> {
-
-  const subEvent = new SubscibeToEvent(sourceId, [[eventId, 0, 0]]);
-  await eProxyService.DispatchEvent(subEvent).toPromise();
-
-}
 
 const tempMaterialList: MaterialsList = {
   Id: 0,
@@ -67,7 +50,7 @@ const readingResultIds = [
   EventIds.MaterialsReceiptsTablePartReadListResults,
   EventIds.MaterialsReceiptsScanTableReadListResults];
 
-describe('MaterialsReceipts API service', () => {
+fdescribe('MaterialsReceipts API service', () => {
   let service: MaterialsReceiptsAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -99,13 +82,6 @@ describe('MaterialsReceipts API service', () => {
     eventProxyService.ApiGatewayURL = backendURL;
 
     await eventProxyService.ConfirmEvents(sourceId, [], true).toPromise();
-
-    readingResultIds.forEach(element => {
-      subscribeToEventAsync(
-        sourceId,
-        eventProxyService,
-        element);
-    });
   });
 
   /**
@@ -139,14 +115,12 @@ describe('MaterialsReceipts API service', () => {
   describe('Material Receipt List Table', () => {
 
     it('Getting some data', async (done) => {
-      // 1. Subscription happens before tests
-
-      // 2. Start listenting to events
+      // Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => propogateEvent(res)
       );
 
-      // 3. Sending query
+      // Sending query
       const page = 1;
       const limit = 3;
       // TODO: real id should be got
@@ -171,14 +145,12 @@ describe('MaterialsReceipts API service', () => {
   describe('Material Receipt ScanTable', () => {
 
     it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async (done) => {
-      // 1. Subscription happens before tests in readingResultIds
-
-      // 2. Start listening to events
+      // Start listening to events
         eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => propogateEvent(res)
       );
 
-      // 3. adding new scan
+      // adding new scan
       const randomQuantity = genRandomNumber(100) + 1;
       const randomId = 99999 + genRandomNumber(100) + 1;
       const unit = "cm";
@@ -194,7 +166,7 @@ describe('MaterialsReceipts API service', () => {
       service.ScanTableCreate(newScan).toPromise();
       await delay(1000);
 
-      // 4. checking wheter it was added
+      // checking wheter it was added
       const limit = 1;
       const queryParams: ScanTableQueryParams = {
         Page: 1,
@@ -212,11 +184,11 @@ describe('MaterialsReceipts API service', () => {
         expect(response.ScanTableDataList[0].Unit).toBe(unit);
       });
 
-      // 5. deleting that entry
+      // deleting that entry
       service.ScanTableDelete(newScan).toPromise();
       await delay(1000);
 
-      // 6. checking it does not exist no more
+      // checking it does not exist no more
       service.ScanTableQuery(queryParams)
       .then((response: MaterialsReceiptsScanTableReadListResults) => {
 
@@ -227,14 +199,12 @@ describe('MaterialsReceipts API service', () => {
     });
 
     it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async (done) => {
-      // 1. Subscription happens before tests in readingResultIds
-
-      // 2. Start listening to events
+      // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ResponseStatus) => propogateEvent(res)
       );
 
-      // 3. Sending query
+      // Sending query
       // TODO: real id should be got
       const limit = 3;
       const queryParams: ScanTableQueryParams = {
@@ -245,13 +215,15 @@ describe('MaterialsReceipts API service', () => {
 
       service.ScanTableQuery(queryParams)
       .then((response: MaterialsReceiptsScanTableReadListResults) => {
+        console.log(response);
         expect(response.ScanTableDataList.length).toBeLessThanOrEqual(limit);
 
-        const fields = Object.getOwnPropertyNames(tempScanDataTable);
+        const expectedFields = Object.getOwnPropertyNames(tempScanDataTable);
+        const gotFields = Object.getOwnPropertyNames(response.ScanTableDataList[0]);
 
-        response.ScanTableDataList.forEach(element => {
-          expect(Object.getOwnPropertyNames(element)).toEqual(fields);
-        });
+        for (let i = 0; i < expectedFields.length; i++) {
+          expect(gotFields).toContain(expectedFields[i]);
+        }
 
         done();
       });

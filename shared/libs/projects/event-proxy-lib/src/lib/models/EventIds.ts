@@ -64,4 +64,5 @@ export enum EventIds {
   TokenRenewSuccessWithTokenInformation = 2030,
   ObserverSnapshotQuery = 2051,
   ObserverSnapshotResult = 2052,
+  Unsubscribe = 2063
 }
