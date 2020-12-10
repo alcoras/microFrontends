@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ResourceSheme } from 'event-proxy-lib-src';
 
-import { ResourceLoaderService } from '../services/resource-loader.service';
+import { ResourceLoaderService } from '../services/ResourceLoaderService';
 
 describe('ResourceLoaderService', () => {
   let service: ResourceLoaderService;

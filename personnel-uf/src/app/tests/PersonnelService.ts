@@ -1,4 +1,4 @@
-import { PersonnelComponent } from '../services/personnel.component';
+import { PersonnelService } from '../services/PersonnelService';
 import { EventBusService } from '../services/EventBus.service';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { TestBed } from '@angular/core/testing';
@@ -8,7 +8,7 @@ import { TestEvent, genRandomNumber } from './helpers/helpers';
 import { BackendToFrontendEvent, CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
 
 describe('Personnel micro frontend component', () => {
-  let service: PersonnelComponent;
+  let service: PersonnelService;
   let eventBus: EventBusService;
   let eProxyService: EventProxyLibService;
 
@@ -20,7 +20,7 @@ describe('Personnel micro frontend component', () => {
         ],
       });
 
-      service = TestBed.inject(PersonnelComponent);
+      service = TestBed.inject(PersonnelService);
       eventBus = TestBed.inject(EventBusService);
       eProxyService = TestBed.inject(EventProxyLibService);
     }

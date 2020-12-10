@@ -13,9 +13,8 @@ import {
   MicroFrontendInfo,
   EnvironmentTypes,
   EventIds } from 'event-proxy-lib-src';
-import { ResourceLoaderService } from '../services/resource-loader.service';
-import { LanguageService } from '../services/lang.service';
-import { PrestartService } from '../services/prestart.service';
+import { ResourceLoaderService } from './ResourceLoaderService';
+import { PrestartService } from './PrestartService';
 import { AuthenticationService } from '../services/AuthenticationService';
 import { LoginRequest } from '../models/LoginRequest';
 import { environment } from 'src/environments/environment';
@@ -27,7 +26,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class UFManagerComponent {
+export class UFManagerService {
 
   public SourceInfo: MicroFrontendInfo = MicroFrontendParts.FrontendShell;
 
@@ -37,12 +36,11 @@ export class UFManagerComponent {
   private resources: { [sourceId: number]: boolean } = {};
 
   /**
-   * Creates an instance of UFManagerComponent.
+   * Creates an instance of UFManagerService.
    * @param authService auth service
    * @param eventProxyService - library service used for communication with backend
    * @param environmentService - some DOM globals
    * @param resourceLoader - helper for communication between Script-Loader
-   * @param languageService - langauge service for demo
    * @param prestartService - prestart service for demo
    */
   public constructor(
@@ -50,7 +48,6 @@ export class UFManagerComponent {
     private eventProxyService: EventProxyLibService,
     private environmentService: EnvironmentService,
     private resourceLoader: ResourceLoaderService,
-    private languageService: LanguageService,
     private prestartService: PrestartService
   ) { }
 
@@ -228,9 +225,8 @@ export class UFManagerComponent {
    * @param event - Event model for language change event
    */
   private changeLanguageEvent(event: LanguageChange): void {
-    this.languageService.SetLang(event.NewLanguage).toPromise().then(
-      () => { window.location.reload(); }
-    );
+    console.error(event);
+    throw new Error("Not implemented");
   }
 
   /**

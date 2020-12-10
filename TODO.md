@@ -120,6 +120,8 @@
     17. 2. Update: still can't build wihthout local files, but tests can reference them..
     17. 3. Try with https://wallabyjs.com/docs/integration/angular.html adding files or include to tsconfig
     17. 4. UPDATE: I've decided to add all models which are shared (like event ids) to event-proxy-lib
+71. DONE remove all subscriptions in all micro frontends
+72. DONE in every micro frontend unsub after getting desired event
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -143,5 +145,6 @@
 66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
 69. clean up package.json scripts in projects (remove serve and serve scripts)
 70. write unit/static tests for MaterialsReceipts
-71. remove all subscriptions in all micro frontends
-72. in every micro frontend unsub after getting desired event
+
+73.
+74.

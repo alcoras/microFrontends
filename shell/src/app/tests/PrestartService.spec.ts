@@ -1,10 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PrestartService } from '../services/prestart.service';
-import { LanguageService } from '../services/lang.service';
-import { langServiceMock } from './mocks/lang.mock';
+import { PrestartService } from '../services/PrestartService';
 import { eventProxyServiceMock } from './mocks/event-proxy-service.mock';
-import { ResourceLoaderService } from '../services/resource-loader.service';
+import { ResourceLoaderService } from '../services/ResourceLoaderService';
 import { resourceLoaderMock } from './mocks/resource-loader.mock';
 import { EnvironmentService } from 'event-proxy-lib-src';
 
@@ -16,7 +14,6 @@ describe('PrestartService', () => {
       imports: [],
       providers: [
         EnvironmentService,
-        { provide: LanguageService, useValue: langServiceMock },
         { provide: eventProxyServiceMock, useValue: eventProxyServiceMock},
         { provide: ResourceLoaderService, useValue: resourceLoaderMock}
       ]

@@ -55,10 +55,6 @@ export class MenuService implements IMicroFrontend {
     }
   }
 
-  public async SubscribeToEventsAsync(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   /**
    * Puts to element to DOM
    * @param elName element name to put in

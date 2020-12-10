@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 
 import {
   EventProxyLibService,
-  SubscibeToEvent,
   CoreEvent,
   ResponseStatus,
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds} from 'event-proxy-lib-src';
+  EventIds,
+  UnsubscibeToEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBus.service';
 
@@ -19,7 +19,7 @@ import { EventBusService } from './EventBus.service';
 @Injectable({
   providedIn: 'root'
 })
-export class PersonnelComponent implements IMicroFrontend {
+export class PersonnelService implements IMicroFrontend {
 
   public SourceInfo: MicroFrontendInfo = MicroFrontendParts.Personnel;
 
@@ -34,7 +34,6 @@ export class PersonnelComponent implements IMicroFrontend {
 
   public async InitAsync(): Promise<void> {
     this.preparePlacements();
-    await this.SubscribeToEventsAsync();
   }
 
   /**
@@ -56,21 +55,6 @@ export class PersonnelComponent implements IMicroFrontend {
 
   }
 
-  /**
-   * Subscribes to events which this micro frontend is responsible for
-   * @returns Promise
-   */
-  public async SubscribeToEventsAsync(): Promise<ResponseStatus> {
-    const e = new SubscibeToEvent(
-      this.SourceInfo.SourceId, [
-      [EventIds.ReadPersonData, 0, 0]
-    ]);
-
-    e.SourceName = this.SourceInfo.SourceName;
-
-    return this.eventProxyService.DispatchEvent(e).toPromise();
-  }
-
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
@@ -84,6 +68,9 @@ export class PersonnelComponent implements IMicroFrontend {
         case EventIds.ReadPersonData:
           await this.eventProxyService.ConfirmEvents(
             this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+
+          await this.eventProxyService.DispatchEvent(
+            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
           this.eventBusService.EventBus.next(element);
           break;
         default:

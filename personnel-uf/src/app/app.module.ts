@@ -11,8 +11,8 @@ import { MaterialModule } from './meterial-module';
 import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 import { EventBusService } from './services/EventBus.service';
 import { PersonnelAPIService } from './services/PersonnelAPI.service';
-import { PersonnelComponent } from './services/personnel.component';
-import { PersonnelComponentFactory } from './services/personnel.factory';
+import { PersonnelService } from './services/PersonnelService';
+import { PersonnelServiceFactory } from './services/PersonnelFactory';
 import { PersonnelTable2Component } from './personnel-table-2/personnel-table.component';
 
 @NgModule({
@@ -35,8 +35,8 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
     PersonnelAPIService,
     {
       provide: APP_INITIALIZER,
-      useFactory: PersonnelComponentFactory,
-      deps: [PersonnelComponent],
+      useFactory: PersonnelServiceFactory,
+      deps: [PersonnelService],
       multi: false
     }
   ],

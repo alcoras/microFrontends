@@ -2,7 +2,7 @@
   styleClass="p-datatable-striped"
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
   [columns]="ColumnsRelation" [value]="MaterialsListTableData"
-  [totalRecords]="TotalRecords"
+  [totalRecords]="TotalRecords" [autoLayout]=true
 >
   <!-- [virtualScroll]="true" [virtualRowHeight]="34" [scrollable]="true"  [rows]="100" scrollHeight="250px" -->
     <!-- currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" -->
@@ -26,9 +26,9 @@
   <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
       <tr>
-          <th *ngFor="let col of columns">
-              {{col.header}}
-          </th>
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
       </tr>
   </ng-template>
 

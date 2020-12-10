@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LanguageService, ILanguageSettings } from './lang.service';
-import { HttpResponse } from '@angular/common/http';
-import { ResourceLoaderService } from './resource-loader.service';
+import { ResourceLoaderService } from './ResourceLoaderService';
 import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src';
 
 /**
@@ -12,7 +10,6 @@ import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src';
 })
 export class PrestartService {
   public constructor(
-    private languageService: LanguageService,
     private environmentService: EnvironmentService,
     private resourceLoader: ResourceLoaderService
   ) { }
@@ -24,17 +21,7 @@ export class PrestartService {
    * @memberof PrestartService
    */
   public async InitLanguage(): Promise<void> {
-    try {
-      const res = await this.languageService.GetLang().toPromise();
-      if (res.status !== 200) {
-        throw new Error('Failure on getting language');
-      }
-      this.setUpLanguage(res);
-    }
-    catch (reject) {
-      console.log('prestart.service could not get language, setting default (en)', reject);
-      this.setUpLanguage(null);
-    }
+    throw new Error("Not implemented");
   }
 
   /**
@@ -50,14 +37,9 @@ export class PrestartService {
 
   /**
    * Sets up language by setting global environment paramater
-   * @param response HttpResponse with lang data
    */
-  private setUpLanguage(response: HttpResponse<ILanguageSettings> | null): void {
-    if (!response) {
-      this.environmentService.Language = 'en';
-      return;
-    }
-    this.environmentService.Language = response.body.lang;
+  private setUpLanguage(): void {
+    throw new Error("Not implemented");
   }
 
   /**

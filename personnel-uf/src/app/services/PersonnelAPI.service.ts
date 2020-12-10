@@ -104,19 +104,17 @@ export class PersonnelAPIService {
       throw new Error('page or pagesize was less than 1');
     }
 
-    return new Promise<PersonDataDTO>(
-      (resolve) => {
-        this.get(multiSorting, page, pageSize).toPromise().then( (response: ResponseStatus) => {
+    return new Promise<PersonDataDTO>((resolve) => {
+        this.get(multiSorting, page, pageSize)
+        .toPromise()
+        .then( (response: ResponseStatus) => {
           if (response.HttpResult.status !== 200) {
             return new Error('Failed to retrieve data');
           }
 
           const uniqueId = response.HttpResult.body.Ids[0];
 
-          console.log(uniqueId);
-
-          this.eventBusService.EventBus.subscribe(
-            async (data: PersonDataRead) => {
+          this.eventBusService.EventBus.subscribe(async (data: PersonDataRead) => {
               if (data.ParentId === uniqueId) {
                 resolve({
                   items: data.ListOutputEnterprisePersonData,
@@ -125,6 +123,7 @@ export class PersonnelAPIService {
               }
             }
           );
+
         });
       }
     );

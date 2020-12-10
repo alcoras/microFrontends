@@ -31,7 +31,6 @@ export class MaterialsReceiptsService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    // await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
@@ -87,19 +86,6 @@ export class MaterialsReceiptsService implements IMicroFrontend {
           throw new Error(`Event ${event.EventId} not implemented.`);
       }
     }
-  }
-
-  public SubscribeToEventsAsync(): Promise<ResponseStatus> {
-    const e = new SubscibeToEvent(
-      this.SourceInfo.SourceId, [
-      [EventIds.MaterialsReceiptsReadListResults, 0, 0],
-      [EventIds.MaterialsReceiptsTablePartReadListResults, 0, 0],
-      [EventIds.MaterialsReceiptsScanTableReadListResults, 0, 0]
-    ]);
-
-    e.SourceName = this.SourceInfo.SourceName;
-
-    return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
   /**

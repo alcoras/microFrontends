@@ -1,12 +1,12 @@
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > .sticky-row {
   position: -webkit-sticky;
   position: sticky;
-  top: 10px;
+  top: 0px;
 }
 
 @media screen and (max-width: 64em) {
-  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-      top: 99px;
+  :host ::ng-deep .p-datatable .p-datatable-thead > tr > .sticky-row {
+      top: 0px;
   }
 }
 

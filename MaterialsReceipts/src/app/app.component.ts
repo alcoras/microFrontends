@@ -7,19 +7,6 @@ import { EventBusService } from './services/EventBus.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  styles: [`
-    :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 10px;
-    }
-
-    @media screen and (max-width: 64em) {
-        :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-            top: 99px;
-        }
-    }
-  `]
 })
 export class AppComponent implements OnDestroy {
 

@@ -1,4 +1,4 @@
-import { MenuService } from './menu.service';
+import { MenuService } from './MenuService';
 
 /**
  * Service factory

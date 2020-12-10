@@ -31,7 +31,6 @@ export class TemplateService implements IMicroFrontend {
     private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
-    await this.SubscribeToEventsAsync();
     this.preparePlacements();
   }
 
@@ -52,17 +51,6 @@ export class TemplateService implements IMicroFrontend {
       }
     );
 
-  }
-
-  public SubscribeToEventsAsync(): Promise<ResponseStatus> {
-    const e = new SubscibeToEvent(
-      this.SourceInfo.SourceId, [
-      [123, 0, 0],
-    ]);
-
-    e.SourceName = this.SourceInfo.SourceName;
-
-    return this.eventProxyService.DispatchEvent(e).toPromise();
   }
 
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {

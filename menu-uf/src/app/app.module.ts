@@ -8,8 +8,8 @@ import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { EventProxyLibModule } from 'event-proxy-lib-src';
 import { MaterialModule } from './material-modules';
-import { MenuService } from './services/menu.service';
-import { MenuServiceFactory } from './services/menu.factory';
+import { MenuService } from './services/MenuService';
+import { MenuServiceFactory } from './services/MenuServiceFactory';
 
 @NgModule({
   declarations: [

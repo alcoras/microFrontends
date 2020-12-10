@@ -2,10 +2,11 @@
     styleClass="p-datatable-striped"
     [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
     [columns]="Cols" [value]="MaterialsListData"
-    [paginator]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+    [paginator]="true" [rows]="50" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [totalRecords]="TotalRecords"
-    selectionMode="single" (onRowSelect)="OnRowSelect($event)" [(selection)]="SelectedRecord">
+    selectionMode="single" (onRowSelect)="OnRowSelect($event)" [(selection)]="SelectedRecord"
+    [autoLayout]=true>
   <ng-template pTemplate="caption">
 
     <!-- Refresh button -->
@@ -46,7 +47,7 @@
   <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
       <tr>
-          <th *ngFor="let col of columns">
+          <th class="sticky-row" *ngFor="let col of columns">
               {{col.header}}
           </th>
       </tr>
