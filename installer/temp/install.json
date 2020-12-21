@@ -1,0 +1,11 @@
+{
+    "projectName": "zzzz",
+    "replace": [
+            { "replace": "zzzz", "search": "$project_name$" },
+            { "replace": "8007", "search": "$prod_port$" },
+            { "replace": "7007", "search": "$dev_port$" },
+            { "replace": "1009", "search": "$source_id$" },
+            { "replace": "zzzz", "search": "$source_name$" },
+            { "replace": "1008", "search": "$button_pressed_id$" }
+    ]
+}

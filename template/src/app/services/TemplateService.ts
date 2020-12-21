@@ -56,7 +56,7 @@ export class TemplateService implements IMicroFrontend {
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
-        case EventIds.<button_pressed_id>:
+        case EventIds.$button_pressed_id$:
             if (this.processButtonPressed(element)) {
               await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
@@ -77,7 +77,7 @@ export class TemplateService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[EventIds.<button_pressed_id>] = '<team-<project_name>></team-<project_name>>';
+    this.elToPlace[EventIds.$button_pressed_id$] = '<team-$project_name$></team-$project_name$>';
   }
 
   /**
@@ -89,7 +89,7 @@ export class TemplateService implements IMicroFrontend {
     const e = element as EventButtonPressed;
 
     switch (e.EventId) {
-      case EventIds.<button_pressed_id>:
+      case EventIds.$button_pressed_id$:
         if (e.UniqueElementId) {
           this.putToElement(e.UniqueElementId, this.getElFromID(element.EventId));
           return true;

@@ -1,6 +1,6 @@
 module.exports = {
   output: {
-  jsonpFunction: 'webpackJsonp<project_name>',
-  library: '<project_name>'
+  jsonpFunction: 'webpackJsonp$project_name$',
+  library: '$project_name$'
   }
 };

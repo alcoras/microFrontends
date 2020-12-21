@@ -25,11 +25,11 @@ In files:<br>
 2. In `package.json` set up launching commands
 ```json
     "ng_build_prod": "ng build --prod --outputHashing=none --output-path prod/",
-    "ng_serve_prod": "serve -C -l tcp://0.0.0.0:<prod_port> prod/",
+    "ng_serve_prod": "serve -C -l tcp://0.0.0.0:$prod_port$ prod/",
     "ng_start_prod": "npm run ng_build_prod && npm run npm_serve_prod",
 
     "ng_build_dev": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false",
-    "ng_serve_dev": "serve -l tcp://0.0.0.0:<dev_port> dist/<projectName>",
+    "ng_serve_dev": "serve -l tcp://0.0.0.0:$dev_port$ dist/<projectName>",
     "ng_watch": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
     "ng_con": "concurrently --kill-others -n \"ANGULAR,SERVER\" \"npm run ng_watch\"  \"npm run ng_serve_dev\" "
 ```

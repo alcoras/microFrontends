@@ -15,7 +15,7 @@
           "options": {
             "customWebpackConfig": { "path": "./extra-webpack.config.js",
             "mergeStrategies": { "externals": "replace" } },
-            "outputPath": "dist/<project_name>",
+            "outputPath": "dist/$project_name$",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",

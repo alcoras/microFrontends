@@ -3,7 +3,7 @@
 
   "use strict";
 
-  const srcId = "<source_id>";
+  const srcId = "$source_id$";
   window.__env = window.__env || {};
   window.__env.uf = window.__env.uf || {};
   window.__env.uf[srcId] = window.__env.uf[srcId] || {};
@@ -27,7 +27,7 @@
   var uf = {};
   // if (!window.__env.one_language)
   //   url = url + window.__env.lang + '/';
-  var url = "<project_name>/";
+  var url = "$project_name$/";
   uf[srcId] = new UFData();
   uf[srcId].events.push(1005);
   temp = new ResourceSheme();
