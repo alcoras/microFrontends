@@ -9,7 +9,7 @@ import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
 
 @Component({
   selector: 'materials-receipts-scan-table',
-  templateUrl: './View.html',
+  templateUrl: './ScanTableView.html',
 })
 export class ScanTableComponent {
   public Loading: boolean;

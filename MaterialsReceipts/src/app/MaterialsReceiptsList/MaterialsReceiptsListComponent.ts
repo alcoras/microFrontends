@@ -36,7 +36,7 @@ interface Category {
 
 @Component({
   selector: 'materials-receipts-list-table',
-  templateUrl: './View.html',
+  templateUrl: './MaterialsReceiptsListView.html',
   styleUrls: ['./Styles.scss']
 })
 export class MaterialsReceiptsListComponent {
@@ -73,8 +73,9 @@ export class MaterialsReceiptsListComponent {
 
   public constructor(
     private eventBus: EventBusService,
-    private materialsReceiptsAPI: MaterialsReceiptsAPI)
-  { }
+    private materialsReceiptsAPI: MaterialsReceiptsAPI) {
+    this.Loading = true;
+  }
 
   public ngOnInit(): void {
     this.UkrainianDate = {

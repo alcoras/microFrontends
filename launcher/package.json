@@ -38,6 +38,7 @@
     "backend-SOneGateway":                "cd .\\backends && SOneGateway.bat",
 
     "backend-start-config0" : "concurrently --kill-others --names \"APIGateway,EventBroker,MaterialsReceipts,PersonData,Occupations\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\" \"npm run backend-PersonData\" \"npm run backend-Occupations\"",
+    "backend-start-mat-rcp" : "concurrently --kill-others --names \"APIGateway,EventBroker,MaterialsReceipts\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold\" \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\"",
 
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod && npm run materialsReceipts-build-prod",
     "build-dev": "npm run shell-build-dev && npm run menu-build-dev && npm run occupation-build-dev && npm run personnel-build-dev && npm run materialsReceipts-build-dev",

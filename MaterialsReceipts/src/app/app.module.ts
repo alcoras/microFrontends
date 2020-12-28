@@ -35,6 +35,7 @@ import { IMaterialsReceiptsAPI } from './Models/index';
 
 import { MaterialsReceiptsTableComponent } from './MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
 import { MaterialsReceiptsListComponent } from './MaterialsReceiptsList/MaterialsReceiptsListComponent';
+import { LocationsTableComponent } from './Locations/LocationsTableComponent';
 
 import { environment } from 'src/environments/environment';
 
@@ -93,7 +94,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     MaterialsReceiptsListComponent,
     TranslatePipe,
     MaterialsReceiptsTableComponent,
-    ScanTableComponent
+    ScanTableComponent,
+    LocationsTableComponent
   ],
   imports: [
     BrowserModule,

@@ -8,7 +8,7 @@ import { MaterialReceiptSelectedData } from '../Models/MaterialReceiptSelectedDa
 
 @Component({
   selector: 'materials-receipts-list-table-table',
-  templateUrl: './View.html',
+  templateUrl: './MaterialsReceiptsTableView.html',
   styleUrls: ['./Styles.scss']
 })
 export class MaterialsReceiptsTableComponent {

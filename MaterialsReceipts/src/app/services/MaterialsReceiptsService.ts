@@ -67,6 +67,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         case EventIds.MaterialsReceiptsScanTableReadListResults:
         case EventIds.MaterialsReceiptsReadListResults:
         case EventIds.MaterialsReceiptsTablePartReadListResults:
+        case EventIds.MaterialsReceiptsLocationsReadListResults:
           await this.eventProxyService.ConfirmEvents(
             this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
 

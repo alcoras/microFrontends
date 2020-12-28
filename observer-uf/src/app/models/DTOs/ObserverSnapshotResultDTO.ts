@@ -10,8 +10,6 @@ export class ObserverSnapshotResultDTO extends CoreEvent {
   public EventParentList: EventParent[];
   public EventParentlessList: EventDataForTracing[];
 
-  public ParentSourceEventUniqueId: number;
-
   public TotalEventParentListRecords: number;
   public TotalEventParentLessListrecords: number;
 }

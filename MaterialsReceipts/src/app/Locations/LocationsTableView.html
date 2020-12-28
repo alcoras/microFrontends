@@ -1,0 +1,65 @@
+<p-card>
+  <p-table
+    styleClass="p-datatable-sm p-datatable-striped"
+    #dt [value]="Locations"
+    [lazy]=true (onLazyLoad)="LazyLoad($event)" [loading]="Loading" [totalRecords]="TotalRecords"
+    [paginator]=true [rows]="50" [rowsPerPageOptions]="[25, 50, 100]" [showCurrentPageReport]=true
+    currentPageReportTemplate="{first}/{last} total:{totalRecords}"
+    >
+
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex">
+        <button pButton (click)="DialogNewLocation()" label="Add" class="p-button-success p-mr-2" icon="pi pi-plus"></button>
+        <button pButton class="p-ml-auto" icon="pi pi-refresh"></button>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let column of Columns">
+          {{column.header}}
+        </th>
+        <th style="width: 4rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-data let-rowData>
+      <tr>
+        <td *ngFor="let column of Columns; let i = index;">
+          {{data[column.field]}}
+        </td>
+        <td>
+          <p-button
+            styleClass="p-button-danger"
+            icon="pi pi-trash"
+            (click)="DeleteLocation(rowData)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+</p-card>
+
+<p-dialog
+  header="New Location"
+    [style]="{width: '50vw'}"
+    [(visible)] = "NewDialogDisplay" [focusOnShow]=true [modal]=true
+  >
+  <p-card>
+    <div class="p-fluid">
+
+      <div class="p-field">
+        <label>Description</label>
+        <input [(ngModel)]="NewLocation.LocationDescription" pInputText>
+      </div>
+
+      <div class="p-field">
+        <label>BarCode</label>
+        <input [(ngModel)]="NewLocation.LocationBarCode" pInputText>
+      </div>
+    </div>
+  </p-card>
+  <ng-template pTemplate="footer">
+    <button (click)="SaveNewLocation()" class="p-button-success" pButton label="Save" icon="pi pi-check"></button>
+  </ng-template>
+</p-dialog>
