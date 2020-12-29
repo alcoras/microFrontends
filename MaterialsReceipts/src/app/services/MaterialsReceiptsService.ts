@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import {
   EventProxyLibService,
-  SubscibeToEvent,
   CoreEvent,
   ResponseStatus,
   IMicroFrontend,
@@ -68,6 +67,8 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         case EventIds.MaterialsReceiptsReadListResults:
         case EventIds.MaterialsReceiptsTablePartReadListResults:
         case EventIds.MaterialsReceiptsLocationsReadListResults:
+        case EventIds.MaterialsReceiptsMaterialsAtLocationsReadListResults:
+        case EventIds.MaterialsReceiptsMaterialsReadListResults:
           await this.eventProxyService.ConfirmEvents(
             this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
 

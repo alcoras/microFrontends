@@ -15,7 +15,10 @@ import {
   MaterialsReceiptsLocationsReadListQuery,
   MaterialsReceiptsLocationsReadListResults,
   MaterialsReceiptsLocationsAddRemove,
-  MaterialsReceiptsLocationsAddRemoveFlag
+  MaterialsReceiptsLocationsAddRemoveFlag,
+  MaterialsReceiptsMaterialsAtLocationsReadListQuery,
+  MaterialsReceiptsMaterialsAtLocationsReadListResults,
+  MaterialsReceiptsMaterialsReadListQuery
 } from '../Models/BackendEvents/index';
 import {
   MaterialsListDTO,
@@ -110,19 +113,82 @@ export class MaterialsReceiptsAPI {
   }
 
   /**
+   * Deletes location
+   * @param locationData !
+   * @returns ResponseStatus
+   */
+  public LocationDelete(locationData: LocationsData): Observable<ResponseStatus> {
+    const event = new MaterialsReceiptsLocationsAddRemove(
+      this.sourceInfo,
+      locationData,
+      MaterialsReceiptsLocationsAddRemoveFlag.Delete);
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
    * Deletes material scan
    * @param data MaterialsReceiptsScanTable
    * @returns ResponseStatus
    */
   public ScanTableDelete(data: ScanTableData): Observable<ResponseStatus> {
-
     const event = new MaterialsReceiptsScanTableAddRemove(
       this.sourceInfo,
       data,
       MaterialsReceiptsScanTableAddRemoveFlag.Delete);
 
-
     return this.eventProxyService.DispatchEvent(event);
+  }
+
+  public MaterialsAtLocationQuery(
+    page: number,
+    limit: number,
+    materialsId?: number,
+    locationId?: number)
+    : Promise<MaterialsReceiptsMaterialsAtLocationsReadListResults> {
+
+    if (page < 1 || limit < 1) {
+      throw new Error('page or pagesize is less than 1');
+    }
+
+    return new Promise<MaterialsReceiptsMaterialsAtLocationsReadListResults>((resolve, reject)=> {
+      this.materialsAtLocationsQuery(materialsId, locationId, page, limit)
+      .toPromise()
+      .then((responseStatus: ResponseStatus) => {
+        if (responseStatus.Failed) reject('Failed to retrive data');
+
+        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+
+        this.eventBusService.EventBus.subscribe(
+          (data: MaterialsReceiptsMaterialsAtLocationsReadListResults) => {
+            if (data.ParentId === uniqueId) resolve(data);
+          })
+      })
+    });
+  }
+
+  public MaterialsQuery(materialId: number, page: number, limit: number)
+  : Promise<MaterialsReceiptsMaterialsReadListQuery> {
+    if (page < 1 || limit < 1) {
+      throw new Error('page or pagesize is less than 1');
+    }
+
+    return new Promise<MaterialsReceiptsMaterialsReadListQuery>((resolve, reject) => {
+      this.materialsQuery(materialId, page, limit)
+      .toPromise()
+      .then( (responseStatus: ResponseStatus) => {
+        if (responseStatus.Failed) reject('Failed to retrive data');
+
+        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+
+        this.eventBusService.EventBus.subscribe(
+          (data: MaterialsReceiptsMaterialsReadListQuery) => {
+            if (data.ParentId === uniqueId) resolve(data);
+          }
+        );
+
+      })
+    });
   }
 
   public LocationsQuery(locationId: number, page: number, limit: number)
@@ -154,7 +220,7 @@ export class MaterialsReceiptsAPI {
    * @returns Promise with MaterialsReceiptsScanTableReadListResults
    */
   public ScanTableQuery(queryParams: ScanTableQueryParams)
-    : Promise<MaterialsReceiptsScanTableReadListResults> {
+  : Promise<MaterialsReceiptsScanTableReadListResults> {
 
       if (queryParams.Page < 1 || queryParams.Limit < 1) {
         throw new Error('page or pagesize is less than 1');
@@ -288,6 +354,44 @@ export class MaterialsReceiptsAPI {
   private locationsQuery(locationsId?: number, page?: number, limit?: number): Observable<ResponseStatus> {
     const event = new MaterialsReceiptsLocationsReadListQuery(
       this.sourceInfo, locationsId, page, limit);
+
+    event.SubscribeToChildren = true;
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
+   * Queries materials
+   * @param materialsId !
+   * @param page !
+   * @param limit !
+   * @returns Observable of Response Status
+   */
+  private materialsQuery(materialsId?: number, page?: number, limit?: number)
+  : Observable<ResponseStatus> {
+    const event = new MaterialsReceiptsMaterialsReadListQuery(
+      this.sourceInfo, materialsId, page, limit);
+
+    event.SubscribeToChildren = true;
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
+   * Queries materials at location
+   * @param materialsId !
+   * @param locationId !
+   * @param page !
+   * @param limit !
+   * @returns Observable of ResponseStatus
+   */
+  private materialsAtLocationsQuery(
+    materialsId?: number,
+    locationId?: number,
+    page?: number,
+    limit?: number): Observable<ResponseStatus> {
+    const event = new MaterialsReceiptsMaterialsAtLocationsReadListQuery(
+      this.sourceInfo, materialsId, locationId, page, limit);
 
     event.SubscribeToChildren = true;
 

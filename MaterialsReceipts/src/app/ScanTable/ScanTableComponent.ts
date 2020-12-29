@@ -85,10 +85,9 @@ export class ScanTableComponent {
       Limit: limit
     };
 
-    const res = this.materialsReceiptsAPI
-      .ScanTableQuery(queryParams);
-
-    res.then( (data: MaterialsReceiptsScanTableReadListResults) => {
+    this.materialsReceiptsAPI
+    .ScanTableQuery(queryParams)
+    .then( (data: MaterialsReceiptsScanTableReadListResults) => {
       this.ScanTableData = data.ScanTableDataList;
       this.TotalRecords = data.TotalRecordsAmount;
       this.Loading = false;

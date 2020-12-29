@@ -1,0 +1,33 @@
+<p-card>
+  <p-table [value]="Data"
+    styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+    [lazy]=true (onLazyLoad)="LazyLoad($event)" [loading]="Loading" [totalRecords]="TotalRecords"
+    [paginator]=true [rows]=50 [rowsPerPageOptions]="[25, 50, 100]" [showCurrentPageReport]=true
+    currentPageReportTemplate="{first}/{last} total:{totalRecords}"
+  >
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let column of Columns">
+          {{column}}
+        </th>
+        <th style="width: 4rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-data let-rowData>
+      <tr>
+        <td *ngFor="let column of Columns; let i = index;">
+          {{data[column]}}
+        </td>
+        <td>
+          <p-button
+            styleClass="p-button-rounded p-button-success"
+            icon="pi pi-check" label="Select"
+            (click)="SelectMaterial(rowData)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+</p-card>

@@ -22,7 +22,7 @@ export class MaterialsReceiptsLocationsAddRemove extends CoreEvent {
 
       super();
 
-      this.LocationsId = locationData.LocationId;
+      this.LocationsId = locationData.Id;
       this.LocationDescription = locationData.LocationDescription;
       this.LocationBarCode = locationData.LocationBarCode;
 

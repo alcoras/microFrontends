@@ -18,7 +18,7 @@ export class AppComponent implements OnDestroy {
 
   public constructor(private eventBus: EventBusService) {
     this.subscriptionList.add(this.eventBus.OnMaterialReceiptSelected.subscribe(() => {
-      this.ActiveTabIndex = 1;
+      this.ActiveTabIndex = 2;
       this.MaterialReceiptsDataTabDisabled = false;
     }));
   }

@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
-import { ResponseStatus } from "../../../../shared/libs/projects/event-proxy-lib/src/lib/models";
 import { MaterialsReceiptsLocationsReadListResults } from "../Models/BackendEvents";
 import { LocationsData } from "../Models/LocationsData";
 import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
@@ -30,7 +29,9 @@ import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
   }
 
   public DeleteLocation(data: LocationsData): void {
-    console.log(data);
+    this.materialsReceiptsAPI.LocationDelete(data).toPromise();
+
+    this.RefreshTable();
   }
 
   public DialogNewLocation(): void {
@@ -45,14 +46,19 @@ import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
 
     this.NewDialogSubmited = true;
     this.NewDialogDisplay = false;
-
+    this.RefreshTable();
   }
+
   public LazyLoad(event: LazyLoadEvent): void {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
     this.queryLocations(page, limit);
+  }
+
+  public RefreshTable(): void {
+    this.queryLocations();
   }
 
   private queryLocations(page = 1, limit = 30): void {
@@ -62,7 +68,6 @@ import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
     .then( (data: MaterialsReceiptsLocationsReadListResults) => {
       this.Locations = data.LocationsDataList;
       this.TotalRecords = data.TotalRecordsAmount;
-      console.log(data);
       this.Loading = false;
     })
   }

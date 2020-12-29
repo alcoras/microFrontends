@@ -1,5 +1,15 @@
 <p-tabView [(activeIndex)]="ActiveTabIndex">
 
+  <p-tabPanel header="Materials">
+    <material-receipts-materials-table>
+    </material-receipts-materials-table>
+  </p-tabPanel>
+
+  <p-tabPanel header="Materials At Locations">
+    <material-receipts-materials-at-location-table>
+    </material-receipts-materials-at-location-table>
+  </p-tabPanel>
+
   <p-tabPanel header="Locations">
     <material-receipts-locations-table></material-receipts-locations-table>
   </p-tabPanel>
@@ -11,6 +21,7 @@
   <p-tabPanel [(disabled)]="MaterialReceiptsDataTabDisabled" header="Material Receipts Data">
       <ng-template pTemplate="content">
           <materials-receipts-list-table-table></materials-receipts-list-table-table>
+          <br>
           <materials-receipts-scan-table></materials-receipts-scan-table>
       </ng-template>
   </p-tabPanel>

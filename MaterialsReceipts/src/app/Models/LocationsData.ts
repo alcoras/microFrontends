@@ -1,5 +1,5 @@
 export class LocationsData {
-  public LocationId?: number;
+  public Id?: number;
   public LocationDescription?: string;
   public LocationBarCode?: string;
 }

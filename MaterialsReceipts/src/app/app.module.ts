@@ -24,6 +24,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CardModule } from 'primeng/card';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 import { ProductService } from './services/ProductService';
 import { MaterialsReceiptsService } from './services/MaterialsReceiptsService';
@@ -35,9 +36,13 @@ import { IMaterialsReceiptsAPI } from './Models/index';
 
 import { MaterialsReceiptsTableComponent } from './MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
 import { MaterialsReceiptsListComponent } from './MaterialsReceiptsList/MaterialsReceiptsListComponent';
-import { LocationsTableComponent } from './Locations/LocationsTableComponent';
+import { LocationsTableComponent } from './LocationsTable/LocationsTableComponent';
+import { MaterialsAtLocationComponent } from './MaterialsAtLocation/MaterialsAtLocationComponent';
+import { MaterialsTableComponent } from './MaterialsTable/MaterialsTableComponent';
+import { SelectMaterialDialog } from './SelectMaterialDialog/SelectMaterialDialog';
 
 import { environment } from 'src/environments/environment';
+
 
 /**
  * Materials Receipts factory
@@ -95,11 +100,15 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     TranslatePipe,
     MaterialsReceiptsTableComponent,
     ScanTableComponent,
-    LocationsTableComponent
+    LocationsTableComponent,
+    MaterialsAtLocationComponent,
+    MaterialsTableComponent,
+    SelectMaterialDialog
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    DynamicDialogModule,
     TableModule,
     FormsModule,
     DialogModule,
@@ -110,7 +119,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     RadioButtonModule,
     InputTextModule,
     CardModule,
-    EventProxyLibModule
+    EventProxyLibModule,
   ],
   providers: [
     ProductService,
@@ -131,7 +140,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
       useFactory: MaterialReceiptsInitializeFactory,
       deps: [MaterialsReceiptsService],
       multi: false
-    }
+    },
   ],
   entryComponents: [AppComponent]
 })
