@@ -16,4 +16,5 @@ export class ScanTableData {
 
   public Quantity?: number;
   public Unit?: string;
+  public BarCode?: string;
 }

@@ -1,15 +1,18 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
+import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Subscription } from "rxjs";
 import { ScanTableData, ScanTableQueryParams } from "../Models";
 import { MaterialsReceiptsScanTableReadListResults } from "../Models/BackendEvents";
 import { MaterialReceiptSelectedData } from "../Models/MaterialReceiptSelectedData";
+import { ScanningDialog } from "../ScanningDialog/ScanningDialog";
 import { EventBusService } from "../services/EventBus.service";
 import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
 
 @Component({
   selector: 'materials-receipts-scan-table',
   templateUrl: './ScanTableView.html',
+  providers: [ DialogService ]
 })
 export class ScanTableComponent {
   public Loading: boolean;
@@ -17,6 +20,8 @@ export class ScanTableComponent {
 
   public ScanTableData: ScanTableData[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
+
+  public dialogReference: DynamicDialogRef;
 
   public ColumnsRelation = [
     { field: 'MaterialsId', header: 'MaterialsId'},
@@ -29,6 +34,7 @@ export class ScanTableComponent {
   private subscriptions: Subscription[];
 
   public constructor(
+    private dialogService: DialogService,
     private materialsReceiptsAPI: MaterialsReceiptsAPI,
     private eventBus: EventBusService) {
 
@@ -52,7 +58,17 @@ export class ScanTableComponent {
   }
 
   public AddNewScan(): void {
-    // show dialog or something for new scan
+    this.dialogReference = this.dialogService.open(
+      ScanningDialog, {
+        modal: true,
+        width: '100%',
+        height: '100%',
+        baseZIndex: 10001
+      });
+
+    this.dialogReference.onClose.subscribe((data: ScanTableData) => {
+      if (data) console.log(data);
+    });
   }
 
   public DeleteScan(data: ScanTableData): void {

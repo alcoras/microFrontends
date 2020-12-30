@@ -27,8 +27,7 @@
         <th *ngFor="let col of columns">
             {{col.header}}
         </th>
-        <!-- Actions -->
-        <th></th>
+        <th style="width: 4rem">Actions</th>
     </tr>
   </ng-template>
 
@@ -40,7 +39,10 @@
         </td>
         <!-- Actions -->
         <td>
-          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="DeleteScan(rowData)"></button>
+          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+            (click)="DeleteScan(rowData)">
+          </button>
+
         </td>
     </tr>
   </ng-template>

@@ -10,7 +10,7 @@ import { MaterialsData } from "../Models";
 @Component({
   selector: "material-receipts-materials-at-location-table",
   templateUrl: "MaterialsAtLocationView.html",
-  providers: [DialogService]
+  providers: [ DialogService ]
 }) export class MaterialsAtLocationComponent {
   public Data: MaterialsAtLocationsData[];
   public Columns = [ "MaterialsId", "LocationId", "Quantity", "Unit" ];
