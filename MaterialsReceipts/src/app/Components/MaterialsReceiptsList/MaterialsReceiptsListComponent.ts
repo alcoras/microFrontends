@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MaterialsList, MaterialsListDTO, ReadListQueryParams } from '../Models/index';
+import { MaterialsList, MaterialsListDTO, ReadListQueryParams } from '../../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
-import { MaterialsReceiptsAPI  } from '../services/MaterialsReceiptsAPI';
-import { EventBusService } from '../services/EventBus.service';
-import { MaterialReceiptSelectedData } from '../Models/MaterialReceiptSelectedData';
+import { MaterialsReceiptsAPI  } from '../../services/MaterialsReceiptsAPI';
+import { EventBusService } from '../../services/EventBus.service';
+import { MaterialReceiptSelectedData } from '../../Models/MaterialReceiptSelectedData';
 
 interface OnRowSelectedEvent {
   originalEvent?: UIEvent,

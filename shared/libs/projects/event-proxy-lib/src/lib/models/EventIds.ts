@@ -68,5 +68,9 @@ export enum EventIds {
   TokenRenewSuccessWithTokenInformation = 2030,
   ObserverSnapshotQuery = 2051,
   ObserverSnapshotResult = 2052,
+  CastorCreate = 2053,
+  CastorDelete = 2054,
+  CastorGet = 2055,
+  CastorFound = 2056,
   Unsubscribe = 2063
 }

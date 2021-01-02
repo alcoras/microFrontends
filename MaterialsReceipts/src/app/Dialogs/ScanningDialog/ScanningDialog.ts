@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { ScanTableData } from "../Models/ScanTableData";
+import { ScanTableData } from "@shared/Models/ScanTableData";
 
 @Component({
   templateUrl: "ScanningDialogView.html"

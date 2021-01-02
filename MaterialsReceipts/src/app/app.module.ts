@@ -13,7 +13,7 @@ import {
 
 import { AppComponent } from './app.component';
 import { TranslatePipe } from './pipes/TranslatePipe';
-import { ScanTableComponent } from './ScanTable/ScanTableComponent';
+import { ScanTableComponent } from './Components/ScanTable/ScanTableComponent';
 
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -27,6 +27,8 @@ import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 import { ProductService } from './services/ProductService';
+import { CastorAPI } from '@shared/services/CastorAPI';
+
 import { MaterialsReceiptsService } from './services/MaterialsReceiptsService';
 import { MaterialsReceiptsAPI } from './services/MaterialsReceiptsAPI';
 import { MaterialsReceiptsAPIMock } from './services/mocks/MaterialReceiptsAPIMock';
@@ -34,16 +36,15 @@ import { EventProxyLibServiceMock } from './services/mocks/EventProxyLibServiceM
 import { EventBusService } from './services/EventBus.service';
 import { IMaterialsReceiptsAPI } from './Models/index';
 
-import { MaterialsReceiptsTableComponent } from './MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
-import { MaterialsReceiptsListComponent } from './MaterialsReceiptsList/MaterialsReceiptsListComponent';
-import { LocationsTableComponent } from './LocationsTable/LocationsTableComponent';
-import { MaterialsAtLocationComponent } from './MaterialsAtLocation/MaterialsAtLocationComponent';
-import { MaterialsTableComponent } from './MaterialsTable/MaterialsTableComponent';
-import { SelectMaterialDialog } from './SelectMaterialDialog/SelectMaterialDialog';
-import { ScanningDialog } from './ScanningDialog/ScanningDialog';
+import { MaterialsReceiptsTableComponent } from './Components/MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
+import { MaterialsReceiptsListComponent } from './Components/MaterialsReceiptsList/MaterialsReceiptsListComponent';
+import { LocationsTableComponent } from './Components/LocationsTable/LocationsTableComponent';
+import { MaterialsAtLocationComponent } from './Components/MaterialsAtLocation/MaterialsAtLocationComponent';
+import { MaterialsTableComponent } from './Components/MaterialsTable/MaterialsTableComponent';
+import { SelectMaterialDialog } from './Dialogs/SelectMaterialDialog/SelectMaterialDialog';
+import { ScanningDialog } from './Dialogs/ScanningDialog/ScanningDialog';
 
 import { environment } from 'src/environments/environment';
-
 
 /**
  * Materials Receipts factory
@@ -143,6 +144,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
       deps: [MaterialsReceiptsService],
       multi: false
     },
+    CastorAPI
   ],
   entryComponents: [AppComponent]
 })

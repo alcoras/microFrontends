@@ -16,3 +16,5 @@ export * from './MaterialsReceiptsMaterialsAtLocationsReadListResults';
 
 export * from './MaterialsReceiptsMaterialsReadListQuery';
 export * from './MaterialsReceiptsMaterialsReadListResults';
+
+export * from './CastorCreateAndOthers';

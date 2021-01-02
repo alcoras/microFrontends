@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
-import { MaterialsData } from "../Models";
-import { MaterialsReceiptsMaterialsReadListResults } from "../Models/BackendEvents";
-import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
+import { MaterialsData } from "../../Models";
+import { MaterialsReceiptsMaterialsReadListResults } from "../../Models/BackendEvents";
+import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 
 @Component({
   templateUrl: "MaterialsTableView.html",

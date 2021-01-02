@@ -290,17 +290,17 @@ export class MaterialsReceiptsAPI {
   private materialsReceiptsListQuery(queryParams: ReadListQueryParams)
     : Observable<ResponseStatus> {
 
-      const event = new MaterialsReceiptsReadListQuery(
-        this.sourceInfo,
-        queryParams.DateFrom,
-        queryParams.DateUntil,
-        queryParams.Signed,
-        queryParams.Page,
-        queryParams.Limit);
+    const event = new MaterialsReceiptsReadListQuery(
+      this.sourceInfo,
+      queryParams.DateFrom,
+      queryParams.DateUntil,
+      queryParams.Signed,
+      queryParams.Page,
+      queryParams.Limit);
 
-      event.SubscribeToChildren = true;
+    event.SubscribeToChildren = true;
 
-      return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEvent(event);
   }
 
   /**
@@ -315,12 +315,12 @@ export class MaterialsReceiptsAPI {
     page?: number,
     limit?: number): Observable<ResponseStatus> {
 
-      const event = new MaterialsReceiptsTablePartReadListQuery(
-        this.sourceInfo, materialsReceiptId, page, limit);
+    const event = new MaterialsReceiptsTablePartReadListQuery(
+      this.sourceInfo, materialsReceiptId, page, limit);
 
-      event.SubscribeToChildren = true;
+    event.SubscribeToChildren = true;
 
-      return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEvent(event);
   }
 
   /**
@@ -330,18 +330,18 @@ export class MaterialsReceiptsAPI {
    */
   private scanTableQuery(queryParams: ScanTableQueryParams): Observable<ResponseStatus> {
 
-      const event = new MaterialsReceiptsScanTableReadListQuery(
-        this.sourceInfo,
-        queryParams.ScanTableId,
-        queryParams.MaterialsId,
-        queryParams.MaterialReceiptsListId,
-        queryParams.MaterialReceiptsTableId,
-        queryParams.Page,
-        queryParams.Limit);
+    const event = new MaterialsReceiptsScanTableReadListQuery(
+      this.sourceInfo,
+      queryParams.ScanTableId,
+      queryParams.MaterialsId,
+      queryParams.MaterialReceiptsListId,
+      queryParams.MaterialReceiptsTableId,
+      queryParams.Page,
+      queryParams.Limit);
 
-      event.SubscribeToChildren = true;
+    event.SubscribeToChildren = true;
 
-      return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEvent(event);
   }
 
   /**

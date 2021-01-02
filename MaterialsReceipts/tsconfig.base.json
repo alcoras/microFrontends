@@ -21,6 +21,7 @@
     ],
     "paths": {
       "@angular/*": [ "./node_modules/@angular/*" ],
+      "@shared/*": ["src/app/*"],
       "event-proxy-lib-src":["../shared/libs/projects/event-proxy-lib/src/public-api"],
     }
   }

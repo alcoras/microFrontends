@@ -2,12 +2,12 @@ import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Subscription } from "rxjs";
-import { ScanTableData, ScanTableQueryParams } from "../Models";
-import { MaterialsReceiptsScanTableReadListResults } from "../Models/BackendEvents";
-import { MaterialReceiptSelectedData } from "../Models/MaterialReceiptSelectedData";
-import { ScanningDialog } from "../ScanningDialog/ScanningDialog";
-import { EventBusService } from "../services/EventBus.service";
-import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
+import { ScanTableData, ScanTableQueryParams } from "../../Models";
+import { MaterialsReceiptsScanTableReadListResults } from "../../Models/BackendEvents";
+import { MaterialReceiptSelectedData } from "../../Models/MaterialReceiptSelectedData";
+import { ScanningDialog } from "../../ScanningDialog/ScanningDialog";
+import { EventBusService } from "../../services/EventBus.service";
+import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 
 @Component({
   selector: 'materials-receipts-scan-table',

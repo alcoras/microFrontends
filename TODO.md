@@ -149,4 +149,7 @@
 74. currently if something fails, we either throw (where we care for it to work) or we don't return message to user; think how to universally handle messages to user about strong fails (cant work further) and safe fails (entry creation failed, deletion failed);
 
 75. Consider renaming all app.*.* so it's easier to jump around files
-76.
+76. Restructure all projects so they feel-look like backend
+
+77.
+78.
