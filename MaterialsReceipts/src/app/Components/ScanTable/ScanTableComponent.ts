@@ -4,10 +4,10 @@ import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Subscription } from "rxjs";
 import { ScanTableData, ScanTableQueryParams } from "../../Models";
 import { MaterialsReceiptsScanTableReadListResults } from "../../Models/BackendEvents";
-import { MaterialReceiptSelectedData } from "../../Models/MaterialReceiptSelectedData";
-import { ScanningDialog } from "../../ScanningDialog/ScanningDialog";
+import { MaterialReceiptSelectedData } from "@shared/Models/MaterialReceiptSelectedData";
 import { EventBusService } from "../../services/EventBus.service";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
+import { ScanningDialog } from "@shared/Dialogs/ScanningDialog/ScanningDialog";
 
 @Component({
   selector: 'materials-receipts-scan-table',

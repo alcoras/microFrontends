@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { MaterialsData } from "../Models";
-import { MaterialsReceiptsMaterialsReadListResults } from "../Models/BackendEvents/MaterialsReceiptsMaterialsReadListResults";
-import { MaterialsReceiptsAPI } from "../services/MaterialsReceiptsAPI";
+import { MaterialsData } from "@shared/Models";
+import { MaterialsReceiptsMaterialsReadListResults } from "@shared/Models/BackendEvents/MaterialsReceiptsMaterialsReadListResults";
+import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
 
 @Component({
   templateUrl: "SelectMaterialDialogView.html"
