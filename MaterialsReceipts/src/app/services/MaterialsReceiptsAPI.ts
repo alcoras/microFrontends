@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
-  EventProxyLibService, MicroFrontendParts, ResponseStatus
-} from 'event-proxy-lib-src';
-import { Observable } from 'rxjs';
-import {
+  EventProxyLibService,
+  LocationsData,
+  MaterialsReceiptsLocationsAddRemove,
+  MaterialsReceiptsLocationsAddRemoveFlag,
+  MaterialsReceiptsLocationsReadListQuery,
+  MaterialsReceiptsLocationsReadListResults,
+  MaterialsReceiptsMaterialsAtLocationsReadListQuery,
+  MaterialsReceiptsMaterialsAtLocationsReadListResults,
+  MaterialsReceiptsMaterialsReadListQuery,
   MaterialsReceiptsReadListQuery,
   MaterialsReceiptsReadListResults,
   MaterialsReceiptsScanTableAddRemove,
@@ -12,23 +17,14 @@ import {
   MaterialsReceiptsScanTableReadListResults,
   MaterialsReceiptsTablePartReadListQuery,
   MaterialsReceiptsTablePartReadListResults,
-  MaterialsReceiptsLocationsReadListQuery,
-  MaterialsReceiptsLocationsReadListResults,
-  MaterialsReceiptsLocationsAddRemove,
-  MaterialsReceiptsLocationsAddRemoveFlag,
-  MaterialsReceiptsMaterialsAtLocationsReadListQuery,
-  MaterialsReceiptsMaterialsAtLocationsReadListResults,
-  MaterialsReceiptsMaterialsReadListQuery
-} from '../Models/BackendEvents/index';
-import {
-  MaterialsListDTO,
-  MaterialsTableListDTO,
-  ReadListQueryParams,
-  ScanTableData,
-  ScanTableQueryParams
-} from '../Models/index';
-import { LocationsData } from '../Models/LocationsData';
-import { EventBusService } from './EventBus.service';
+  MicroFrontendParts,
+  ResponseStatus,
+  ScanTableData
+} from 'event-proxy-lib-src';
+import { Observable } from 'rxjs';
+import { EventBusService } from './EventBusService';
+import { ReadListQueryParams } from '../Adds/ReadListQueryParams';
+import { ScanTableQueryParams } from '../Adds/ScanTableQueryParams';
 
 @Injectable({
   providedIn: 'root',
@@ -50,12 +46,12 @@ export class MaterialsReceiptsAPI {
   public MaterialsReceiptsTableQuery(
     materialsReceiptId?: number,
     page?: number,
-    limit?: number): Promise<MaterialsTableListDTO> {
+    limit?: number): Promise<MaterialsReceiptsTablePartReadListResults> {
       if (page < 1 || limit < 1) {
         throw new Error('page or pagesize is less than 1');
       }
 
-      return new Promise<MaterialsTableListDTO>((resolve, reject) => {
+      return new Promise<MaterialsReceiptsTablePartReadListResults>((resolve, reject) => {
 
         this.materialsReceiptsTableQuery(materialsReceiptId, page, limit)
         .toPromise()
@@ -68,13 +64,7 @@ export class MaterialsReceiptsAPI {
 
           this.eventBusService.EventBus.subscribe(
             async (data: MaterialsReceiptsTablePartReadListResults) => {
-              if (data.ParentId === uniqueId) {
-
-                resolve({
-                  Items: data.MaterialsDataTablePartList,
-                  Total: data.TotalRecordsAmount
-                });
-              }
+              if (data.ParentId === uniqueId) resolve(data);
             }
           );
 
@@ -250,12 +240,12 @@ export class MaterialsReceiptsAPI {
    * @param queryParams Query Class params
    * @returns Http Response
    */
-  public MaterialsReceiptsListQuery(queryParams: ReadListQueryParams): Promise<MaterialsListDTO> {
+  public MaterialsReceiptsListQuery(queryParams: ReadListQueryParams): Promise<MaterialsReceiptsReadListResults> {
     if (queryParams.Page < 1 || queryParams.Limit < 1) {
       throw new Error('page or pagesize is less than 1');
     }
 
-    return new Promise<MaterialsListDTO>((resolve, reject) => {
+    return new Promise<MaterialsReceiptsReadListResults>((resolve, reject) => {
 
         const getResponse = this.materialsReceiptsListQuery(queryParams).toPromise();
 
@@ -268,13 +258,7 @@ export class MaterialsReceiptsAPI {
 
           this.eventBusService.EventBus.subscribe(
             async (data: MaterialsReceiptsReadListResults) => {
-              if (data.ParentId === uniqueId) {
-
-                resolve({
-                  Items: data.MaterialsDataList,
-                  Total: data.TotalRecordsAmount
-                });
-              }
+              if (data.ParentId === uniqueId) resolve(data);
             });
 
         });

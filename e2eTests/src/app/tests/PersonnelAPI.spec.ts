@@ -3,11 +3,12 @@ import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
+  PersonData,
+  PersonDataRead,
   ResponseStatus } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
+import { BackendPort, BackendURL, genRandomNumber } from './Adds/helpers';
 import { PersonnelAPIService } from 'personnel-uf/services/PersonnelAPI.service';
 import { EventBusService } from 'personnel-uf/services/EventBus.service';
-import { PersonData, PersonDataDTO } from 'personnel-uf/Models';
 
 describe('PersonnelAPI service', () => {
   let service: PersonnelAPIService;
@@ -95,11 +96,11 @@ describe('PersonnelAPI service', () => {
       let entryToUpdate: PersonData;
 
       await service.Get([], 1, 5).then(
-        (res: PersonDataDTO) => {
-          if (res.total === 0) {
+        (res: PersonDataRead) => {
+          if (res.CommonNumberRecords === 0) {
             done.fail('no entries found');
           }
-          entryToUpdate = res.items[0];
+          entryToUpdate = res.ListOutputEnterprisePersonData[0];
         }
       );
 
@@ -111,8 +112,8 @@ describe('PersonnelAPI service', () => {
 
       // 5. compare entry
       await service.Get([], 1, 5).then(
-        (res: PersonDataDTO) => {
-          for (const iterator of res.items) {
+        (res: PersonDataRead) => {
+          for (const iterator of res.ListOutputEnterprisePersonData) {
             if (entryToUpdate.PersonDataID === iterator.PersonDataID) {
               expect(entryToUpdate.KodDRFO).toBe(newField);
               expect(entryToUpdate.PIP).toBe(newField);
@@ -140,9 +141,9 @@ describe('PersonnelAPI service', () => {
     let id: number;
 
     await service.Get([], 1, 5).then(
-      (res: PersonDataDTO) => {
-        id = res.items[0].PersonDataID;
-        currentLen = res.total;
+      (res: PersonDataRead) => {
+        id = res.ListOutputEnterprisePersonData[0].PersonDataID;
+        currentLen = res.CommonNumberRecords;
       }
     );
 
@@ -150,8 +151,8 @@ describe('PersonnelAPI service', () => {
     await service.Create(newPersonnelData);
 
     await service.Get([], 1, 5).then(
-      (res: PersonDataDTO) => {
-        expect(res.total).toBeGreaterThan(currentLen);
+      (res: PersonDataRead) => {
+        expect(res.CommonNumberRecords).toBeGreaterThan(currentLen);
       }
     );
 
@@ -159,8 +160,8 @@ describe('PersonnelAPI service', () => {
     await service.Delete(id);
 
     await service.Get([], 1, 5).then(
-      (res: PersonDataDTO) => {
-        expect(res.total).toEqual(currentLen);
+      (res: PersonDataRead) => {
+        expect(res.CommonNumberRecords).toEqual(currentLen);
         done();
       }
     );
@@ -181,8 +182,8 @@ describe('PersonnelAPI service', () => {
       // Get current length
       let currentLen: number;
       await service.Get([], 1, 1).then(
-        (res: PersonDataDTO) => {
-          currentLen = res.total;
+        (res: PersonDataRead) => {
+          currentLen = res.CommonNumberRecords;
         }
       );
 
@@ -190,8 +191,8 @@ describe('PersonnelAPI service', () => {
       await service.Create(newPersonnelData).then(() => {
           // 5. compare length
           service.Get([], 1, 10).then(
-            (res: PersonDataDTO) => {
-              expect(res.total).toBeGreaterThan(currentLen);
+            (res: PersonDataRead) => {
+              expect(res.CommonNumberRecords).toBeGreaterThan(currentLen);
               done();
             }
           );
@@ -213,8 +214,8 @@ describe('PersonnelAPI service', () => {
 
     // Send ReadPersonDataQuery event
     service.Get([], 1, 5).then(
-      (res: PersonDataDTO) => {
-        res.items.forEach(element => {
+      (res: PersonDataRead) => {
+        res.ListOutputEnterprisePersonData.forEach(element => {
           expect(element.PersonDataID).toBeDefined();
           expect(element.DataPriyomu).toBeDefined();
           expect(element.Oklad).toBeDefined();

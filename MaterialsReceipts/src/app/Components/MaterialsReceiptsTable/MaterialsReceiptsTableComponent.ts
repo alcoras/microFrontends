@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
-import { MaterialsListTablePart, MaterialsTableListDTO } from '../../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI } from '../../services/MaterialsReceiptsAPI';
-import { EventBusService } from '../../services/EventBus.service';
+import { EventBusService } from '../../services/EventBusService';
 import { Subscription } from 'rxjs';
-import { MaterialReceiptSelectedData } from '../../Models/MaterialReceiptSelectedData';
+import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
+import { MaterialsListTablePart, MaterialsReceiptsTablePartReadListResults } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'materials-receipts-list-table-table',
   templateUrl: './MaterialsReceiptsTableView.html',
-  styleUrls: ['./Styles.scss']
 })
 export class MaterialsReceiptsTableComponent {
 
@@ -75,9 +74,9 @@ export class MaterialsReceiptsTableComponent {
     const res = this.materialsReceiptsAPI
        .MaterialsReceiptsTableQuery(materialsReceiptData.Id, page, limit);
 
-    res.then( (data: MaterialsTableListDTO) => {
-      this.MaterialsListTableData = data.Items;
-      this.TotalRecords = data.Total;
+    res.then( (data: MaterialsReceiptsTablePartReadListResults) => {
+      this.MaterialsListTableData = data.MaterialsDataTablePartList;
+      this.TotalRecords = data.TotalRecordsAmount;
       this.Loading = false;
     });
 

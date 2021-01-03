@@ -1,10 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpResponse } from '@angular/common/http';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { EventBusService } from '../services/EventBus.service';
-import { PersonData } from '../Models/index';
-import { APIGatewayResponse } from 'event-proxy-lib-src';
+import { PersonData } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'app-new-personnel',
@@ -34,11 +32,8 @@ export class NewPersonnelComponent {
   public Save(): void {
     this.dialogRef.close();
     this.apiService.Create(this.data).then(
-      (ret: HttpResponse<APIGatewayResponse>) => {
-        if (ret.status === 200) {
-          console.log('added');
+      () => {
           this.eventBus.RefreshTable.next();
-        }
       },
     );
   }

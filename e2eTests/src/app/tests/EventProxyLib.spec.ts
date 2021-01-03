@@ -6,7 +6,7 @@ import {
   EventProxyLibService,
   ResponseStatus,
   SubscibeToEvent } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL } from './helpers/helpers';
+import { BackendPort, BackendURL } from './Adds/helpers';
 
 /**
  * generates random number

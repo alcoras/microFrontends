@@ -3,17 +3,15 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { EventBusService } from './EventBus.service';
 import {
-  ReadPersonDataQuery,
-  CreateUpdatePersonData,
-  PersonDataCreateUpdateFlag,
-  RemoveEnterpisePersonData,
-  PersonDataRead,
-  PersonData,
-  PersonDataDTO } from '../Models/index';
-import {
   BackendToFrontendEvent,
+  CreateUpdatePersonData,
   EventProxyLibService,
   MicroFrontendParts,
+  PersonData,
+  PersonDataCreateUpdateFlag,
+  PersonDataRead,
+  ReadPersonDataQuery,
+  RemoveEnterpisePersonData,
   ResponseStatus } from 'event-proxy-lib-src';
 
 /**
@@ -98,13 +96,13 @@ export class PersonnelAPIService {
    * @param pageSize page size
    * @returns Promise with Personnel data
    */
-  public Get(multiSorting: string[], page: number, pageSize: number): Promise<PersonDataDTO> {
+  public Get(multiSorting: string[], page: number, pageSize: number): Promise<PersonDataRead> {
 
     if (page < 1 || pageSize < 1) {
       throw new Error('page or pagesize was less than 1');
     }
 
-    return new Promise<PersonDataDTO>((resolve) => {
+    return new Promise<PersonDataRead>((resolve) => {
         this.get(multiSorting, page, pageSize)
         .toPromise()
         .then( (response: ResponseStatus) => {
@@ -116,10 +114,7 @@ export class PersonnelAPIService {
 
           this.eventBusService.EventBus.subscribe(async (data: PersonDataRead) => {
               if (data.ParentId === uniqueId) {
-                resolve({
-                  items: data.ListOutputEnterprisePersonData,
-                  total: data.CommonNumberRecords
-                });
+                resolve(data);
               }
             }
           );
@@ -140,6 +135,7 @@ export class PersonnelAPIService {
   private get(multiSorting: string[], page: number, pageSize: number): Observable<ResponseStatus> {
     const e = new ReadPersonDataQuery(this.sourceId, multiSorting, page, pageSize);
     e.SourceName = this.sourceName;
+    e.SubscribeToChildren = true;
     return this.eventProxyService.DispatchEvent(e);
   }
 

@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
+import { LocationsData, MaterialsReceiptsLocationsReadListResults } from "event-proxy-lib-src";
 import { LazyLoadEvent } from "primeng/api";
-import { MaterialsReceiptsLocationsReadListResults } from "../../Models/BackendEvents";
-import { LocationsData } from "../../Models/LocationsData";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 
 @Component({

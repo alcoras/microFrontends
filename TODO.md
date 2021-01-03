@@ -122,6 +122,8 @@
     17. 4. UPDATE: I've decided to add all models which are shared (like event ids) to event-proxy-lib
 71. DONE remove all subscriptions in all micro frontends
 72. DONE in every micro frontend unsub after getting desired event
+75. DONE Consider renaming all app.*.* so it's easier to jump around files
+76. DONE Restructure all projects so they feel-look like backend
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -147,9 +149,7 @@
 70. write unit/static tests for MaterialsReceipts
 73. remove ParentSourceEventUniqueId everywhere
 74. currently if something fails, we either throw (where we care for it to work) or we don't return message to user; think how to universally handle messages to user about strong fails (cant work further) and safe fails (entry creation failed, deletion failed);
+77. template installer
+78. 
 
-75. Consider renaming all app.*.* so it's easier to jump around files
-76. Restructure all projects so they feel-look like backend
-
-77.
-78.
+79.

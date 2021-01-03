@@ -3,11 +3,12 @@ import {
   EventIds,
   EventProxyLibModule,
   EventProxyLibService,
+  OccupationData,
+  OccupationsReadResults,
   ResponseStatus } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL, genRandomNumber } from './helpers/helpers';
-import { OccupationData, OccupationDataDTO } from 'occupation-uf/Models';
-import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI.service';
-import { EventBusService } from 'occupation-uf/services/EventBus.service';
+import { BackendPort, BackendURL, genRandomNumber } from './Adds/helpers';
+import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI';
+import { EventBusService } from 'occupation-uf/services/EventBusService';
 
 /**
  * @returns new occupation entry for testing
@@ -108,9 +109,9 @@ describe('Occupation API service', () => {
       const page = 1;
       const limit = 3;
       service.Get(page, limit).then(
-        (res: OccupationDataDTO) => {
-          expect(res.items.length).toBeLessThanOrEqual(limit);
-          res.items.forEach(element => {
+        (res: OccupationsReadResults) => {
+          expect(res.OccupationDataList.length).toBeLessThanOrEqual(limit);
+          res.OccupationDataList.forEach(element => {
             expect(element.DocReestratorId).toBeDefined();
             expect(element.TariffCategory).toBeDefined();
             expect(element.Name).toBeDefined();
@@ -136,9 +137,9 @@ describe('Occupation API service', () => {
       let id: number;
 
       await service.Get(1, 1).then(
-        (res: OccupationDataDTO) => {
-          id = res.items[0].OccupationAggregateIdHolderId;
-          currentLen = res.total;
+        (res: OccupationsReadResults) => {
+          id = res.OccupationDataList[0].OccupationAggregateIdHolderId;
+          currentLen = res.TotalRecordsAmount;
         }
       );
 
@@ -146,8 +147,8 @@ describe('Occupation API service', () => {
       await service.Create(newEntry);
 
       await service.Get(1, 1000).then(
-        (res: OccupationDataDTO) => {
-          expect(res.total).toBeGreaterThan(currentLen);
+        (res: OccupationsReadResults) => {
+          expect(res.TotalRecordsAmount).toBeGreaterThan(currentLen);
         }
       );
 
@@ -155,8 +156,8 @@ describe('Occupation API service', () => {
       await service.Delete(id);
 
       await service.Get(1, 1).then(
-        (res: OccupationDataDTO) => {
-          expect(res.total).toEqual(currentLen);
+        (res: OccupationsReadResults) => {
+          expect(res.TotalRecordsAmount).toEqual(currentLen);
           done();
         }
       );
@@ -176,11 +177,11 @@ describe('Occupation API service', () => {
       let entryToUpdate: OccupationData;
       // Get entry
       await service.Get(1, 1).then(
-        (res: OccupationDataDTO) => {
-          if (res.total === 0) {
+        (res: OccupationsReadResults) => {
+          if (res.TotalRecordsAmount === 0) {
             done.fail('no entries found');
           }
-          entryToUpdate = res.items[0];
+          entryToUpdate = res.OccupationDataList[0];
       });
 
       // change name
@@ -191,8 +192,8 @@ describe('Occupation API service', () => {
 
       // compare entry
       await service.Get(1, 5).then(
-        (res: OccupationDataDTO) => {
-          for (const iterator of res.items) {
+        (res: OccupationsReadResults) => {
+          for (const iterator of res.OccupationDataList) {
             if (entryToUpdate.OccupationAggregateIdHolderId === iterator.OccupationAggregateIdHolderId) {
               expect(entryToUpdate.Name).toBe(newName);
               done();
@@ -218,16 +219,16 @@ describe('Occupation API service', () => {
       let currentLen: number;
 
       await service.Get(1, 1).then(
-        (res: OccupationDataDTO) => {
-          currentLen = res.total;
+        (res: OccupationsReadResults) => {
+          currentLen = res.TotalRecordsAmount;
       });
 
       // create new occupation entry
       await service.Create(newOccupationData).then(() => {
         // compare length
         service.Get(1, 1).then(
-          (res: OccupationDataDTO) => {
-            expect(res.total).toBeGreaterThan(currentLen);
+          (res: OccupationsReadResults) => {
+            expect(res.TotalRecordsAmount).toBeGreaterThan(currentLen);
             done();
           }
         );

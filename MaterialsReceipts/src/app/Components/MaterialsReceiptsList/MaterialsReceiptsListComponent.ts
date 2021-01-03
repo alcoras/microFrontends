@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { MaterialsList, MaterialsListDTO, ReadListQueryParams } from '../../Models/index';
 import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI  } from '../../services/MaterialsReceiptsAPI';
-import { EventBusService } from '../../services/EventBus.service';
-import { MaterialReceiptSelectedData } from '../../Models/MaterialReceiptSelectedData';
+import { EventBusService } from '../../services/EventBusService';
+import { MaterialsList, MaterialsReceiptsReadListResults } from 'event-proxy-lib-src';
+import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
+import { ReadListQueryParams } from '@shared/Adds/ReadListQueryParams';
 
 interface OnRowSelectedEvent {
   originalEvent?: UIEvent,
@@ -123,9 +124,9 @@ export class MaterialsReceiptsListComponent {
 
     const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
 
-    res.then( (data: MaterialsListDTO) => {
-      this.MaterialsListData = data.Items;
-      this.TotalRecords = data.Total;
+    res.then( (data: MaterialsReceiptsReadListResults) => {
+      this.MaterialsListData = data.MaterialsDataList;
+      this.TotalRecords = data.TotalRecordsAmount;
       this.Loading = false;
     })
   }
@@ -148,9 +149,9 @@ export class MaterialsReceiptsListComponent {
 
     const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
 
-    res.then( (data: MaterialsListDTO) => {
-      this.MaterialsListData = data.Items;
-      this.TotalRecords = data.Total;
+    res.then( (data: MaterialsReceiptsReadListResults) => {
+      this.MaterialsListData = data.MaterialsDataList;
+      this.TotalRecords = data.TotalRecordsAmount;
       this.Loading = false;
     })
   }

@@ -1,14 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
+import { EventParent, ObserverSnapshotResult } from 'event-proxy-lib-src';
 import { LazyLoadEvent } from 'primeng/api';
-import { ObserverSnapshotResultDTO } from '../models/DTOs/ObserverSnapshotResultDTO';
-import { EventParent } from '../models/EventParent';
 import { ObserverAPI } from '../services/ObserverAPI';
 
 @Component({
   selector: 'trace-component',
-  templateUrl: './View.html',
-  styleUrls: ['./Styles.scss'],
+  templateUrl: './TraceTableView.html',
+  styleUrls: ['./TraceTableStyle.scss'],
   animations: [
     trigger('rowExpansionTrigger', [
         state('void', style({
@@ -25,7 +24,7 @@ import { ObserverAPI } from '../services/ObserverAPI';
 })
 export class TraceTableComponent {
   public Loading: boolean;
-  public Data: ObserverSnapshotResultDTO;
+  public Data: ObserverSnapshotResult;
 
   public ParentEvents: EventParent[];
 
@@ -56,12 +55,12 @@ export class TraceTableComponent {
     this.DisplayJsonBodyForm = true;
   }
 
-  private requestSnapshotAndPopulateData(data: ObserverSnapshotResultDTO = this.Data): void {
+  private requestSnapshotAndPopulateData(data: ObserverSnapshotResult = this.Data): void {
     this.Loading = true;
 
     const response = this.observerService.RequestSnapshot();
 
-    response.then( (newData: ObserverSnapshotResultDTO) => {
+    response.then( (newData: ObserverSnapshotResult) => {
       data = newData;
       this.ParentEvents = data.EventParentList;
       this.Loading = false;

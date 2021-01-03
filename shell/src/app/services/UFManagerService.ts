@@ -12,11 +12,11 @@ import {
   MicroFrontendParts,
   MicroFrontendInfo,
   EnvironmentTypes,
-  EventIds } from 'event-proxy-lib-src';
+  EventIds,
+  LoginRequest } from 'event-proxy-lib-src';
 import { ResourceLoaderService } from './ResourceLoaderService';
 import { PrestartService } from './PrestartService';
 import { AuthenticationService } from '../services/AuthenticationService';
-import { LoginRequest } from '../models/LoginRequest';
 import { environment } from 'src/environments/environment';
 
 /**

@@ -73,6 +73,13 @@ export class PersonnelService implements IMicroFrontend {
             new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
           this.eventBusService.EventBus.next(element);
           break;
+        case EventIds.EventProccessedSuccessfully:
+            await this.eventProxyService.ConfirmEvents(
+              this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+            break;
+        case EventIds.EventProccessedWithFails:
+            console.error(element);
+            throw new Error(`Event sroccessed with error(s)`);
         default:
           console.error(element);
           throw new Error('Event is not implemented.');

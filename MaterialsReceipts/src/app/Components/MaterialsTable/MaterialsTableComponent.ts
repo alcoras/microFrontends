@@ -1,8 +1,7 @@
 import { Component } from "@angular/core";
+import { MaterialsData, MaterialsReceiptsMaterialsReadListResults } from "event-proxy-lib-src";
 import { LazyLoadEvent } from "primeng/api";
-import { MaterialsData } from "../../Models";
-import { MaterialsReceiptsMaterialsReadListResults } from "../../Models/BackendEvents";
-import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
+import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
 
 @Component({
   templateUrl: "MaterialsTableView.html",
@@ -17,7 +16,7 @@ import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
   public Columns = ["Name", "Comment", "BarCode"];
 
   public constructor(
-      private materialsReceiptsAPI: MaterialsReceiptsAPI) {
+    private materialsReceiptsAPI: MaterialsReceiptsAPI) {
       this.Loading = true;
   }
 

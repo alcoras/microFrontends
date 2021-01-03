@@ -1,8 +1,13 @@
 import { Injectable } from "@angular/core";
-import { CastorCreateAndOthers, CastorCreateAndOthersType, CastType } from "@shared/Models/BackendEvents";
-import { EventProxyLibService, MicroFrontendParts, ResponseStatus } from "event-proxy-lib-src";
+import {
+  CastorCreateAndOthers,
+  CastorCreateAndOthersType,
+  CastTypes,
+  EventProxyLibService,
+  MicroFrontendParts,
+  ResponseStatus } from "event-proxy-lib-src";
 import { Observable } from "rxjs";
-import { EventBusService } from "./EventBus.service";
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +34,7 @@ export class CastorAPI {
     firstId: number,
     secondType: string,
     secondIds: number[],
-    castType = CastType.OneToOne): Observable<ResponseStatus> {
+    castType = CastTypes.OneToOne): Observable<ResponseStatus> {
 
     const event = new CastorCreateAndOthers(
       this.sourceInfo,

@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { OccupationAPIService } from '../services/OccupationAPI.service';
-import { EventBusService } from '../services/EventBus.service';
-import { OccupationData } from '../Models/OccupationData';
+import { OccupationAPIService } from '../services/OccupationAPI';
+import { EventBusService } from '../services/EventBusService';
+import { OccupationData } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'app-new-occup',

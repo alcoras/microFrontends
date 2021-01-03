@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
-import { MaterialsReceiptsMaterialsAtLocationsReadListResults } from "@shared/Models/BackendEvents";
-import { MaterialsAtLocationsData } from "@shared/Models/MaterialsAtLocationsData";
 import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
-import { MaterialsData } from "@shared/Models";
-import { SelectMaterialDialog } from "@shared/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
+import { SelectMaterialDialog } from "@shared/Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
+import {
+  MaterialsAtLocationsData,
+  MaterialsData,
+  MaterialsReceiptsMaterialsAtLocationsReadListResults } from "event-proxy-lib-src";
 
 @Component({
   selector: "material-receipts-materials-at-location-table",

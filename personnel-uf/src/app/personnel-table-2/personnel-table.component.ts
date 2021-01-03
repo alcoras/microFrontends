@@ -7,7 +7,7 @@ import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { EventBusService } from '../services/EventBus.service';
-import { PersonData, PersonDataDTO } from '../Models';
+import { PersonData, PersonDataRead } from 'event-proxy-lib-src';
 
 /**
  * Table component for Personnel micro frontend
@@ -104,13 +104,13 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
           return this.personnelApiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
 
         }),
-        map((data: PersonDataDTO) => {
+        map((data: PersonDataRead) => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
-          this.ResultsLength = data.total;
+          this.ResultsLength = data.CommonNumberRecords;
 
-          const ic: PersonData[] = data.items;
-          this.DataSource = new MatTableDataSource(data.items);
+          const ic: PersonData[] = data.ListOutputEnterprisePersonData;
+          this.DataSource = new MatTableDataSource(data.ListOutputEnterprisePersonData);
           return ic;
         }),
         catchError((err) => {

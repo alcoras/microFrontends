@@ -8,8 +8,8 @@ export const environment = {
   oneLanguage: false,
   version: '1.0.0',
   defaultLanguage: 'en',
-  url: 'http://192.168.0.112',
-  apiGatewayUrl : 'http://192.168.0.112',
+  url: 'http://localhost',
+  apiGatewayUrl : 'http://localhost',
   apiGatewayPort : '7001',
 
   loggedIn : false,

@@ -7,8 +7,8 @@ import {
   EventIds,
   EventProxyLibService,
   LoginSuccess,
-  ResponseStatus } from 'event-proxy-lib-src';
-import { LoginRequest } from '../models/LoginRequest';
+  ResponseStatus,
+  LoginRequest } from 'event-proxy-lib-src';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];

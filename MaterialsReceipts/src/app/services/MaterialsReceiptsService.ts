@@ -11,7 +11,7 @@ import {
   EventIds,
   UnsubscibeToEvent} from 'event-proxy-lib-src';
 
-import { EventBusService } from './EventBus.service';
+import { EventBusService } from './EventBusService';
 
 @Injectable({
   providedIn: 'root'

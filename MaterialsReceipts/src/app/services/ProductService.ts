@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Injectable } from '@angular/core';
-import { Product } from '../Models/Product';
+import { Product } from '../Adds/Product';
 
 @Injectable()
 export class ProductService {

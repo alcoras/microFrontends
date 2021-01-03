@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, timeout } from 'rxjs/operators';
 import { Observable, Observer, Subscriber, of } from 'rxjs';
-import { CoreEvent, EventIds, ErrorMessage, ResponseStatus, MicroFrontendParts } from './models/index';
+import { CoreEvent, EventIds, ErrorMessage, ResponseStatus, MicroFrontendParts } from './DTOs/index';
 import { EnvironmentService } from './services/EnvironmentService';
 import { retryWithBackoff } from './retry/retry.pipe';
-import { BackendToFrontendEvent } from './models/BackendEvents/BackendToFrontendEvent';
-import { FrontendToBackendEvent } from './models/FrontendEvents/FrontendToBackendEvent';
+import { BackendToFrontendEvent } from './DTOs/BackendEvents/BackendToFrontendEvent';
+import { FrontendToBackendEvent } from './DTOs/FrontendEvents/FrontendToBackendEvent';
 
 /**
  * Event Proxy service for communication with API gateway

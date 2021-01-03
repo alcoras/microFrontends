@@ -5,10 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { OccupationAPIService } from '../services/OccupationAPI.service';
-import { OccupationDataDTO } from '../Models/DTOs/OccupationDataDTO';
-import { EventBusService } from '../services/EventBus.service';
-import { OccupationData } from '../Models/OccupationData';
+import { OccupationAPIService } from '../services/OccupationAPI';
+import { EventBusService } from '../services/EventBusService';
+import { OccupationData, OccupationsReadResults } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'app-occup-table3',
@@ -148,13 +147,13 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
 
           return await this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
-        map((data: OccupationDataDTO) => {
+        map((data: OccupationsReadResults) => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
-          this.ResultsLength = data.total;
+          this.ResultsLength = data.TotalRecordsAmount;
 
-          const ic: OccupationData[] = data.items;
-          this.DataSource = new MatTableDataSource(data.items);
+          const ic: OccupationData[] = data.OccupationDataList;
+          this.DataSource = new MatTableDataSource(data.OccupationDataList);
           return ic;
         }),
         catchError((err) => {

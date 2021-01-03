@@ -2,7 +2,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
-import { AppModule } from './app/app.module';
+import { MenuModule } from './app/MenuModule';
 import { environment } from './environments/environment';
 
 if (environment.EnvironmentTypes == EnvironmentTypes.Production) {
@@ -26,5 +26,5 @@ if (environment.EnvironmentTypes == EnvironmentTypes.Isolated) {
 }
 
 platformBrowserDynamic()
-  .bootstrapModule(AppModule)
+  .bootstrapModule(MenuModule)
   .catch(err => console.error(err));
