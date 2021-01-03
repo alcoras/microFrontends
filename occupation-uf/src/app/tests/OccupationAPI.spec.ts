@@ -148,7 +148,6 @@ describe('Occupation API service', () => {
       const testEvent = new OccupationsReadResults();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.SourceEventUniqueId = 123;
       testEvent.OccupationDataList = [];
       testEvent.OccupationDataList.push(newOccupationData);
       eventBus.EventBus.next(testEvent);
@@ -168,7 +167,6 @@ describe('Occupation API service', () => {
       const testEvent = new OccupationsReadResults();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.ParentSourceEventUniqueId = 123;
       testEvent.OccupationDataList = [];
       testEvent.OccupationDataList.push(newOccupationData);
       eventBus.EventBus.next(testEvent);
@@ -207,7 +205,6 @@ describe('Occupation API service', () => {
       const testEvent = new OccupationsReadResults();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.ParentSourceEventUniqueId = 123;
       testEvent.OccupationDataList = [];
       testEvent.OccupationDataList.push(newOccupationData);
       eventBus.EventBus.next(testEvent);

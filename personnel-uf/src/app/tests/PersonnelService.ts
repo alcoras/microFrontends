@@ -4,7 +4,7 @@ import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
 import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TestEvent, genRandomNumber } from './helpers/helpers';
+import { TestEvent, genRandomNumber } from './Adds/helpers';
 import { BackendToFrontendEvent, CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
 
 describe('Personnel micro frontend component', () => {

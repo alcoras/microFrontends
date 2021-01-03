@@ -124,6 +124,9 @@
 72. DONE in every micro frontend unsub after getting desired event
 75. DONE Consider renaming all app.*.* so it's easier to jump around files
 76. DONE Restructure all projects so they feel-look like backend
+66. DONE fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
+    66. 1. Update: in constructor Loading should set to true
+73. DONE remove ParentSourceEventUniqueId everywhere
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -144,12 +147,10 @@
 59. if backend does not work show some message in shell or show trying to connect
 63. consider adding loading indication (console or otherwise when event-proxy-lib is retrying)
 64. nginx will be the server, so remove serve in all micro frontends
-66. fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
 69. clean up package.json scripts in projects (remove serve and serve scripts)
 70. write unit/static tests for MaterialsReceipts
-73. remove ParentSourceEventUniqueId everywhere
 74. currently if something fails, we either throw (where we care for it to work) or we don't return message to user; think how to universally handle messages to user about strong fails (cant work further) and safe fails (entry creation failed, deletion failed);
 77. template installer
-78. 
+78.
 
 79.

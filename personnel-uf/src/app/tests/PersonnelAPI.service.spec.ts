@@ -4,7 +4,7 @@ import { EventBusService } from '../services/EventBus.service';
 import { PersonnelAPIService } from '../services/PersonnelAPI.service';
 import { HttpResponse } from '@angular/common/http';
 import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
-import { delay, genRandomNumber, TestEvent } from './helpers/helpers';
+import { delay, genRandomNumber, TestEvent } from './Adds/helpers';
 import { PersonData, PersonDataDTO, PersonDataRead } from '../Models/index';
 
 /**
@@ -145,7 +145,6 @@ describe('PersonnelAPI service', () => {
       const testEvent = new TestEvent();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.SourceEventUniqueId = 123;
       testEvent.ListOutputEnterprisePersonData = [];
       testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
       eventBus.EventBus.next(testEvent);
@@ -165,7 +164,6 @@ describe('PersonnelAPI service', () => {
       const testEvent = new TestEvent();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.ParentSourceEventUniqueId = 123;
       testEvent.ListOutputEnterprisePersonData = [];
       testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
       eventBus.EventBus.next(testEvent);
@@ -204,7 +202,6 @@ describe('PersonnelAPI service', () => {
       const testEvent = new TestEvent();
 
       // 123 just as in  event-proxy-service-mock.ts
-      testEvent.ParentSourceEventUniqueId = 123;
       testEvent.ListOutputEnterprisePersonData = [];
       testEvent.ListOutputEnterprisePersonData.push(newPersonnelData);
       eventBus.EventBus.next(testEvent);

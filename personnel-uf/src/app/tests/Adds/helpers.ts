@@ -1,4 +1,4 @@
-import { PersonDataRead } from 'src/app/Models/index';
+import { PersonDataRead } from "event-proxy-lib-src";
 
 /**
  * Returns promise after ms
