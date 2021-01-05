@@ -67,7 +67,7 @@ export class ScanTableComponent {
       });
 
     this.dialogReference.onClose.subscribe((data: ScanTableData) => {
-      if (data) console.log(data);
+      if (data) this.parseNewScans(data);
     });
   }
 
@@ -82,6 +82,10 @@ export class ScanTableComponent {
     const limit = event.rows;
 
     this.requestMaterialsScanTableData(page, limit);
+  }
+
+  private parseNewScans(data: ScanTableData): void {
+    console.log(data);
   }
 
   private requestMaterialsScanTableData(page = 1, limit = 30): void {

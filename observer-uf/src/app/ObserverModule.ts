@@ -11,17 +11,19 @@ import { OccupationServiceFactory } from './services/ObserverFactory';
 import { ObserverService } from './services/ObserverService';
 import { ObserverAPI } from './services/ObserverAPI';
 import { TraceTableComponent } from './TraceTable/TraceTableComponent';
-import { PrimeNgImportModule } from './PrimeNgImportModule';
+import { PrimeNgModules } from './PrimeNgModules';
+import { TraceTreeTableComponent } from './TraceTreeTable/TraceTreeTableComponent';
 
 @NgModule({
   declarations: [
     ObserverComponent,
     TraceTableComponent,
+    TraceTreeTableComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    PrimeNgImportModule,
+    PrimeNgModules,
     EventProxyLibModule,
   ],
   providers: [

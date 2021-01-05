@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { EventParent, ObserverSnapshotResult } from 'event-proxy-lib-src';
+import { ObserverSnapshotResult } from 'event-proxy-lib-src';
 import { LazyLoadEvent } from 'primeng/api';
 import { ObserverAPI } from '../services/ObserverAPI';
 
@@ -26,13 +26,12 @@ export class TraceTableComponent {
   public Loading: boolean;
   public Data: ObserverSnapshotResult;
 
-  public ParentEvents: EventParent[];
-
   public DisplayJsonBodyForm: boolean;
   public CurrentJsonBody: string;
 
   public Cols = [
     { field: 'EventId', header: 'EventId'},
+    { field: 'ParentId', header: 'ParentId'},
     { field: 'EventInfo', header: 'EventInfo'},
     { field: 'AggregateId', header: 'AggregateId'},
     { field: 'SourceId', header: 'SourceId'},
@@ -55,14 +54,13 @@ export class TraceTableComponent {
     this.DisplayJsonBodyForm = true;
   }
 
-  private requestSnapshotAndPopulateData(data: ObserverSnapshotResult = this.Data): void {
+  private requestSnapshotAndPopulateData(): void {
     this.Loading = true;
 
     const response = this.observerService.RequestSnapshot();
 
     response.then( (newData: ObserverSnapshotResult) => {
-      data = newData;
-      this.ParentEvents = data.EventParentList;
+      console.log(newData);
       this.Loading = false;
     });
   }

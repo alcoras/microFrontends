@@ -48,8 +48,9 @@
 </div>
 
 <p-dialog
-  [(visible)]="NewDialogVisible"
-  [focusOnShow]=true [modal]=true>
+  baseZIndex=10002
+  [(visible)]="NewDialogVisible" [modal]=true
+  [draggable]=false>
   <p-card>
 
     <div class="p-fluid">

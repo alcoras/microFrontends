@@ -1,0 +1,23 @@
+<p-treeTable
+  [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
+  styleClass="p-datatable-sm"
+  [value]="SubData">
+
+  <ng-template pTemplate="header">
+    <tr>
+        <th *ngFor="let col of Cols">
+          {{col.header}}
+        </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+    <tr>
+      <td *ngFor="let col of Cols; let i = index">
+        <p-treeTableToggler [rowNode]="rowNode" *ngIf="i==0"></p-treeTableToggler>
+        {{rowData[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+
+</p-treeTable>

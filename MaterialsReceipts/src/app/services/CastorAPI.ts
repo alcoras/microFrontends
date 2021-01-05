@@ -65,6 +65,30 @@ export class CastorAPI {
 
   }
 
+  public CastorGetExperimental(firstType: string, firstId: number, secondType: string)
+  : Promise<CastorCreateAndOthers> {
+    return this.universal_get<CastorCreateAndOthers>(this.castorGet, [firstType, firstId, secondType]);
+  }
+
+  // experiments
+  private universal_get<T>(func: any, params: any[]): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      func(params)
+      .toPromise()
+      .then( (responseStatus: ResponseStatus) => {
+        if (responseStatus.Failed) reject(responseStatus.Error);
+
+        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+
+        this.eventBusService.EventBus.subscribe(
+          (data: any) => {
+            if (data.ParentId === uniqueId) resolve(data);
+          }
+        )
+      })
+    });
+  }
+
   /**
    * Checking if there is a relationship
    * More info in README.md - Castor

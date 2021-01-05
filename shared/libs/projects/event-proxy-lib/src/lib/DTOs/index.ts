@@ -27,9 +27,9 @@ export * from './BackendEvents/OccupationsDeleteEvent';
 export * from './BackendEvents/OccupationsReadResults';
 export * from './BackendEvents/OccupationsReadQuery';
 
-export * from './BackendEvents/ObserverEventParent';
 export * from './BackendEvents/ObserverSnapshotQuery';
 export * from './BackendEvents/ObserverSnapshotResult';
+export * from './BackendEvents/Adds/ObserverEventNode';
 export * from './BackendEvents/Adds/ObserverEventDataForTracing';
 
 export * from './BackendEvents/MaterialsReceiptsReadListQuery';
