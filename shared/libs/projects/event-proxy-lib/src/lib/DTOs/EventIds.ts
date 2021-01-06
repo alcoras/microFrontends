@@ -72,5 +72,6 @@ export enum EventIds {
   CastorDelete = 2054,
   CastorGet = 2055,
   CastorFound = 2056,
-  Unsubscribe = 2063
+  Unsubscribe = 2063,
+  ObserverSnapshotReset = 2064
 }

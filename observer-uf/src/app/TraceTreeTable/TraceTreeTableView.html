@@ -1,12 +1,32 @@
-<p-treeTable
+<p-treeTable #observer_treetable
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
-  styleClass="p-datatable-sm"
-  [value]="SubData">
+  styleClass="p-treetable-sm"
+  [value]="Data">
+
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+        <col style="width:5%">
+        <col style="width:10%">
+        <col style="width:5%">
+        <col style="width:15%">
+        <col style="width:5%">
+        <col style="width:15%">
+        <col style="width:10%">
+        <col style="width:10%">
+    </colgroup>
+  </ng-template>
+
+  <ng-template pTemplate="caption">
+    <button icon="pi pi-refresh" style="margin-right: 0.5rem;" pButton (click)="RefreshTable()" ></button>
+    <button icon="pi pi-trash" class="p-button-danger" pButton (click)="ResetSnapshot()" ></button>
+  </ng-template>
 
   <ng-template pTemplate="header">
     <tr>
         <th *ngFor="let col of Cols">
           {{col.header}}
+        </th>
+        <th style="width: 8rem;">
         </th>
     </tr>
   </ng-template>
@@ -17,7 +37,16 @@
         <p-treeTableToggler [rowNode]="rowNode" *ngIf="i==0"></p-treeTableToggler>
         {{rowData[col.field]}}
       </td>
+      <td>
+        <button type="button" (click)="ShowJSONData(rowData)" label="JSON" pButton></button>
+      </td>
     </tr>
   </ng-template>
 
 </p-treeTable>
+
+<p-dialog [(visible)]="DisplayJsonBodyForm" [style]="{width: '50vw'}" [baseZIndex]="10000">
+  <div class="jsonBody">
+    {{ CurrentJsonBody }}
+  </div>
+</p-dialog>

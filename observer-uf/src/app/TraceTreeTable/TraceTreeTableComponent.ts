@@ -5,12 +5,16 @@ import { ObserverAPI } from "../services/ObserverAPI";
 
 @Component({
   templateUrl: "TraceTreeTableView.html",
-  selector: "observer-trace-table-comp"
+  selector: "observer-trace-table-comp",
+  styleUrls: ['TraceTreeTableStyle.css']
 }) export class TraceTreeTableComponent {
 
   public Loading: boolean;
   public Data: TreeNode<ObserverEventDataForTracing>[] = [];
   public SubData = {};
+
+  public DisplayJsonBodyForm: boolean;
+  public CurrentJsonBody: string;
 
   public Cols = [
     { field: 'EventId', header: 'EventId'},
@@ -25,8 +29,23 @@ import { ObserverAPI } from "../services/ObserverAPI";
 
   public constructor(private observerService: ObserverAPI) {}
 
+  public ResetSnapshot(): void {
+    this.observerService.ResetSnapshot().toPromise().then(
+      () => this.RefreshTable()
+    );
+  }
+
+  public RefreshTable(): void {
+    this.requestSnapshotAndPopulateData();
+  }
+
   public LoadDataLazy(event: LazyLoadEvent): void {
     this.requestSnapshotAndPopulateData();
+  }
+
+  public ShowJSONData(data: ObserverEventDataForTracing): void {
+    this.CurrentJsonBody = JSON.stringify(JSON.parse(data.BodyJson), null, 4);
+    this.DisplayJsonBodyForm = true;
   }
 
   private requestSnapshotAndPopulateData(): void {
@@ -38,8 +57,9 @@ import { ObserverAPI } from "../services/ObserverAPI";
 
       console.log(data);
 
-      this.convertToTreeNode(data.EventNode, this.Data);
-      this.SubData = this.Data[0].children;
+      const temp: TreeNode<ObserverEventDataForTracing>[] = [];
+      this.convertToTreeNode(data.EventNode, temp);
+      this.Data = temp[0].children;
 
       this.Loading = false;
     });

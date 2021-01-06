@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import {
+  CoreEvent,
+  EventIds,
   EventProxyLibService,
   MicroFrontendParts,
   ObserverSnapshotResult,
@@ -20,6 +22,17 @@ export class ObserverAPI {
   public constructor(
     private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
+
+  public ResetSnapshot(): Observable<ResponseStatus> {
+    class Temp extends CoreEvent {}
+    const event: Temp = new Temp();
+    event.SourceId = this.sourceInfo.SourceId;
+    event.SourceName = this.sourceInfo.SourceName;
+
+    event.EventId = EventIds.ObserverSnapshotReset;
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
 
   public RequestSnapshot(): Promise<ObserverSnapshotResult> {
     return new Promise<ObserverSnapshotResult>(
