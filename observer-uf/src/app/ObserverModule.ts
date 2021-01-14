@@ -10,14 +10,12 @@ import { createCustomElement } from '@angular/elements';
 import { OccupationServiceFactory } from './services/ObserverFactory';
 import { ObserverService } from './services/ObserverService';
 import { ObserverAPI } from './services/ObserverAPI';
-import { TraceTableComponent } from './TraceTable/TraceTableComponent';
 import { PrimeNgModules } from './PrimeNgModules';
 import { TraceTreeTableComponent } from './TraceTreeTable/TraceTreeTableComponent';
 
 @NgModule({
   declarations: [
     ObserverComponent,
-    TraceTableComponent,
     TraceTreeTableComponent
   ],
   imports: [

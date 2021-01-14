@@ -9,6 +9,7 @@ import {
   MaterialsReceiptsMaterialsAtLocationsReadListQuery,
   MaterialsReceiptsMaterialsAtLocationsReadListResults,
   MaterialsReceiptsMaterialsReadListQuery,
+  MaterialsReceiptsMaterialsReadListResults,
   MaterialsReceiptsReadListQuery,
   MaterialsReceiptsReadListResults,
   MaterialsReceiptsScanTableAddRemove,
@@ -157,14 +158,14 @@ export class MaterialsReceiptsAPI {
     });
   }
 
-  public MaterialsQuery(materialId: number, page: number, limit: number)
-  : Promise<MaterialsReceiptsMaterialsReadListQuery> {
+  public MaterialsQuery(materialId: number, barCode: string, page?: number, limit?: number)
+  : Promise<MaterialsReceiptsMaterialsReadListResults> {
     if (page < 1 || limit < 1) {
       throw new Error('page or pagesize is less than 1');
     }
 
-    return new Promise<MaterialsReceiptsMaterialsReadListQuery>((resolve, reject) => {
-      this.materialsQuery(materialId, page, limit)
+    return new Promise<MaterialsReceiptsMaterialsReadListResults>((resolve, reject) => {
+      this.materialsQuery(materialId, barCode, page, limit)
       .toPromise()
       .then( (responseStatus: ResponseStatus) => {
         if (responseStatus.Failed) reject('Failed to retrive data');
@@ -172,7 +173,7 @@ export class MaterialsReceiptsAPI {
         const uniqueId = responseStatus.HttpResult.body.Ids[0];
 
         this.eventBusService.EventBus.subscribe(
-          (data: MaterialsReceiptsMaterialsReadListQuery) => {
+          (data: MaterialsReceiptsMaterialsReadListResults) => {
             if (data.ParentId === uniqueId) resolve(data);
           }
         );
@@ -347,14 +348,15 @@ export class MaterialsReceiptsAPI {
   /**
    * Queries materials
    * @param materialsId !
+   * @param barCode !
    * @param page !
    * @param limit !
    * @returns Observable of Response Status
    */
-  private materialsQuery(materialsId?: number, page?: number, limit?: number)
+  private materialsQuery(materialsId?: number, barCode?: string, page?: number, limit?: number)
   : Observable<ResponseStatus> {
     const event = new MaterialsReceiptsMaterialsReadListQuery(
-      this.sourceInfo, materialsId, page, limit);
+      this.sourceInfo, materialsId, barCode, page, limit);
 
     event.SubscribeToChildren = true;
 

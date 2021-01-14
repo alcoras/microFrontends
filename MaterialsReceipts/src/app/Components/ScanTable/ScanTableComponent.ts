@@ -5,7 +5,7 @@ import { Subscription } from "rxjs";
 import { EventBusService } from "../../services/EventBusService";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 import { ScanningDialog } from "@shared/Components/Dialogs/ScanningDialog/ScanningDialog";
-import { MaterialsReceiptsScanTableReadListResults, ScanTableData } from "event-proxy-lib-src";
+import { MaterialsReceiptsMaterialsReadListQuery, MaterialsReceiptsMaterialsReadListResults, MaterialsReceiptsScanTableReadListResults, ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 
@@ -66,7 +66,7 @@ export class ScanTableComponent {
         baseZIndex: 10001
       });
 
-    this.dialogReference.onClose.subscribe((data: ScanTableData) => {
+    this.dialogReference.onClose.subscribe((data: ScanTableData[]) => {
       if (data) this.parseNewScans(data);
     });
   }
@@ -84,8 +84,16 @@ export class ScanTableComponent {
     this.requestMaterialsScanTableData(page, limit);
   }
 
-  private parseNewScans(data: ScanTableData): void {
-    console.log(data);
+  private parseNewScans(scanTableData: ScanTableData[]): void {
+    // 1. extract same bar codes
+    // 2. check if we have a match
+    for (let i = 0; i < scanTableData.length; i++) {
+      this.materialsReceiptsAPI.MaterialsQuery(null, scanTableData[i].BarCode).then(
+        (queryResult: MaterialsReceiptsMaterialsReadListResults) => {
+          console.log(queryResult);
+        }
+      )
+    }
   }
 
   private requestMaterialsScanTableData(page = 1, limit = 30): void {

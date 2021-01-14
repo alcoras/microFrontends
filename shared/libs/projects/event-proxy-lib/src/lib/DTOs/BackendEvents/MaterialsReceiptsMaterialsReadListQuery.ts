@@ -10,6 +10,7 @@ export class MaterialsReceiptsMaterialsReadListQuery extends CoreEvent {
   public constructor(
     sourceInfo: MicroFrontendInfo,
     public MaterialsId?: number,
+    public BarCode?: string,
     public Page?: number,
     public Limit?: number) {
 

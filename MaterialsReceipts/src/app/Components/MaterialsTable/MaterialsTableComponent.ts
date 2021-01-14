@@ -39,7 +39,7 @@ import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
   private queryMaterials(page = 1, limit = 30): void {
     this.Loading = true;
 
-    this.materialsReceiptsAPI.MaterialsQuery(null, page, limit)
+    this.materialsReceiptsAPI.MaterialsQuery(null, null, page, limit)
     .then( (data: MaterialsReceiptsMaterialsReadListResults) => {
       this.Data = data.MaterialsDataList;
       this.TotalRecords = data.TotalRecordsAmount;
