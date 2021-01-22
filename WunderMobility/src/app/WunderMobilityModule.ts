@@ -10,14 +10,19 @@ import { PrimeNgModules } from './PrimeNgModules';
 
 import { createCustomElement } from '@angular/elements';
 
-import { WunderMobilityFactory } from './services/WunderMobilityFactory';
-import { WunderMobilityService } from './services/WunderMobilityService';
+import { WunderMobilityFactory } from './Services/WunderMobilityFactory';
+import { WunderMobilityService } from './Services/WunderMobilityService';
 
 import { WunderMobilityComponent } from './Components/WunderMobilityComponent';
+import { ProductsTableComponent } from './Components/ProductsTable/ProductsTableComponent';
+import { WunderMobilityAPI } from './Services/WunderMobilityAPI';
+import { BuyTableComponent } from './Components/BuyTable/BuyTableComponent';
 
 @NgModule({
   declarations: [
-    WunderMobilityComponent
+    WunderMobilityComponent,
+    ProductsTableComponent,
+    BuyTableComponent
   ],
   imports: [
     BrowserModule,
@@ -29,6 +34,7 @@ import { WunderMobilityComponent } from './Components/WunderMobilityComponent';
   ],
   providers: [
     EventProxyLibService,
+    WunderMobilityAPI,
     {
       provide: APP_INITIALIZER,
       useFactory: WunderMobilityFactory,

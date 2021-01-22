@@ -21,7 +21,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from "primeng/api";
 import { ContextMenuModule } from "primeng/contextmenu";
 import { InputNumberModule } from "primeng/inputnumber";
-
+import { TabViewModule } from "primeng/tabview";
 
 @NgModule({
   exports: [
@@ -44,7 +44,8 @@ import { InputNumberModule } from "primeng/inputnumber";
     TreeTableModule,
     ToastModule,
     ContextMenuModule,
-    InputNumberModule
+    InputNumberModule,
+    TabViewModule
   ],
   providers: [
     MessageService
