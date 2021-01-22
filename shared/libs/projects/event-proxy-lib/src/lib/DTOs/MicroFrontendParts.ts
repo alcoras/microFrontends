@@ -54,11 +54,19 @@ export class MicroFrontendParts {
   };
 
   /**
-   * Micro frontend MaterialsReceipts. Used for 1C communication
+   * Micro frontend MaterialsReceipts
    */
   public static MaterialsReceipts: MicroFrontendInfo = {
     SourceId: '1008',
     SourceName: 'MaterialsReceipts'
+  };
+
+  /**
+   * Micro frontend WunderMobility
+   */
+  public static WunderMobility: MicroFrontendInfo = {
+    SourceId: '1009',
+    SourceName: 'WunderMobility'
   };
 
   // /**

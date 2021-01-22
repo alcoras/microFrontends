@@ -1,0 +1,11 @@
+{
+    "projectName": "WunderMobility",
+    "replace": [
+            { "replace": "WunderMobility", "search": "$project_name$" },
+            { "replace": "8009", "search": "$prod_port$" },
+            { "replace": "7009", "search": "$dev_port$" },
+            { "replace": "1009", "search": "$source_id$" },
+            { "replace": "WunderMobility", "search": "$source_name$" },
+            { "replace": "1009", "search": "$button_pressed_id$" }
+    ]
+}

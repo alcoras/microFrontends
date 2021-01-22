@@ -150,9 +150,14 @@
 69. clean up package.json scripts in projects (remove serve and serve scripts)
 70. write unit/static tests for MaterialsReceipts
 74. currently if something fails, we either throw (where we care for it to work) or we don't return message to user; think how to universally handle messages to user about strong fails (cant work further) and safe fails (entry creation failed, deletion failed);
-77. template installer
+77. template installer:
+    77. 1. Services: TemplateFactory, TemplateService should be renamed
+    77. 2. Change root structure's file names (app.module.ts ...)
+    77. 3. Add *Service to root NgModule
+    77. 4. In TemplateService fix EventBusService
+    77. 5. MicroFrontendParts Template copying in MicroFrontendParts, MicroFrontendParts.* in *Service
+    77. 6. EventIds.$ProjectNameButtonPressed$
+    77. 7. Comment out EventIds.<TemplateRead> because it's just an example
+    77. 8. preparePlacements() should have project name in lower case, same when registering custom element
 78.
-
 79.
-
-TEST

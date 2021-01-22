@@ -12,6 +12,7 @@ export enum EventIds {
   LanguageChange = 1006,
   ObserverButtonPressed = 1007,
   MaterialsReceiptsButtonPressed = 1008,
+  WunderMobilityButtonPressed = 1009,
 
   // Business events
   CreatePersonData = 2006,
