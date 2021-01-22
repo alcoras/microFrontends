@@ -1,0 +1,15 @@
+<p-toolbar>
+
+  <div class="p-toolbar-group-left">
+    <!-- For some reason you have to have left group -->
+  </div>
+
+  <div class="p-toolbar-group-right">
+    <p-dropdown
+      [options]="Themes"
+      [(ngModel)]="SelectedTheme"
+      (ngModelChange)="ChangeTheme()"
+      optionLabel="name">
+    </p-dropdown>
+  </div>
+</p-toolbar>

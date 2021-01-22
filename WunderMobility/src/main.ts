@@ -2,7 +2,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { EnvironmentService, EnvironmentTypes } from 'event-proxy-lib-src';
 
-import { AppModule } from './app/app.module';
+import { WunderMobilityModule } from './app/WunderMobilityModule';
 import { environment } from './environments/environment';
 
 if (environment.EnvironmentTypes == EnvironmentTypes.Production) {
@@ -25,5 +25,5 @@ if (environment.EnvironmentTypes == EnvironmentTypes.Isolated) {
 }
 
 
-platformBrowserDynamic().bootstrapModule(AppModule)
+platformBrowserDynamic().bootstrapModule(WunderMobilityModule)
   .catch(err => console.error(err));
