@@ -5,7 +5,7 @@ import { Subscription } from "rxjs";
 import { EventBusService } from "../../services/EventBusService";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 import { ScanningDialog } from "@shared/Components/Dialogs/ScanningDialog/ScanningDialog";
-import { MaterialsReceiptsMaterialsReadListQuery, MaterialsReceiptsMaterialsReadListResults, MaterialsReceiptsScanTableReadListResults, ScanTableData } from "event-proxy-lib-src";
+import { MaterialsReceiptsMaterialsReadListResults, MaterialsReceiptsScanTableReadListResults, ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 

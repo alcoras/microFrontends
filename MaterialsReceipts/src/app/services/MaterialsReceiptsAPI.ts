@@ -76,7 +76,7 @@ export class MaterialsReceiptsAPI {
 
   /**
    * Creates new location
-   * @param data !
+   * @param data new location data
    * @returns ReponseStatus
    */
   public LocationCreate(data: LocationsData): Observable<ResponseStatus> {
@@ -146,7 +146,7 @@ export class MaterialsReceiptsAPI {
       this.materialsAtLocationsQuery(materialsId, locationId, page, limit)
       .toPromise()
       .then((responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject('Failed to retrive data');
+        if (responseStatus.Failed) reject('Failed to retrieve data');
 
         const uniqueId = responseStatus.HttpResult.body.Ids[0];
 

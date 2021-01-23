@@ -48,6 +48,10 @@ export enum EventIds {
   MaterialsReceiptsMaterialsAtLocationsRemove = 2048,
   MaterialsReceiptsMaterialsAtLocationsReadListQuery = 2049,
   MaterialsReceiptsMaterialsAtLocationsReadListResults = 2050,
+  TestWunderMobilityProductsQuery = 2066,
+  TestWunderMobilityProductsQueryResults = 2067,
+  TestWunderMobilityDelete = 2068,
+  TestWunderMobilityCreate = 2069,
 
   // Core events
   PingRequest = 2001,
@@ -74,5 +78,5 @@ export enum EventIds {
   CastorGet = 2055,
   CastorFound = 2056,
   Unsubscribe = 2063,
-  ObserverSnapshotReset = 2064
+  ObserverSnapshotReset = 2064,
 }

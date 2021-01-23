@@ -9,7 +9,8 @@ import {
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
-  MicroFrontendParts} from 'event-proxy-lib-src';
+  MicroFrontendParts,
+  UnsubscibeToEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBusService';
 
@@ -64,9 +65,15 @@ export class WunderMobilityService implements IMicroFrontend {
               throw new Error('Did not proccess after processButtonPressed');
             }
             break;
-        // case EventIds.<TemplateRead>:
-        //     this.eventBus.EventBus.next(element);
-        //     break;
+        case EventIds.TestWunderMobilityProductsQueryResults:
+          await this.eventProxyService.ConfirmEvents(
+            this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+
+          await this.eventProxyService.DispatchEvent(
+            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
+
+          this.eventBus.EventBus.next(element);
+          break;
         default:
             throw new Error(`Event ${element.EventId} not implemented.`);
       }
