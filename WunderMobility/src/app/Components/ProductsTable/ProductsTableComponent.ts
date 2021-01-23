@@ -44,7 +44,6 @@ import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
   }
 
   public LazyLoad(event: LazyLoadEvent): void {
-    console.log(event);
     this.queryProducts();
   }
 

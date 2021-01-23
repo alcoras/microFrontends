@@ -52,6 +52,8 @@ export enum EventIds {
   TestWunderMobilityProductsQueryResults = 2067,
   TestWunderMobilityDelete = 2068,
   TestWunderMobilityCreate = 2069,
+  TestWunderMobilityCheckout = 2070,
+  TestWunderMobilityCheckoutResults = 2071,
 
   // Core events
   PingRequest = 2001,

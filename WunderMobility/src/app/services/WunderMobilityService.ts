@@ -66,6 +66,7 @@ export class WunderMobilityService implements IMicroFrontend {
             }
             break;
         case EventIds.TestWunderMobilityProductsQueryResults:
+        case EventIds.TestWunderMobilityCheckoutResults:
           await this.eventProxyService.ConfirmEvents(
             this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
 

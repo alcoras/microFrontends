@@ -1,5 +1,16 @@
 import { Injectable } from '@angular/core';
-import { EventProxyLibService, MicroFrontendParts, ResponseStatus, WunderMobilityProduct, WunderMobilityProductCreate, WunderMobilityProductDelete, WunderMobilityProductQuery, WunderMobilityProductQueryResults } from 'event-proxy-lib-src';
+import {
+  EventProxyLibService,
+  MicroFrontendParts,
+  ResponseStatus,
+  WunderMobilityDoCheckout,
+  WunderMobilityDoCheckoutResults,
+  WunderMobilityProduct,
+  WunderMobilityProductCreate,
+  WunderMobilityProductDelete,
+  WunderMobilityProductQuery,
+  WunderMobilityProductQueryResults,
+  WunderMobilityScannedProduct} from 'event-proxy-lib-src';
 import { Observable } from 'rxjs';
 import { EventBusService } from './EventBusService';
 
@@ -13,6 +24,29 @@ import { EventBusService } from './EventBusService';
     private eventBusService: EventBusService) {
   }
 
+  /**
+   * Do checkout
+   * @param data list of scanned items
+   * @returns Response with total price
+   */
+  public Checkout(data: WunderMobilityScannedProduct[])
+  : Promise<WunderMobilityDoCheckoutResults> {
+    return new Promise<WunderMobilityDoCheckoutResults>((resolve, reject) => {
+      this.doCheckout(data)
+      .toPromise()
+      .then((responseStatus: ResponseStatus) => {
+        if (responseStatus.Failed) reject("Failed to retrieve data");
+
+        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+
+        this.eventBusService.EventBus.subscribe(
+          (data: WunderMobilityDoCheckoutResults) => {
+            if (data.ParentId === uniqueId) resolve(data);
+          }
+        )
+      })
+    })
+  }
 
   /**
    * Create new product
@@ -65,6 +99,19 @@ import { EventBusService } from './EventBusService';
    */
   private productsQuery(): Observable<ResponseStatus> {
     const event = new WunderMobilityProductQuery(this.sourceInfo);
+
+    event.SubscribeToChildren = true;
+
+    return this.eventProxyService.DispatchEvent(event);
+  }
+
+  /**
+   * Sends data for checkout
+   * @param data list of checkout items
+   * @returns Observable of ResponseStatus
+   */
+  private doCheckout(data: WunderMobilityScannedProduct[]): Observable<ResponseStatus> {
+    const event = new WunderMobilityDoCheckout(this.sourceInfo, data);
 
     event.SubscribeToChildren = true;
 

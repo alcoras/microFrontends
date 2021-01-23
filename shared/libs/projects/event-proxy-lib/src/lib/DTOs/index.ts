@@ -62,8 +62,11 @@ export * from './BackendEvents/Adds/MaterialsList';
 export * from './BackendEvents/CastorCreateAndOthers';
 
 export * from './BackendEvents/Adds/WunderMobilityProduct';
+export * from './BackendEvents/Adds/WunderMobilityScannedProduct';
 export * from './BackendEvents/WunderMobilityProductCreate';
 export * from './BackendEvents/WunderMobilityProductDelete';
 export * from './BackendEvents/WunderMobilityProductQuery';
 export * from './BackendEvents/WunderMobilityProductQueryResults';
+export * from './BackendEvents/WunderMobilityDoCheckoutResults';
+export * from './BackendEvents/WunderMobilityDoCheckout';
 

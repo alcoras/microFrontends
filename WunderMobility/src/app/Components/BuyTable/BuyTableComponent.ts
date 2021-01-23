@@ -1,33 +1,35 @@
 import { Component } from "@angular/core";
-
-interface ScannedProduct {
-  ProductCode: number;
-  Quantity: number;
-}
+import { WunderMobilityDoCheckoutResults, WunderMobilityScannedProduct } from "event-proxy-lib-src";
+import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
 
 @Component({
   templateUrl: "BuyTableView.html",
   selector: "wunder-mobility-buy-table"
 }) export class BuyTableComponent {
 
-  public ScannedProducts: ScannedProduct[] = [];
+  public ScannedProducts: WunderMobilityScannedProduct[] = [];
 
   public Columns = [
     { field:"ProductCode", header: "Product Code"},
     { field:"Quantity", header: "Quantity"}
   ];
 
-  public Delete(data: ScannedProduct): void {
+  public constructor(private wunderMobilityAPI: WunderMobilityAPI) {}
+
+  public Delete(data: WunderMobilityScannedProduct): void {
     const index = this.ScannedProducts.indexOf(data);
     this.ScannedProducts.splice(index, 1);
   }
 
   public Checkout(): void {
-    console.log("Checkout table");
+    this.wunderMobilityAPI.Checkout(this.ScannedProducts)
+    .then((data: WunderMobilityDoCheckoutResults) => {
+      console.log(data);
+    });
   }
 
   public AddNewRandomScan(): void {
-    const randomId = Math.floor(Math.random() * Math.floor(10) + 1);
+    const randomId = "00" + Math.floor(Math.random() * Math.floor(3) + 1);
     let added = false;
     for (let i = 0; i < this.ScannedProducts.length; i++) {
       if (this.ScannedProducts[i].ProductCode == randomId) {
@@ -37,7 +39,7 @@ interface ScannedProduct {
     }
 
     if (!added) {
-      const newProduct: ScannedProduct = {
+      const newProduct: WunderMobilityScannedProduct = {
         ProductCode: randomId,
         Quantity: 1
       };
