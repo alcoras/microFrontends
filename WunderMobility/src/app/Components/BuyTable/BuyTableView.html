@@ -31,3 +31,9 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-dialog [(visible)]="ShowTotalPriceDialog" [modal]=true>
+  <div class="p-fluid">
+    <label>Total Price: {{CurrentTotalPrice}}</label>
+  </div>
+</p-dialog>

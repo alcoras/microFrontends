@@ -8,6 +8,8 @@ import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
 }) export class BuyTableComponent {
 
   public ScannedProducts: WunderMobilityScannedProduct[] = [];
+  public ShowTotalPriceDialog: boolean;
+  public CurrentTotalPrice: number;
 
   public Columns = [
     { field:"ProductCode", header: "Product Code"},
@@ -24,7 +26,9 @@ import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
   public Checkout(): void {
     this.wunderMobilityAPI.Checkout(this.ScannedProducts)
     .then((data: WunderMobilityDoCheckoutResults) => {
-      console.log(data);
+      this.ScannedProducts = [];
+      this.CurrentTotalPrice = data.TotalPrice;
+      this.ShowTotalPriceDialog = true;
     });
   }
 
