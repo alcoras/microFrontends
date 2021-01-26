@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import {
   EventProxyLibService,
   CoreEvent,
-  ResponseStatus,
+  ValidationStatus,
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
   EventIds,
-  UnsubscibeToEvent} from 'event-proxy-lib-src';
+  UnsubscibeToEvent,
+  BackendToFrontendEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBusService';
 
@@ -39,14 +40,14 @@ export class MaterialsReceiptsService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
-          this.ParseNewEventAsync(response.HttpResult.body.Events);
+          this.ParseNewEventAsync(response.Result.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         this.eventProxyService.EndListeningToBackend();
-        throw new Error(error.Error);
+        throw new Error(response.ErrorList.toString());
       }
     );
 
@@ -57,7 +58,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
       switch (event.EventId) {
         case EventIds.MaterialsReceiptsButtonPressed:
           if (this.processButtonPressed(event)) {
-            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
           } else {
             console.error(event);
             throw new Error('Did not proccess after processButtonPressed');
@@ -70,17 +71,17 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         case EventIds.MaterialsReceiptsMaterialsAtLocationsReadListResults:
         case EventIds.MaterialsReceiptsMaterialsReadListResults:
         case EventIds.CastorFound:
-          await this.eventProxyService.ConfirmEvents(
-            this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+          await this.eventProxyService.ConfirmEventsAsync(
+            this.SourceInfo.SourceId, [event.AggregateId]);
 
-          await this.eventProxyService.DispatchEvent(
-            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]])).toPromise();
+          await this.eventProxyService.DispatchEventAsync(
+            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]]));
 
           this.eventBus.EventBus.next(event);
           break;
         case EventIds.EventProccessedSuccessfully:
-          await this.eventProxyService.ConfirmEvents(
-            this.SourceInfo.SourceId, [event.AggregateId]).toPromise();
+          await this.eventProxyService.ConfirmEventsAsync(
+            this.SourceInfo.SourceId, [event.AggregateId]);
           break;
         case EventIds.EventProccessedWithFails:
           console.error(event);

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable jsdoc/require-jsdoc */
 import { TestBed } from '@angular/core/testing';
-import { EventProxyLibService } from '../event-proxy-lib.service';
-import { ResponseStatus } from "../models/ResponseStatus";
+import { EventProxyLibService } from '../EventProxyLibService';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { EventIds, CoreEvent, ErrorMessage, BackendToFrontendEvent } from '../models/index';
-import { HttpResponse } from '@angular/common/http';
-import { of, Observable } from 'rxjs';
 import { EnvironmentService } from '../services/EnvironmentService';
+import { CoreEvent } from '../DTOs/CoreEvent';
+import { BackendToFrontendEvent } from '../DTOs/BackendEvents/BackendToFrontendEvent';
+import { ValidationStatus } from '../DTOs/ValidationStatus';
+import { EventIds } from '../DTOs/EventIds';
+import { ErrorMessage } from '../DTOs/Errors';
 
 /**
  * Returns promise after ms
@@ -17,7 +18,7 @@ import { EnvironmentService } from '../services/EnvironmentService';
 function delay(ms: number): Promise<any> {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
-
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 const envPrefix = '__env';
 const TestSourceId = '1000';
 const backendURL = 'localhost';
@@ -69,9 +70,8 @@ describe('EventProxyLibService', () => {
         'Events': [ testEvent ]
       }
 
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse(
-        {status: 200, body: events});
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = events;
 
       expect(() => service.PerformResponseCheck(tempStatus))
       .toThrowError(ErrorMessage.UnrecognizedEventId);
@@ -85,9 +85,8 @@ describe('EventProxyLibService', () => {
         'Events': [ testEvent ]
       }
 
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse(
-        {status: 200, body: events});
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = events;
 
       expect(() => service.PerformResponseCheck(tempStatus))
       .toThrowError(ErrorMessage.TokenFailure);
@@ -102,7 +101,7 @@ describe('EventProxyLibService', () => {
 
     it('testing sendMessage fail states', async (done) => {
       const eventProxyLibService = TestBed.inject(EventProxyLibService);
-      eventProxyLibService.Timeout = 10;
+      eventProxyLibService.TimeoutMs = 10;
       eventProxyLibService.DelayMs = 0;
       eventProxyLibService.BackOffMS = 0;
       eventProxyLibService.Retries = 0;
@@ -114,8 +113,8 @@ describe('EventProxyLibService', () => {
         () => {
           fail();
         },
-        (error: ResponseStatus) => {
-          expect(error.Failed).toBeTrue();
+        (error: ValidationStatus<BackendToFrontendEvent>) => {
+          expect(error.HasErrors()).toBeTrue();
           done();
         }
       );
@@ -126,12 +125,12 @@ describe('EventProxyLibService', () => {
 
     it('on InitializeConnectionToBackend status should be true', (done) => {
 
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200});
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = { EventId: 123 };
 
-      spyOn(service, 'GetLastEvents')
+      spyOn(service, 'GetLastEventsAsync')
         .and
-        .returnValue(of(tempStatus));
+        .returnValue(Promise.resolve(tempStatus));
 
       service.InitializeConnectionToBackend(TestSourceId).subscribe(
         () => {
@@ -144,18 +143,18 @@ describe('EventProxyLibService', () => {
 
     it('after EndListeningToBackend status should be false', (done) => {
 
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200});
-      function fakeGetLastEvents(): Observable<ResponseStatus> {
-        return new Observable( sub => {
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = { EventId: 123}
+
+      function fakeGetLastEvents(): Promise<ValidationStatus<BackendToFrontendEvent>> {
+        return new Promise( (resolve => {
           setTimeout(() => {
-            sub.next(tempStatus);
-            sub.complete();
+            resolve(tempStatus)
           }, 100);
-        });
+        }));
       }
 
-      spyOn(service, 'GetLastEvents')
+      spyOn(service, 'GetLastEventsAsync')
         .and
         .callFake(() => fakeGetLastEvents());
 
@@ -179,15 +178,14 @@ describe('EventProxyLibService', () => {
       let doneParsing = 0;
       let launchedParsing = 0;
       // tslint:disable-next-line: completed-docs
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200});
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = { EventId: 123 };
 
-      function fakeGetLastEvents(): Observable<ResponseStatus> {
-        return new Observable(sub => {
+      function fakeGetLastEvents(): Promise<ValidationStatus<BackendToFrontendEvent>> {
+        return new Promise((resolve) => {
           setTimeout(() => {
-            sub.next(tempStatus);
             requestsSent++;
-            sub.complete();
+            resolve(tempStatus);
           }, responseTimeMs);
         });
       }
@@ -198,7 +196,7 @@ describe('EventProxyLibService', () => {
         doneParsing++;
       }
 
-      spyOn(service, 'GetLastEvents')
+      spyOn(service, 'GetLastEventsAsync')
         .and
         .callFake(() => fakeGetLastEvents());
 
@@ -220,15 +218,16 @@ describe('EventProxyLibService', () => {
     });
 
     it('testing InitializeConnectionToBackend', async (done) => {
-      const tempStatus = new ResponseStatus();
-      tempStatus.HttpResult = new HttpResponse({status: 200});
-      const getLastEventsSpy = spyOn(service, 'GetLastEvents')
+      const tempStatus = new ValidationStatus<BackendToFrontendEvent>();
+      tempStatus.Result = { EventId: 123 };
+
+      const getLastEventsSpy = spyOn(service, 'GetLastEventsAsync')
         .and
-        .returnValue( of (tempStatus) );
+        .returnValue( Promise.resolve(tempStatus) );
 
       service.InitializeConnectionToBackend(TestSourceId).subscribe(
         (res) => {
-          expect(res.HttpResult.status).toBe(200);
+          expect(res.HasErrors()).toBeFalse();
           service.EndListeningToBackend();
           expect(getLastEventsSpy).toHaveBeenCalled();
           done();
@@ -247,7 +246,7 @@ describe('EventProxyLibService', () => {
     it('should throw if apiGatewayURL is undefined', () => {
       service.ApiGatewayURL = '';
 
-      expect( () => service.DispatchEvent(null).toPromise() ).toThrow();
+      expectAsync(service.DispatchEventAsync(null)).toBeRejected();
 
     });
   });
@@ -255,11 +254,7 @@ describe('EventProxyLibService', () => {
   describe('common spec for all requests', () => {
 
     it('testing method', () => {
-      service.ConfirmEvents(TestSourceId, [], true).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.ConfirmEventsAsync(TestSourceId, [], true);
 
       const req = httpTestingController.expectOne(URL);
 
@@ -270,18 +265,20 @@ describe('EventProxyLibService', () => {
     });
 
     it('testing headers', () => {
-      service.ConfirmEvents(TestSourceId, [], true).toPromise();
+      service.ConfirmEventsAsync(TestSourceId, [], true);
 
       const req = httpTestingController.expectOne(
         (res) => res.headers.has('Content-Type')
       );
+
+      expect(req.request.method).toEqual('POST');
 
       req.flush('');
     });
 
   });
 
-  describe('ConfirmEvents', () => {
+  describe('ConfirmEventsAsync', () => {
 
     it('testing content MarkAllReceived=true Ids:[] ', () => {
       const testBody = {
@@ -292,11 +289,7 @@ describe('EventProxyLibService', () => {
         Token: undefined
       };
 
-      service.ConfirmEvents(TestSourceId, [], true).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.ConfirmEventsAsync(TestSourceId, [], true);
 
       const req = httpTestingController.expectOne(URL);
       expect(req.request.body).toEqual(testBody);
@@ -313,11 +306,7 @@ describe('EventProxyLibService', () => {
         Token: undefined
       };
 
-      service.ConfirmEvents(TestSourceId, testBody.Ids).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.ConfirmEventsAsync(TestSourceId, testBody.Ids);
 
       const req = httpTestingController.expectOne(URL);
       expect(req.request.body).toEqual(testBody);
@@ -326,7 +315,7 @@ describe('EventProxyLibService', () => {
     });
   });
 
-  describe('DispatchEvent', () => {
+  describe('DispatchEventAsync', () => {
 
     it('sending one event ', () => {
 
@@ -336,11 +325,7 @@ describe('EventProxyLibService', () => {
         Token: undefined
       };
 
-      service.DispatchEvent(new TestEvent()).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.DispatchEventAsync(new TestEvent());
 
       const req = httpTestingController.expectOne(URL);
       expect(req.request.body).toEqual(testBody);
@@ -356,11 +341,7 @@ describe('EventProxyLibService', () => {
         Token: undefined
       };
 
-      service.DispatchEvent([new TestEvent(), new TestEvent(), new TestEvent()]).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.DispatchEventAsync([new TestEvent(), new TestEvent(), new TestEvent()]);
 
       const req = httpTestingController.expectOne(URL);
       expect(req.request.body).toEqual(testBody);
@@ -370,7 +351,7 @@ describe('EventProxyLibService', () => {
 
   });
 
-  describe('GetLastEvents', () => {
+  describe('GetLastEventsAsync', () => {
 
     const testBody = {
       EventId: EventIds.GetNewEvents,
@@ -379,11 +360,8 @@ describe('EventProxyLibService', () => {
     };
 
     it('testing body', () => {
-      service.GetLastEvents(TestSourceId).subscribe(
-        (res) => {
-          expect(res.HttpResult.status).toBe(200);
-        }
-      );
+      service.Retries = 0;
+      service.GetLastEventsAsync(TestSourceId);
 
       const req = httpTestingController.expectOne(URL);
 

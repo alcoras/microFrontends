@@ -7,7 +7,7 @@ import {
   EventIds,
   EventProxyLibService,
   LoginSuccess,
-  ResponseStatus,
+  ValidationStatus,
   LoginRequest } from 'event-proxy-lib-src';
 
 const WindowWeb3Context = window['web3'] as Web3;
@@ -56,7 +56,7 @@ export class AuthenticationService {
 
     const ret = new Promise<LoginRequest>((resolve, reject) => {
       this.eventProxyService.LogIn(loginRequest.Timestamp, loginRequest.Signature).toPromise().then(
-        (responseStatus: ResponseStatus) => {
+        (responseStatus: ValidationStatus) => {
           if (responseStatus.HttpResult.status !== 200) {
             loginRequest.Error = "Failed to communicate with backend";
             loginRequest.FullError = "Failed to communicate with backend";
@@ -77,7 +77,7 @@ export class AuthenticationService {
             return reject(loginRequest);
           }
         },
-        (responseStatusRejected: ResponseStatus) => {
+        (responseStatusRejected: ValidationStatus) => {
           loginRequest.Error = responseStatusRejected.Error;
           return reject(loginRequest);
         }
@@ -99,7 +99,7 @@ export class AuthenticationService {
 
     const ret = new Promise<string>((resolve, reject) => {
       this.eventProxyService.RenewToken().toPromise().then(
-        (responseStatus: ResponseStatus) => {
+        (responseStatus: ValidationStatus) => {
           if (responseStatus.HttpResult.status !== 200) {
             reject("Failed to communicate with backend");
           }

@@ -22,25 +22,24 @@ import { MaterialsData, MaterialsReceiptsMaterialsReadListResults } from "event-
     this.Loading = true;
   }
 
-  public LazyLoad(event: LazyLoadEvent): void {
+  public async LazyLoad(event: LazyLoadEvent): Promise<void> {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    this.queryMaterials(page, limit);
+    await this.queryMaterialsAsync(page, limit);
   }
 
   public SelectMaterial(data: MaterialsData): void{
     this.ref.close(data);
   }
-  private queryMaterials(page = 1, limit = 30): void {
+  private async queryMaterialsAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
-    this.materialsReceiptsAPI.MaterialsQuery(null, null, page, limit)
-    .then( (data: MaterialsReceiptsMaterialsReadListResults) => {
-      this.Data = data.MaterialsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    const response = await this.materialsReceiptsAPI.MaterialsQueryAsync(null, null, page, limit);
+
+    this.Data = response.Result.MaterialsDataList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

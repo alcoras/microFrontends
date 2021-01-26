@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import {
+  BackendToFrontendEvent,
   CastorCreateAndOthers,
   CastorCreateAndOthersType,
   CastTypes,
   EventProxyLibService,
   MicroFrontendParts,
-  ResponseStatus } from "event-proxy-lib-src";
-import { Observable } from "rxjs";
+  ValidationStatus } from "event-proxy-lib-src";
 import { EventBusService } from "./EventBusService";
 
 @Injectable({
@@ -27,86 +27,33 @@ export class CastorAPI {
    * @param secondType !
    * @param secondIds !
    * @param castType !
-   * @returns Observable of ResponseStatus
+   * @returns Observable of ValidationStatus
    */
-  public CreateCastor(
-    firstType: string,
-    firstId: number,
-    secondType: string,
-    secondIds: number[],
-    castType = CastTypes.OneToOne): Observable<ResponseStatus> {
-
+  public CreateCastorAsync(firstType: string, firstId: number, secondType: string, secondIds: number[], castType = CastTypes.OneToOne): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new CastorCreateAndOthers(
       this.sourceInfo,
       CastorCreateAndOthersType.Create,
       firstType, firstId, secondType, secondIds, castType);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
-  public CastorGet(firstType: string, firstId: number, secondType: string)
-  : Promise<CastorCreateAndOthers> {
-
-    return new Promise<CastorCreateAndOthers>((resolve, reject) => {
-      this.castorGet(firstType, firstId, secondType)
-      .toPromise()
-      .then((responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject('Failed to retrieve data');
-
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-        this.eventBusService.EventBus.subscribe(
-          (data: CastorCreateAndOthers) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        )
-      })
-    });
-
-  }
-
-  public CastorGetExperimental(firstType: string, firstId: number, secondType: string)
-  : Promise<CastorCreateAndOthers> {
-    return this.universal_get<CastorCreateAndOthers>(this.castorGet, [firstType, firstId, secondType]);
-  }
-
-  // experiments
-  private universal_get<T>(func: any, params: any[]): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      func(params)
-      .toPromise()
-      .then( (responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject(responseStatus.Error);
-
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-        this.eventBusService.EventBus.subscribe(
-          (data: any) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        )
-      })
-    });
-  }
-
-  /**
-   * Checking if there is a relationship
-   * More info in README.md - Castor
-   * @param firstType !
-   * @param firstId !
-   * @param secondType !
-   * @returns Observable of ResponseStatus
-   */
-  private castorGet(firstType: string, firstId: number, secondType: string)
-  : Observable<ResponseStatus> {
-    const event = new CastorCreateAndOthers(
-      this.sourceInfo,
-      CastorCreateAndOthersType.Get,
-      firstType, firstId, secondType);
-
+  public async CastorGetAsync(firstType: string, firstId: number, secondType: string): Promise<ValidationStatus<CastorCreateAndOthers>> {
+    const event = new CastorCreateAndOthers(this.sourceInfo, CastorCreateAndOthersType.Get, firstType, firstId, secondType);
     event.SubscribeToChildren = true;
 
-    return this.eventProxyService.DispatchEvent(event);
-  }
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
+
+    const uniqueId = request.Result.Ids[0];
+
+    const responsePromise = new Promise<CastorCreateAndOthers>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: CastorCreateAndOthers) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
+  }
 }

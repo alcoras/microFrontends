@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TestEvent, genRandomNumber } from './Adds/helpers';
-import { BackendToFrontendEvent, CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
+import { BackendToFrontendEvent, CoreEvent, EventButtonPressed, EventIds, EventProxyLibService, ValidationStatus } from 'event-proxy-lib-src';
 
 describe('Personnel micro frontend component', () => {
   let service: PersonnelService;
@@ -50,7 +50,7 @@ describe('Personnel micro frontend component', () => {
     event.Events = [];
     event.Events.push(buttonEvent);
 
-    const responseStatus = new ResponseStatus();
+    const responseStatus = new ValidationStatus();
     responseStatus.HttpResult = new HttpResponse<BackendToFrontendEvent>({status: 200, body: event});
 
     const spies: jasmine.Spy<any>[] = [];
@@ -89,7 +89,7 @@ describe('Personnel micro frontend component', () => {
 
     event.Events.push(personDataEvent);
 
-    const responseStatus = new ResponseStatus();
+    const responseStatus = new ValidationStatus();
     responseStatus.HttpResult = new HttpResponse<BackendToFrontendEvent>({status: 200, body: event});
 
     spyOn<any>(eProxyService, 'GetLastEvents').and.returnValue(

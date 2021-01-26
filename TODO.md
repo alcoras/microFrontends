@@ -28,7 +28,7 @@
 19. DUPLICATE 26. 5 Write tests for uf-manager
 8. DONE: Do angular element show uf (show every angular-material element)
     8. 1. Update: Won't do, there are better things to show off in demo, as elements can be seen in material website itself
-27. DUPLICATE 32. In DispatchEvent.toPromise() add checks for failure and throws
+27. DUPLICATE 32. In DispatchEventAsync.toPromise() add checks for failure and throws
 35. DONE Consider adding (example personnel-uf/**/PersonnelAPI.service) event subscription-to-id to library
     35. 1. UPDATE: For demo should not be done
 38. DONE: shared\events\backend\CreateUpdateEnterpisePersonData.ts convert to classes
@@ -159,5 +159,5 @@
     77. 6. EventIds.$ProjectNameButtonPressed$
     77. 7. Comment out EventIds.<TemplateRead> because it's just an example
     77. 8. preparePlacements() should have project name in lower case, same when registering custom element
-78.
+78. add radio/checkbox for untraced events
 79.

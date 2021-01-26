@@ -5,7 +5,7 @@ export * from './EventIds';
 export * from './IMicroFrontend';
 export * from './MicroFrontendInfo';
 export * from './MicroFrontendParts';
-export * from './ResponseStatus';
+export * from './ValidationStatus';
 
 export * from './BackendEvents/BackendToFrontendEvent';
 export * from './BackendEvents/LoginSuccess';

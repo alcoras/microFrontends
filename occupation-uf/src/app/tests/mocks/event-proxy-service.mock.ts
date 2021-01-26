@@ -1,4 +1,4 @@
-import { CoreEvent, EventProxyLibService, ResponseStatus } from 'event-proxy-lib-src';
+import { CoreEvent, EventProxyLibService, ValidationStatus } from 'event-proxy-lib-src';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 
@@ -10,7 +10,7 @@ export const eProxyServiceMock: Partial<EventProxyLibService> = {
 
   GetLastEvents(sourceID: string) {
 
-    const responseStatus = new ResponseStatus();
+    const responseStatus = new ValidationStatus();
     responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: {
       Events: [ ],
       Ids: [123]
@@ -24,8 +24,8 @@ export const eProxyServiceMock: Partial<EventProxyLibService> = {
     );
   },
 
-  DispatchEvent(event: CoreEvent | CoreEvent[]) {
-    const responseStatus = new ResponseStatus();
+  DispatchEventAsync(event: CoreEvent | CoreEvent[]) {
+    const responseStatus = new ValidationStatus();
     responseStatus.HttpResult = new HttpResponse<any>({status: 200, body: {
       Events: [event ],
       Ids: [123]
@@ -39,7 +39,7 @@ export const eProxyServiceMock: Partial<EventProxyLibService> = {
     );
   },
 
-  ConfirmEvents(srcId: string, idList?: number[], confirmAll = true) {
+  ConfirmEventsAsync(srcId: string, idList?: number[], confirmAll = true) {
     return new Observable(
       (val) => {
         val.complete();

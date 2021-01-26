@@ -4,7 +4,7 @@ import {
   EventProxyLibService,
   SubscibeToEvent,
   CoreEvent,
-  ResponseStatus,
+  ValidationStatus,
   EventIds,
   IMicroFrontend,
   EventButtonPressed,
@@ -40,12 +40,12 @@ export class TemplateService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
           this.ParseNewEventAsync(response.HttpResult.body.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (error: ValidationStatus) => {
         this.eventProxyService.EndListeningToBackend();
         throw new Error(error.Error);
       }
@@ -58,7 +58,7 @@ export class TemplateService implements IMicroFrontend {
       switch (element.EventId) {
         case EventIds.$button_pressed_id$:
             if (this.processButtonPressed(element)) {
-              await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+              await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
               console.error(element);
               throw new Error('Did not proccess after processButtonPressed');

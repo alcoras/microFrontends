@@ -21,14 +21,12 @@ import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
     {field: "LocationBarCode", header: "BarCode"},
   ]
 
-  public constructor(
-    private materialsReceiptsAPI: MaterialsReceiptsAPI
-  ) {
+  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI) {
     this.Loading = true;
   }
 
-  public DeleteLocation(data: LocationsData): void {
-    this.materialsReceiptsAPI.LocationDelete(data).toPromise();
+  public async DeleteLocation(data: LocationsData): Promise<void> {
+    await this.materialsReceiptsAPI.LocationDeleteAsync(data);
 
     this.RefreshTable();
   }
@@ -39,35 +37,33 @@ import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
     this.NewDialogSubmited = false;
   }
 
-  public SaveNewLocation(): void {
-    this.materialsReceiptsAPI.LocationCreate(this.NewLocation)
-    .toPromise();
+  public async SaveNewLocation(): Promise<void> {
+    await this.materialsReceiptsAPI.LocationCreateAsync(this.NewLocation);
 
     this.NewDialogSubmited = true;
     this.NewDialogDisplay = false;
     this.RefreshTable();
   }
 
-  public LazyLoad(event: LazyLoadEvent): void {
+  public async LazyLoad(event: LazyLoadEvent): Promise<void> {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    this.queryLocations(page, limit);
+    await this.queryLocationsAsync(page, limit);
   }
 
-  public RefreshTable(): void {
-    this.queryLocations();
+  public async RefreshTable(): Promise<void> {
+    await this.queryLocationsAsync();
   }
 
-  private queryLocations(page = 1, limit = 30): void {
+  private async queryLocationsAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
-    this.materialsReceiptsAPI.LocationsQuery(null, page, limit)
-    .then( (data: MaterialsReceiptsLocationsReadListResults) => {
-      this.Locations = data.LocationsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    const res = await this.materialsReceiptsAPI.LocationsQueryAsync(null, page, limit);
+
+    this.Locations = res.Result.LocationsDataList;
+    this.TotalRecords = res.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

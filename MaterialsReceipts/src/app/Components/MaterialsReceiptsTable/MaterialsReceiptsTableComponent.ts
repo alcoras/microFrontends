@@ -42,7 +42,7 @@ export class MaterialsReceiptsTableComponent {
 
       this.subscriptions.push(
         this.eventBus.OnMaterialReceiptSelected
-          .subscribe(() => this.requestMaterialsListTableData()));
+          .subscribe(async () => await this.requestMaterialsListTableDataAsync()));
   }
 
   public OnDestroy(): void {
@@ -51,15 +51,15 @@ export class MaterialsReceiptsTableComponent {
     });
   }
 
-  public LoadDataLazy(event: LazyLoadEvent): void {
+  public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    this.requestMaterialsListTableData(page, limit);
+    await this.requestMaterialsListTableDataAsync(page, limit);
   }
 
-  private requestMaterialsListTableData(page = 1, limit = 30): void {
+  private async requestMaterialsListTableDataAsync(page = 1, limit = 30): Promise<void> {
 
     this.Loading = true;
 
@@ -71,14 +71,16 @@ export class MaterialsReceiptsTableComponent {
       throw new Error("MaterialsReceiptId was not given or id equal/below 0");
     }
 
-    const res = this.materialsReceiptsAPI
-       .MaterialsReceiptsTableQuery(materialsReceiptData.Id, page, limit);
+    const response = await this.materialsReceiptsAPI.MaterialsReceiptsTableQueryAsync(materialsReceiptData.Id, page, limit);
 
-    res.then( (data: MaterialsReceiptsTablePartReadListResults) => {
-      this.MaterialsListTableData = data.MaterialsDataTablePartList;
-      this.TotalRecords = data.TotalRecordsAmount;
+    if (response.HasErrors()) {
+      console.warn(response.ErrorList.toString());
       this.Loading = false;
-    });
+      return;
+    }
 
+    this.MaterialsListTableData = response.Result.MaterialsDataTablePartList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

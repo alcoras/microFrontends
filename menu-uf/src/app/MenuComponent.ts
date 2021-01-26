@@ -76,7 +76,7 @@ export class MenuComponent {
     e.SourceId = this.sourceId;
     e.SourceName = this.sourceName;
 
-    this.eventProxyService.DispatchEvent(e).toPromise();
+    this.eventProxyService.DispatchEventAsync(e).toPromise();
   }
 
   /**
@@ -157,7 +157,7 @@ export class MenuComponent {
 
     event.SourceId = this.sourceId;
 
-    this.eventProxyService.DispatchEvent(event).toPromise();
+    this.eventProxyService.DispatchEventAsync(event).toPromise();
   }
 
   /**

@@ -31,8 +31,8 @@ import {
     this.Loading = true;
   }
 
-  public LazyLoad(event: LazyLoadEvent): void {
-    this.queryMaterialsAtLocation(
+  public async LazyLoad(event: LazyLoadEvent): Promise<void> {
+    await this.queryMaterialsAtLocationAsync(
       event.first/event.rows + 1, event.rows);
   }
 
@@ -66,22 +66,21 @@ import {
     console.log("Saving");
   }
 
-  public RefreshTable(): void {
-    this.queryMaterialsAtLocation();
+  public async RefreshTableAsync(): Promise<void> {
+    await this.queryMaterialsAtLocationAsync();
   }
 
   public DeleteLocation(data: MaterialsAtLocationsData): void {
     console.log(data);
   }
 
-  private queryMaterialsAtLocation(page = 1, limit = 30): void {
+  private async queryMaterialsAtLocationAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
-    this.materialsReceiptsAPI.MaterialsAtLocationQuery(page, limit)
-    .then( (data: MaterialsReceiptsMaterialsAtLocationsReadListResults) => {
-      this.Data = data.MaterialsAtLocationsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    const response = await this.materialsReceiptsAPI.MaterialsAtLocationQueryAsync(page, limit);
+
+    this.Data = response.Result.MaterialsAtLocationsDataList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

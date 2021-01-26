@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   EventProxyLibService,
   CoreEvent,
-  ResponseStatus,
+  ValidationStatus,
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
@@ -42,12 +42,12 @@ export class PersonnelService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
           this.ParseNewEventAsync(response.HttpResult.body.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (error: ValidationStatus) => {
         this.eventProxyService.EndListeningToBackend();
         throw new Error(error.Error);
       }
@@ -60,21 +60,21 @@ export class PersonnelService implements IMicroFrontend {
       switch (element.EventId) {
         case EventIds.PersonnelButtonPressed:
           if (this.processButtonPressed(element as EventButtonPressed)) {
-            this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+            this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           } else {
             throw new Error('Did not proccess after processButtonPressed');
           }
           break;
         case EventIds.ReadPersonData:
-          await this.eventProxyService.ConfirmEvents(
+          await this.eventProxyService.ConfirmEventsAsync(
             this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
 
-          await this.eventProxyService.DispatchEvent(
+          await this.eventProxyService.DispatchEventAsync(
             new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
           this.eventBusService.EventBus.next(element);
           break;
         case EventIds.EventProccessedSuccessfully:
-            await this.eventProxyService.ConfirmEvents(
+            await this.eventProxyService.ConfirmEventsAsync(
               this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             break;
         case EventIds.EventProccessedWithFails:

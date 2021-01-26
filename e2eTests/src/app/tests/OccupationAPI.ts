@@ -5,7 +5,7 @@ import {
   EventProxyLibService,
   OccupationData,
   OccupationsReadResults,
-  ResponseStatus } from 'event-proxy-lib-src';
+  ValidationStatus } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './Adds/helpers';
 import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI';
 import { EventBusService } from 'occupation-uf/services/EventBusService';
@@ -52,19 +52,19 @@ describe('Occupation API service', () => {
     eventBusService = TestBed.inject(EventBusService);
     eProxyService.ApiGatewayURL = backendURL;
 
-    await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   afterEach(async () => {
     eProxyService.EndListeningToBackend();
-    await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   /**
    * sends events to event bus
    * @param res response to propogate
    */
-  function propogateEvent(res: ResponseStatus): void {
+  function propogateEvent(res: ValidationStatus): void {
 
   // ignoring empty responses
     if (!res.HttpResult.body) return;
@@ -72,7 +72,7 @@ describe('Occupation API service', () => {
     res.HttpResult.body.Events.forEach(element => {
       if (element.EventId === EventIds.OccupationsRead) {
         eventBusService.EventBus.next(element);
-        eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+        eProxyService.ConfirmEventsAsync(sourceId, [element.AggregateId]).toPromise();
       }
     });
   }
@@ -100,7 +100,7 @@ describe('Occupation API service', () => {
     it('should get events after Occupation query', async (done) => {
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           propogateEvent(res);
         }
       );
@@ -128,7 +128,7 @@ describe('Occupation API service', () => {
       const newEntry = createOccupationEntry();
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           propogateEvent(res);
       });
 
@@ -170,7 +170,7 @@ describe('Occupation API service', () => {
 
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           propogateEvent(res);
       });
 
@@ -211,7 +211,7 @@ describe('Occupation API service', () => {
 
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           propogateEvent(res);
       });
 

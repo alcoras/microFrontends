@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import {
+  BackendToFrontendEvent,
   CoreEvent,
   EventIds,
   EventProxyLibService,
   MicroFrontendParts,
   ObserverSnapshotResult,
   ObserverSnapshowQuery,
-  ResponseStatus } from "event-proxy-lib-src";
-import { Observable } from "rxjs";
+  ValidationStatus } from "event-proxy-lib-src";
 import { EventBusService } from "./EventBusService";
 
 /**
@@ -23,7 +23,7 @@ export class ObserverAPI {
     private eventProxyService: EventProxyLibService,
     private eventBusService: EventBusService) { }
 
-  public ResetSnapshot(): Observable<ResponseStatus> {
+  public ResetSnapshot(): Promise<ValidationStatus<BackendToFrontendEvent>> {
     class Temp extends CoreEvent {}
     const event: Temp = new Temp();
     event.SourceId = this.sourceInfo.SourceId;
@@ -31,32 +31,28 @@ export class ObserverAPI {
 
     event.EventId = EventIds.ObserverSnapshotReset;
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
-  public RequestSnapshot(): Promise<ObserverSnapshotResult> {
-    return new Promise<ObserverSnapshotResult>(
-      (resolve, reject) => {
-        this.requestSnapshot().toPromise().then((response: ResponseStatus) => {
-          if (response.Failed)
-            reject('Failed to retrieve data');
+  public async RequestSnapshotAsync(): Promise<ValidationStatus<ObserverSnapshotResult>> {
+    const request = await this.requestSnapshotAsync();
 
-          const uniqueId = response.HttpResult.body.Ids[0];
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-          this.eventBusService.EventBus.subscribe((data: ObserverSnapshotResult) => {
-            if (data.ParentId === uniqueId)
-              resolve(data);
-          });
+    const uniqueId = request.Result.Ids[0];
 
-        });
-      }
-    );
+    const responsePromise = new Promise<ObserverSnapshotResult>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: ObserverSnapshotResult) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
-  private requestSnapshot(): Observable<ResponseStatus> {
-    const e = new ObserverSnapshowQuery(this.sourceInfo.SourceId);
-    e.SourceName = this.sourceInfo.SourceName;
+  private requestSnapshotAsync(): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const e = new ObserverSnapshowQuery(this.sourceInfo);
     e.SubscribeToChildren = true;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 }

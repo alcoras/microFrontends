@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   EventProxyLibService,
   CoreEvent,
-  ResponseStatus,
+  ValidationStatus,
   IMicroFrontend,
   MicroFrontendInfo,
   MicroFrontendParts,
@@ -28,12 +28,12 @@ export class MenuService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
           this.ParseNewEventAsync(response.HttpResult.body.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (error: ValidationStatus) => {
         this.eventProxyService.EndListeningToBackend();
         throw new Error(error.Error);
       }
@@ -48,7 +48,7 @@ export class MenuService implements IMicroFrontend {
        */
       if (element.EventId === EventIds.InitMenu) {
         this.putToElement('menu-team', '<menu-team></menu-team>');
-        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       } else {
         throw new Error('Event not implemented.');
       }

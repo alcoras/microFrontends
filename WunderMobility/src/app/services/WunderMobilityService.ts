@@ -4,7 +4,7 @@ import {
   EventProxyLibService,
   SubscibeToEvent,
   CoreEvent,
-  ResponseStatus,
+  ValidationStatus,
   EventIds,
   IMicroFrontend,
   EventButtonPressed,
@@ -41,12 +41,12 @@ export class WunderMobilityService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
           this.ParseNewEventAsync(response.HttpResult.body.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (error: ValidationStatus) => {
         this.eventProxyService.EndListeningToBackend();
         throw new Error(error.Error);
       }
@@ -59,7 +59,7 @@ export class WunderMobilityService implements IMicroFrontend {
       switch (element.EventId) {
         case EventIds.WunderMobilityButtonPressed:
             if (this.processButtonPressed(element)) {
-              await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+              await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
             } else {
               console.error(element);
               throw new Error('Did not proccess after processButtonPressed');
@@ -67,10 +67,10 @@ export class WunderMobilityService implements IMicroFrontend {
             break;
         case EventIds.TestWunderMobilityProductsQueryResults:
         case EventIds.TestWunderMobilityCheckoutResults:
-          await this.eventProxyService.ConfirmEvents(
+          await this.eventProxyService.ConfirmEventsAsync(
             this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
 
-          await this.eventProxyService.DispatchEvent(
+          await this.eventProxyService.DispatchEventAsync(
             new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
 
           this.eventBus.EventBus.next(element);

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { MaterialsData, MaterialsReceiptsMaterialsReadListResults } from "event-proxy-lib-src";
+import { MaterialsData } from "event-proxy-lib-src";
 import { LazyLoadEvent } from "primeng/api";
 import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
 
@@ -20,30 +20,29 @@ import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
       this.Loading = true;
   }
 
-  public LazyLoad(event: LazyLoadEvent): void {
+  public async LazyLoad(event: LazyLoadEvent): Promise<void> {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    this.queryMaterials(page, limit);
+    await this.queryMaterialsAsync(page, limit);
   }
 
-  public RefreshTable(): void {
-    this.queryMaterials();
+  public async RefreshTable(): Promise<void> {
+    await this.queryMaterialsAsync();
   }
 
   public DeleteMaterial(): void {
     console.log('gg');
   }
 
-  private queryMaterials(page = 1, limit = 30): void {
+  private async queryMaterialsAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
-    this.materialsReceiptsAPI.MaterialsQuery(null, null, page, limit)
-    .then( (data: MaterialsReceiptsMaterialsReadListResults) => {
-      this.Data = data.MaterialsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    const response = await this.materialsReceiptsAPI.MaterialsQueryAsync(null, null, page, limit);
+
+    this.Data = response.Result.MaterialsDataList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

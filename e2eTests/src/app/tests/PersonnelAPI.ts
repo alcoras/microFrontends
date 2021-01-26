@@ -5,7 +5,7 @@ import {
   EventProxyLibService,
   PersonData,
   PersonDataRead,
-  ResponseStatus } from 'event-proxy-lib-src';
+  ValidationStatus } from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, genRandomNumber } from './Adds/helpers';
 import { PersonnelAPIService } from 'personnel-uf/services/PersonnelAPI.service';
 import { EventBusService } from 'personnel-uf/services/EventBus.service';
@@ -40,26 +40,26 @@ describe('PersonnelAPI service', () => {
     eventBusService = TestBed.inject(EventBusService);
     eProxyService.ApiGatewayURL = backendURL;
 
-    await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   afterEach(async () => {
     eProxyService.EndListeningToBackend();
-    await eProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   /**
    * sends events to event bus
    * @param res response to propogate
    */
-  function propogateEvent(res: ResponseStatus): void {
+  function propogateEvent(res: ValidationStatus): void {
 
     if (!res.HttpResult.body) return;
 
     res.HttpResult.body.Events.forEach(element => {
       if (element.EventId === EventIds.ReadPersonData) {
         console.log(element);
-        eProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+        eProxyService.ConfirmEventsAsync(sourceId, [element.AggregateId]).toPromise();
         eventBusService.EventBus.next(element);
       }
     });
@@ -90,7 +90,7 @@ describe('PersonnelAPI service', () => {
 
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res));
+        (res: ValidationStatus) => propogateEvent(res));
 
       // Get entry
       let entryToUpdate: PersonData;
@@ -132,7 +132,7 @@ describe('PersonnelAPI service', () => {
 
     // 2. Start listenting to events
     eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-      (res: ResponseStatus) => {
+      (res: ValidationStatus) => {
         propogateEvent(res);
     });
 
@@ -173,7 +173,7 @@ describe('PersonnelAPI service', () => {
 
       // Start listenting to events
       eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           propogateEvent(res);
         },
         (err) => { done.fail(err); },
@@ -208,7 +208,7 @@ describe('PersonnelAPI service', () => {
   it('should get events after ReadPersonDataQuery', async (done) => {
     // Start listenting to events
     eProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-      (res: ResponseStatus) => {
+      (res: ValidationStatus) => {
         propogateEvent(res);
     });
 

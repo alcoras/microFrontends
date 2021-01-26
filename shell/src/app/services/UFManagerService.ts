@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   EventProxyLibService,
   EnvironmentService,
-  ResponseStatus,
+  ValidationStatus,
   SubscibeToEvent,
   CoreEvent,
   RequestToLoadScripts,
@@ -59,7 +59,7 @@ export class UFManagerService {
     // We confirm all events because otherwise upon errors from other microservices, we start to accumulate
     // unconfirmed events, because shell subscribe to them aswell
     // It's fine because no one should call shell, as it's an entry point
-    await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [], true).toPromise().then(
+    await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [], true).toPromise().then(
       () => { console.log(`${this.SourceInfo.SourceName} events are preconfirmed`)},
       () => { throw new Error('Failed to confirm events'); }
     );
@@ -100,12 +100,12 @@ export class UFManagerService {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ResponseStatus) => {
+      (response: ValidationStatus) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
           this.parseNewEventAsync(response.HttpResult.body.Events);
         }
       },
-      (error: ResponseStatus) => {
+      (error: ValidationStatus) => {
         this.eventProxyService.EndListeningToBackend();
         throw new Error(error.Error);
       }
@@ -144,18 +144,18 @@ export class UFManagerService {
    * Sends event to backend to init Menu
    * @returns Promise
    */
-  private preloadMenuMicroFrontend(): Promise<ResponseStatus> {
+  private preloadMenuMicroFrontend(): Promise<ValidationStatus> {
     const e = new InitializeMenuEvent(this.SourceInfo.SourceId);
     e.SourceName = this.SourceInfo.SourceName;
 
-    return this.eventProxyService.DispatchEvent(e).toPromise();
+    return this.eventProxyService.DispatchEventAsync(e).toPromise();
   }
 
   /**
    * Subscribes to events which this micro frontend is responsible for
    * @returns Promise
    */
-  private subscribeToEventsAsync(): Promise<ResponseStatus> {
+  private subscribeToEventsAsync(): Promise<ValidationStatus> {
     const e = new SubscibeToEvent(this.SourceInfo.SourceId, [
       [EventIds.LoadedResource, 0, 0],
       [EventIds.RequestToLoadScript, 0, 0],
@@ -163,7 +163,7 @@ export class UFManagerService {
       [EventIds.InitMenu, 0, 0],
     ]);
     e.SourceName = this.SourceInfo.SourceName;
-    return this.eventProxyService.DispatchEvent(e).toPromise();
+    return this.eventProxyService.DispatchEventAsync(e).toPromise();
   }
 
   /**
@@ -187,19 +187,19 @@ export class UFManagerService {
           if (Object.prototype.hasOwnProperty.call(ufConfigs, config)
             && ufConfigs[config].events.includes(el.ResourceEventId)) {
             this.resources[+config] = true;
-            await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+            await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           }
         }
       }
       else if (element.EventId === EventIds.RequestToLoadScript) {
         const event: RequestToLoadScripts = element as RequestToLoadScripts;
         this.loadResourcesEvent(event);
-        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
       else if (element.EventId === EventIds.LanguageChange) {
         const event: LanguageChange = element as LanguageChange;
         this.changeLanguageEvent(event);
-        await this.eventProxyService.ConfirmEvents(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
       }
       else {
         for (const config in ufConfigs) {
@@ -212,7 +212,7 @@ export class UFManagerService {
 
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
-            await this.eventProxyService.ConfirmEvents(
+            await this.eventProxyService.ConfirmEventsAsync(
               this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
           }
         }
@@ -242,7 +242,7 @@ export class UFManagerService {
    * can load them if they're not yet laoded
    * @returns Promise
    */
-  private subscribeMicroFrontends(): Promise<ResponseStatus> {
+  private subscribeMicroFrontends(): Promise<ValidationStatus> {
 
     const subscribeEventsList: SubscibeToEvent[] = [];
 
@@ -259,16 +259,16 @@ export class UFManagerService {
         let event = new SubscibeToEvent(key, subList);
         event.SourceName = MicroFrontendParts.GetSourceNameFromSourceID(event.SourceId);
         subscribeEventsList.push(event);
-        // promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
+        // promises.push(this.eventProxyService.DispatchEventAsync(event).toPromise());
 
         // Subscribe to them for loading
         event = new SubscibeToEvent(this.SourceInfo.SourceId, subList);
         event.SourceName = this.SourceInfo.SourceName;
         subscribeEventsList.push(event);
-        // promises.push(this.eventProxyService.DispatchEvent(event).toPromise());
+        // promises.push(this.eventProxyService.DispatchEventAsync(event).toPromise());
       }
     }
-    const promise = this.eventProxyService.DispatchEvent(subscribeEventsList).toPromise();
+    const promise = this.eventProxyService.DispatchEventAsync(subscribeEventsList).toPromise();
     return Promise.resolve(promise);
   }
 }

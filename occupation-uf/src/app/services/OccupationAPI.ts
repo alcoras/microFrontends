@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import {
   EventProxyLibService,
-  ResponseStatus,
+  ValidationStatus,
   MicroFrontendParts,
   OccupationCreateUpdateFlag,
   OccupationData,
@@ -34,9 +34,9 @@ export class OccupationAPIService {
    * @param id Occupation to remove by
    * @returns Promise
    */
-  public Delete(id: number): Promise<ResponseStatus> {
+  public Delete(id: number): Promise<ValidationStatus> {
     return new Promise( (resolve, reject) => {
-      this.delete(id).toPromise().then( (val: ResponseStatus) => {
+      this.delete(id).toPromise().then( (val: ValidationStatus) => {
         if (!val.Failed) {
           resolve(val);
         } else {
@@ -51,10 +51,10 @@ export class OccupationAPIService {
    * @param occupationData new OccupationData
    * @returns Promise
    */
-  public Create(occupationData: OccupationData): Promise<ResponseStatus> {
+  public Create(occupationData: OccupationData): Promise<ValidationStatus> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(occupationData).toPromise().then( (val: ResponseStatus) => {
+      this.create(occupationData).toPromise().then( (val: ValidationStatus) => {
         if (!val.Failed) {
           resolve(val);
         } else {
@@ -69,10 +69,10 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Promise
    */
-  public Update(occupationData: OccupationData): Promise<ResponseStatus> {
+  public Update(occupationData: OccupationData): Promise<ValidationStatus> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(occupationData).toPromise().then( (val: ResponseStatus) => {
+      this.update(occupationData).toPromise().then( (val: ValidationStatus) => {
         if (!val.Failed) {
           resolve(val);
         } else {
@@ -95,7 +95,7 @@ export class OccupationAPIService {
       (resolve, reject) => {
         this.get(page, pageSize)
           .toPromise()
-          .then( (response: ResponseStatus) => {
+          .then( (response: ValidationStatus) => {
             if (response.Failed) {
               reject('Failed to retrieve data');
             }
@@ -122,11 +122,11 @@ export class OccupationAPIService {
    * @param pageSize entries' limit
    * @returns Observable with Http response
    */
-  private get(page: number, pageSize: number): Observable<ResponseStatus> {
+  private get(page: number, pageSize: number): Observable<ValidationStatus> {
     const e = new OccupationsReadQuery(this.sourceInfo.SourceId, new Date().toISOString(), page, pageSize);
     e.SourceName = this.sourceInfo.SourceName;
     e.SubscribeToChildren = true;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -134,7 +134,7 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Observable with HttpResponse
    */
-  private update(occupationData: OccupationData): Observable<ResponseStatus> {
+  private update(occupationData: OccupationData): Observable<ValidationStatus> {
     const e = new OccupationsCreateUpdate(
       this.sourceInfo.SourceId,
       OccupationCreateUpdateFlag.Update,
@@ -142,7 +142,7 @@ export class OccupationAPIService {
       occupationData);
 
     e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -150,7 +150,7 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Observable with HttpResponse
    */
-  private create(occupationData: OccupationData): Observable<ResponseStatus> {
+  private create(occupationData: OccupationData): Observable<ValidationStatus> {
     occupationData.DocReestratorId = 1; // TODO: for Demo purpose
     const e = new OccupationsCreateUpdate(
       this.sourceInfo.SourceId,
@@ -159,7 +159,7 @@ export class OccupationAPIService {
       occupationData);
 
     e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -167,9 +167,9 @@ export class OccupationAPIService {
    * @param id Occupation id to remove
    * @returns Observable with HttpResponse
    */
-  private delete(id: number): Observable<ResponseStatus> {
+  private delete(id: number): Observable<ValidationStatus> {
     const e = new OccupationsDeleteEvent(this.sourceInfo.SourceId, id);
     e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 }

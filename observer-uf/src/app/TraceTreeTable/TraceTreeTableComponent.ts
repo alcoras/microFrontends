@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ObserverEventDataForTracing, ObserverEventNode, ObserverSnapshotResult } from "event-proxy-lib-src";
+import { ObserverEventDataForTracing, ObserverEventNode } from "event-proxy-lib-src";
 import { LazyLoadEvent, TreeNode } from "primeng/api";
 import { ObserverAPI } from "../services/ObserverAPI";
 
@@ -30,17 +30,17 @@ import { ObserverAPI } from "../services/ObserverAPI";
   public constructor(private observerService: ObserverAPI) {}
 
   public ResetSnapshot(): void {
-    this.observerService.ResetSnapshot().toPromise().then(
+    this.observerService.ResetSnapshot().then(
       () => this.RefreshTable()
     );
   }
 
-  public RefreshTable(): void {
-    this.requestSnapshotAndPopulateData();
+  public async RefreshTable(): Promise<void> {
+    await this.requestSnapshotAndPopulateDataAsync();
   }
 
-  public LoadDataLazy(event: LazyLoadEvent): void {
-    this.requestSnapshotAndPopulateData();
+  public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
+    await this.requestSnapshotAndPopulateDataAsync();
   }
 
   public ShowJSONData(data: ObserverEventDataForTracing): void {
@@ -48,21 +48,22 @@ import { ObserverAPI } from "../services/ObserverAPI";
     this.DisplayJsonBodyForm = true;
   }
 
-  private requestSnapshotAndPopulateData(): void {
+  private async requestSnapshotAndPopulateDataAsync(): Promise<void> {
     this.Loading = true;
 
-    const response = this.observerService.RequestSnapshot();
+    const response = await this.observerService.RequestSnapshotAsync();
 
-    response.then( (data: ObserverSnapshotResult) => {
-
-      console.log(data);
-
-      const temp: TreeNode<ObserverEventDataForTracing>[] = [];
-      this.convertToTreeNode(data.EventNode, temp);
-      this.Data = temp[0].children;
-
+    if (response.HasErrors()) {
+      console.warn(response.ErrorList.toString());
       this.Loading = false;
-    });
+      return;
+    }
+
+    const temp: TreeNode<ObserverEventDataForTracing>[] = [];
+    this.convertToTreeNode(response.Result.EventNode, temp);
+    this.Data = temp[0].children;
+
+    this.Loading = false;
   }
 
   private convertToTreeNode(eventNode: ObserverEventNode, prev: TreeNode<ObserverEventDataForTracing>[]): void {

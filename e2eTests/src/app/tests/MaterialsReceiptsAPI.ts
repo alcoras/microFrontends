@@ -8,7 +8,7 @@ import {
   MaterialsReceiptsReadListResults,
   MaterialsReceiptsScanTableReadListResults,
   MaterialsReceiptsTablePartReadListResults,
-  ResponseStatus,
+  ValidationStatus,
   ScanTableData} from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, delay, genRandomNumber } from './Adds/helpers';
 import { MaterialsReceiptsAPI } from 'materialsReceipts-uf/services/MaterialsReceiptsAPI';
@@ -80,14 +80,14 @@ fdescribe('MaterialsReceipts API service', () => {
     eventBusService = TestBed.inject(EventBusService);
     eventProxyService.ApiGatewayURL = backendURL;
 
-    await eventProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eventProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   /**
    * sends events to event bus
    * @param res response to propogate
    */
-  function propogateEvent(res: ResponseStatus): void {
+  function propogateEvent(res: ValidationStatus): void {
 
     // ignoring empty responses
     if (!res.HttpResult.body) return;
@@ -95,14 +95,14 @@ fdescribe('MaterialsReceipts API service', () => {
     res.HttpResult.body.Events.forEach(element => {
       if (readingResultIds.includes(element.EventId)) {
         eventBusService.EventBus.next(element);
-        eventProxyService.ConfirmEvents(sourceId, [element.AggregateId]).toPromise();
+        eventProxyService.ConfirmEventsAsync(sourceId, [element.AggregateId]).toPromise();
       }
     });
   }
 
   afterEach(async () => {
     eventProxyService.EndListeningToBackend();
-    await eventProxyService.ConfirmEvents(sourceId, [], true).toPromise();
+    await eventProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
   });
 
   it('test service creation', () => {
@@ -116,7 +116,7 @@ fdescribe('MaterialsReceipts API service', () => {
     it('Getting some data', async (done) => {
       // Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res)
+        (res: ValidationStatus) => propogateEvent(res)
       );
 
       // Sending query
@@ -146,7 +146,7 @@ fdescribe('MaterialsReceipts API service', () => {
     it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async (done) => {
       // Start listening to events
         eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res)
+        (res: ValidationStatus) => propogateEvent(res)
       );
 
       // adding new scan
@@ -200,7 +200,7 @@ fdescribe('MaterialsReceipts API service', () => {
     it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async (done) => {
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res)
+        (res: ValidationStatus) => propogateEvent(res)
       );
 
       // Sending query
@@ -237,7 +237,7 @@ fdescribe('MaterialsReceipts API service', () => {
 
       // 2. Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ResponseStatus) => propogateEvent(res)
+        (res: ValidationStatus) => propogateEvent(res)
       );
 
       // 3. Sending query

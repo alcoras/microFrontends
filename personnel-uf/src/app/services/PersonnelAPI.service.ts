@@ -12,7 +12,7 @@ import {
   PersonDataRead,
   ReadPersonDataQuery,
   RemoveEnterpisePersonData,
-  ResponseStatus } from 'event-proxy-lib-src';
+  ValidationStatus } from 'event-proxy-lib-src';
 
 /**
  * Personnel API service for CRUD operations
@@ -43,7 +43,7 @@ export class PersonnelAPIService {
    */
   public Delete(personDataId: number): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
-      this.delete(personDataId).toPromise().then( (val: ResponseStatus) => {
+      this.delete(personDataId).toPromise().then( (val: ValidationStatus) => {
         if (val.HttpResult.status === 200) {
           resolve(val.HttpResult);
         } else {
@@ -61,7 +61,7 @@ export class PersonnelAPIService {
   public Create(personnel: PersonData): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.create(personnel).toPromise().then( (val: ResponseStatus) => {
+      this.create(personnel).toPromise().then( (val: ValidationStatus) => {
         if (val.HttpResult.status === 200) {
           resolve(val.HttpResult);
         } else {
@@ -79,7 +79,7 @@ export class PersonnelAPIService {
   public Update(personnel: PersonData): Promise<HttpResponse<BackendToFrontendEvent>> {
     return new Promise( (resolve, reject) => {
       // tslint:disable-next-line: no-identical-functions
-      this.update(personnel).toPromise().then( (val: ResponseStatus) => {
+      this.update(personnel).toPromise().then( (val: ValidationStatus) => {
         if (val.HttpResult.status === 200) {
           resolve(val.HttpResult);
         } else {
@@ -105,7 +105,7 @@ export class PersonnelAPIService {
     return new Promise<PersonDataRead>((resolve) => {
         this.get(multiSorting, page, pageSize)
         .toPromise()
-        .then( (response: ResponseStatus) => {
+        .then( (response: ValidationStatus) => {
           if (response.HttpResult.status !== 200) {
             return new Error('Failed to retrieve data');
           }
@@ -132,11 +132,11 @@ export class PersonnelAPIService {
    * @param pageSize page size
    * @returns Observable with HttpResponse
    */
-  private get(multiSorting: string[], page: number, pageSize: number): Observable<ResponseStatus> {
+  private get(multiSorting: string[], page: number, pageSize: number): Observable<ValidationStatus> {
     const e = new ReadPersonDataQuery(this.sourceId, multiSorting, page, pageSize);
     e.SourceName = this.sourceName;
     e.SubscribeToChildren = true;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -144,13 +144,13 @@ export class PersonnelAPIService {
    * @param personnel PersonData
    * @returns Observable with HttpResponse
    */
-  private update(personnel: PersonData): Observable<ResponseStatus> {
+  private update(personnel: PersonData): Observable<ValidationStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Update,
       personnel);
     e.SourceName = this.sourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -158,13 +158,13 @@ export class PersonnelAPIService {
    * @param personnel PersonData
    * @returns Observable with HttpResponse
    */
-  private create(personnel: PersonData): Observable<ResponseStatus> {
+  private create(personnel: PersonData): Observable<ValidationStatus> {
     const e = new CreateUpdatePersonData(
       this.sourceId,
       PersonDataCreateUpdateFlag.Create,
       personnel);
     e.SourceName = this.sourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -172,9 +172,9 @@ export class PersonnelAPIService {
    * @param personDataId PersonDataId to remove
    * @returns Observable with HttpResponse
    */
-  private delete(personDataId: number): Observable<ResponseStatus> {
+  private delete(personDataId: number): Observable<ValidationStatus> {
     const e = new RemoveEnterpisePersonData(this.sourceName, personDataId);
     e.SourceName = this.sourceName;
-    return this.eventProxyService.DispatchEvent(e);
+    return this.eventProxyService.DispatchEventAsync(e);
   }
 }

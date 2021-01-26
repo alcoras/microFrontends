@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { MaterialsReceiptsAPI  } from '../../services/MaterialsReceiptsAPI';
 import { EventBusService } from '../../services/EventBusService';
-import { MaterialsList, MaterialsReceiptsReadListResults } from 'event-proxy-lib-src';
+import { MaterialsList } from 'event-proxy-lib-src';
 import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
 import { ReadListQueryParams } from '@shared/Adds/ReadListQueryParams';
 
@@ -103,7 +103,7 @@ export class MaterialsReceiptsListComponent {
     this.eventBus.MaterialReceiptSelected(eventData);
   }
 
-  public RefreshTable(): void {
+  public async RefreshTable(): Promise<void> {
     this.Loading = true;
 
     const queryParams = new ReadListQueryParams();
@@ -122,23 +122,15 @@ export class MaterialsReceiptsListComponent {
     else if (this.SelectedCategory.name == Categories.Unsigned)
       queryParams.Signed = false;
 
-    const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
+    const res = await this.materialsReceiptsAPI.MaterialsReceiptsListQueryAsync(queryParams);
 
-    res.then( (data: MaterialsReceiptsReadListResults) => {
-      this.MaterialsListData = data.MaterialsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    this.MaterialsListData = res.Result.MaterialsDataList;
+    this.TotalRecords = res.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 
-  public LoadDataLazy(event: LazyLoadEvent): void {
+  public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
     this.Loading = true;
-
-    //event.first = First row offset
-    //event.rows = Number of rows per page
-    //event.sortField = Field name to sort with
-    //event.sortOrder = Sort order as number, 1 for asc and -1 for dec
-    //filters: FilterMetadata object having field as key and filter value, filter matchMode as value
 
     const queryParams = new ReadListQueryParams();
     queryParams.Page = event.first/event.rows + 1;
@@ -147,12 +139,10 @@ export class MaterialsReceiptsListComponent {
     this.currentPage = queryParams.Page;
     this.currentLimit = event.rows;
 
-    const res = this.materialsReceiptsAPI.MaterialsReceiptsListQuery(queryParams);
+    const res = await this.materialsReceiptsAPI.MaterialsReceiptsListQueryAsync(queryParams);
 
-    res.then( (data: MaterialsReceiptsReadListResults) => {
-      this.MaterialsListData = data.MaterialsDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    this.MaterialsListData = res.Result.MaterialsDataList;
+    this.TotalRecords = res.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

@@ -19,10 +19,11 @@ import {
   MaterialsReceiptsTablePartReadListQuery,
   MaterialsReceiptsTablePartReadListResults,
   MicroFrontendParts,
-  ResponseStatus,
-  ScanTableData
+  ValidationStatus,
+  ScanTableData,
+  BackendToFrontendEvent,
+  CoreEvent
 } from 'event-proxy-lib-src';
-import { Observable } from 'rxjs';
 import { EventBusService } from './EventBusService';
 import { ReadListQueryParams } from '../Adds/ReadListQueryParams';
 import { ScanTableQueryParams } from '../Adds/ScanTableQueryParams';
@@ -44,34 +45,13 @@ export class MaterialsReceiptsAPI {
    * @param limit limit
    * @returns Http Response
    */
-  public MaterialsReceiptsTableQuery(
-    materialsReceiptId?: number,
-    page?: number,
-    limit?: number): Promise<MaterialsReceiptsTablePartReadListResults> {
-      if (page < 1 || limit < 1) {
-        throw new Error('page or pagesize is less than 1');
-      }
+  public async MaterialsReceiptsTableQueryAsync(materialsReceiptId?: number, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsTablePartReadListResults>> {
+    const event = new MaterialsReceiptsTablePartReadListQuery(
+      this.sourceInfo, materialsReceiptId, page, limit);
+    event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-      return new Promise<MaterialsReceiptsTablePartReadListResults>((resolve, reject) => {
-
-        this.materialsReceiptsTableQuery(materialsReceiptId, page, limit)
-        .toPromise()
-        .then( (responseStatus: ResponseStatus) => {
-          if (responseStatus.Failed) {
-            reject('Failed to retrieve data');
-          }
-
-          const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-          this.eventBusService.EventBus.subscribe(
-            async (data: MaterialsReceiptsTablePartReadListResults) => {
-              if (data.ParentId === uniqueId) resolve(data);
-            }
-          );
-
-          });
-        }
-      );
+    return this.waitForResults<MaterialsReceiptsTablePartReadListResults>(request);
   }
 
   /**
@@ -79,130 +59,129 @@ export class MaterialsReceiptsAPI {
    * @param data new location data
    * @returns ReponseStatus
    */
-  public LocationCreate(data: LocationsData): Observable<ResponseStatus> {
+  public LocationCreateAsync(data: LocationsData): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new MaterialsReceiptsLocationsAddRemove(
       this.sourceInfo,
       data,
       MaterialsReceiptsLocationsAddRemoveFlag.Create);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
    * Creates new material scan
    * @param data MaterialsReceiptsScanTable
-   * @returns ResponseStatus
+   * @returns ValidationStatus
    */
-  public ScanTableCreate(data: ScanTableData): Observable<ResponseStatus> {
+  public ScanTableCreateAsync(data: ScanTableData): Promise<ValidationStatus<BackendToFrontendEvent>> {
 
     const event = new MaterialsReceiptsScanTableAddRemove(
       this.sourceInfo,
       data,
       MaterialsReceiptsScanTableAddRemoveFlag.Create);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
    * Deletes location
    * @param locationData !
-   * @returns ResponseStatus
+   * @returns ValidationStatus
    */
-  public LocationDelete(locationData: LocationsData): Observable<ResponseStatus> {
+  public LocationDeleteAsync(locationData: LocationsData): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new MaterialsReceiptsLocationsAddRemove(
       this.sourceInfo,
       locationData,
       MaterialsReceiptsLocationsAddRemoveFlag.Delete);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
    * Deletes material scan
    * @param data MaterialsReceiptsScanTable
-   * @returns ResponseStatus
+   * @returns ValidationStatus
    */
-  public ScanTableDelete(data: ScanTableData): Observable<ResponseStatus> {
+  public ScanTableDeleteAsync(data: ScanTableData): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new MaterialsReceiptsScanTableAddRemove(
       this.sourceInfo,
       data,
       MaterialsReceiptsScanTableAddRemoveFlag.Delete);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
-  public MaterialsAtLocationQuery(
-    page: number,
-    limit: number,
-    materialsId?: number,
-    locationId?: number)
-    : Promise<MaterialsReceiptsMaterialsAtLocationsReadListResults> {
+  /**
+   *
+   * @param page !
+   * @param limit !
+   * @param materialsId !
+   * @param locationId !
+   * @returns ValidationStatus
+   */
+  public async MaterialsAtLocationQueryAsync(page: number, limit: number, materialsId?: number, locationId?: number): Promise<ValidationStatus<MaterialsReceiptsMaterialsAtLocationsReadListResults>> {
 
-    if (page < 1 || limit < 1) {
-      throw new Error('page or pagesize is less than 1');
-    }
+    const event = new MaterialsReceiptsMaterialsAtLocationsReadListQuery(
+      this.sourceInfo, materialsId, locationId, page, limit);
+    event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-    return new Promise<MaterialsReceiptsMaterialsAtLocationsReadListResults>((resolve, reject)=> {
-      this.materialsAtLocationsQuery(materialsId, locationId, page, limit)
-      .toPromise()
-      .then((responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject('Failed to retrieve data');
-
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-        this.eventBusService.EventBus.subscribe(
-          (data: MaterialsReceiptsMaterialsAtLocationsReadListResults) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          })
-      })
-    });
+    return this.waitForResults<MaterialsReceiptsMaterialsAtLocationsReadListResults>(request);
   }
 
-  public MaterialsQuery(materialId: number, barCode: string, page?: number, limit?: number)
-  : Promise<MaterialsReceiptsMaterialsReadListResults> {
-    if (page < 1 || limit < 1) {
-      throw new Error('page or pagesize is less than 1');
-    }
+  /**
+   * Query all materials
+   * @param materialId !
+   * @param barCode !
+   * @param page !
+   * @param limit !
+   * @returns ValidationStatus with MaterialsReceiptsMaterialsReadListResults
+   */
+  public async MaterialsQueryAsync(materialId: number, barCode: string, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsMaterialsReadListResults>> {
 
-    return new Promise<MaterialsReceiptsMaterialsReadListResults>((resolve, reject) => {
-      this.materialsQuery(materialId, barCode, page, limit)
-      .toPromise()
-      .then( (responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject('Failed to retrive data');
+    const event = new MaterialsReceiptsMaterialsReadListQuery(
+      this.sourceInfo, materialId, barCode, page, limit);
+    event.SubscribeToChildren = true;
 
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-        this.eventBusService.EventBus.subscribe(
-          (data: MaterialsReceiptsMaterialsReadListResults) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        );
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-      })
-    });
+    const uniqueId = request.Result.Ids[0];
+
+    const responsePromise = new Promise<MaterialsReceiptsMaterialsReadListResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: MaterialsReceiptsMaterialsReadListResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
-  public LocationsQuery(locationId: number, page: number, limit: number)
-  : Promise<MaterialsReceiptsLocationsReadListResults> {
-    if (page < 1 || limit < 1) {
-      throw new Error('page or pagesize is less than 1');
-    }
+  /**
+   * Query locations
+   * @param locationId location id
+   * @param page !
+   * @param limit !
+   * @returns ValidationStatus with MaterialsReceiptsLocationsReadListResults if čiki-piki
+   */
+  public async LocationsQueryAsync(locationId: number, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsLocationsReadListResults>> {
+    const event = new MaterialsReceiptsLocationsReadListQuery(
+      this.sourceInfo, locationId, page, limit);
+    event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-    return new Promise<MaterialsReceiptsLocationsReadListResults>((resolve, reject) => {
-      this.locationsQuery(locationId, page, limit).toPromise()
-      .then((responseStatus: ResponseStatus) => {
-        if (responseStatus.Failed) reject('Failed to retrive data');
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+    const uniqueId = request.Result.Ids[0];
 
-        this.eventBusService.EventBus.subscribe(
-          (data: MaterialsReceiptsLocationsReadListResults) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        );
+    const responsePromise = new Promise<MaterialsReceiptsLocationsReadListResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: MaterialsReceiptsLocationsReadListResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
 
-      })
-    });
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
   /**
@@ -210,111 +189,7 @@ export class MaterialsReceiptsAPI {
    * @param queryParams scan table query params
    * @returns Promise with MaterialsReceiptsScanTableReadListResults
    */
-  public ScanTableQuery(queryParams: ScanTableQueryParams)
-  : Promise<MaterialsReceiptsScanTableReadListResults> {
-
-      if (queryParams.Page < 1 || queryParams.Limit < 1) {
-        throw new Error('page or pagesize is less than 1');
-      }
-
-      return new Promise<MaterialsReceiptsScanTableReadListResults>((resolve, reject) => {
-        const getResponse = this.scanTableQuery(queryParams).toPromise();
-
-        getResponse.then( (responseStatus: ResponseStatus) => {
-          if (responseStatus.Failed) reject('Failed to retrieve data');
-
-          const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-          this.eventBusService.EventBus.subscribe(
-            (data: MaterialsReceiptsScanTableReadListResults) => {
-              if (data.ParentId === uniqueId)
-                resolve(data);
-            }
-          );
-
-        })
-      });
-  }
-
-  /**
-   * Queries Material Receipt List
-   * @param queryParams Query Class params
-   * @returns Http Response
-   */
-  public MaterialsReceiptsListQuery(queryParams: ReadListQueryParams): Promise<MaterialsReceiptsReadListResults> {
-    if (queryParams.Page < 1 || queryParams.Limit < 1) {
-      throw new Error('page or pagesize is less than 1');
-    }
-
-    return new Promise<MaterialsReceiptsReadListResults>((resolve, reject) => {
-
-        const getResponse = this.materialsReceiptsListQuery(queryParams).toPromise();
-
-        getResponse.then( (responseStatus: ResponseStatus) => {
-          if (responseStatus.Failed) {
-            reject('Failed to retrieve data');
-          }
-
-          const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-          this.eventBusService.EventBus.subscribe(
-            async (data: MaterialsReceiptsReadListResults) => {
-              if (data.ParentId === uniqueId) resolve(data);
-            });
-
-        });
-      }
-    );
-  }
-
-  /**
-   * Gets Material Receipt List
-   * @param queryParams Query Class params
-   * @returns Http Response
-   */
-  private materialsReceiptsListQuery(queryParams: ReadListQueryParams)
-    : Observable<ResponseStatus> {
-
-    const event = new MaterialsReceiptsReadListQuery(
-      this.sourceInfo,
-      queryParams.DateFrom,
-      queryParams.DateUntil,
-      queryParams.Signed,
-      queryParams.Page,
-      queryParams.Limit);
-
-    event.SubscribeToChildren = true;
-
-    return this.eventProxyService.DispatchEvent(event);
-  }
-
-  /**
-   * Get material receipt associated list of entries
-   * @param materialsReceiptId material receipt id
-   * @param page page
-   * @param limit limit
-   * @returns ResponseStatus
-   */
-  private materialsReceiptsTableQuery(
-    materialsReceiptId?: number,
-    page?: number,
-    limit?: number): Observable<ResponseStatus> {
-
-    const event = new MaterialsReceiptsTablePartReadListQuery(
-      this.sourceInfo, materialsReceiptId, page, limit);
-
-    event.SubscribeToChildren = true;
-
-    return this.eventProxyService.DispatchEvent(event);
-  }
-
-  /**
-   * Queries scan table
-   * @param queryParams query parameteres
-   * @returns ResponseStatus
-   */
-  private scanTableQuery(queryParams: ScanTableQueryParams): Observable<ResponseStatus> {
-
+  public async ScanTableQueryAsync(queryParams: ScanTableQueryParams): Promise<ValidationStatus<MaterialsReceiptsScanTableReadListResults>> {
     const event = new MaterialsReceiptsScanTableReadListQuery(
       this.sourceInfo,
       queryParams.ScanTableId,
@@ -323,64 +198,68 @@ export class MaterialsReceiptsAPI {
       queryParams.MaterialReceiptsTableId,
       queryParams.Page,
       queryParams.Limit);
-
     event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-    return this.eventProxyService.DispatchEvent(event);
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
+
+    const uniqueId = request.Result.Ids[0];
+
+    const responsePromise = new Promise<MaterialsReceiptsScanTableReadListResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: MaterialsReceiptsScanTableReadListResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
   /**
-   * Queries location
-   * @param locationsId location id
-   * @param page !
-   * @param limit !
-   * @returns ResponseStatus
+   * Queries Material Receipt List
+   * @param queryParams Query Class params
+   * @returns Http Response
    */
-  private locationsQuery(locationsId?: number, page?: number, limit?: number): Observable<ResponseStatus> {
-    const event = new MaterialsReceiptsLocationsReadListQuery(
-      this.sourceInfo, locationsId, page, limit);
-
+  public async MaterialsReceiptsListQueryAsync(queryParams: ReadListQueryParams): Promise<ValidationStatus<MaterialsReceiptsReadListResults>> {
+    const event = new MaterialsReceiptsReadListQuery(
+      this.sourceInfo,
+      queryParams.DateFrom,
+      queryParams.DateUntil,
+      queryParams.Signed,
+      queryParams.Page,
+      queryParams.Limit);
     event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-    return this.eventProxyService.DispatchEvent(event);
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
+
+    const uniqueId = request.Result.Ids[0];
+
+    const responsePromise = new Promise<MaterialsReceiptsReadListResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: MaterialsReceiptsReadListResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
   /**
-   * Queries materials
-   * @param materialsId !
-   * @param barCode !
-   * @param page !
-   * @param limit !
-   * @returns Observable of Response Status
+   * Experimental wrapper for requests, not sure if it's good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
+   * @param request request which returns id (currently only one)
+   * @returns Promise of ValidationStatus with T which is event that extends CoreEvent
    */
-  private materialsQuery(materialsId?: number, barCode?: string, page?: number, limit?: number)
-  : Observable<ResponseStatus> {
-    const event = new MaterialsReceiptsMaterialsReadListQuery(
-      this.sourceInfo, materialsId, barCode, page, limit);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async waitForResults<T extends CoreEvent>(request: ValidationStatus<BackendToFrontendEvent>): Promise<ValidationStatus<T>> {
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-    event.SubscribeToChildren = true;
+    const uniqueId = request.Result.Ids[0];
 
-    return this.eventProxyService.DispatchEvent(event);
-  }
+    const responsePromise = new Promise<T>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: CoreEvent) => {
+        if (data.ParentId === uniqueId) resolve(<T>data);
+      });
+    })
 
-  /**
-   * Queries materials at location
-   * @param materialsId !
-   * @param locationId !
-   * @param page !
-   * @param limit !
-   * @returns Observable of ResponseStatus
-   */
-  private materialsAtLocationsQuery(
-    materialsId?: number,
-    locationId?: number,
-    page?: number,
-    limit?: number): Observable<ResponseStatus> {
-    const event = new MaterialsReceiptsMaterialsAtLocationsReadListQuery(
-      this.sourceInfo, materialsId, locationId, page, limit);
-
-    event.SubscribeToChildren = true;
-
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 }

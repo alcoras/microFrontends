@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   EventProxyLibService,
   MicroFrontendParts,
-  ResponseStatus,
+  ValidationStatus,
   WunderMobilityDoCheckout,
   WunderMobilityDoCheckoutResults,
   WunderMobilityProduct,
@@ -34,7 +34,7 @@ import { EventBusService } from './EventBusService';
     return new Promise<WunderMobilityDoCheckoutResults>((resolve, reject) => {
       this.doCheckout(data)
       .toPromise()
-      .then((responseStatus: ResponseStatus) => {
+      .then((responseStatus: ValidationStatus) => {
         if (responseStatus.Failed) reject("Failed to retrieve data");
 
         const uniqueId = responseStatus.HttpResult.body.Ids[0];
@@ -51,24 +51,24 @@ import { EventBusService } from './EventBusService';
   /**
    * Create new product
    * @param data new product entry
-   * @returns Observable of ResponseStatus
+   * @returns Observable of ValidationStatus
    */
-  public ProductCreate(data: WunderMobilityProduct): Observable<ResponseStatus> {
+  public ProductCreate(data: WunderMobilityProduct): Observable<ValidationStatus> {
     const event = new WunderMobilityProductCreate(
       this.sourceInfo, data);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
    * Deletes products by ids
    * @param ids List of entries to delete
-   * @returns Observable of ResponseStatus
+   * @returns Observable of ValidationStatus
    */
-  public ProductDelete(ids: number[]): Observable<ResponseStatus> {
+  public ProductDelete(ids: number[]): Observable<ValidationStatus> {
     const event = new WunderMobilityProductDelete(this.sourceInfo, ids);
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
@@ -79,7 +79,7 @@ import { EventBusService } from './EventBusService';
     return new Promise<WunderMobilityProductQueryResults>((resolve, reject) => {
       this.productsQuery()
       .toPromise()
-      .then((responseStatus: ResponseStatus) => {
+      .then((responseStatus: ValidationStatus) => {
         if (responseStatus.Failed) reject("Failed to retrieve data");
 
         const uniqueId = responseStatus.HttpResult.body.Ids[0];
@@ -95,26 +95,26 @@ import { EventBusService } from './EventBusService';
 
   /**
    * Queries all products
-   * @returns Observable of ResponseStatus
+   * @returns Observable of ValidationStatus
    */
-  private productsQuery(): Observable<ResponseStatus> {
+  private productsQuery(): Observable<ValidationStatus> {
     const event = new WunderMobilityProductQuery(this.sourceInfo);
 
     event.SubscribeToChildren = true;
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
    * Sends data for checkout
    * @param data list of checkout items
-   * @returns Observable of ResponseStatus
+   * @returns Observable of ValidationStatus
    */
-  private doCheckout(data: WunderMobilityScannedProduct[]): Observable<ResponseStatus> {
+  private doCheckout(data: WunderMobilityScannedProduct[]): Observable<ValidationStatus> {
     const event = new WunderMobilityDoCheckout(this.sourceInfo, data);
 
     event.SubscribeToChildren = true;
 
-    return this.eventProxyService.DispatchEvent(event);
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 }

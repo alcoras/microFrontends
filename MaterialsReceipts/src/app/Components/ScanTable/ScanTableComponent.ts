@@ -44,7 +44,7 @@ export class ScanTableComponent {
 
     this.subscriptions.push(
       this.eventBus.OnMaterialReceiptSelected
-        .subscribe(() => this.requestMaterialsScanTableData()));
+        .subscribe(async () => await this.requestMaterialsScanTableDataAsync()));
   }
 
   public OnDestroy(): void {
@@ -53,8 +53,8 @@ export class ScanTableComponent {
     });
   }
 
-  public RefreshTable(): void {
-    this.requestMaterialsScanTableData();
+  public async RefreshTable(): Promise<void> {
+    await this.requestMaterialsScanTableDataAsync();
   }
 
   public AddNewScan(): void {
@@ -71,32 +71,32 @@ export class ScanTableComponent {
     });
   }
 
-  public DeleteScan(data: ScanTableData): void {
-    this.materialsReceiptsAPI.ScanTableDelete(data).toPromise();
-    this.requestMaterialsScanTableData();
+  public async DeleteScan(data: ScanTableData): Promise<void> {
+    await this.materialsReceiptsAPI.ScanTableDeleteAsync(data);
+    await this.requestMaterialsScanTableDataAsync();
   }
 
-  public LoadDataLazy(event: LazyLoadEvent): void {
+  public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
 
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    this.requestMaterialsScanTableData(page, limit);
+    await this.requestMaterialsScanTableDataAsync(page, limit);
   }
 
   private parseNewScans(scanTableData: ScanTableData[]): void {
     // 1. extract same bar codes
     // 2. check if we have a match
     for (let i = 0; i < scanTableData.length; i++) {
-      this.materialsReceiptsAPI.MaterialsQuery(null, scanTableData[i].BarCode).then(
-        (queryResult: MaterialsReceiptsMaterialsReadListResults) => {
-          console.log(queryResult);
-        }
-      )
+      // this.materialsReceiptsAPI.MaterialsQueryAsync(null, scanTableData[i].BarCode).then(
+      //   (queryResult: MaterialsReceiptsMaterialsReadListResults) => {
+      //     console.log(queryResult);
+      //   }
+      // )
     }
   }
 
-  private requestMaterialsScanTableData(page = 1, limit = 30): void {
+  private async requestMaterialsScanTableDataAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
     const data = this.eventBus.LastSelectedMaterialsReceiptData;
@@ -113,12 +113,10 @@ export class ScanTableComponent {
       Limit: limit
     };
 
-    this.materialsReceiptsAPI
-    .ScanTableQuery(queryParams)
-    .then( (data: MaterialsReceiptsScanTableReadListResults) => {
-      this.ScanTableData = data.ScanTableDataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    });
+    const response = await this.materialsReceiptsAPI.ScanTableQueryAsync(queryParams);
+
+    this.ScanTableData = response.Result.ScanTableDataList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+    this.Loading = false;
   }
 }

@@ -7,7 +7,7 @@ import { genRandomNumber, delay } from './Adds/helpers';
 import {
   EventProxyLibService,
   EventIds,
-  ResponseStatus,
+  ValidationStatus,
   OccupationData,
   OccupationsCreateUpdate,
   OccupationsReadResults
@@ -40,7 +40,7 @@ describe('Occupation API service', () => {
   describe('Delete', () => {
     it('testing response', (done) => {
       service.Delete(19).then(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           expect(res.HttpResult.status).toBe(200);
           done();
         },
@@ -68,7 +68,7 @@ describe('Occupation API service', () => {
 
     it('testing response', (done) => {
       service.Update(newOccupationData).then(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           expect(res.HttpResult.status).toBe(200);
           done();
         },
@@ -80,7 +80,7 @@ describe('Occupation API service', () => {
 
     it('testing content', (done) => {
       service.Update(newOccupationData).then(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
 
           expect(tempEvent.EventId).toBe(EventIds.OccupationsUpdate);
@@ -100,7 +100,7 @@ describe('Occupation API service', () => {
 
     it('testing response', (done) => {
       service.Create(newOccupationData).then(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
           expect(res.HttpResult.status).toBe(200);
           done();
         },
@@ -112,7 +112,7 @@ describe('Occupation API service', () => {
 
     it('testing content', (done) => {
       service.Create(newOccupationData).then(
-        (res: ResponseStatus) => {
+        (res: ValidationStatus) => {
 
           const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
 
