@@ -7,7 +7,8 @@ import {
   IMicroFrontend,
   MicroFrontendInfo,
   MicroFrontendParts,
-  EventIds } from 'event-proxy-lib-src';
+  EventIds,
+  BackendToFrontendEvent} from 'event-proxy-lib-src';
 
 @Injectable({
   providedIn: 'root'
@@ -28,14 +29,14 @@ export class MenuService implements IMicroFrontend {
   public InitializeConnectionWithBackend(): void {
 
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
-          this.ParseNewEventAsync(response.HttpResult.body.Events);
+          this.ParseNewEventAsync(response.Result.Events);
         }
       },
-      (error: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         this.eventProxyService.EndListeningToBackend();
-        throw new Error(error.Error);
+        throw new Error(response.ErrorList.toString());
       }
     );
 
@@ -48,7 +49,7 @@ export class MenuService implements IMicroFrontend {
        */
       if (element.EventId === EventIds.InitMenu) {
         this.putToElement('menu-team', '<menu-team></menu-team>');
-        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
       } else {
         throw new Error('Event not implemented.');
       }

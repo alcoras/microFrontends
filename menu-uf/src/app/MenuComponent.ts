@@ -70,13 +70,13 @@ export class MenuComponent {
   /**
    * Button change language handler
    */
-  public ChangeLanguage(): void {
+  public async ChangeLanguage(): Promise<void> {
     const e = new LanguageChange(this.selectedLang);
 
     e.SourceId = this.sourceId;
     e.SourceName = this.sourceName;
 
-    this.eventProxyService.DispatchEventAsync(e).toPromise();
+    await this.eventProxyService.DispatchEventAsync(e);
   }
 
   /**
@@ -142,7 +142,7 @@ export class MenuComponent {
     return elId;
   }
 
-  private eventButtonPressed(eventName: number): void {
+  private async eventButtonPressed(eventName: number): Promise<void> {
     const elState = this.getElFromID(eventName);
 
     const elId = elState.loaded ? null : elState.elementId;
@@ -156,8 +156,9 @@ export class MenuComponent {
     const event = new EventButtonPressed(eventName, elId);
 
     event.SourceId = this.sourceId;
+    event.SourceName = this.sourceName;
 
-    this.eventProxyService.DispatchEventAsync(event).toPromise();
+    await this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**

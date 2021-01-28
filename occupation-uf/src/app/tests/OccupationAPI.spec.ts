@@ -1,21 +1,39 @@
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { OccupationAPIService } from '../services/OccupationAPI';
 import { EventBusService } from '../services/EventBusService';
 import { TestBed } from '@angular/core/testing';
-import { eProxyServiceMock } from './mocks/event-proxy-service.mock';
-import { genRandomNumber, delay } from './Adds/helpers';
+import { genRandomNumber } from './Adds/helpers';
 
 import {
   EventProxyLibService,
   EventIds,
-  ValidationStatus,
   OccupationData,
   OccupationsCreateUpdate,
-  OccupationsReadResults
+  OccupationsReadResults,
+  EnvironmentService,
+  OccupationsDeleteEvent,
+  OccupationsReadQuery
 } from 'event-proxy-lib-src';
+
+const envPrefix = '__env';
+const backendURL = 'localhost';
+const backendPath = '/newEvents';
+const backendPort = '54366';
+const URL = `http://${backendURL}:${backendPort}${backendPath}`;
 
 /**
  * Test Occupation data
  */
+
+window[envPrefix] = window[envPrefix] || {};
+
+// eslint-disable-next-line @typescript-eslint/camelcase
+window[envPrefix].one_language = false;
+// API url
+window[envPrefix].url = 'http://' + backendURL;
+window[envPrefix].apiGatewayUrl = window[envPrefix].url;
+window[envPrefix].apiGatewayPort = backendPort;
+
 const newOccupationData = new OccupationData();
 newOccupationData.DocReestratorId = 24;
 newOccupationData.Name = 'testName';
@@ -25,119 +43,81 @@ newOccupationData.TariffCategory = genRandomNumber(100);
 describe('Occupation API service', () => {
   let service: OccupationAPIService;
   let eventBus: EventBusService;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EventProxyLibService, useValue: eProxyServiceMock}
-      ]
+      providers: [EventProxyLibService, EnvironmentService],
+      imports: [HttpClientTestingModule]
     });
 
-    service = TestBed.inject(OccupationAPIService);
     eventBus = TestBed.inject(EventBusService);
+    service = TestBed.inject(OccupationAPIService);
+    httpTestingController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpTestingController.verify();
   });
 
   describe('Delete', () => {
-    it('testing response', (done) => {
-      service.Delete(19).then(
-        (res: ValidationStatus) => {
-          expect(res.HttpResult.status).toBe(200);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
+    it('testing response', () => {
+
+      service.DeleteAsync(123);
+
+      const req = httpTestingController.expectOne(URL);
+
+      expect(req.request.method).toEqual("POST");
+
+      req.flush("");
     });
 
-    it('testing content', (done) => {
+    it("testing content", () => {
       const id = genRandomNumber(200);
-      service.Delete(id).then(
-        (res: any) => {
-          expect(res.HttpResult.body.Events[0].ObjectAggregateId).toBe(id);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
+      service.DeleteAsync(id);
+
+      const req = httpTestingController.expectOne(URL);
+
+      const event = req.request.body.Events[0] as OccupationsDeleteEvent;
+      expect(event.ObjectAggregateId).toBe(id);
+
+      req.flush("");
     });
   });
 
   describe('Update', () => {
 
-    it('testing response', (done) => {
-      service.Update(newOccupationData).then(
-        (res: ValidationStatus) => {
-          expect(res.HttpResult.status).toBe(200);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
+    it('testing content', () => {
+      service.UpdateAsync(newOccupationData);
+
+      const req = httpTestingController.expectOne(URL);
+
+      const event = req.request.body.Events[0] as OccupationsCreateUpdate;
+      expect(event.EventId).toBe(EventIds.OccupationsUpdate);
+      expect(event.Name).toBe(newOccupationData.Name);
+      expect(event.TariffCategory).toBe(newOccupationData.TariffCategory);
+
+      req.flush("");
     });
-
-    it('testing content', (done) => {
-      service.Update(newOccupationData).then(
-        (res: ValidationStatus) => {
-          const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
-
-          expect(tempEvent.EventId).toBe(EventIds.OccupationsUpdate);
-          expect(tempEvent.Name).toBe(newOccupationData.Name);
-          expect(tempEvent.TariffCategory).toBe(newOccupationData.TariffCategory);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
-    });
-
   });
 
   describe('Create', () => {
 
-    it('testing response', (done) => {
-      service.Create(newOccupationData).then(
-        (res: ValidationStatus) => {
-          expect(res.HttpResult.status).toBe(200);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
+    it('testing content', () => {
+      service.CreateAsync(newOccupationData);
+
+      const req = httpTestingController.expectOne(URL);
+
+      const event = req.request.body.Events[0] as OccupationsCreateUpdate;
+      expect(event.EventId).toBe(EventIds.OccupationsCreate);
+      expect(event.Name).toBe(newOccupationData.Name);
+      expect(event.TariffCategory).toBe(newOccupationData.TariffCategory);
+
+      req.flush("");
     });
-
-    it('testing content', (done) => {
-      service.Create(newOccupationData).then(
-        (res: ValidationStatus) => {
-
-          const tempEvent = res.HttpResult.body.Events[0] as OccupationsCreateUpdate;
-
-          expect(tempEvent.EventId).toBe(EventIds.OccupationsCreate);
-          expect(tempEvent.Name).toBe(newOccupationData.Name);
-          expect(tempEvent.TariffCategory).toBe(newOccupationData.TariffCategory);
-          done();
-        },
-        (rej) => {
-          done.fail(rej);
-        }
-      );
-    });
-
   });
 
-  describe('Get', () => {
-
-    it('should throw if page 0', () => {
-      expect( () => service.Get(0, 1)).toThrow();
-    });
-
-    it('should throw if pagesize 0', () => {
-      expect( () => service.Get(1, 0)).toThrow();
-    });
+  describe('Testing Event Bus', () => {
 
     it('passing to EventBus', () => {
       eventBus.EventBus.subscribe( (data: OccupationsReadResults) => {
@@ -146,71 +126,26 @@ describe('Occupation API service', () => {
       });
 
       const testEvent = new OccupationsReadResults();
-
-      // 123 just as in  event-proxy-service-mock.ts
       testEvent.OccupationDataList = [];
       testEvent.OccupationDataList.push(newOccupationData);
-      eventBus.EventBus.next(testEvent);
-    });
 
-    it('get passed data, then get response', async (done) => {
-      service.Get(1, 1).then(
-        (res: OccupationsReadResults) => {
-          expect(res.OccupationDataList.length).toBe(1);
-          expect(res.OccupationDataList[0]).toBe(newOccupationData);
-          done();
-        }
-      );
-
-      await delay(1000);
-
-      const testEvent = new OccupationsReadResults();
-
-      // 123 just as in  event-proxy-service-mock.ts
-      testEvent.OccupationDataList = [];
-      testEvent.OccupationDataList.push(newOccupationData);
-      eventBus.EventBus.next(testEvent);
-    });
-
-    it('get passed data many times', async (done) => {
-      let resp = 0;
-      service.Get(1, 1).then(
-        (res: OccupationsReadResults) => {
-          expect(res.OccupationDataList.length).toBe(1);
-          expect(res.OccupationDataList[0]).toBe(newOccupationData);
-          resp++;
-        }
-      );
-
-      service.Get(1, 1).then(
-        (res: OccupationsReadResults) => {
-          resp++;
-          expect(res.OccupationDataList.length).toBe(1);
-          expect(res.OccupationDataList[0]).toBe(newOccupationData);
-        }
-      );
-
-      service.Get(1, 1).then(
-        (res: OccupationsReadResults) => {
-          expect(res.OccupationDataList.length).toBe(1);
-          expect(res.OccupationDataList[0]).toBe(newOccupationData);
-          resp++;
-          expect(resp).toBe(3);
-          done();
-        }
-      );
-
-      await delay(1000);
-
-      const testEvent = new OccupationsReadResults();
-
-      // 123 just as in  event-proxy-service-mock.ts
-      testEvent.OccupationDataList = [];
-      testEvent.OccupationDataList.push(newOccupationData);
-      eventBus.EventBus.next(testEvent);
-      eventBus.EventBus.next(testEvent);
       eventBus.EventBus.next(testEvent);
     });
   });
 
+  describe('Get', () => {
+
+    it('testing content', () => {
+      service.GetAsync(1, 2);
+
+      const req = httpTestingController.expectOne(URL);
+
+      const event = req.request.body.Events[0] as OccupationsReadQuery;
+      expect(event.EventId).toBe(EventIds.OccupationsReadQuery);
+      expect(event.Page).toBe(1);
+      expect(event.Limit).toBe(2);
+
+      req.flush("");
+    });
+  });
 });

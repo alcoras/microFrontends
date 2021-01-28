@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
+  BackendToFrontendEvent,
   EventProxyLibService,
   MicroFrontendParts,
   ValidationStatus,
@@ -11,7 +12,6 @@ import {
   WunderMobilityProductQuery,
   WunderMobilityProductQueryResults,
   WunderMobilityScannedProduct} from 'event-proxy-lib-src';
-import { Observable } from 'rxjs';
 import { EventBusService } from './EventBusService';
 
 @Injectable({
@@ -29,23 +29,24 @@ import { EventBusService } from './EventBusService';
    * @param data list of scanned items
    * @returns Response with total price
    */
-  public Checkout(data: WunderMobilityScannedProduct[])
-  : Promise<WunderMobilityDoCheckoutResults> {
-    return new Promise<WunderMobilityDoCheckoutResults>((resolve, reject) => {
-      this.doCheckout(data)
-      .toPromise()
-      .then((responseStatus: ValidationStatus) => {
-        if (responseStatus.Failed) reject("Failed to retrieve data");
+  public async CheckoutAsync(data: WunderMobilityScannedProduct[]): Promise<ValidationStatus<WunderMobilityDoCheckoutResults>> {
 
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
+    const event = new WunderMobilityDoCheckout(this.sourceInfo, data);
+    event.SubscribeToChildren = true;
 
-        this.eventBusService.EventBus.subscribe(
-          (data: WunderMobilityDoCheckoutResults) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        )
-      })
+    const request = await this.eventProxyService.DispatchEventAsync(event);
+
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
+
+    const uniqueId = request.Result.Ids[0];
+
+    const responsePromise = new Promise<WunderMobilityDoCheckoutResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: WunderMobilityDoCheckoutResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
     })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 
   /**
@@ -53,9 +54,8 @@ import { EventBusService } from './EventBusService';
    * @param data new product entry
    * @returns Observable of ValidationStatus
    */
-  public ProductCreate(data: WunderMobilityProduct): Observable<ValidationStatus> {
-    const event = new WunderMobilityProductCreate(
-      this.sourceInfo, data);
+  public ProductCreateAsync(data: WunderMobilityProduct): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const event = new WunderMobilityProductCreate(this.sourceInfo, data);
 
     return this.eventProxyService.DispatchEventAsync(event);
   }
@@ -65,7 +65,7 @@ import { EventBusService } from './EventBusService';
    * @param ids List of entries to delete
    * @returns Observable of ValidationStatus
    */
-  public ProductDelete(ids: number[]): Observable<ValidationStatus> {
+  public ProductDeleteAsync(ids: number[]): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new WunderMobilityProductDelete(this.sourceInfo, ids);
 
     return this.eventProxyService.DispatchEventAsync(event);
@@ -75,46 +75,22 @@ import { EventBusService } from './EventBusService';
    * Query all products
    * @returns Response with all products
    */
-  public ProductsQuery(): Promise<WunderMobilityProductQueryResults> {
-    return new Promise<WunderMobilityProductQueryResults>((resolve, reject) => {
-      this.productsQuery()
-      .toPromise()
-      .then((responseStatus: ValidationStatus) => {
-        if (responseStatus.Failed) reject("Failed to retrieve data");
-
-        const uniqueId = responseStatus.HttpResult.body.Ids[0];
-
-        this.eventBusService.EventBus.subscribe(
-          (data: WunderMobilityProductQueryResults) => {
-            if (data.ParentId === uniqueId) resolve(data);
-          }
-        )
-      })
-    })
-  }
-
-  /**
-   * Queries all products
-   * @returns Observable of ValidationStatus
-   */
-  private productsQuery(): Observable<ValidationStatus> {
+  public async ProductsQueryAsync(): Promise<ValidationStatus<WunderMobilityProductQueryResults>> {
     const event = new WunderMobilityProductQuery(this.sourceInfo);
-
     event.SubscribeToChildren = true;
 
-    return this.eventProxyService.DispatchEventAsync(event);
-  }
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-  /**
-   * Sends data for checkout
-   * @param data list of checkout items
-   * @returns Observable of ValidationStatus
-   */
-  private doCheckout(data: WunderMobilityScannedProduct[]): Observable<ValidationStatus> {
-    const event = new WunderMobilityDoCheckout(this.sourceInfo, data);
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-    event.SubscribeToChildren = true;
+    const uniqueId = request.Result.Ids[0];
 
-    return this.eventProxyService.DispatchEventAsync(event);
+    const responsePromise = new Promise<WunderMobilityProductQueryResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: WunderMobilityProductQueryResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    })
+
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 }

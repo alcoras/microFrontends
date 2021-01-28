@@ -160,4 +160,6 @@
     77. 7. Comment out EventIds.<TemplateRead> because it's just an example
     77. 8. preparePlacements() should have project name in lower case, same when registering custom element
 78. add radio/checkbox for untraced events
-79.
+79. when `ng test` runs on OccupationAPI.spec (occupation-uf) console errors appear, because it tries to read event but I do not provide one, because I would need access to event bus, which I don't know how to provide (same in service as in test)
+
+80.

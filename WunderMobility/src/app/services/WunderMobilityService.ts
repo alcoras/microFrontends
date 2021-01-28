@@ -10,7 +10,8 @@ import {
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  UnsubscibeToEvent} from 'event-proxy-lib-src';
+  UnsubscibeToEvent,
+  BackendToFrontendEvent} from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBusService';
 
@@ -39,19 +40,17 @@ export class WunderMobilityService implements IMicroFrontend {
    * Initialize Connection to backend (API gateway)
    */
   public InitializeConnectionWithBackend(): void {
-
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
-          this.ParseNewEventAsync(response.HttpResult.body.Events);
+          this.ParseNewEventAsync(response.Result.Events);
         }
       },
-      (error: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         this.eventProxyService.EndListeningToBackend();
-        throw new Error(error.Error);
+        throw new Error(response.ErrorList.toString());
       }
     );
-
   }
 
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
@@ -59,7 +58,7 @@ export class WunderMobilityService implements IMicroFrontend {
       switch (element.EventId) {
         case EventIds.WunderMobilityButtonPressed:
             if (this.processButtonPressed(element)) {
-              await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+              await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
             } else {
               console.error(element);
               throw new Error('Did not proccess after processButtonPressed');
@@ -68,10 +67,10 @@ export class WunderMobilityService implements IMicroFrontend {
         case EventIds.TestWunderMobilityProductsQueryResults:
         case EventIds.TestWunderMobilityCheckoutResults:
           await this.eventProxyService.ConfirmEventsAsync(
-            this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
+            this.SourceInfo.SourceId, [element.AggregateId]);
 
           await this.eventProxyService.DispatchEventAsync(
-            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]])).toPromise();
+            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
 
           this.eventBus.EventBus.next(element);
           break;

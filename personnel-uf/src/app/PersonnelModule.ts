@@ -10,7 +10,7 @@ import { PersonnelComponent } from './PersonnelComponent';
 import { MaterialModule } from './meterial-module';
 import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
 import { EventBusService } from './services/EventBus.service';
-import { PersonnelAPIService } from './services/PersonnelAPI.service';
+import { PersonnelAPI } from './services/PersonnelAPI';
 import { PersonnelService } from './services/PersonnelService';
 import { PersonnelServiceFactory } from './services/PersonnelFactory';
 import { PersonnelTable2Component } from './personnel-table-2/personnel-table.component';
@@ -32,7 +32,7 @@ import { PersonnelTable2Component } from './personnel-table-2/personnel-table.co
   providers: [
     EventProxyLibService,
     EventBusService,
-    PersonnelAPIService,
+    PersonnelAPI,
     {
       provide: APP_INITIALIZER,
       useFactory: PersonnelServiceFactory,

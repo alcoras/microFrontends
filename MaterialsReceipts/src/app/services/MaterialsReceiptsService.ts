@@ -38,7 +38,6 @@ export class MaterialsReceiptsService implements IMicroFrontend {
    * Initialize Connection to backend (API gateway)
    */
   public InitializeConnectionWithBackend(): void {
-
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
       (response: ValidationStatus<BackendToFrontendEvent>) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
@@ -50,7 +49,6 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         throw new Error(response.ErrorList.toString());
       }
     );
-
   }
 
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {

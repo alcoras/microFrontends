@@ -9,9 +9,7 @@ import { CoreEvent } from 'event-proxy-lib-src';
   providedIn: 'root'
 })
 export class EventBusService {
-  /**
-   * Event bus for inter component/service communication in current module
-   */
+
   public EventBus = new Subject<CoreEvent>();
 
   public RefreshTable = new  Subject<void>();

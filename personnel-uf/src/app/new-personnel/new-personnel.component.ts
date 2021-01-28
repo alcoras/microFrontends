@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PersonnelAPIService } from '../services/PersonnelAPI.service';
+import { PersonnelAPI } from '../services/PersonnelAPI';
 import { EventBusService } from '../services/EventBus.service';
 import { PersonData } from 'event-proxy-lib-src';
 
@@ -12,7 +12,7 @@ import { PersonData } from 'event-proxy-lib-src';
 export class NewPersonnelComponent {
 
   public constructor(
-    private apiService: PersonnelAPIService,
+    private apiService: PersonnelAPI,
     public dialogRef: MatDialogRef<NewPersonnelComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PersonData,
     private eventBus: EventBusService) { }
@@ -31,7 +31,7 @@ export class NewPersonnelComponent {
    */
   public Save(): void {
     this.dialogRef.close();
-    this.apiService.Create(this.data).then(
+    this.apiService.CreateAsync(this.data).then(
       () => {
           this.eventBus.RefreshTable.next();
       },

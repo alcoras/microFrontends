@@ -74,7 +74,6 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus
    */
   public ScanTableCreateAsync(data: ScanTableData): Promise<ValidationStatus<BackendToFrontendEvent>> {
-
     const event = new MaterialsReceiptsScanTableAddRemove(
       this.sourceInfo,
       data,

@@ -31,7 +31,7 @@ export class NewOccupComponent {
    */
   public Save(): void {
     this.dialogRef.close();
-    this.apiService.Create(this.data).then(
+    this.apiService.CreateAsync(this.data).then(
       () => {
         console.log('added');
         this.eventBus.RefreshTable.next();

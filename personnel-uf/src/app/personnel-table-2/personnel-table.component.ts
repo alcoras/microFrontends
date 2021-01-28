@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { PersonnelAPIService } from '../services/PersonnelAPI.service';
+import { PersonnelAPI } from '../services/PersonnelAPI';
 import { EventBusService } from '../services/EventBus.service';
 import { PersonData, PersonDataRead } from 'event-proxy-lib-src';
 
@@ -62,7 +62,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   private eventsSubscription: Subscription[] = [];
 
   public constructor(
-    private personnelApiService: PersonnelAPIService,
+    private personnelApiService: PersonnelAPI,
     private eventBusService: EventBusService) {
   }
 
@@ -101,16 +101,16 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
             sorts.push(oneSort);
           }
 
-          return this.personnelApiService.Get(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
+          return this.personnelApiService.GetAsync(sorts, this.paginator.pageIndex + 1, this.paginator.pageSize);
 
         }),
-        map((data: PersonDataRead) => {
+        map((data): PersonData[] => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
-          this.ResultsLength = data.CommonNumberRecords;
+          this.ResultsLength = data.Result.CommonNumberRecords;
 
-          const ic: PersonData[] = data.ListOutputEnterprisePersonData;
-          this.DataSource = new MatTableDataSource(data.ListOutputEnterprisePersonData);
+          const ic: PersonData[] = data.Result.ListOutputEnterprisePersonData;
+          this.DataSource = new MatTableDataSource(ic);
           return ic;
         }),
         catchError((err) => {
@@ -150,7 +150,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
       PodatkovaPilga: +PodatkovaPilga.value
     };
 
-    this.personnelApiService.Update(up).then(
+    this.personnelApiService.UpdateAsync(up).then(
       () => {
         console.log('update', id);
         this.RefreshTable();
@@ -167,7 +167,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
    * @param id PersonDataId
    */
   public DeleteEntry(id: number): void {
-    this.personnelApiService.Delete(id).then(
+    this.personnelApiService.DeleteAsync(id).then(
       () => {
         console.log('delete', id);
         this.RefreshTable();

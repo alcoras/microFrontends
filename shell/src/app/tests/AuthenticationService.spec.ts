@@ -1,7 +1,6 @@
 import { AuthenticationService } from "../services/AuthenticationService"
-import { LoginRequest } from "../models/LoginRequest";
 import { TestBed } from '@angular/core/testing';
-import { EnvironmentService, EventProxyLibService } from 'event-proxy-lib-src';
+import { EnvironmentService, EventProxyLibService, LoginRequest } from 'event-proxy-lib-src';
 import { eventProxyServiceMock, tokenConst } from './mocks/event-proxy-service.mock';
 import * as moment from 'moment';
 

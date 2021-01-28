@@ -9,6 +9,7 @@ import {
   LoginSuccess,
   ValidationStatus,
   LoginRequest } from 'event-proxy-lib-src';
+import { rejects } from 'assert';
 
 const WindowWeb3Context = window['web3'] as Web3;
 const MetamaskEthereumHandle = window['ethereum'];
@@ -54,37 +55,24 @@ export class AuthenticationService {
     if (loginRequest.Error)
       return Promise.reject(loginRequest);
 
-    const ret = new Promise<LoginRequest>((resolve, reject) => {
-      this.eventProxyService.LogIn(loginRequest.Timestamp, loginRequest.Signature).toPromise().then(
-        (responseStatus: ValidationStatus) => {
-          if (responseStatus.HttpResult.status !== 200) {
-            loginRequest.Error = "Failed to communicate with backend";
-            loginRequest.FullError = "Failed to communicate with backend";
-            return reject(loginRequest);
-          }
+    const request = await this.eventProxyService.LogInAsync(loginRequest.Timestamp, loginRequest.Signature);
 
-          const response = responseStatus.HttpResult.body as LoginSuccess;
+    if (request.HasErrors()) {
+      return Promise.reject(request);
+    }
 
-          if (response.EventId === EventIds.LoginFailed) {
-            loginRequest.Error = 'Failed to login';
-            loginRequest.FullError = 'Failed to login';
-            return reject(loginRequest);
-          } else if (response.EventId === EventIds.LoginSuccessWithTokenInformation) {
-            this.setSession(response);
-            resolve(loginRequest);
-          } else {
-            loginRequest.Error = `EventID ${response.EventId} was not recognized`;
-            return reject(loginRequest);
-          }
-        },
-        (responseStatusRejected: ValidationStatus) => {
-          loginRequest.Error = responseStatusRejected.Error;
-          return reject(loginRequest);
-        }
-      );
-    });
+    const response = request.Result.Events[0] as LoginSuccess;
 
-    return Promise.resolve(ret);
+    if (response.EventId == EventIds.LoginFailed) {
+      request.ErrorList.push("Failed to Login");
+      return Promise.reject(request);
+    } else if (response.EventId == EventIds.LoginSuccessWithTokenInformation) {
+      this.setSession(response);
+      return Promise.resolve(loginRequest);
+    } else {
+      loginRequest.Error = `EventID ${response.EventId} was not recognized`;
+      return Promise.reject(loginRequest);
+    }
   }
 
   public GetToken(): string {
@@ -97,33 +85,23 @@ export class AuthenticationService {
    */
   private async renewTokenAsync(): Promise<string> {
 
-    const ret = new Promise<string>((resolve, reject) => {
-      this.eventProxyService.RenewToken().toPromise().then(
-        (responseStatus: ValidationStatus) => {
-          if (responseStatus.HttpResult.status !== 200) {
-            reject("Failed to communicate with backend");
-          }
+    const request = await this.eventProxyService.RenewTokenAsync();
 
-          const response = responseStatus.HttpResult.body as CoreEvent;
+    if (request.HasErrors()) {
+      return Promise.reject(request.ErrorList.toString());
+    }
 
-          if (response.EventId === EventIds.LoginFailed) {
-            reject('Failed to login');
-          } else if (response.EventId === EventIds.TokenRenewSuccessWithTokenInformation) {
-            const login = response as LoginSuccess;
-            this.setUpcomingSession(login);
-            resolve("");
-          }
-          else {
-            reject(`EventID ${response.EventId} was not recognized`);
-          }
-        },
-        (reject) => {
-          return new Error(reject);
-        }
-      );
-    });
+    const response = request.Result.Events[0] as CoreEvent;
 
-    return Promise.resolve(ret);
+    if (response.EventId == EventIds.LoginFailed) {
+      return Promise.reject("Failed to login");
+    } else if (response.EventId == EventIds.LoginSuccessWithTokenInformation) {
+      const login = response as LoginSuccess;
+      this.setUpcomingSession(login);
+      return Promise.resolve("");
+    } else {
+      return Promise.reject(`EventID ${response.EventId} was not recognized`);
+    }
   }
 
   /**

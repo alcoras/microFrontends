@@ -23,13 +23,12 @@ import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
     this.ScannedProducts.splice(index, 1);
   }
 
-  public Checkout(): void {
-    this.wunderMobilityAPI.Checkout(this.ScannedProducts)
-    .then((data: WunderMobilityDoCheckoutResults) => {
-      this.ScannedProducts = [];
-      this.CurrentTotalPrice = data.TotalPrice;
-      this.ShowTotalPriceDialog = true;
-    });
+  public async CheckoutAsync(): Promise<void> {
+    const request = await this.wunderMobilityAPI.CheckoutAsync(this.ScannedProducts);
+
+    this.ScannedProducts = [];
+    this.CurrentTotalPrice = request.Result.TotalPrice;
+    this.ShowTotalPriceDialog = true;
   }
 
   public AddNewRandomScan(): void {

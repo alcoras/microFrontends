@@ -26,35 +26,33 @@ import { WunderMobilityAPI } from "src/app/Services/WunderMobilityAPI";
     this.NewProductDialog = true;
   }
 
-  public RefreshTable(): void {
-    this.queryProducts();
+  public async RefreshTable(): Promise<void> {
+    await this.queryProductsAsync();
   }
 
   public SaveNewProduct(): void {
     this.NewProductDialog = false;
-    this.wunderMobilityApi.ProductCreate(this.NewProduct)
-    .toPromise()
+    this.wunderMobilityApi.ProductCreateAsync(this.NewProduct)
     .then(() => this.RefreshTable());
   }
 
   public DeleteProduct(data: WunderMobilityProduct): void {
-    this.wunderMobilityApi.ProductDelete([data.Id])
-    .toPromise()
+    this.wunderMobilityApi.ProductDeleteAsync([data.Id])
     .then(() => this.RefreshTable());
   }
 
-  public LazyLoad(event: LazyLoadEvent): void {
-    this.queryProducts();
+  public async LazyLoad(event: LazyLoadEvent): Promise<void> {
+    await this.queryProductsAsync();
   }
 
-  private queryProducts(): void {
+  private async queryProductsAsync(): Promise<void> {
     this.Loading = true;
 
-    this.wunderMobilityApi.ProductsQuery()
-    .then( (data: WunderMobilityProductQueryResults) => {
-      this.Data = data.DataList;
-      this.TotalRecords = data.TotalRecordsAmount;
-      this.Loading = false;
-    })
+    const response = await this.wunderMobilityApi.ProductsQueryAsync();
+
+    this.Data = response.Result.DataList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
+
+    this.Loading = false;
   }
 }

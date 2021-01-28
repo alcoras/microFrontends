@@ -7,7 +7,7 @@ import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import { catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { OccupationAPIService } from '../services/OccupationAPI';
 import { EventBusService } from '../services/EventBusService';
-import { OccupationData, OccupationsReadResults } from 'event-proxy-lib-src';
+import { OccupationData, OccupationsReadResults, ValidationStatus } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'app-occup-table3',
@@ -58,7 +58,7 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
    * Updates entry given id
    * @param id OccupationAggregateIdHolderId
    */
-  public UpdateEntry(id: number): void {
+  public async UpdateEntry(id: number): Promise<void> {
     const tariffElement = document.querySelector(`[occu_TariffCategory="${id}"]`) as HTMLTextAreaElement;
     const nameElement = document.querySelector(`[occu_Name="${id}"]`) as HTMLTextAreaElement;
 
@@ -69,33 +69,30 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
       TariffCategory: +tariffElement.value
     };
 
-    this.occupationApiService.Update(up).then(
-      () => {
-        console.log('update', id);
-        this.RefreshTable();
-      },
-      (rejected) => {
-        console.error(rejected);
-        throw new Error('Failed to update');
-      }
-    );
+    const response = await this.occupationApiService.UpdateAsync(up);
+
+    if (response.HasErrors()) {
+      console.error(response.ErrorList.toString());
+      throw new Error("Failed to update");
+    }
+
+    this.RefreshTable();
   }
 
   /**
    * Deletes entry
    * @param id OccupationAggregateIdHolderId
    */
-  public DeleteEntry(id: number): void {
-    this.occupationApiService.Delete(id).then(
-      () => {
-        console.log('delete', id);
-        this.RefreshTable();
-      },
-      (rejected) => {
-        console.error(rejected);
-        throw new Error('Failed to update');
-      }
-    );
+  public async DeleteEntry(id: number): Promise<void> {
+
+    const response = await this.occupationApiService.DeleteAsync(id);
+
+    if (response.HasErrors()) {
+      console.error(response.ErrorList.toString());
+      throw new Error("Failed to delete");
+    }
+
+    this.RefreshTable();
   }
 
   /**
@@ -145,15 +142,15 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
         switchMap(async () => {
           this.IsLoadingResults = true;
 
-          return await this.occupationApiService.Get(this.paginator.pageIndex + 1, this.paginator.pageSize);
+          return await this.occupationApiService.GetAsync(this.paginator.pageIndex + 1, this.paginator.pageSize);
         }),
-        map((data: OccupationsReadResults) => {
+        map( (data): OccupationData[] => {
           // Flip flag to show that loading has finished.
           this.IsLoadingResults = false;
-          this.ResultsLength = data.TotalRecordsAmount;
+          this.ResultsLength = data.Result.TotalRecordsAmount;
 
-          const ic: OccupationData[] = data.OccupationDataList;
-          this.DataSource = new MatTableDataSource(data.OccupationDataList);
+          const ic: OccupationData[] = data.Result.OccupationDataList;
+          this.DataSource = new MatTableDataSource(ic);
           return ic;
         }),
         catchError((err) => {

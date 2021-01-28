@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import {
   EventProxyLibService,
@@ -10,7 +9,8 @@ import {
   OccupationsCreateUpdate,
   OccupationsDeleteEvent,
   OccupationsReadQuery,
-  OccupationsReadResults
+  OccupationsReadResults,
+  BackendToFrontendEvent
 } from 'event-proxy-lib-src';
 
 import { EventBusService } from './EventBusService';
@@ -34,16 +34,11 @@ export class OccupationAPIService {
    * @param id Occupation to remove by
    * @returns Promise
    */
-  public Delete(id: number): Promise<ValidationStatus> {
-    return new Promise( (resolve, reject) => {
-      this.delete(id).toPromise().then( (val: ValidationStatus) => {
-        if (!val.Failed) {
-          resolve(val);
-        } else {
-          reject(val);
-        }
-      });
-    });
+  public DeleteAsync(id: number): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const event = new OccupationsDeleteEvent(this.sourceInfo.SourceId, id);
+    event.SourceName = this.sourceInfo.SourceName;
+
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
@@ -51,17 +46,17 @@ export class OccupationAPIService {
    * @param occupationData new OccupationData
    * @returns Promise
    */
-  public Create(occupationData: OccupationData): Promise<ValidationStatus> {
-    return new Promise( (resolve, reject) => {
-      // tslint:disable-next-line: no-identical-functions
-      this.create(occupationData).toPromise().then( (val: ValidationStatus) => {
-        if (!val.Failed) {
-          resolve(val);
-        } else {
-          reject(val);
-        }
-      });
-    });
+  public CreateAsync(occupationData: OccupationData): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    occupationData.DocReestratorId = 1; // TODO: for Demo purpose
+    const event = new OccupationsCreateUpdate(
+      this.sourceInfo.SourceId,
+      OccupationCreateUpdateFlag.Create,
+      new Date().toISOString(),
+      occupationData);
+
+    event.SourceName = this.sourceInfo.SourceName;
+
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
@@ -69,17 +64,16 @@ export class OccupationAPIService {
    * @param occupationData OccupationData
    * @returns Promise
    */
-  public Update(occupationData: OccupationData): Promise<ValidationStatus> {
-    return new Promise( (resolve, reject) => {
-      // tslint:disable-next-line: no-identical-functions
-      this.update(occupationData).toPromise().then( (val: ValidationStatus) => {
-        if (!val.Failed) {
-          resolve(val);
-        } else {
-          reject(val);
-        }
-      });
-    });
+  public UpdateAsync(occupationData: OccupationData): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const event = new OccupationsCreateUpdate(
+      this.sourceInfo.SourceId,
+      OccupationCreateUpdateFlag.Update,
+      new Date().toISOString(),
+      occupationData);
+
+    event.SourceName = this.sourceInfo.SourceName;
+
+    return this.eventProxyService.DispatchEventAsync(event);
   }
 
   /**
@@ -89,87 +83,24 @@ export class OccupationAPIService {
    * @param pageSize entries' limit
    * @returns Promise with response
    */
-  public Get(page: number, pageSize: number): Promise<OccupationsReadResults> {
+  public async GetAsync(page: number, pageSize: number): Promise<ValidationStatus<OccupationsReadResults>> {
 
-    return new Promise<OccupationsReadResults>(
-      (resolve, reject) => {
-        this.get(page, pageSize)
-          .toPromise()
-          .then( (response: ValidationStatus) => {
-            if (response.Failed) {
-              reject('Failed to retrieve data');
-            }
+    const event = new OccupationsReadQuery(this.sourceInfo.SourceId, new Date().toISOString(), page, pageSize);
+    event.SourceName = this.sourceInfo.SourceName;
+    event.SubscribeToChildren = true;
 
-            const uniqueId = response.HttpResult.body.Ids[0];
+    const request = await this.eventProxyService.DispatchEventAsync(event);
 
-            this.eventBusService.EventBus.subscribe(
-              async (data: OccupationsReadResults) => {
-                if (data.ParentId === uniqueId) {
-                  resolve(data);
-                }
-              }
-            );
-        });
-      }
-    );
+    if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
 
-  }
+    const uniqueId = request.Result.Ids[0];
 
-  /**
-   * Queries for occupation data
-   *
-   * @param page page to get
-   * @param pageSize entries' limit
-   * @returns Observable with Http response
-   */
-  private get(page: number, pageSize: number): Observable<ValidationStatus> {
-    const e = new OccupationsReadQuery(this.sourceInfo.SourceId, new Date().toISOString(), page, pageSize);
-    e.SourceName = this.sourceInfo.SourceName;
-    e.SubscribeToChildren = true;
-    return this.eventProxyService.DispatchEventAsync(e);
-  }
+    const responsePromise = new Promise<OccupationsReadResults>((resolve) => {
+      this.eventBusService.EventBus.subscribe((data: OccupationsReadResults) => {
+        if (data.ParentId === uniqueId) resolve(data);
+      });
+    });
 
-  /**
-   * Updates Occupation entry
-   * @param occupationData OccupationData
-   * @returns Observable with HttpResponse
-   */
-  private update(occupationData: OccupationData): Observable<ValidationStatus> {
-    const e = new OccupationsCreateUpdate(
-      this.sourceInfo.SourceId,
-      OccupationCreateUpdateFlag.Update,
-      new Date().toISOString(),
-      occupationData);
-
-    e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEventAsync(e);
-  }
-
-  /**
-   * Creates new Occupation entry
-   * @param occupationData OccupationData
-   * @returns Observable with HttpResponse
-   */
-  private create(occupationData: OccupationData): Observable<ValidationStatus> {
-    occupationData.DocReestratorId = 1; // TODO: for Demo purpose
-    const e = new OccupationsCreateUpdate(
-      this.sourceInfo.SourceId,
-      OccupationCreateUpdateFlag.Create,
-      new Date().toISOString(),
-      occupationData);
-
-    e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEventAsync(e);
-  }
-
-  /**
-   * Deletes occupation entry
-   * @param id Occupation id to remove
-   * @returns Observable with HttpResponse
-   */
-  private delete(id: number): Observable<ValidationStatus> {
-    const e = new OccupationsDeleteEvent(this.sourceInfo.SourceId, id);
-    e.SourceName = this.sourceInfo.SourceName;
-    return this.eventProxyService.DispatchEventAsync(e);
+    return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
 }
