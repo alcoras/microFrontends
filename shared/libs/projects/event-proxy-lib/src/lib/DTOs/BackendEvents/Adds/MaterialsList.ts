@@ -5,23 +5,18 @@
 
   public Id: number;
 
-  /**
-   * Receipt number
-   */
+  /** Receipt number */
   public Number: number;
 
-  /**
-   * Receipt registration date and time (ISO formatted)
-   */
+  /** Receipt registration date and time (ISO formatted) */
   public RegisterDateTime: string;
 
-  /**
-   * Sign mark (true if signed)
-   */
+  /** Sign mark (true if signed) */
   public SignMark?: boolean;
 
-  /**
-   * Signee
-   */
+  /** Signee */
   public SignPerson: string;
+
+  /** Block mark (true if we begin scan process) */
+  public Blocked: boolean;
 }

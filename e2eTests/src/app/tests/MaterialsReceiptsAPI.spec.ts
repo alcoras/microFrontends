@@ -5,11 +5,10 @@ import {
   EventProxyLibService,
   MaterialsList,
   MaterialsListTablePart,
-  MaterialsReceiptsReadListResults,
-  MaterialsReceiptsScanTableReadListResults,
-  MaterialsReceiptsTablePartReadListResults,
   ValidationStatus,
-  ScanTableData} from 'event-proxy-lib-src';
+  ScanTableData,
+  BackendToFrontendEvent,
+  MicroFrontendParts} from 'event-proxy-lib-src';
 import { BackendPort, BackendURL, delay, genRandomNumber } from './Adds/helpers';
 import { MaterialsReceiptsAPI } from 'materialsReceipts-uf/services/MaterialsReceiptsAPI';
 import { EventBusService } from 'materialsReceipts-uf/services/EventBusService';
@@ -21,7 +20,8 @@ const tempMaterialList: MaterialsList = {
   Number: 123,
   RegisterDateTime: "123",
   SignMark: true,
-  SignPerson: "asdf"
+  SignPerson: "asdf",
+  Blocked: false
 }
 
 const tempMaterialListTable: MaterialsListTablePart = {
@@ -49,11 +49,11 @@ const readingResultIds = [
   EventIds.MaterialsReceiptsTablePartReadListResults,
   EventIds.MaterialsReceiptsScanTableReadListResults];
 
-fdescribe('MaterialsReceipts API service', () => {
+describe('MaterialsReceipts API service', () => {
   let service: MaterialsReceiptsAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
-  const sourceId = 'e2eTests_MaterialReceipts';
+  const sourceId = MicroFrontendParts.MaterialsReceipts.SourceId;
   const backendURL = BackendURL;
   const backendPort = BackendPort;
 
@@ -80,29 +80,29 @@ fdescribe('MaterialsReceipts API service', () => {
     eventBusService = TestBed.inject(EventBusService);
     eventProxyService.ApiGatewayURL = backendURL;
 
-    await eventProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
+    await eventProxyService.ConfirmEventsAsync(sourceId, [], true);
   });
 
   /**
    * sends events to event bus
    * @param res response to propogate
    */
-  function propogateEvent(res: ValidationStatus): void {
+  function propogateEvent(res: ValidationStatus<BackendToFrontendEvent>): void {
 
     // ignoring empty responses
-    if (!res.HttpResult.body) return;
+    if (res.Result == null) return;
 
-    res.HttpResult.body.Events.forEach(element => {
+    res.Result.Events.forEach(async element => {
       if (readingResultIds.includes(element.EventId)) {
         eventBusService.EventBus.next(element);
-        eventProxyService.ConfirmEventsAsync(sourceId, [element.AggregateId]).toPromise();
+        await eventProxyService.ConfirmEventsAsync(sourceId, [element.AggregateId]);
       }
     });
   }
 
   afterEach(async () => {
     eventProxyService.EndListeningToBackend();
-    await eventProxyService.ConfirmEventsAsync(sourceId, [], true).toPromise();
+    await eventProxyService.ConfirmEventsAsync(sourceId, [], true);
   });
 
   it('test service creation', () => {
@@ -113,40 +113,38 @@ fdescribe('MaterialsReceipts API service', () => {
 
   describe('Material Receipt List Table', () => {
 
-    it('Getting some data', async (done) => {
+    it('Getting some data', async () => {
       // Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ValidationStatus) => propogateEvent(res)
+        (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
       );
 
       // Sending query
       const page = 1;
       const limit = 3;
-      // TODO: real id should be got
+      // TODO: real id should be taken
       const materialsReceiptId = 11;
 
-      service.MaterialsReceiptsTableQuery(materialsReceiptId, page, limit)
-      .then((response: MaterialsReceiptsTablePartReadListResults) => {
-        expect(response.MaterialsDataTablePartList.length).toBeLessThanOrEqual(limit);
+      const response = await service.MaterialsReceiptsTableQueryAsync(materialsReceiptId, page, limit);
 
-        const fields = Object.getOwnPropertyNames(tempMaterialListTable);
+      expect(response.HasErrors()).toBeFalse();
 
-        response.MaterialsDataTablePartList.forEach(element => {
-          expect(Object.getOwnPropertyNames(element)).toEqual(fields);
-        });
+      expect(response.Result.MaterialsDataTablePartList.length).toBeLessThanOrEqual(limit);
 
-        done();
+      const fields = Object.getOwnPropertyNames(tempMaterialListTable);
+
+      response.Result.MaterialsDataTablePartList.forEach(element => {
+        expect(Object.getOwnPropertyNames(element)).toEqual(fields);
       });
-
     });
   });
 
   describe('Material Receipt ScanTable', () => {
 
-    it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async (done) => {
+    it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async () => {
       // Start listening to events
-        eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ValidationStatus) => propogateEvent(res)
+      eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
+        (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
       );
 
       // adding new scan
@@ -162,7 +160,7 @@ fdescribe('MaterialsReceipts API service', () => {
         Unit: unit,
       };
 
-      service.ScanTableCreate(newScan).toPromise();
+      await service.ScanTableCreateAsync(newScan);
       await delay(1000);
 
       // checking wheter it was added
@@ -175,32 +173,27 @@ fdescribe('MaterialsReceipts API service', () => {
         MaterialsId: randomId,
       };
 
-      service.ScanTableQuery(queryParams)
-      .then((response: MaterialsReceiptsScanTableReadListResults) => {
+      let response = await service.ScanTableQueryAsync(queryParams);
+      expect(response.HasErrors()).toBeFalse();
 
-        expect(response.ScanTableDataList.length).toBeGreaterThan(0);
-        expect(response.ScanTableDataList[0].Quantity).toBe(randomQuantity);
-        expect(response.ScanTableDataList[0].Unit).toBe(unit);
-      });
+      expect(response.Result.ScanTableDataList.length).toBeGreaterThan(0);
+      expect(response.Result.ScanTableDataList[0].Quantity).toBe(randomQuantity);
+      expect(response.Result.ScanTableDataList[0].Unit).toBe(unit);
 
       // deleting that entry
-      service.ScanTableDelete(newScan).toPromise();
+      await service.ScanTableDeleteAsync(newScan);
       await delay(1000);
 
-      // checking it does not exist no more
-      service.ScanTableQuery(queryParams)
-      .then((response: MaterialsReceiptsScanTableReadListResults) => {
-
-        expect(response.ScanTableDataList.length).toBe(0);
-        done();
-      });
-
+      // checking if it still exists
+      response = await service.ScanTableQueryAsync(queryParams);
+      expect(response.HasErrors()).toBeFalse();
+      expect(response.Result.ScanTableDataList.length).toBe(0);
     });
 
-    it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async (done) => {
+    it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async () => {
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ValidationStatus) => propogateEvent(res)
+        (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
       );
 
       // Sending query
@@ -212,32 +205,26 @@ fdescribe('MaterialsReceipts API service', () => {
         MaterialReceiptsListId: 20,
       };
 
-      service.ScanTableQuery(queryParams)
-      .then((response: MaterialsReceiptsScanTableReadListResults) => {
-        console.log(response);
-        expect(response.ScanTableDataList.length).toBeLessThanOrEqual(limit);
+      const response = await service.ScanTableQueryAsync(queryParams);
+      expect(response.Result.ScanTableDataList.length).toBeLessThanOrEqual(limit);
 
-        const expectedFields = Object.getOwnPropertyNames(tempScanDataTable);
-        const gotFields = Object.getOwnPropertyNames(response.ScanTableDataList[0]);
+      const expectedFields = Object.getOwnPropertyNames(tempScanDataTable);
+      const gotFields = Object.getOwnPropertyNames(response.Result.ScanTableDataList[0]);
 
-        for (let i = 0; i < expectedFields.length; i++) {
-          expect(gotFields).toContain(expectedFields[i]);
-        }
-
-        done();
-      });
-
+      for (let i = 0; i < expectedFields.length; i++) {
+        expect(gotFields).toContain(expectedFields[i]);
+      }
     });
   });
 
   describe('Material Receipt List', () => {
 
-    it('Getting some data', async (done) => {
+    it('Getting some data', async () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
-        (res: ValidationStatus) => propogateEvent(res)
+        (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
       );
 
       // 3. Sending query
@@ -248,19 +235,16 @@ fdescribe('MaterialsReceipts API service', () => {
         Limit: limit
       };
 
-      service.MaterialsReceiptsListQuery(queryParams).then((response: MaterialsReceiptsReadListResults) => {
-        expect(response.MaterialsDataList.length).toBeLessThanOrEqual(limit);
+      const response = await service.MaterialsReceiptsListQueryAsync(queryParams);
+      expect(response.Result.MaterialsDataList.length).toBeLessThanOrEqual(limit);
 
-        const fields = Object.getOwnPropertyNames(tempMaterialList);
+      const fields = Object.getOwnPropertyNames(tempMaterialList);
 
-        response.MaterialsDataList.forEach(element => {
-          expect(Object.getOwnPropertyNames(element)).toEqual(fields);
-        });
-
-        done();
+      response.Result.MaterialsDataList.forEach(element => {
+        expect(Object.getOwnPropertyNames(element)).toEqual(fields);
       });
 
-    }, 1000);
+    });
 
   })
 

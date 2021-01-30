@@ -44,8 +44,9 @@ describe('EventProxyLibService', () => {
     const backendPort = BackendPort;
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
-    const testinID = '10';
     const testinName = 'testing';
+    const testinID = '10';
+    tEvent.SourceName = testinName;
     let service: EventProxyLibService;
     const serviceList: EventProxyLibService[] = new Array(3);
 

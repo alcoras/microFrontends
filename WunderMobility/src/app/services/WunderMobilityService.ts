@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import {
   EventProxyLibService,
-  SubscibeToEvent,
   CoreEvent,
   ValidationStatus,
   EventIds,
@@ -73,6 +72,13 @@ export class WunderMobilityService implements IMicroFrontend {
             new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
 
           this.eventBus.EventBus.next(element);
+          break;
+        case EventIds.EventProccessedSuccessfully:
+          await this.eventProxyService.ConfirmEventsAsync(
+            this.SourceInfo.SourceId, [element.AggregateId]);
+          break;
+        case EventIds.EventProccessedWithFails:
+          console.error(element);
           break;
         default:
             throw new Error(`Event ${element.EventId} not implemented.`);
