@@ -9,17 +9,17 @@ import {
   IMicroFrontend,
   EventButtonPressed,
   MicroFrontendInfo,
-  MicroFrontendParts} from 'event-proxy-lib-src';
+  MicroFrontendParts,
+  BackendToFrontendEvent } from 'event-proxy-lib-src';
 
-import { EventBusService } from './EventBus.service';
-
+import { EventBusService } from './EventBusService';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TemplateService implements IMicroFrontend {
+export class $project_name$Service implements IMicroFrontend {
 
-  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.<template_data>;
+  public SourceInfo: MicroFrontendInfo = MicroFrontendParts.$project_name$;
 
   /**
    * Element to place dictionary
@@ -38,35 +38,40 @@ export class TemplateService implements IMicroFrontend {
    * Initialize Connection to backend (API gateway)
    */
   public InitializeConnectionWithBackend(): void {
-
     this.eventProxyService.InitializeConnectionToBackend(this.SourceInfo.SourceId).subscribe(
-      (response: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         if (this.eventProxyService.PerformResponseCheck(response)) {
-          this.ParseNewEventAsync(response.HttpResult.body.Events);
+          this.ParseNewEventAsync(response.Result.Events);
         }
       },
-      (error: ValidationStatus) => {
+      (response: ValidationStatus<BackendToFrontendEvent>) => {
         this.eventProxyService.EndListeningToBackend();
-        throw new Error(error.Error);
+        throw new Error(response.ErrorList.toString());
       }
     );
-
   }
 
   public async ParseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
       switch (element.EventId) {
-        case EventIds.$button_pressed_id$:
-            if (this.processButtonPressed(element)) {
-              await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]).toPromise();
-            } else {
-              console.error(element);
-              throw new Error('Did not proccess after processButtonPressed');
-            }
-            break;
-        case EventIds.<TemplateRead>:
-            this.eventBus.EventBus.next(element);
-            break;
+        case EventIds.$button_pressed_event$:
+          if (this.processButtonPressed(element)) {
+            await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
+          } else {
+            console.error(element);
+            throw new Error('Did not proccess after processButtonPressed');
+          }
+          break;
+        // case EventIds.<TemplateReadEventId>:
+        //     this.eventBus.EventBus.next(element);
+        //     break;
+        case EventIds.EventProccessedSuccessfully:
+          await this.eventProxyService.ConfirmEventsAsync(
+            this.SourceInfo.SourceId, [element.AggregateId]);
+          break;
+        case EventIds.EventProccessedWithFails:
+          console.error(element);
+          break;
         default:
             throw new Error(`Event ${element.EventId} not implemented.`);
       }
@@ -77,7 +82,7 @@ export class TemplateService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[EventIds.$button_pressed_id$] = '<team-$project_name$></team-$project_name$>';
+    this.elToPlace[EventIds.$button_pressed_event$] = '<team-$project_name_html$></team-$project_name_html$>';
   }
 
   /**
@@ -89,7 +94,7 @@ export class TemplateService implements IMicroFrontend {
     const e = element as EventButtonPressed;
 
     switch (e.EventId) {
-      case EventIds.$button_pressed_id$:
+      case EventIds.$button_pressed_event$:
         if (e.UniqueElementId) {
           this.putToElement(e.UniqueElementId, this.getElFromID(element.EventId));
           return true;

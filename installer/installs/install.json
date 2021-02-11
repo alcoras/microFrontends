@@ -1,11 +1,13 @@
 {
-    "projectName": "zzzz",
+    "projectName": "NewProject",
     "replace": [
-            { "replace": "zzzz", "search": "$project_name$" },
-            { "replace": "8007", "search": "$prod_port$" },
-            { "replace": "7007", "search": "$dev_port$" },
-            { "replace": "1009", "search": "$source_id$" },
-            { "replace": "zzzz", "search": "$source_name$" },
-            { "replace": "1008", "search": "$button_pressed_id$" }
+            { "replace": "new-project", "search": "$project_name_html$" },
+            { "replace": "NewProject", "search": "$project_name$" },
+            { "replace": "NewProject", "search": "$source_name$" },
+            { "replace": "NewProjectButtonPressed", "search": "$button_pressed_event$" },
+            { "replace": "1010", "search": "$button_pressed_id$" },
+            { "replace": "1010", "search": "$source_id$" },
+            { "replace": "8010", "search": "$prod_port$" },
+            { "replace": "7010", "search": "$dev_port$" }
     ]
 }

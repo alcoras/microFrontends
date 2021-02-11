@@ -13,6 +13,7 @@ export enum EventIds {
   ObserverButtonPressed = 1007,
   MaterialsReceiptsButtonPressed = 1008,
   WunderMobilityButtonPressed = 1009,
+  /** PLACEHOLDER USED BY INSTALLER */
 
   // Business events
   CreatePersonData = 2006,

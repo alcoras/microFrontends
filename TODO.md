@@ -127,6 +127,16 @@
 66. DONE fix ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: 'undefined'. Current value: 'true'. in MaterialsReceiptsTableComponent view component
     66. 1. Update: in constructor Loading should set to true
 73. DONE remove ParentSourceEventUniqueId everywhere
+77. DONE template installer:
+    77. 1. DONE Services: TemplateFactory, TemplateService should be renamed
+    77. 2. DONE Change root structure's file names (app.module.ts ...)
+    77. 3. DONE Add *Service to root NgModule
+    77. 4. DONE In TemplateService fix EventBusService
+    77. 5. DONE MicroFrontendParts Template copying in MicroFrontendParts, MicroFrontendParts.* in *Service
+    77. 6. DONE EventIds.$ProjectNameButtonPressed$
+    77. 7. DONE Comment out EventIds.<TemplateRead> because it's just an example
+    77. 8. DONE preparePlacements() should have project name in lower case, same when registering custom element
+    77. 9. DONE In order to automatically add it as micro frontend I need to provide unique ID
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -150,16 +160,11 @@
 69. clean up package.json scripts in projects (remove serve and serve scripts)
 70. write unit/static tests for MaterialsReceipts
 74. currently if something fails, we either throw (where we care for it to work) or we don't return message to user; think how to universally handle messages to user about strong fails (cant work further) and safe fails (entry creation failed, deletion failed);
-77. template installer:
-    77. 1. Services: TemplateFactory, TemplateService should be renamed
-    77. 2. Change root structure's file names (app.module.ts ...)
-    77. 3. Add *Service to root NgModule
-    77. 4. In TemplateService fix EventBusService
-    77. 5. MicroFrontendParts Template copying in MicroFrontendParts, MicroFrontendParts.* in *Service
-    77. 6. EventIds.$ProjectNameButtonPressed$
-    77. 7. Comment out EventIds.<TemplateRead> because it's just an example
-    77. 8. preparePlacements() should have project name in lower case, same when registering custom element
 78. add radio/checkbox for untraced events
 79. when `ng test` runs on OccupationAPI.spec (occupation-uf) console errors appear, because it tries to read event but I do not provide one, because I would need access to event bus, which I don't know how to provide (same in service as in test)
+80. in event-proxy-lib I have non dtos objects in DTOs folder, confusing
+81. INSTALLER:
+    81. 1. Add to shell
+    81. 2. Add to menu
 
-80.
+82.

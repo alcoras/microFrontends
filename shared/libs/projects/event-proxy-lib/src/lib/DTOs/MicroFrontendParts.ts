@@ -69,13 +69,12 @@ export class MicroFrontendParts {
     SourceName: 'WunderMobility'
   };
 
-  // /**
-  //  * Micro frontend Template.
-  //  */
-  // public static Template: MicroFrontendInfo = {
-  //   SourceId: '<source_id>',
-  //   SourceName: '<project_name>'
-  // };
+  public static $project_name$: MicroFrontendInfo = {
+    SourceId: '$source_id$',
+    SourceName: '$project_name$'
+  };
+
+  /** PLACEHOLDER USED BY INSTALLER */
 
   /**
    * Gets source name from source id
