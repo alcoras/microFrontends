@@ -25,6 +25,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 import { ProductService } from './services/ProductService';
 import { CastorAPI } from '@shared/services/CastorAPI';
@@ -115,6 +116,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     CheckboxModule,
     RadioButtonModule,
     InputTextModule,
+    InputNumberModule,
     CardModule,
     EventProxyLibModule,
   ],

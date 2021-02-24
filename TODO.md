@@ -166,5 +166,6 @@
 81. INSTALLER:
     81. 1. Add to shell
     81. 2. Add to menu
-
 82.
+
+83.

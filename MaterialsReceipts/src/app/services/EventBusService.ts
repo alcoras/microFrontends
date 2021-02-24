@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'event-proxy-lib-src';
+import { CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
 import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData';
 
 /**
@@ -11,6 +11,7 @@ import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData
 })
 export class EventBusService {
 
+  public LastMaterialsListTableData: MaterialsListTablePart[];
   public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
 
   /**
@@ -23,6 +24,19 @@ export class EventBusService {
    * passed to parent to active tab MaterialsReceiptsTable
    */
   public OnMaterialReceiptSelected = new Subject<void>();
+
+  /**
+   * Invoked by MaterialsReceiptsTable when a row is selected
+   */
+  public OnMaterialReceiptDataRowSelected = new Subject<MaterialsListTablePart>();
+
+  /**
+   * Event called MaterialsReceiptsTable when a row is selected
+   * @param data Materials List Table Part
+   */
+  public MaterialReceiptDataRowSelected(data: MaterialsListTablePart): void {
+    this.OnMaterialReceiptDataRowSelected.next(data);
+  }
 
   /**
    * Event called when in Material Receipt List a record is selected

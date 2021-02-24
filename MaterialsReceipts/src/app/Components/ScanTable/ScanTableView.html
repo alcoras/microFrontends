@@ -3,14 +3,14 @@
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
   [columns]="ColumnsRelation" [value]="ScanTableData"
   [totalRecords]="TotalRecords"
-  [autoLayout]=true
 >
   <ng-template pTemplate="caption">
     <!-- Refresh button -->
     <div style="margin-bottom: 1em">
 
       <!-- Add new -->
-      <button pButton pRipple label="New" icon="pi pi-plus"
+      <button pButton 
+        pRipple label="New" icon="pi pi-plus"
         class="p-button-success p-mr-2" (click)="AddNewScan()">
       </button>
 
@@ -46,5 +46,48 @@
         </td>
     </tr>
   </ng-template>
-
 </p-table>
+
+<p-dialog
+  baseZIndex=10002
+  [(visible)]="NewDialogVisible" [modal]=true
+  [draggable]=false>
+  <p-card>
+
+    <div class="p-fluid">
+      <div class="p-field">
+        <label>Name: {{NewEntryName}}</label>
+      </div>
+
+      <div class="p-field">
+        <label>Bar Code</label>
+        <input pInputText (focusout)="CheckBarcode()" [(ngModel)]="NewEntry.BarCode">
+      </div>
+      
+      <div class="p-field">
+        <label>Quantity</label>
+        <div class="p-inputgroup">
+          <p-inputNumber [(ngModel)]="NewEntry.Quantity"></p-inputNumber>
+          <span class="p-inputgroup-addon">{{NewEntry.Unit}}</span>
+        </div>
+      </div>
+
+    </div>
+  </p-card>
+  <ng-template pTemplate="footer">
+    <button pButton
+      [disabled]="NewEntriesAddingDisabled"
+      (click)="SaveNewEntry()"
+      class="p-button-success"
+      label="Save&Close" icon="pi pi-save">
+    </button>
+
+    <button pButton
+      [disabled]="NewEntriesAddingDisabled"
+      (click)="SaveNewEntryAndNext()"
+      class="p-button-success"
+      label="Save&Next" icon="pi pi-angle-right">
+  </button>
+
+  </ng-template>
+</p-dialog>

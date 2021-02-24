@@ -27,7 +27,7 @@ export class CastorAPI {
    * @param secondType !
    * @param secondIds !
    * @param castType !
-   * @returns Observable of ValidationStatus
+   * @returns Promise of ValidationStatus
    */
   public CreateCastorAsync(firstType: string, firstId: number, secondType: string, secondIds: number[], castType = CastTypes.OneToOne): Promise<ValidationStatus<BackendToFrontendEvent>> {
     const event = new CastorCreateAndOthers(

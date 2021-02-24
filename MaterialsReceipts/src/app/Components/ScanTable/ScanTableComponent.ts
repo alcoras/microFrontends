@@ -5,36 +5,42 @@ import { Subscription } from "rxjs";
 import { EventBusService } from "../../services/EventBusService";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
 import { ScanningDialog } from "@shared/Components/Dialogs/ScanningDialog/ScanningDialog";
-import { ScanTableData } from "event-proxy-lib-src";
+import { MaterialsListTablePart, ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 
 @Component({
   selector: 'materials-receipts-scan-table',
   templateUrl: './ScanTableView.html',
-  providers: [ DialogService ]
 })
 export class ScanTableComponent {
   public Loading: boolean;
   public TotalRecords: number;
 
+  public NewEntriesAddingDisabled: boolean;
+  public NewDialogVisible: boolean;
+  public NewEntryName: string;
+  public NewEntry = new ScanTableData();
+  public Submited: false;
+
   public ScanTableData: ScanTableData[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
 
-  public dialogReference: DynamicDialogRef;
+  private subToRowSelected: Subscription;
 
   public ColumnsRelation = [
-    { field: 'MaterialsId', header: 'MaterialsId'},
-    { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
-    { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
-    { field: 'Quantity', header: 'Quantity'},
-    { field: 'Unit', header: 'Unit'}
+    // { field: 'MaterialsId', header: 'MaterialsId'},
+    // { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
+    // { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
+    { field: "BarCode", header: "BarCode" },
+    { field: "Name", header: "Name" },
+    { field: "Unit", header: "Unit"},
+    { field: "Quantity", header: "Quantity"},
   ];
 
   private subscriptions: Subscription[];
 
   public constructor(
-    private dialogService: DialogService,
     private materialsReceiptsAPI: MaterialsReceiptsAPI,
     private eventBus: EventBusService) {
 
@@ -58,17 +64,42 @@ export class ScanTableComponent {
   }
 
   public AddNewScan(): void {
-    this.dialogReference = this.dialogService.open(
-      ScanningDialog, {
-        modal: true,
-        width: '100%',
-        height: '100%',
-        baseZIndex: 10001
-      });
+    this.NewDialogVisible = true;
+    this.NewEntryName = "";
+    this.NewEntry = { Quantity: 1 };
+    this.Submited = false;
+    this.NewEntriesAddingDisabled = true;
+    this.subToRowSelected?.unsubscribe();
+  }
 
-    this.dialogReference.onClose.subscribe((data: ScanTableData[]) => {
-      if (data) this.parseNewScans(data);
+  public CheckBarcode(): void {
+    if (!this.NewEntry.BarCode || this.NewEntry.BarCode?.trim().length == 0)
+      return;
+
+    // 1. check if we already have barcode from shared MaterialsListTablePart from event bus
+    for (var i = 0; i < this.eventBus.LastMaterialsListTableData.length; i++) {
+      if (this.eventBus.LastMaterialsListTableData[i].NameSOne == this.NewEntry.BarCode) {
+        //  1. 2. Yes - we extract name and scanning buttons are active
+        this.NewEntryName = this.eventBus.LastMaterialsListTableData[i].NameSOne;
+        this.NewEntry.Unit = this.eventBus.LastMaterialsListTableData[i].Unit;
+        return;
+      }
+    }
+    console.log("please select");
+
+    this.NewDialogVisible = false;
+    //  1. 1. No - we have to select existing
+    this.subToRowSelected = this.eventBus.OnMaterialReceiptDataRowSelected.subscribe((data: MaterialsListTablePart) => {
+      this.subToRowSelected.unsubscribe();
+      console.log(data);
+      this.NewEntriesAddingDisabled = false;
+      this.NewEntryName = data.NameSOne;
+      this.NewEntry.Unit = data.Unit;
+      this.NewDialogVisible = true;
     });
+  }
+
+  public SaveNewEntry(): void {
   }
 
   public async DeleteScan(data: ScanTableData): Promise<void> {
@@ -82,18 +113,6 @@ export class ScanTableComponent {
     const limit = event.rows;
 
     await this.requestMaterialsScanTableDataAsync(page, limit);
-  }
-
-  private parseNewScans(scanTableData: ScanTableData[]): void {
-    // 1. extract same bar codes
-    // 2. check if we have a match
-    for (let i = 0; i < scanTableData.length; i++) {
-      // this.materialsReceiptsAPI.MaterialsQueryAsync(null, scanTableData[i].BarCode).then(
-      //   (queryResult: MaterialsReceiptsMaterialsReadListResults) => {
-      //     console.log(queryResult);
-      //   }
-      // )
-    }
   }
 
   private async requestMaterialsScanTableDataAsync(page = 1, limit = 30): Promise<void> {
