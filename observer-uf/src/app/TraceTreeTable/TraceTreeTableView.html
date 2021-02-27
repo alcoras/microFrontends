@@ -39,14 +39,14 @@
         {{rowData[col.field]}}
       </td>
       <td>
-        <button pButton class="p-button-sm" (click)="ShowJSONData(rowData)" label="JSON"></button>
+        <button pButton type="button" (click)="ShowJSONData(rowData)" label="JSON" class="p-button-sm"></button>
       </td>
     </tr>
   </ng-template>
 
 </p-treeTable>
 
-<p-dialog [(visible)]="DisplayJsonBodyForm" [style]="{width: '50vw'}" [baseZIndex]="10000">
+<p-dialog header="Event's JSON" [(visible)]="DisplayJsonBodyForm" [style]="{width: '50vw'}" [baseZIndex]="10000">
   <div class="jsonBody">
     {{ CurrentJsonBody }}
   </div>

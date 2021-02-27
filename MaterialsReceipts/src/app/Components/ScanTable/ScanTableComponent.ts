@@ -1,22 +1,28 @@
 import { Component } from "@angular/core";
-import { LazyLoadEvent } from "primeng/api";
-import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
+import { LazyLoadEvent, MessageService } from "primeng/api";
 import { Subscription } from "rxjs";
 import { EventBusService } from "../../services/EventBusService";
 import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
-import { ScanningDialog } from "@shared/Components/Dialogs/ScanningDialog/ScanningDialog";
 import { MaterialsListTablePart, ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 
+const inputTimeoutMs = 1000;
+
 @Component({
   selector: 'materials-receipts-scan-table',
   templateUrl: './ScanTableView.html',
+  providers: [ MessageService ]
 })
 export class ScanTableComponent {
+  private barCodeInputTimeout: number;
+  private subscriptionToRowSelected: Subscription;
+
   public Loading: boolean;
   public TotalRecords: number;
-
+  
+  public SubDialog: boolean;
+  
   public NewEntriesAddingDisabled: boolean;
   public NewDialogVisible: boolean;
   public NewEntryName: string;
@@ -26,21 +32,20 @@ export class ScanTableComponent {
   public ScanTableData: ScanTableData[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
 
-  private subToRowSelected: Subscription;
-
-  public ColumnsRelation = [
-    // { field: 'MaterialsId', header: 'MaterialsId'},
-    // { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
-    // { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
+  public Columns = [
+    { field: 'MaterialsId', header: 'MaterialsId'},
+    { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
+    { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
+    // { field: "Unit", header: "Unit"},
     { field: "BarCode", header: "BarCode" },
     { field: "Name", header: "Name" },
-    { field: "Unit", header: "Unit"},
     { field: "Quantity", header: "Quantity"},
   ];
 
   private subscriptions: Subscription[];
 
   public constructor(
+    private toastService: MessageService,
     private materialsReceiptsAPI: MaterialsReceiptsAPI,
     private eventBus: EventBusService) {
 
@@ -50,7 +55,7 @@ export class ScanTableComponent {
 
     this.subscriptions.push(
       this.eventBus.OnMaterialReceiptSelected
-        .subscribe(async () => await this.requestMaterialsScanTableDataAsync()));
+        .subscribe(async () => await this.refreshScanTableTable()));
   }
 
   public OnDestroy(): void {
@@ -60,7 +65,7 @@ export class ScanTableComponent {
   }
 
   public async RefreshTable(): Promise<void> {
-    await this.requestMaterialsScanTableDataAsync();
+    await this.refreshScanTableTable();
   }
 
   public AddNewScan(): void {
@@ -69,42 +74,56 @@ export class ScanTableComponent {
     this.NewEntry = { Quantity: 1 };
     this.Submited = false;
     this.NewEntriesAddingDisabled = true;
-    this.subToRowSelected?.unsubscribe();
+    this.eventBus.ScanTableRowSelected(null);
+    this.subscriptionToRowSelected?.unsubscribe();
   }
 
   public CheckBarcode(): void {
-    if (!this.NewEntry.BarCode || this.NewEntry.BarCode?.trim().length == 0)
-      return;
 
-    // 1. check if we already have barcode from shared MaterialsListTablePart from event bus
-    for (var i = 0; i < this.eventBus.LastMaterialsListTableData.length; i++) {
-      if (this.eventBus.LastMaterialsListTableData[i].NameSOne == this.NewEntry.BarCode) {
-        //  1. 2. Yes - we extract name and scanning buttons are active
-        this.NewEntryName = this.eventBus.LastMaterialsListTableData[i].NameSOne;
-        this.NewEntry.Unit = this.eventBus.LastMaterialsListTableData[i].Unit;
+    if (this.barCodeInputTimeout)
+      clearTimeout(this.barCodeInputTimeout);
+
+      this.barCodeInputTimeout = setTimeout(() => {
+        if (!this.NewEntry.BarCode || this.NewEntry.BarCode?.trim().length == 0)
         return;
-      }
-    }
-    console.log("please select");
 
-    this.NewDialogVisible = false;
-    //  1. 1. No - we have to select existing
-    this.subToRowSelected = this.eventBus.OnMaterialReceiptDataRowSelected.subscribe((data: MaterialsListTablePart) => {
-      this.subToRowSelected.unsubscribe();
-      console.log(data);
-      this.NewEntriesAddingDisabled = false;
-      this.NewEntryName = data.NameSOne;
-      this.NewEntry.Unit = data.Unit;
-      this.NewDialogVisible = true;
-    });
+      // 1. check if we already have barcode from shared MaterialsListTablePart from event bus
+      for (var i = 0; i < this.eventBus.LastMaterialsListTableData.length; i++) {
+        if (this.eventBus.LastMaterialsListTableData[i].NameSOne == this.NewEntry.BarCode) {
+          //  1. 2. Yes - we extract name and scanning buttons are active
+          this.NewEntry.MaterialsReceiptsListId = this.eventBus.LastMaterialsListTableData[i].MaterialsReceiptsListId;
+          this.NewEntryName = this.eventBus.LastMaterialsListTableData[i].NameSOne;
+          this.NewEntry.Unit = this.eventBus.LastMaterialsListTableData[i].Unit;
+          return;
+        }
+      }
+
+      this.NewDialogVisible = false;
+      this.toastService.add({severity: "info", summary:"", detail: "Please select row"});
+      //  1. 1. No - we have to select existing
+      this.subscriptionToRowSelected = this.eventBus.OnMaterialReceiptDataRowSelected.subscribe((data: MaterialsListTablePart) => {
+        this.subscriptionToRowSelected.unsubscribe();
+        this.NewEntriesAddingDisabled = false;
+        this.NewEntryName = data.NameSOne;
+        this.NewEntry.Unit = data.Unit;
+        this.NewEntry.MaterialsReceiptsListId = data.MaterialsReceiptsListId;
+        this.NewDialogVisible = true;
+      });
+    }, inputTimeoutMs);
   }
 
-  public SaveNewEntry(): void {
+  public async SaveNewEntry(): Promise<void> {
+    await this.materialsReceiptsAPI.ScanTableCreateAsync(this.NewEntry);
+    await this.refreshScanTableTable();
   }
 
   public async DeleteScan(data: ScanTableData): Promise<void> {
     await this.materialsReceiptsAPI.ScanTableDeleteAsync(data);
-    await this.requestMaterialsScanTableDataAsync();
+    await this.refreshScanTableTable();
+  }
+
+  public RowSelected(data: ScanTableData): void {
+    this.eventBus.ScanTableRowSelected(data.MaterialsReceiptsTableId);
   }
 
   public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
@@ -112,10 +131,10 @@ export class ScanTableComponent {
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    await this.requestMaterialsScanTableDataAsync(page, limit);
+    await this.refreshScanTableTable(page, limit);
   }
 
-  private async requestMaterialsScanTableDataAsync(page = 1, limit = 30): Promise<void> {
+  private async refreshScanTableTable(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
     const data = this.eventBus.LastSelectedMaterialsReceiptData;

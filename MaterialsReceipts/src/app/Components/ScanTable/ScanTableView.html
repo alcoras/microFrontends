@@ -1,7 +1,8 @@
+<p-toast position="top-center"></p-toast>
 <p-table
-  styleClass="p-datatable-striped p-datatable-sm"
+  styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
-  [columns]="ColumnsRelation" [value]="ScanTableData"
+  [value]="ScanTableData"
   [totalRecords]="TotalRecords"
 >
   <ng-template pTemplate="caption">
@@ -22,9 +23,9 @@
     </div>
   </ng-template>
   <!-- Headers -->
-  <ng-template pTemplate="header" let-columns>
+  <ng-template pTemplate="header">
     <tr>
-        <th *ngFor="let col of columns">
+        <th *ngFor="let col of Columns">
             {{col.header}}
         </th>
         <th style="width: 4rem">Actions</th>
@@ -32,23 +33,27 @@
   </ng-template>
 
   <!-- Fields -->
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr [pSelectableRow]="rowData">
-        <td *ngFor="let col of columns">
-            {{rowData[col.field]}}
-        </td>
-        <!-- Actions -->
-        <td>
-          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-            (click)="DeleteScan(rowData)">
-          </button>
+  <ng-template pTemplate="body" let-rowData>
+    <tr [pSelectableRow]="rowData" (click)="RowSelected(rowData)">
+      <td *ngFor="let col of Columns">
+          <div *ngIf="(col.field == 'Quantity'); else default">
+            {{rowData[col.field]}} {{rowData['Unit']}}
+          </div>
+          <ng-template #default>{{rowData[col.field]}}</ng-template>
+      </td>
+      <!-- Actions -->
+      <td>
+        <button pButton pRipple icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-danger"
+          (click)="DeleteScan(rowData)">
+        </button>
 
-        </td>
+      </td>
     </tr>
   </ng-template>
 </p-table>
 
 <p-dialog
+  header="New Scan"
   baseZIndex=10002
   [(visible)]="NewDialogVisible" [modal]=true
   [draggable]=false>
@@ -60,8 +65,10 @@
       </div>
 
       <div class="p-field">
-        <label>Bar Code</label>
-        <input pInputText (focusout)="CheckBarcode()" [(ngModel)]="NewEntry.BarCode">
+        <span class="p-float-label">
+          <input pInputText (input)="CheckBarcode()" [(ngModel)]="NewEntry.BarCode">
+          <label>Bar Code</label>
+        </span>
       </div>
       
       <div class="p-field">
@@ -84,10 +91,20 @@
 
     <button pButton
       [disabled]="NewEntriesAddingDisabled"
-      (click)="SaveNewEntryAndNext()"
+      (click)="SaveNewEntry()"
       class="p-button-success"
       label="Save&Next" icon="pi pi-angle-right">
-  </button>
+    </button>
 
+    <button pButton
+      (click)="SubDialog = true"
+    >
+    </button>
   </ng-template>
+</p-dialog>
+
+<p-dialog header="SubDialog" [(visible)]="SubDialog" [modal]=true baseZIndex=10003 [draggable]="false">
+  <p-card>
+    Test
+  </p-card>
 </p-dialog>

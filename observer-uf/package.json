@@ -8,10 +8,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-config": "tsc --project tsconfig.conf-builder.json",
-    "ng_serve": "serve --cors -l tcp://0.0.0.0:3006 dist/",
+    "build-config": "tsc --project tsconfig.json",
+    "ng_serve": "serve --cors -l tcp://0.0.0.0:3006 dist/observer",
     "ng_build": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
-    "ng_con": "npm run build-config && concurrently --kill-others \"npm run ng_build\" \"npm run ng_serve\""
+    "ng_con": "concurrently --kill-others \"npm run ng_build\" \"npm run ng_serve\""
   },
   "private": true,
   "dependencies": {

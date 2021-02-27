@@ -8,9 +8,18 @@ import { MaterialsListTablePart } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'materials-receipts-list-table-table',
+  styles: [
+    `
+    .ui-state-highlight {
+      background: red;
+    }
+    `
+  ],
   templateUrl: './MaterialsReceiptsTableView.html',
 })
 export class MaterialsReceiptsTableComponent {
+
+  private selectedRowTimeoutMs = 1000;
 
   public Loading: boolean;
   public TotalRecords: number;
@@ -18,6 +27,7 @@ export class MaterialsReceiptsTableComponent {
   public MaterialsListTableData: MaterialsListTablePart[];
 
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
+  public SelectedRow: MaterialsListTablePart;
 
   public Columns = [
     // skipping irrelevant information
@@ -45,6 +55,8 @@ export class MaterialsReceiptsTableComponent {
       this.subscriptions.push(
         this.eventBus.OnMaterialReceiptSelected
           .subscribe(async () => await this.requestAndUpdateTableAsync()));
+
+      this.subscriptions.push(this.eventBus.OnScanTableRowSelected.subscribe((data: number) => this.ScanTableRowSelected(data)));
   }
 
   public OnDestroy(): void {
@@ -55,6 +67,22 @@ export class MaterialsReceiptsTableComponent {
 
   public RowSelected(data: MaterialsListTablePart): void {
     this.eventBus.MaterialReceiptDataRowSelected(data);
+  }
+
+  /**
+   * Handle row selection from ScanTable
+   * @param id MaterialsReceiptsTableId
+   */
+  public ScanTableRowSelected(id: number): void {
+    this.SelectedRow = null;
+    if (id == null)
+      return;
+      
+    this.SelectedRow = this.MaterialsListTableData[0];
+
+    // for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+    //   if (this.MaterialsListTableData[i].MaterialsReceiptsListId == id)
+    // }
   }
 
   public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {

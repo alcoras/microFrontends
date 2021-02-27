@@ -31,6 +31,19 @@ export class EventBusService {
   public OnMaterialReceiptDataRowSelected = new Subject<MaterialsListTablePart>();
 
   /**
+   * Invoked by ScanTable when row is selected, so Data Table can highlight a match
+   */
+  public OnScanTableRowSelected = new Subject<number>();
+
+  /**
+   * Event called when a row is selected in ScanTable
+   * @param data MaterialsReceiptsTableId
+   */
+  public ScanTableRowSelected(data: number) {
+    this.OnScanTableRowSelected.next(data);
+  }
+
+  /**
    * Event called MaterialsReceiptsTable when a row is selected
    * @param data Materials List Table Part
    */

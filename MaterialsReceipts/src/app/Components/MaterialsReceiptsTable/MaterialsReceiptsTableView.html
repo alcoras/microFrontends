@@ -3,6 +3,7 @@
   styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
   [totalRecords]="TotalRecords" [loading]="Loading"
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)"
+  [(selection)]="SelectedRow"
   >
   <ng-template pTemplate="caption">
     <div class="p-grid">
@@ -23,14 +24,14 @@
       <tr>
         <th *ngFor="let col of Columns">
           {{col.header}}
-
         </th>
       </tr>
   </ng-template>
 
   <!-- Fields -->
   <ng-template pTemplate="body" let-rowData>
-      <tr style="height:34px" (click)="RowSelected(rowData)" [pSelectableRow]="rowData">
+      <tr 
+        (click)="RowSelected(rowData)" [pSelectableRow]="rowData">
           <td *ngFor="let col of Columns">
               <div *ngIf="(col.field == 'Quantity'); else default">
                 {{rowData[col.field]}} {{rowData['Unit']}}

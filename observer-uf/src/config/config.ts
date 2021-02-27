@@ -1,12 +1,9 @@
-import { UParts } from '@uf-shared-models/UParts';
-import { uEventsIds } from '@uf-shared-models/event';
-import { ResourceSheme } from '@uf-shared-events/helpers/ResourceSheme';
-import { MicroFrontendData } from '@uf-shared-events/index';
+import { EventIds, MicroFrontendData, MicroFrontendParts, ResourceSheme } from "event-proxy-lib-src";
 
 /**
  * Source Id
  */
-const srcId = UParts.Observer.SourceId;
+const srcId = MicroFrontendParts.Observer.SourceId;
 
 /**
  * Microservice's port
@@ -33,7 +30,7 @@ const url = `${domain}:${port}/`;
 const uf: { [id: string]: MicroFrontendData } = {};
 
 uf[srcId] = new MicroFrontendData();
-uf[srcId].events.push(uEventsIds.ObserverButtonPressed);
+uf[srcId].events.push(EventIds.ObserverButtonPressed);
 
 /**
  * List of scripts to be loaded by shell
@@ -47,6 +44,5 @@ for (const script of scriptList) {
   temp.setAttribute('type', 'module');
   uf[srcId].resources.push(temp);
 }
-
 
 window['__env']['uf'][srcId] = uf[srcId];
