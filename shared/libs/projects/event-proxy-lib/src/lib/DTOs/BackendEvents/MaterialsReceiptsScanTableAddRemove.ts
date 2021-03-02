@@ -30,6 +30,7 @@ export class MaterialsReceiptsScanTableAddRemove extends CoreEvent {
 
   public Quantity?: number;
   public Unit?: string;
+  public BarCode?: string;
 
   public constructor(
     sourceInfo: MicroFrontendInfo,

@@ -4,27 +4,19 @@ import { MaterialsReceiptsAPI } from '../../services/MaterialsReceiptsAPI';
 import { EventBusService } from '../../services/EventBusService';
 import { Subscription } from 'rxjs';
 import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
-import { MaterialsListTablePart } from 'event-proxy-lib-src';
+import { BarCodeCast, MaterialsListTablePart, ValidationStatus } from 'event-proxy-lib-src';
 
 @Component({
   selector: 'materials-receipts-list-table-table',
-  styles: [
-    `
-    .ui-state-highlight {
-      background: red;
-    }
-    `
-  ],
   templateUrl: './MaterialsReceiptsTableView.html',
 })
 export class MaterialsReceiptsTableComponent {
-
-  private selectedRowTimeoutMs = 1000;
 
   public Loading: boolean;
   public TotalRecords: number;
 
   public MaterialsListTableData: MaterialsListTablePart[];
+  public MaterialsListBarScanData: BarCodeCast[];
 
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
   public SelectedRow: MaterialsListTablePart;
@@ -32,8 +24,8 @@ export class MaterialsReceiptsTableComponent {
   public Columns = [
     // skipping irrelevant information
     // { field: 'LineNumber', header: 'LineNumber'},
-    // { field: 'CodeSOne', header: 'CodeSOne?'},
-    // { field: 'Type', header: 'Type'},
+    { field: 'CodeSOne', header: 'CodeSOne?'},
+    { field: 'Type', header: 'Type'},
     // { field: 'Account', header: 'Account'},
     // { field: 'Unit', header: 'Units'},
     { field: 'NameSOne', header: 'Name'},
@@ -53,10 +45,9 @@ export class MaterialsReceiptsTableComponent {
       this.subscriptions = [];
 
       this.subscriptions.push(
-        this.eventBus.OnMaterialReceiptSelected
-          .subscribe(async () => await this.requestAndUpdateTableAsync()));
+        this.eventBus.OnMaterialReceiptSelected.subscribe(async () => await this.requestAndUpdateTableAsync()));
 
-      this.subscriptions.push(this.eventBus.OnScanTableRowSelected.subscribe((data: number) => this.ScanTableRowSelected(data)));
+      this.subscriptions.push(this.eventBus.OnScanTableRowSelected.subscribe((id: number) => this.ScanTableRowSelected(id)));
   }
 
   public OnDestroy(): void {
@@ -65,24 +56,20 @@ export class MaterialsReceiptsTableComponent {
     });
   }
 
-  public RowSelected(data: MaterialsListTablePart): void {
-    this.eventBus.MaterialReceiptDataRowSelected(data);
-  }
-
   /**
    * Handle row selection from ScanTable
    * @param id MaterialsReceiptsTableId
    */
   public ScanTableRowSelected(id: number): void {
     this.SelectedRow = null;
+
     if (id == null)
       return;
-      
-    this.SelectedRow = this.MaterialsListTableData[0];
 
-    // for (var i = 0; i < this.MaterialsListTableData.length; i++) {
-    //   if (this.MaterialsListTableData[i].MaterialsReceiptsListId == id)
-    // }
+    for (let i = 0; i < this.MaterialsListTableData.length; i++) {
+      if (this.MaterialsListTableData[i].Id == id)
+        this.SelectedRow = this.MaterialsListTableData[i];
+    }
   }
 
   public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
@@ -105,17 +92,32 @@ export class MaterialsReceiptsTableComponent {
       throw new Error("MaterialsReceiptId was not given or id equal/below 0");
     }
 
-    const response = await this.materialsReceiptsAPI.MaterialsReceiptsTableQueryAsync(materialsReceiptData.Id, page, limit);
+    const materialReceiptResponseIndex = 0;
+    const barCodesResponseIndex = 1;
 
-    if (response.HasErrors()) {
-      console.warn(response.ErrorList.toString());
+    const waitResponses = await Promise.all([
+      this.materialsReceiptsAPI.MaterialsReceiptsTableQueryAsync(materialsReceiptData.Id, page, limit),
+      this.materialsReceiptsAPI.BarCodesByMaterialReceiptQueryAsync(materialsReceiptData.Id)
+    ]);
+
+    var status = new ValidationStatus();
+    status.CombineErrors(waitResponses[materialReceiptResponseIndex]);
+    status.CombineErrors(waitResponses[barCodesResponseIndex]);
+
+    if (status.HasErrors()) {
+      console.warn(status.ErrorList.toString());
       this.Loading = false;
       return;
     }
 
-    this.MaterialsListTableData = response.Result.MaterialsDataTablePartList;
-    this.TotalRecords = response.Result.TotalRecordsAmount;
-    this.Loading = false;
+    this.MaterialsListTableData = waitResponses[materialReceiptResponseIndex].Result.MaterialsDataTablePartList;
+    this.TotalRecords = waitResponses[materialReceiptResponseIndex].Result.TotalRecordsAmount;
+
+    this.MaterialsListBarScanData = waitResponses[barCodesResponseIndex].Result.BarCodeDetails;
+
     this.eventBus.LastMaterialsListTableData = this.MaterialsListTableData;
+    this.eventBus.LastBarCodesOfMaterialReceipt = this.MaterialsListBarScanData;
+
+    this.Loading = false;
   }
 }

@@ -26,7 +26,6 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { ToastModule } from 'primeng/toast';
 
 import { ProductService } from './services/ProductService';
 import { CastorAPI } from '@shared/services/CastorAPI';
@@ -42,7 +41,6 @@ import { LocationsTableComponent } from './Components/LocationsTable/LocationsTa
 import { MaterialsAtLocationComponent } from './Components/MaterialsAtLocation/MaterialsAtLocationComponent';
 import { MaterialsTableComponent } from './Components/MaterialsTable/MaterialsTableComponent';
 import { SelectMaterialDialog } from './Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog';
-import { ScanningDialog } from './Components/Dialogs/ScanningDialog/ScanningDialog';
 
 import { environment } from 'src/environments/environment';
 
@@ -52,9 +50,7 @@ import { environment } from 'src/environments/environment';
  * @param eventBusService event bus
  * @returns Mock or real
  */
-const MaterialsReceiptsAPIFactory =
-(eventProxyLibService: EventProxyLibService,
-  eventBusService: EventBusService) => {
+const MaterialsReceiptsAPIFactory = (eventProxyLibService: EventProxyLibService, eventBusService: EventBusService) => {
   return new MaterialsReceiptsAPI(eventProxyLibService, eventBusService);
 };
 
@@ -64,9 +60,7 @@ const MaterialsReceiptsAPIFactory =
  * @param httpClient http
  * @returns Mock or real
  */
-const EventProxyLibFacotry =
-(envService: EnvironmentService,
-  httpClient: HttpClient): unknown => {
+const EventProxyLibFacotry = (envService: EnvironmentService, httpClient: HttpClient): unknown => {
   if (environment.EnvironmentTypes == EnvironmentTypes.Solo) {
     return new EventProxyLibServiceMock();
   } else {
@@ -101,8 +95,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     LocationsTableComponent,
     MaterialsAtLocationComponent,
     MaterialsTableComponent,
-    SelectMaterialDialog,
-    ScanningDialog
+    SelectMaterialDialog
   ],
   imports: [
     BrowserModule,
@@ -119,7 +112,6 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     InputTextModule,
     InputNumberModule,
     CardModule,
-    ToastModule,
     EventProxyLibModule,
   ],
   providers: [

@@ -14,5 +14,5 @@ export class EventBusService {
    */
   public EventBus = new Subject<CoreEvent>();
 
-  public RefreshTable = new  Subject<void>();
+  public RefreshTable = new Subject<void>();
 }

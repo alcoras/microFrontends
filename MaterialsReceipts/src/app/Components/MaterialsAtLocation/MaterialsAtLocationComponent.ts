@@ -5,8 +5,7 @@ import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
 import { SelectMaterialDialog } from "@shared/Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
 import {
   MaterialsAtLocationsData,
-  MaterialsData,
-  MaterialsReceiptsMaterialsAtLocationsReadListResults } from "event-proxy-lib-src";
+  MaterialsData } from "event-proxy-lib-src";
 
 @Component({
   selector: "material-receipts-materials-at-location-table",

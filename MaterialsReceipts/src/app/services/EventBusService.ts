@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
+import { BarCodeCast, CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
 import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData';
 
 /**
@@ -12,6 +12,7 @@ import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData
 export class EventBusService {
 
   public LastMaterialsListTableData: MaterialsListTablePart[];
+  public LastBarCodesOfMaterialReceipt: BarCodeCast[];
   public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
 
   /**
@@ -26,29 +27,17 @@ export class EventBusService {
   public OnMaterialReceiptSelected = new Subject<void>();
 
   /**
-   * Invoked by MaterialsReceiptsTable when a row is selected
-   */
-  public OnMaterialReceiptDataRowSelected = new Subject<MaterialsListTablePart>();
-
-  /**
-   * Invoked by ScanTable when row is selected, so Data Table can highlight a match
+   * Invoked by Scan Table when row is selected so MaterialsReceiptsTable
+   * can highlight matching row with Scan Table
    */
   public OnScanTableRowSelected = new Subject<number>();
 
   /**
    * Event called when a row is selected in ScanTable
-   * @param data MaterialsReceiptsTableId
+   * @param materialsReceiptsTableId MaterialsReceiptsTableId
    */
-  public ScanTableRowSelected(data: number) {
-    this.OnScanTableRowSelected.next(data);
-  }
-
-  /**
-   * Event called MaterialsReceiptsTable when a row is selected
-   * @param data Materials List Table Part
-   */
-  public MaterialReceiptDataRowSelected(data: MaterialsListTablePart): void {
-    this.OnMaterialReceiptDataRowSelected.next(data);
+  public ScanTableRowSelected(materialsReceiptsTableId?: number): void {
+    this.OnScanTableRowSelected.next(materialsReceiptsTableId);
   }
 
   /**

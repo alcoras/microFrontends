@@ -24,11 +24,8 @@ module.exports = {
     'jsdoc'
   ],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/member-ordering': 'error',
     'jsdoc/newline-after-description': 'off',
     'jsdoc/require-param-type': 'off',
     'jsdoc/require-returns-type': 'off',
-    '@typescript-eslint/explicit-member-accessibility': 'warn'
   },
 }

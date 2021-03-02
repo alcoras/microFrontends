@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { LazyLoadEvent } from "primeng/api";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
-import { MaterialsData, MaterialsReceiptsMaterialsReadListResults } from "event-proxy-lib-src";
+import { MaterialsData } from "event-proxy-lib-src";
 
 @Component({
   templateUrl: "SelectMaterialDialogView.html"

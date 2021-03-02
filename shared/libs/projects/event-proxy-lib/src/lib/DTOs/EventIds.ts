@@ -55,6 +55,15 @@ export enum EventIds {
   TestWunderMobilityCreate = 2069,
   TestWunderMobilityCheckout = 2070,
   TestWunderMobilityCheckoutResults = 2071,
+  OrchestratorTeam1OrchestrationFailed = 2072,
+  OrchestratorTeam1OrchestrationSuccess = 2073,
+  SOneMaterialReceiptBlock = 2074,
+  SOneMaterialReceiptUnBlock = 2075,
+  OrchestratorTeam1BarCodeDetailsQuery = 2076,
+  OrchestratorTeam1BarCodeDetailsResult = 2077,
+  OrchestratorTeam1MaterialsScanSigned = 2078,
+  OrchestratorTeam1MaterialsScanUnSigned = 2079,
+  MaterialsReceiptsMaterialsQueryListIds = 2080,
 
   // Core events
   PingRequest = 2001,

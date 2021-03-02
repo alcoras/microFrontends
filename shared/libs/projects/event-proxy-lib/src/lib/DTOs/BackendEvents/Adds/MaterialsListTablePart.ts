@@ -1,4 +1,5 @@
 export class MaterialsListTablePart {
+  public Id: number;
   public LineNumber: number;
   public NameSOne: string;
   public CodeSOne?: number;

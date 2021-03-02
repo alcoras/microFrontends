@@ -13,7 +13,7 @@ import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
   public Loading: boolean;
   public TotalRecords: number;
 
-  public Columns = ["Name", "Comment", "BarCode"];
+  public Columns = ["Id", "Name", "Comment", "BarCode"];
 
   public constructor(
     private materialsReceiptsAPI: MaterialsReceiptsAPI) {

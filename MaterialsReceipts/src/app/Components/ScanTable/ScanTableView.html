@@ -1,7 +1,8 @@
-<p-toast position="top-center"></p-toast>
 <p-table
   styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
   [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
+  selectionMode="single"
+  (onRowSelect)="OnScanTableRowSelected($event.data)" (onRowUnselect)="OnScanTableRowUnSelected()"
   [value]="ScanTableData"
   [totalRecords]="TotalRecords"
 >
@@ -34,7 +35,7 @@
 
   <!-- Fields -->
   <ng-template pTemplate="body" let-rowData>
-    <tr [pSelectableRow]="rowData" (click)="RowSelected(rowData)">
+    <tr [pSelectableRow]="rowData" (click)="(rowData)">
       <td *ngFor="let col of Columns">
           <div *ngIf="(col.field == 'Quantity'); else default">
             {{rowData[col.field]}} {{rowData['Unit']}}
@@ -44,9 +45,8 @@
       <!-- Actions -->
       <td>
         <button pButton pRipple icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-danger"
-          (click)="DeleteScan(rowData)">
+          (click)="OnDeleteScan(rowData)">
         </button>
-
       </td>
     </tr>
   </ng-template>
@@ -55,13 +55,13 @@
 <p-dialog
   header="New Scan"
   baseZIndex=10002
-  [(visible)]="NewDialogVisible" [modal]=true
+  [(visible)]="NewScanDialogVisible" [modal]=true
   [draggable]=false>
   <p-card>
 
     <div class="p-fluid">
       <div class="p-field">
-        <label>Name: {{NewEntryName}}</label>
+        <label>Name: {{NewEntry.Name}}</label>
       </div>
 
       <div class="p-field">
@@ -78,33 +78,71 @@
           <span class="p-inputgroup-addon">{{NewEntry.Unit}}</span>
         </div>
       </div>
+      <br>
+      <div *ngIf="ShowNewMaterialForms">
+        <div class="p-field">
+          <span class="p-float-label">
+            <input pInputText [(ngModel)]="NewEntry.Comment">
+            <label>Comment</label>
+          </span>
+        </div>
+      </div>
 
     </div>
   </p-card>
   <ng-template pTemplate="footer">
     <button pButton
       [disabled]="NewEntriesAddingDisabled"
-      (click)="SaveNewEntry()"
-      class="p-button-success"
-      label="Save&Close" icon="pi pi-save">
-    </button>
-
-    <button pButton
-      [disabled]="NewEntriesAddingDisabled"
-      (click)="SaveNewEntry()"
+      (click)="OnSaveNewEntry()"
       class="p-button-success"
       label="Save&Next" icon="pi pi-angle-right">
-    </button>
-
-    <button pButton
-      (click)="SubDialog = true"
-    >
     </button>
   </ng-template>
 </p-dialog>
 
-<p-dialog header="SubDialog" [(visible)]="SubDialog" [modal]=true baseZIndex=10003 [draggable]="false">
+<p-dialog 
+    header="Select relation"
+    [closable]=false
+    [(visible)]="SelectMaterialForBarcodeDialog"
+    [style]="{width: '100%'}"
+    [modal]=true baseZIndex=10003 [draggable]="false">
   <p-card>
-    Test
+    <p-table 
+      [value]="MaterialsListTableData"
+      styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
+      selectionMode="single" 
+      (onRowSelect)="OnSelectMaterialForBarcode($event.data)" (onRowUnselect)="OnUnSelectMaterialForBarcode()"
+    >
+      <!-- Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of MaterialReceiptTableColumns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+
+      <!-- Fields -->
+      <ng-template pTemplate="body" let-rowData>
+        <tr [pSelectableRow]="rowData">
+            <td *ngFor="let col of MaterialReceiptTableColumns">
+                <div *ngIf="(col.field == 'Quantity'); else default">
+                  {{rowData[col.field]}} {{rowData['Unit']}}
+                </div>
+                <ng-template #default>{{rowData[col.field]}}</ng-template>
+            </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
   </p-card>
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <button pButton
+      [disabled]="ButtonConfirmMaterialRelationDisabled"
+      (click)="OnClickConfirmMaterialRelation()"
+      class="p-button-success"
+      label="Confirm" icon="pi pi-check">
+    </button>
+  </ng-template>
 </p-dialog>

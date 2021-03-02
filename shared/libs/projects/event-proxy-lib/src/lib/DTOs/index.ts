@@ -46,6 +46,7 @@ export * from './BackendEvents/Adds/ScanTableData';
 
 export * from './BackendEvents/MaterialsReceiptsLocationsReadListResults';
 export * from './BackendEvents/MaterialsReceiptsLocationsReadListQuery';
+export * from './BackendEvents/MaterialsReceiptsMaterialsQueryListIds';
 export * from './BackendEvents/MaterialsReceiptsLocationsAddRemove';
 export * from './BackendEvents/Adds/LocationsData';
 export * from './BackendEvents/Adds/MaterialsAtLocationsData';
@@ -59,6 +60,11 @@ export * from './BackendEvents/MaterialsReceiptsMaterialsReadListResults';
 export * from './BackendEvents/Adds/MaterialsData';
 export * from './BackendEvents/Adds/MaterialsList';
 
+export * from './BackendEvents/Adds/BarCodeCast';
+export * from './BackendEvents/MaterialsReceiptsMaterials';
+export * from './BackendEvents/OrchestratorTeam1BarCodeDetailsQuery';
+export * from './BackendEvents/OrchestratorTeam1BarCodeDetailsResult';
+
 export * from './BackendEvents/CastorCreateAndOthers';
 
 export * from './BackendEvents/Adds/WunderMobilityProduct';
@@ -69,4 +75,5 @@ export * from './BackendEvents/WunderMobilityProductQuery';
 export * from './BackendEvents/WunderMobilityProductQueryResults';
 export * from './BackendEvents/WunderMobilityDoCheckoutResults';
 export * from './BackendEvents/WunderMobilityDoCheckout';
+
 

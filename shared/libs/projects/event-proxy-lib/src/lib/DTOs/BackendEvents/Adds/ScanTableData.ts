@@ -7,7 +7,7 @@ export class ScanTableData {
   /**
    * Reference to MaterialsReceiptsList by Id
    */
-  public MaterialsReceiptsListId?: number;
+  public MaterialsReceiptsListId: number;
 
   /**
    * Reference to MaterialsReceiptsTable by Id
@@ -16,5 +16,4 @@ export class ScanTableData {
 
   public Quantity?: number;
   public Unit?: string;
-  public BarCode?: string;
 }
