@@ -251,6 +251,7 @@ export class MaterialsReceiptsAPI {
       queryParams.Page,
       queryParams.Limit);
     event.SubscribeToChildren = true;
+
     const request = await this.eventProxyService.DispatchEventAsync(event);
 
     if (request.HasErrors()) return Promise.reject(request.ErrorList.toString());
@@ -259,7 +260,7 @@ export class MaterialsReceiptsAPI {
 
     const responsePromise = new Promise<MaterialsReceiptsScanTableReadListResults>((resolve) => {
       this.eventBusService.EventBus.subscribe((data: MaterialsReceiptsScanTableReadListResults) => {
-        if (data.ParentId === uniqueId) resolve(data);
+        if (data.ParentId === uniqueId) { resolve(data);}
       });
     })
 

@@ -65,13 +65,12 @@ export class OccupationService implements IMicroFrontend {
             }
             break;
         case EventIds.OccupationsRead:
-          await this.eventProxyService.ConfirmEventsAsync(
-            this.SourceInfo.SourceId, [element.AggregateId]);
-
-          await this.eventProxyService.DispatchEventAsync(
-            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
-
           this.eventBus.EventBus.next(element);
+
+          await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
+
+          await this.eventProxyService.DispatchEventAsync(new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
+
           break;
         case EventIds.EventProccessedSuccessfully:
           await this.eventProxyService.ConfirmEventsAsync(

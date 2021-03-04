@@ -264,8 +264,7 @@ export class EventProxyLibService {
     }
 
     const sourceName = MicroFrontendParts.GetSourceNameFromSourceID(this.sourceID);
-    console.log(`
-    ${caller}, source: id: ${this.sourceID} name: ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
+    console.log(`${caller}, source: id: ${this.sourceID} name: ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
 
     return await new Observable( (res: Subscriber<ValidationStatus<BackendToFrontendEvent>>) => {
       this.httpClient

@@ -16,8 +16,10 @@ const inputTimeoutMs = 1000;
 })
 export class ScanTableComponent {
 
+  public RequestBarCodeRelation = true;
   public MaterialsListTableData: MaterialsListTablePart[];
   public BarCodesOfMaterialReceipt: BarCodeCast[];
+
   
   // New material
   public ShowNewMaterialForms: boolean;
@@ -39,27 +41,26 @@ export class ScanTableComponent {
   public NewScanDialogVisible: boolean;
   public NewEntry: ScanTableAggregate;
   public Submited: false;
-  public Columns = [
-    { field: 'MaterialsId', header: 'MaterialsId'},
-    { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
-    { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
-    // { field: "Unit", header: "Unit"},
-    { field: "BarCode", header: "BarCode" },
-    { field: "Name", header: "Name" },
-    { field: "Quantity", header: "Quantity"},
-  ];
-
+  
   // Table
+    public Columns = [
+      { field: 'MaterialsId', header: 'MaterialsId'},
+      { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
+      { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
+      // skipping unit because it goes along with quantity
+      // { field: "Unit", header: "Unit"},
+      { field: "BarCode", header: "BarCode" },
+      { field: "Name", header: "Name" },
+      { field: "Quantity", header: "Quantity"},
+    ];
   public Loading: boolean;
   public TotalRecords: number;
-  public ScanTableData: ScanTableData[];
+  public ScanTableData: ScanTableAggregate[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
   
   private subscriptions: Subscription[];
 
-  public constructor(
-    private materialsReceiptsAPI: MaterialsReceiptsAPI,
-    private eventBus: EventBusService) {
+  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService) {
 
     this.Loading = true;
     this.NewEntry = new ScanTableAggregate();
@@ -67,7 +68,8 @@ export class ScanTableComponent {
     this.subscriptions = [];
 
     this.subscriptions.push(this.eventBus.OnMaterialReceiptSelected.subscribe(async () => {
-      await this.refreshScanTableTable();
+      this.RequestBarCodeRelation = true;
+      await this.refreshScanTableTableAsync();
     }));
   }
 
@@ -78,10 +80,12 @@ export class ScanTableComponent {
   }
 
   public async RefreshTable(): Promise<void> {
-    await this.refreshScanTableTable();
+    await this.refreshScanTableTableAsync();
   }
 
   public AddNewScan(): void {
+    // we don't wait because there is very unlikely a scan will be done faster
+    this.requestBarCodeRelationAsync();
     this.NewEntry = new ScanTableAggregate();
     this.NewScanDialogVisible = true;
     this.NewEntry.Quantity = 1;
@@ -89,7 +93,9 @@ export class ScanTableComponent {
     this.NewEntriesAddingDisabled = true;
   }
 
-  public CheckBarcode(): void {
+  public OnInputBarcodeChange(): void {
+    this.NewEntry.BarCode = this.NewEntry.BarCode?.trim();
+
     if (!this.NewEntry.BarCode || this.NewEntry.BarCode?.trim().length == 0) {
       this.NewEntriesAddingDisabled = true;
       return;
@@ -98,22 +104,43 @@ export class ScanTableComponent {
     if (this.barCodeInputTimeout)
       clearTimeout(this.barCodeInputTimeout);
 
-      this.barCodeInputTimeout = setTimeout(() => {
+      this.barCodeInputTimeout = setTimeout(async () => {
         this.MaterialsListTableData = this.eventBus.LastMaterialsListTableData;
-        this.BarCodesOfMaterialReceipt = this.eventBus.LastBarCodesOfMaterialReceipt;
         
-        // 1. check if we already have barcode from shared MaterialsListTablePart from event bus
-        for (let i = 0; i < this.MaterialsListTableData.length; i++) {
-          if (this.MaterialsListTableData[i].NameSOne == this.NewEntry.BarCode) {
-            // @UNDONE
+        // 1. check if we already have barcode from shared data in event bus
+        for (let barCodeIndex = 0; barCodeIndex < this.BarCodesOfMaterialReceipt.length; barCodeIndex++) {
+          if (this.BarCodesOfMaterialReceipt[barCodeIndex].BarCode == this.NewEntry.BarCode) {
             //  1. 2. Yes - we extract name and scanning buttons are active
-            this.NewEntry.MaterialsReceiptsListId = this.MaterialsListTableData[i].MaterialsReceiptsListId;
-            this.NewEntry.Name = this.MaterialsListTableData[i].NameSOne;
-            this.NewEntry.Unit = this.MaterialsListTableData[i].Unit;
-            this.NewEntry.MaterialsReceiptsTableId = this.MaterialsListTableData[i].Id;
+            const materialId = this.BarCodesOfMaterialReceipt[barCodeIndex].MaterialsId;
+            const material = await this.materialsReceiptsAPI.MaterialsQueryAsync(materialId);
+            
+            // TODO: handle errors and check if only one material was returned
+
+            this.NewEntry.MaterialsId = materialId;
+            this.NewEntry.Name = material.Result.MaterialsDataList[0].Name;
+            this.NewEntry.Comment = material.Result.MaterialsDataList[0].Comment;
+
+            let found = false;
+            for (let listTableIndex = 0; listTableIndex < this.MaterialsListTableData.length; listTableIndex++) {
+              if (this.MaterialsListTableData[listTableIndex].Id == this.BarCodesOfMaterialReceipt[barCodeIndex].Id) {
+                this.NewEntry.MaterialsReceiptsListId = this.MaterialsListTableData[listTableIndex].MaterialsReceiptsListId;
+                this.NewEntry.MaterialsReceiptsTableId = this.MaterialsListTableData[listTableIndex].Id;
+                this.NewEntry.Unit = this.MaterialsListTableData[listTableIndex].Unit;
+                found = true;
+                break;
+              }
+            }
+
+            if (!found)
+              throw new Error("Could not find MaterialsListTablePart which must be found");
+
+            // allow to save
+            this.NewEntriesAddingDisabled = false;
+
             return;
           }
         }
+
         //  1. 1. No - we have to select existing - Material relation dialog enabled
         this.SelectMaterialForBarcodeDialog = true;
         this.ButtonConfirmMaterialRelationDisabled = true;
@@ -162,20 +189,14 @@ export class ScanTableComponent {
       Unit: this.NewEntry.Unit
     };
 
-    const materialData: MaterialsData = {
-      Name: this.NewEntry.Name,
-      Comment: this.NewEntry.Comment,
-      BarCode: this.NewEntry.BarCode
-    };
-
     this.AddNewScan();
     await this.materialsReceiptsAPI.ScanTableCreateAsync(scanTabledata);
-    await this.refreshScanTableTable();
+    await this.refreshScanTableTableAsync();
   }
 
   public async OnDeleteScan(data: ScanTableData): Promise<void> {
     await this.materialsReceiptsAPI.ScanTableDeleteAsync(data);
-    await this.refreshScanTableTable();
+    await this.refreshScanTableTableAsync();
   }
 
   public async LoadDataLazy(event: LazyLoadEvent): Promise<void> {
@@ -183,30 +204,78 @@ export class ScanTableComponent {
     const page = event.first/event.rows + 1;
     const limit = event.rows;
 
-    await this.refreshScanTableTable(page, limit);
+    await this.refreshScanTableTableAsync(page, limit);
   }
 
-  private async refreshScanTableTable(page = 1, limit = 30): Promise<void> {
+  private async requestBarCodeRelationAsync() {
+    // we do it only once per material receipt change
+    if (!this.RequestBarCodeRelation)
+      return;
+
+    const response = await this.materialsReceiptsAPI.BarCodesByMaterialReceiptQueryAsync(this.eventBus.LastSelectedMaterialsReceiptData.Id);
+
+    this.BarCodesOfMaterialReceipt = response.Result.BarCodeDetails;
+
+    this.RequestBarCodeRelation = false;
+  }
+
+  private async refreshScanTableTableAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 
-    const data = this.eventBus.LastSelectedMaterialsReceiptData;
-    this.CurrentMaterialsReceiptData = data;
+    this.CurrentMaterialsReceiptData = this.eventBus.LastSelectedMaterialsReceiptData;
 
-    if (!data || data.Id <= 0) {
-      console.error(data);
+    this.MaterialsListTableData = this.eventBus.LastMaterialsListTableData;
+
+    if (!this.CurrentMaterialsReceiptData || this.CurrentMaterialsReceiptData.Id <= 0) {
+      console.error(this.CurrentMaterialsReceiptData);
       throw new Error("MaterialsReceiptId was not given or id equal/below 0");
     }
 
     const queryParams: ScanTableQueryParams = {
-      MaterialReceiptsListId: data.Id,
+      MaterialReceiptsListId: this.CurrentMaterialsReceiptData.Id,
       Page: page,
       Limit: limit
     };
-
+    
     const response = await this.materialsReceiptsAPI.ScanTableQueryAsync(queryParams);
+    
+    this.ScanTableData = [];
+    let materialIdList: number[] = [];
 
-    this.ScanTableData = response.Result.ScanTableDataList;
+    // gather all material ids
+    for (let i = 0; i < response.Result.ScanTableDataList.length; i++) {
+      const scanTableData = response.Result.ScanTableDataList[i];
+      const newScan: ScanTableAggregate = {
+        MaterialsId: scanTableData.MaterialsId,
+        MaterialsReceiptsListId: scanTableData.MaterialsReceiptsListId,
+        MaterialsReceiptsTableId: scanTableData.MaterialsReceiptsTableId,
+        Quantity: scanTableData.Quantity,
+        Unit: scanTableData.Unit
+      };
+
+      this.ScanTableData.push(newScan);
+      materialIdList.push(scanTableData.MaterialsId);
+    }
+
     this.TotalRecords = response.Result.TotalRecordsAmount;
     this.Loading = false;
+
+    // we fill up name and comment as we go (probably should show loading data entries or something)
+    const materialsResponse = await this.materialsReceiptsAPI.MaterialsQueryByListAsync(materialIdList);
+
+    for (let i = 0; i < materialsResponse.Result.MaterialsDataList.length; i++) {
+      const material = materialsResponse.Result.MaterialsDataList[i];
+      for (let m = 0; m < this.ScanTableData.length; m++) {
+        if (this.ScanTableData[m].MaterialsId == material.Id) {
+          // we found a match
+          this.ScanTableData[m].BarCode = material.BarCode;
+          this.ScanTableData[m].Name = material.Name;
+          this.ScanTableData[m].Comment = material.Comment;
+        }
+      }
+    }
+
+    this.eventBus.LastScanDataAggregateList = this.ScanTableData;
+    this.eventBus.ScanTableChanged();
   }
 }

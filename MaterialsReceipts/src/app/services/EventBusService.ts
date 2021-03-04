@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { BarCodeCast, CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
-import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData';
+import { CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
+import { ScanTableAggregate } from '@shared/Adds/ScanTableAggregate';
+import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
 
 /**
  * Event bus for inter component/service communication in current module
@@ -12,8 +13,8 @@ import { MaterialReceiptSelectedData } from '../Adds/MaterialReceiptSelectedData
 export class EventBusService {
 
   public LastMaterialsListTableData: MaterialsListTablePart[];
-  public LastBarCodesOfMaterialReceipt: BarCodeCast[];
   public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
+  public LastScanDataAggregateList: ScanTableAggregate[];
 
   /**
    * Event bus for inter component/service communication in current module
@@ -31,6 +32,18 @@ export class EventBusService {
    * can highlight matching row with Scan Table
    */
   public OnScanTableRowSelected = new Subject<number>();
+
+  /**
+   * Invoked by Scan Table when entries are updated
+   */
+  public OnScanTableChanged = new Subject<void>();
+
+  /**
+   * Event called when Scan Table is updated
+   */
+  public ScanTableChanged(): void {
+    this.OnScanTableChanged.next();
+  }
 
   /**
    * Event called when a row is selected in ScanTable

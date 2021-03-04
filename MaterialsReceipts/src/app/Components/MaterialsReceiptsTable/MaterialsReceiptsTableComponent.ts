@@ -5,12 +5,16 @@ import { EventBusService } from '../../services/EventBusService';
 import { Subscription } from 'rxjs';
 import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
 import { BarCodeCast, MaterialsListTablePart, ValidationStatus } from 'event-proxy-lib-src';
+import { ScanTableAggregate } from '@shared/Adds/ScanTableAggregate';
 
 @Component({
   selector: 'materials-receipts-list-table-table',
   templateUrl: './MaterialsReceiptsTableView.html',
 })
 export class MaterialsReceiptsTableComponent {
+
+  public LastScanTableAggregateList: ScanTableAggregate[];
+  public LeftToScanDictionary: { [materialReceiptTableId: number]: number };
 
   public Loading: boolean;
   public TotalRecords: number;
@@ -23,6 +27,7 @@ export class MaterialsReceiptsTableComponent {
 
   public Columns = [
     // skipping irrelevant information
+    { field: 'Id', header: 'Id'},
     // { field: 'LineNumber', header: 'LineNumber'},
     { field: 'CodeSOne', header: 'CodeSOne?'},
     { field: 'Type', header: 'Type'},
@@ -31,7 +36,6 @@ export class MaterialsReceiptsTableComponent {
     { field: 'NameSOne', header: 'Name'},
     { field: 'PersonMRP', header: 'Person MRP'},
     { field: 'Quantity', header: 'Expected'},
-    { field: 'ScannedQuantity', header: 'Left to scan'},
   ];
 
   private subscriptions: Subscription[];
@@ -48,6 +52,8 @@ export class MaterialsReceiptsTableComponent {
         this.eventBus.OnMaterialReceiptSelected.subscribe(async () => await this.requestAndUpdateTableAsync()));
 
       this.subscriptions.push(this.eventBus.OnScanTableRowSelected.subscribe((id: number) => this.ScanTableRowSelected(id)));
+
+      this.subscriptions.push(this.eventBus.OnScanTableChanged.subscribe( () => this.handleScanTableDataChange()));
   }
 
   public OnDestroy(): void {
@@ -80,6 +86,27 @@ export class MaterialsReceiptsTableComponent {
     await this.requestAndUpdateTableAsync(page, limit);
   }
 
+  private handleScanTableDataChange(): void {
+    this.LastScanTableAggregateList = this.eventBus.LastScanDataAggregateList;
+
+    this.LeftToScanDictionary = {};
+
+    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+      this.LeftToScanDictionary[this.MaterialsListTableData[i].Id] = 0;
+    }
+
+    let entry: ScanTableAggregate;
+    let id: number;
+    for (var i = 0; i < this.LastScanTableAggregateList.length; i++) {
+      entry = this.LastScanTableAggregateList[i];
+      id = entry.MaterialsReceiptsTableId;
+
+      this.LeftToScanDictionary[id] += entry.Quantity;
+    }
+
+    console.log(this.LeftToScanDictionary);
+  }
+
   private async requestAndUpdateTableAsync(page = 1, limit = 30): Promise<void> {
 
     this.Loading = true;
@@ -87,37 +114,22 @@ export class MaterialsReceiptsTableComponent {
     const materialsReceiptData = this.eventBus.LastSelectedMaterialsReceiptData;
     this.CurrentMaterialsReceiptData = materialsReceiptData;
 
-    if (!materialsReceiptData || materialsReceiptData.Id <= 0) {
+    if (!materialsReceiptData || materialsReceiptData.Id < 1) {
       console.error(materialsReceiptData);
       throw new Error("MaterialsReceiptId was not given or id equal/below 0");
     }
 
-    const materialReceiptResponseIndex = 0;
-    const barCodesResponseIndex = 1;
+    const response = await this.materialsReceiptsAPI.MaterialsReceiptsTableQueryAsync(materialsReceiptData.Id, page, limit);
 
-    const waitResponses = await Promise.all([
-      this.materialsReceiptsAPI.MaterialsReceiptsTableQueryAsync(materialsReceiptData.Id, page, limit),
-      this.materialsReceiptsAPI.BarCodesByMaterialReceiptQueryAsync(materialsReceiptData.Id)
-    ]);
-
-    var status = new ValidationStatus();
-    status.CombineErrors(waitResponses[materialReceiptResponseIndex]);
-    status.CombineErrors(waitResponses[barCodesResponseIndex]);
-
-    if (status.HasErrors()) {
-      console.warn(status.ErrorList.toString());
+    if (response.HasErrors()) {
+      console.warn(response.ErrorList.toString());
       this.Loading = false;
       return;
     }
 
-    this.MaterialsListTableData = waitResponses[materialReceiptResponseIndex].Result.MaterialsDataTablePartList;
-    this.TotalRecords = waitResponses[materialReceiptResponseIndex].Result.TotalRecordsAmount;
-
-    this.MaterialsListBarScanData = waitResponses[barCodesResponseIndex].Result.BarCodeDetails;
-
-    this.eventBus.LastMaterialsListTableData = this.MaterialsListTableData;
-    this.eventBus.LastBarCodesOfMaterialReceipt = this.MaterialsListBarScanData;
-
+    this.MaterialsListTableData = response.Result.MaterialsDataTablePartList;
+    this.TotalRecords = response.Result.TotalRecordsAmount;
     this.Loading = false;
+    this.eventBus.LastMaterialsListTableData = this.MaterialsListTableData;
   }
 }

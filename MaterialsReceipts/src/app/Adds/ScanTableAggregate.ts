@@ -5,6 +5,6 @@ export class ScanTableAggregate {
   public Quantity?: number;
   public Unit?: string;
   public Name?: string;
-  public BarCode: string;
+  public BarCode?: string;
   public Comment?: string;
 }

@@ -66,8 +66,7 @@ export class $project_name$Service implements IMicroFrontend {
         //     this.eventBus.EventBus.next(element);
         //     break;
         case EventIds.EventProccessedSuccessfully:
-          await this.eventProxyService.ConfirmEventsAsync(
-            this.SourceInfo.SourceId, [element.AggregateId]);
+          await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
           break;
         case EventIds.EventProccessedWithFails:
           console.error(element);

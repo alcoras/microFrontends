@@ -65,12 +65,11 @@ export class PersonnelService implements IMicroFrontend {
           }
           break;
         case EventIds.ReadPersonData:
-          await this.eventProxyService.ConfirmEventsAsync(
-            this.SourceInfo.SourceId, [element.AggregateId]);
-
-          await this.eventProxyService.DispatchEventAsync(
-            new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
           this.eventBusService.EventBus.next(element);
+
+          await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
+
+          await this.eventProxyService.DispatchEventAsync(new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, element.ParentId]]));
           break;
         case EventIds.EventProccessedSuccessfully:
             await this.eventProxyService.ConfirmEventsAsync(

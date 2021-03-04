@@ -10,7 +10,7 @@
     <!-- Refresh button -->
     <div style="margin-bottom: 1em">
 
-      <!-- Add new -->
+      <!-- New Button -->
       <button pButton 
         pRipple label="New" icon="pi pi-plus"
         class="p-button-success p-mr-2" (click)="AddNewScan()">
@@ -66,7 +66,7 @@
 
       <div class="p-field">
         <span class="p-float-label">
-          <input pInputText (input)="CheckBarcode()" [(ngModel)]="NewEntry.BarCode">
+          <input pInputText (input)="OnInputBarcodeChange()" [(ngModel)]="NewEntry.BarCode">
           <label>Bar Code</label>
         </span>
       </div>
@@ -79,13 +79,12 @@
         </div>
       </div>
       <br>
-      <div *ngIf="ShowNewMaterialForms">
-        <div class="p-field">
-          <span class="p-float-label">
-            <input pInputText [(ngModel)]="NewEntry.Comment">
-            <label>Comment</label>
-          </span>
-        </div>
+
+      <div class="p-field">
+        <span class="p-float-label">
+          <input pInputText [(ngModel)]="NewEntry.Comment">
+          <label>Comment</label>
+        </span>
       </div>
 
     </div>
@@ -102,7 +101,6 @@
 
 <p-dialog 
     header="Select relation"
-    [closable]=false
     [(visible)]="SelectMaterialForBarcodeDialog"
     [style]="{width: '100%'}"
     [modal]=true baseZIndex=10003 [draggable]="false">
