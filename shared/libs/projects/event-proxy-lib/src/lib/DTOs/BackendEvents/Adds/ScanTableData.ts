@@ -1,17 +1,13 @@
 export class ScanTableData {
-  /**
-   * Reference to Materials by Id
-   */
+  /** Scan table Id */
+  public Id?: number;
+  /** Reference to Materials by Id */
   public MaterialsId?: number;
 
-  /**
-   * Reference to MaterialsReceiptsList by Id
-   */
-  public MaterialsReceiptsListId: number;
+  /** Reference to MaterialsReceiptsList by Id */
+  public MaterialsReceiptsListId?: number;
 
-  /**
-   * Reference to MaterialsReceiptsTable by Id
-   */
+  /** Reference to MaterialsReceiptsTable by Id */
   public MaterialsReceiptsTableId?: number;
 
   public Quantity?: number;

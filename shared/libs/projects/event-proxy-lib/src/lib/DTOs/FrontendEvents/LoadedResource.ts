@@ -13,10 +13,7 @@ export class LoadedResource extends CoreEvent {
      * @param {ResourceSheme} ResourceScheme Resource scheme with element's data (script, src..)
      * @memberof LoadedResource
      */
-    public constructor(
-        public ResourceEventId: number,
-        public ResourceScheme: ResourceSheme
-    ) {
+    public constructor(public ResourceEventId: number, public ResourceScheme: ResourceSheme) {
       super();
       this.EventId = EventIds.LoadedResource;
     }

@@ -12,10 +12,7 @@ export class RequestToLoadScripts extends CoreEvent {
      * @param RequestEventId event id which requested the load
      * @param ResourceSchemes scheme with data about HTML element to be loaded
      */
-    public constructor(
-        public RequestEventId: number,
-        public ResourceSchemes: ResourceSheme[]
-    ) {
+    public constructor(public RequestEventId: number, public ResourceSchemes: ResourceSheme[]) {
       super();
       this.EventId = EventIds.RequestToLoadScript;
     }

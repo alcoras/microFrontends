@@ -81,7 +81,7 @@ export class MicroFrontendParts {
    * @param sourceId source id string
    * @returns source name
    */
-  public static GetSourceNameFromSourceID(sourceId: string): string {
+  public static TryGetSourceNameFromSourceID(sourceId: string): string {
     const members = Object.getOwnPropertyNames(this);
 
     for (const key of members) {
@@ -98,7 +98,7 @@ export class MicroFrontendParts {
    * @param sourceName source id string
    * @returns source name
    */
-  public static GetSourceIdFromSourceName(sourceName: string): string {
+  public static TryGetSourceIdFromSourceName(sourceName: string): string {
     const members = Object.getOwnPropertyNames(this);
 
     for (const key of members) {

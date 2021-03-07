@@ -91,4 +91,10 @@ export enum EventIds {
   CastorFound = 2056,
   Unsubscribe = 2063,
   ObserverSnapshotReset = 2064,
+  DraftsCreate = 2081,
+  DraftsDelete = 2082,
+  DraftsGet = 2083,
+  DraftsFound = 2084,
+  DraftsUpdate = 2085,
+  NewEntryCreatedSuccessfully = 2086
 }

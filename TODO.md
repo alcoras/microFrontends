@@ -166,6 +166,7 @@
 81. INSTALLER:
     81. 1. Add to shell
     81. 2. Add to menu
-82.
+82. In all events add source info
+83. MaterialsReceiptsAPI.ts CreateDraft should placed somewhere globally
 
-83.
+84.

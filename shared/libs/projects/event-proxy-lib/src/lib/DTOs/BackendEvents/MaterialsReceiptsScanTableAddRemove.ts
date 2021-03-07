@@ -13,32 +13,25 @@ export enum MaterialsReceiptsScanTableAddRemoveFlag {
 
 export class MaterialsReceiptsScanTableAddRemove extends CoreEvent {
 
-  /**
-   * Reference to Materials by Id
-   */
+  /** Scan Table Id */
+  public Id?: number;
+  /** Reference to Materials by Id */
   public MaterialsId?: number;
-
-  /**
-   * Reference to MaterialsReceiptsList by Id
-   */
+  /** Reference to MaterialsReceiptsList by Id*/
   public MaterialsReceiptsListId?: number;
 
-  /**
-   * Reference to MaterialsReceiptsTable by Id
-   */
+  /** Reference to MaterialsReceiptsTable by Id */
   public MaterialsReceiptsTableId?: number;
 
   public Quantity?: number;
   public Unit?: string;
   public BarCode?: string;
 
-  public constructor(
-    sourceInfo: MicroFrontendInfo,
-    scanTableData: ScanTableData,
-    addRemoveFlag: MaterialsReceiptsScanTableAddRemoveFlag) {
+  public constructor(sourceInfo: MicroFrontendInfo, scanTableData: ScanTableData, addRemoveFlag: MaterialsReceiptsScanTableAddRemoveFlag) {
 
       super();
 
+      this.Id = scanTableData.Id;
       this.MaterialsId = scanTableData.MaterialsId;
       this.MaterialsReceiptsListId = scanTableData.MaterialsReceiptsListId;
       this.MaterialsReceiptsTableId = scanTableData.MaterialsReceiptsTableId;

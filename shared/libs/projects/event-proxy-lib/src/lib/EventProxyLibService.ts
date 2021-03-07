@@ -247,8 +247,7 @@ export class EventProxyLibService {
    * @param anonymous (default false) if set to true will not include LoginToken field
    * @returns ValidationStatus
    */
-  private async sendMessageAsync(caller: string, body: FrontendToBackendEvent, anonymous = false):
-  Promise<ValidationStatus<BackendToFrontendEvent>> {
+  private async sendMessageAsync(caller: string, body: FrontendToBackendEvent, anonymous = false): Promise<ValidationStatus<BackendToFrontendEvent>> {
 
     const result = new ValidationStatus<BackendToFrontendEvent>();
 
@@ -263,7 +262,7 @@ export class EventProxyLibService {
       body['Token'] = this.environmentService.AuthorizationToken;
     }
 
-    const sourceName = MicroFrontendParts.GetSourceNameFromSourceID(this.sourceID);
+    const sourceName = MicroFrontendParts.TryGetSourceNameFromSourceID(this.sourceID);
     console.log(`${caller}, source: id: ${this.sourceID} name: ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
 
     return await new Observable( (res: Subscriber<ValidationStatus<BackendToFrontendEvent>>) => {

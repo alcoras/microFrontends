@@ -103,8 +103,6 @@ export class MaterialsReceiptsTableComponent {
 
       this.LeftToScanDictionary[id] += entry.Quantity;
     }
-
-    console.log(this.LeftToScanDictionary);
   }
 
   private async requestAndUpdateTableAsync(page = 1, limit = 30): Promise<void> {

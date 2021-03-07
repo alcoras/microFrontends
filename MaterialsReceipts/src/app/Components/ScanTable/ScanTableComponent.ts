@@ -20,15 +20,12 @@ export class ScanTableComponent {
   public MaterialsListTableData: MaterialsListTablePart[];
   public BarCodesOfMaterialReceipt: BarCodeCast[];
 
-  
-  // New material
-  public ShowNewMaterialForms: boolean;
-
   // Material relation dialog
   public SelectMaterialForBarcodeDialog: boolean;
   public SelectedMaterialForBarcode: MaterialsListTablePart;
   public ButtonConfirmMaterialRelationDisabled: boolean;
   public MaterialReceiptTableColumns = [
+    { field: 'Id', header: 'Id'},
     { field: 'NameSOne', header: 'Name'},
     { field: 'PersonMRP', header: 'Person MRP'},
     { field: 'Quantity', header: 'Expected'},
@@ -37,13 +34,15 @@ export class ScanTableComponent {
   
   // New Scan entry dialog
   private barCodeInputTimeout: number;
+  public NewScanHeader = "New Scan";
   public NewEntriesAddingDisabled: boolean;
   public NewScanDialogVisible: boolean;
   public NewEntry: ScanTableAggregate;
   public Submited: false;
   
-  // Table
+  // Scan Table
     public Columns = [
+      { field: 'Id', header: 'Id'},
       { field: 'MaterialsId', header: 'MaterialsId'},
       { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
       { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
@@ -59,9 +58,13 @@ export class ScanTableComponent {
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
   
   private subscriptions: Subscription[];
+  private keyString: string;
+  private draftId: number;
 
   public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService) {
 
+    // TODO: hardcoding id for time being
+    this.keyString = this.materialsReceiptsAPI.CreateDraftKeyString("ScanTableData", "0", "MaterialElement");
     this.Loading = true;
     this.NewEntry = new ScanTableAggregate();
 
@@ -83,9 +86,10 @@ export class ScanTableComponent {
     await this.refreshScanTableTableAsync();
   }
 
-  public AddNewScan(): void {
-    // we don't wait because there is very unlikely a scan will be done faster
+  public async AddNewScan(): Promise<void> {
     this.requestBarCodeRelationAsync();
+    this.draftId = 0;
+    this.NewScanHeader = "New Scan";
     this.NewEntry = new ScanTableAggregate();
     this.NewScanDialogVisible = true;
     this.NewEntry.Quantity = 1;
@@ -107,15 +111,17 @@ export class ScanTableComponent {
       this.barCodeInputTimeout = setTimeout(async () => {
         this.MaterialsListTableData = this.eventBus.LastMaterialsListTableData;
         
-        // 1. check if we already have barcode from shared data in event bus
+        // 1. check if we already have barcode
+        // look up relation between one s
+        let barcodeRelationFound = false;
         for (let barCodeIndex = 0; barCodeIndex < this.BarCodesOfMaterialReceipt.length; barCodeIndex++) {
-          if (this.BarCodesOfMaterialReceipt[barCodeIndex].BarCode == this.NewEntry.BarCode) {
+          if (this.NewEntry.BarCode == this.BarCodesOfMaterialReceipt[barCodeIndex].BarCode) {
             //  1. 2. Yes - we extract name and scanning buttons are active
+            this.NewScanHeader = "New Scan > Material found";
+            barcodeRelationFound = true;
             const materialId = this.BarCodesOfMaterialReceipt[barCodeIndex].MaterialsId;
             const material = await this.materialsReceiptsAPI.MaterialsQueryAsync(materialId);
             
-            // TODO: handle errors and check if only one material was returned
-
             this.NewEntry.MaterialsId = materialId;
             this.NewEntry.Name = material.Result.MaterialsDataList[0].Name;
             this.NewEntry.Comment = material.Result.MaterialsDataList[0].Comment;
@@ -141,13 +147,36 @@ export class ScanTableComponent {
           }
         }
 
+        // look up in existing scans in case we did not found in s one relations
+        if (!barcodeRelationFound) {
+          for (let barcodeIndex = 0; barcodeIndex < this.ScanTableData.length; barcodeIndex++) {
+            if (this.NewEntry.BarCode == this.ScanTableData[barcodeIndex].BarCode) {
+              this.NewScanHeader = "New Scan > Material found";
+              barcodeRelationFound = true;
+
+              this.NewEntry.MaterialsId = this.ScanTableData[barcodeIndex].MaterialsId;
+              this.NewEntry.MaterialsReceiptsListId = this.ScanTableData[barcodeIndex].MaterialsReceiptsListId;
+              this.NewEntry.MaterialsReceiptsTableId = this.ScanTableData[barcodeIndex].MaterialsReceiptsTableId;
+              this.NewEntry.Comment = this.ScanTableData[barcodeIndex].Comment;
+              this.NewEntry.Name = this.ScanTableData[barcodeIndex].Name;
+              this.NewEntry.Unit = this.ScanTableData[barcodeIndex].Unit;
+
+              // allow to save
+              this.NewEntriesAddingDisabled = false;
+
+              return;
+            }
+          }
+        }
+
         //  1. 1. No - we have to select existing - Material relation dialog enabled
         this.SelectMaterialForBarcodeDialog = true;
         this.ButtonConfirmMaterialRelationDisabled = true;
+        // watch for OnClickConfirmMaterialRelation which will be triggered after selection is made
     }, inputTimeoutMs);
   }
 
-  public OnClickConfirmMaterialRelation(): void {
+  public async OnClickConfirmMaterialRelation(): Promise<void> {
     if (this.SelectedMaterialForBarcode == null)
       return;
   
@@ -157,8 +186,23 @@ export class ScanTableComponent {
     this.NewEntry.MaterialsReceiptsListId = this.SelectedMaterialForBarcode.MaterialsReceiptsListId;
     this.NewEntry.MaterialsReceiptsTableId = this.SelectedMaterialForBarcode.Id;
 
-    // creating new material entry
-    this.ShowNewMaterialForms = true;
+    // creating new material entry and load draft if exists, currently we need draft just for a comment
+    this.NewScanHeader = "New Scan > New Material";
+    const resposne = await this.materialsReceiptsAPI.DraftsGetAsync(this.keyString);
+    
+    if (resposne.HasErrors()) {
+      console.error(resposne.ErrorList.toString());
+      return;
+    }
+
+    if (resposne.Result.DraftDataList.length > 0) {
+      this.NewScanHeader = "New Scan > New Material (draft)";
+      const material: MaterialsData = JSON.parse(resposne.Result.DraftDataList[0].Draft);
+      this.draftId = resposne.Result.DraftDataList[0].Id;
+      this.NewEntry.Comment = material.Comment;
+    }
+    // allow to save new ScanDataTable
+    this.NewEntriesAddingDisabled = false;
   }
 
   public OnScanTableRowSelected(data: ScanTableData): void {
@@ -179,6 +223,9 @@ export class ScanTableComponent {
     this.ButtonConfirmMaterialRelationDisabled = false;
   }
 
+  /**
+   * Called when when saving entry to ScanData
+   */
   public async OnSaveNewEntry(): Promise<void> {
 
     const scanTabledata: ScanTableData = {
@@ -189,13 +236,43 @@ export class ScanTableComponent {
       Unit: this.NewEntry.Unit
     };
 
+    // add new material if we could not find existing one
+    if (!this.NewEntry.MaterialsId) {
+      const material: MaterialsData = {
+        Name: this.NewEntry.Name,
+        Comment: this.NewEntry.Comment,
+        BarCode: this.NewEntry.BarCode
+      };
+  
+      const materialCreateResponse = await this.materialsReceiptsAPI.MaterialCreateAsync(material);
+      scanTabledata.MaterialsId = materialCreateResponse.Result.Id;
+    }
+    
     this.AddNewScan();
-    await this.materialsReceiptsAPI.ScanTableCreateAsync(scanTabledata);
+    await this.materialsReceiptsAPI.ScanTableCreateAsync(scanTabledata)
     await this.refreshScanTableTableAsync();
   }
 
-  public async OnDeleteScan(data: ScanTableData): Promise<void> {
-    await this.materialsReceiptsAPI.ScanTableDeleteAsync(data);
+  public async OnSaveDraft() {
+    const materialDraft: MaterialsData = {
+      Name: this.NewEntry.Name,
+      Comment: this.NewEntry.Comment,
+      BarCode: this.NewEntry.BarCode
+    };
+
+    // save or update MaterialElement draft
+    if (this.draftId > 0) {
+      await this.materialsReceiptsAPI.DraftsUpdateAsync(this.draftId, this.keyString, JSON.stringify(materialDraft))
+    } else {
+      await this.materialsReceiptsAPI.DraftsCreateAsync(this.keyString, JSON.stringify(materialDraft));
+    }
+  }
+
+  public async OnDeleteScan(data: ScanTableAggregate): Promise<void> {
+    const scanTabledata: ScanTableData = {
+      Id: data.Id
+    };
+    await this.materialsReceiptsAPI.ScanTableDeleteAsync(scanTabledata);
     await this.refreshScanTableTableAsync();
   }
 
@@ -246,6 +323,7 @@ export class ScanTableComponent {
     for (let i = 0; i < response.Result.ScanTableDataList.length; i++) {
       const scanTableData = response.Result.ScanTableDataList[i];
       const newScan: ScanTableAggregate = {
+        Id: scanTableData.Id,
         MaterialsId: scanTableData.MaterialsId,
         MaterialsReceiptsListId: scanTableData.MaterialsReceiptsListId,
         MaterialsReceiptsTableId: scanTableData.MaterialsReceiptsTableId,
@@ -254,7 +332,8 @@ export class ScanTableComponent {
       };
 
       this.ScanTableData.push(newScan);
-      materialIdList.push(scanTableData.MaterialsId);
+      if (scanTableData.MaterialsId)
+        materialIdList.push(scanTableData.MaterialsId);
     }
 
     this.TotalRecords = response.Result.TotalRecordsAmount;

@@ -15,9 +15,7 @@ import { EventBusService } from "./EventBusService";
 export class CastorAPI {
   private sourceInfo = MicroFrontendParts.MaterialsReceipts;
 
-  public constructor(
-    private eventBusService: EventBusService,
-    private eventProxyService: EventProxyLibService) { }
+  public constructor(private eventBusService: EventBusService, private eventProxyService: EventProxyLibService) { }
 
   /**
    * Creating a relationship between two types

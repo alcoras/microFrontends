@@ -1,4 +1,5 @@
 export class ScanTableAggregate {
+  public Id?: number;
   public MaterialsId?: number;
   public MaterialsReceiptsListId?: number;
   public MaterialsReceiptsTableId?: number;

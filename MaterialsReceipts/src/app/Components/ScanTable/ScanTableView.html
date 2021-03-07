@@ -53,8 +53,9 @@
 </p-table>
 
 <p-dialog
-  header="New Scan"
+  [header]="NewScanHeader"
   baseZIndex=10002
+  [style]="{width: '50%'}"
   [(visible)]="NewScanDialogVisible" [modal]=true
   [draggable]=false>
   <p-card>
@@ -90,6 +91,11 @@
     </div>
   </p-card>
   <ng-template pTemplate="footer">
+    <button pButton
+      (click)="OnSaveDraft()"
+      class="p-button-success"
+      label="Save Draft" icon="pi pi-angle-right">
+    </button>
     <button pButton
       [disabled]="NewEntriesAddingDisabled"
       (click)="OnSaveNewEntry()"

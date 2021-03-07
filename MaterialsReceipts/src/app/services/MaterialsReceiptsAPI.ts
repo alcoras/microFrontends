@@ -29,7 +29,12 @@ import {
   OrchestratorTeam1BarCodeDetailsQuery,
   OrchestratorTeam1BarCodeDetailsResult,
   EventIds,
-  MaterialsReceiptsMaterialsQueryListIds
+  MaterialsReceiptsMaterialsQueryListIds,
+  DraftsCreateAndOthers,
+  DraftsEventFlags,
+  DraftsCreateAndOthersResults,
+  DraftsDelete,
+  CommonId
 } from 'event-proxy-lib-src';
 import { EventBusService } from './EventBusService';
 import { ReadListQueryParams } from '../Adds/ReadListQueryParams';
@@ -42,6 +47,60 @@ export class MaterialsReceiptsAPI {
   private sourceInfo = MicroFrontendParts.MaterialsReceipts;
 
   public constructor(private eventProxyService: EventProxyLibService, private eventBusService: EventBusService) { }
+
+  /**
+   * Main purpose is to unify all draft creations, should be somewhere globally so all drafts maintain format
+   * @param firstTypeName name for data type which needs a reference to second's type (example: ScanTableData needs a material draft)
+   * @param firstTypeId id used to find right draft based on context (Example: ScanTableData where id 10) (string because at somepoint id can be GUID or something)
+   * @param secondTypeName name for data type which we creating reference to (Example: for ScanTableData id 10 we need MaterialElement)
+   * @returns string which is basically concat of previous values and microfrontend's name
+   */
+  public CreateDraftKeyString(firstTypeName: string, firstTypeId: string, secondTypeName: string): string {
+    return `${this.sourceInfo.SourceName}${firstTypeName}${firstTypeId}${secondTypeName}`;
+  }
+
+  /**
+   * Update existing draft
+   * @param id draft's id which we want to update
+   * @param keyString filter key
+   * @param draft new draft
+   */
+  public async DraftsUpdateAsync(id: number, keyString: string, draft: string): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const event = new DraftsCreateAndOthers(this.sourceInfo, DraftsEventFlags.Update, keyString, draft, id);
+
+    return await this.eventProxyService.DispatchEventAsync(event);
+  }
+  
+  /**
+   * Create new draft
+   * @param keyString unique key string to identify draft
+   * @param draft draft's body in json
+   */
+  public async DraftsCreateAsync(keyString: string, draft: string): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    const event = new DraftsCreateAndOthers(this.sourceInfo, DraftsEventFlags.Create, keyString, draft);
+
+    return await this.eventProxyService.DispatchEventAsync(event);
+  }
+
+  /**
+   * Try to get existing draft
+   * @param keyString 
+   */
+  public async DraftsGetAsync(keyString: string): Promise<ValidationStatus<DraftsCreateAndOthersResults>> {
+    const event = new DraftsCreateAndOthers(this.sourceInfo, DraftsEventFlags.Get, keyString);
+    event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
+
+    return this.waitForResults<DraftsCreateAndOthersResults>(request);
+  }
+
+  /**
+   * Deletes drafts provided by their ids numbers
+   * @param ids list of draft ids to delete
+   */
+  public async DraftsDeleteAsync(ids: number[]): Promise<ValidationStatus<BackendToFrontendEvent>> {
+    return await this.eventProxyService.DispatchEventAsync(new DraftsDelete(this.sourceInfo, ids));
+  }
   
   /**
    * Gets existing barcodes from all entries in specified Materials Receipts 
@@ -81,8 +140,7 @@ export class MaterialsReceiptsAPI {
    */
   public async MaterialsQueryAsync(materialId?: number, barCode?: string, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsMaterialsReadListResults>> {
 
-    const event = new MaterialsReceiptsMaterialsReadListQuery(
-      this.sourceInfo, materialId, barCode, page, limit);
+    const event = new MaterialsReceiptsMaterialsReadListQuery(this.sourceInfo, materialId, barCode, page, limit);
     event.SubscribeToChildren = true;
 
     const request = await this.eventProxyService.DispatchEventAsync(event);
@@ -105,9 +163,12 @@ export class MaterialsReceiptsAPI {
    * @param materialsData MaterialsElement representation
    * @returns Promise with ReponseStatus
    */
-  public MaterialCreateAsync(materialsData: MaterialsData): Promise<ValidationStatus<BackendToFrontendEvent>> {
+  public async MaterialCreateAsync(materialsData: MaterialsData): Promise<ValidationStatus<CommonId>> {
     const event = new MaterialsReceiptsMaterials(this.sourceInfo, materialsData, MaterialsReceiptsMaterialsAddRemoveFlag.Create);
-    return this.eventProxyService.DispatchEventAsync(event);
+    event.SubscribeToChildren = true;
+    const request = await this.eventProxyService.DispatchEventAsync(event);
+
+    return this.waitForResults<CommonId>(request);
   }
   
   /**
@@ -128,8 +189,7 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus with MaterialsReceiptsTablePartReadListResults
    */
   public async MaterialsReceiptsTableQueryAsync(materialsReceiptId?: number, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsTablePartReadListResults>> {
-    const event = new MaterialsReceiptsTablePartReadListQuery(
-      this.sourceInfo, materialsReceiptId, page, limit);
+    const event = new MaterialsReceiptsTablePartReadListQuery(this.sourceInfo, materialsReceiptId, page, limit);
     event.SubscribeToChildren = true;
     const request = await this.eventProxyService.DispatchEventAsync(event);
 
@@ -142,10 +202,7 @@ export class MaterialsReceiptsAPI {
    * @returns ReponseStatus
    */
   public LocationCreateAsync(data: LocationsData): Promise<ValidationStatus<BackendToFrontendEvent>> {
-    const event = new MaterialsReceiptsLocationsAddRemove(
-      this.sourceInfo,
-      data,
-      MaterialsReceiptsLocationsAddRemoveFlag.Create);
+    const event = new MaterialsReceiptsLocationsAddRemove(this.sourceInfo, data, MaterialsReceiptsLocationsAddRemoveFlag.Create);
 
     return this.eventProxyService.DispatchEventAsync(event);
   }
@@ -156,10 +213,7 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus
    */
   public ScanTableCreateAsync(data: ScanTableData): Promise<ValidationStatus<BackendToFrontendEvent>> {
-    const event = new MaterialsReceiptsScanTableAddRemove(
-      this.sourceInfo,
-      data,
-      MaterialsReceiptsScanTableAddRemoveFlag.Create);
+    const event = new MaterialsReceiptsScanTableAddRemove(this.sourceInfo, data, MaterialsReceiptsScanTableAddRemoveFlag.Create);
 
     return this.eventProxyService.DispatchEventAsync(event);
   }
@@ -170,10 +224,7 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus
    */
   public LocationDeleteAsync(locationData: LocationsData): Promise<ValidationStatus<BackendToFrontendEvent>> {
-    const event = new MaterialsReceiptsLocationsAddRemove(
-      this.sourceInfo,
-      locationData,
-      MaterialsReceiptsLocationsAddRemoveFlag.Delete);
+    const event = new MaterialsReceiptsLocationsAddRemove(this.sourceInfo, locationData, MaterialsReceiptsLocationsAddRemoveFlag.Delete);
 
     return this.eventProxyService.DispatchEventAsync(event);
   }
@@ -184,10 +235,7 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus
    */
   public ScanTableDeleteAsync(data: ScanTableData): Promise<ValidationStatus<BackendToFrontendEvent>> {
-    const event = new MaterialsReceiptsScanTableAddRemove(
-      this.sourceInfo,
-      data,
-      MaterialsReceiptsScanTableAddRemoveFlag.Delete);
+    const event = new MaterialsReceiptsScanTableAddRemove(this.sourceInfo, data, MaterialsReceiptsScanTableAddRemoveFlag.Delete);
 
     return this.eventProxyService.DispatchEventAsync(event);
   }
@@ -202,8 +250,7 @@ export class MaterialsReceiptsAPI {
    */
   public async MaterialsAtLocationQueryAsync(page: number, limit: number, materialsId?: number, locationId?: number): Promise<ValidationStatus<MaterialsReceiptsMaterialsAtLocationsReadListResults>> {
 
-    const event = new MaterialsReceiptsMaterialsAtLocationsReadListQuery(
-      this.sourceInfo, materialsId, locationId, page, limit);
+    const event = new MaterialsReceiptsMaterialsAtLocationsReadListQuery(this.sourceInfo, materialsId, locationId, page, limit);
     event.SubscribeToChildren = true;
     const request = await this.eventProxyService.DispatchEventAsync(event);
 
@@ -218,8 +265,7 @@ export class MaterialsReceiptsAPI {
    * @returns ValidationStatus with MaterialsReceiptsLocationsReadListResults if čiki-piki
    */
   public async LocationsQueryAsync(locationId: number, page?: number, limit?: number): Promise<ValidationStatus<MaterialsReceiptsLocationsReadListResults>> {
-    const event = new MaterialsReceiptsLocationsReadListQuery(
-      this.sourceInfo, locationId, page, limit);
+    const event = new MaterialsReceiptsLocationsReadListQuery(this.sourceInfo, locationId, page, limit);
     event.SubscribeToChildren = true;
     const request = await this.eventProxyService.DispatchEventAsync(event);
 
@@ -308,7 +354,7 @@ export class MaterialsReceiptsAPI {
 
     const responsePromise = new Promise<T>((resolve) => {
       this.eventBusService.EventBus.subscribe((data: CoreEvent) => {
-        if (data.ParentId === uniqueId) resolve(<T>data);
+        if (data.ParentId == uniqueId) resolve(<T>data);
       });
     })
 

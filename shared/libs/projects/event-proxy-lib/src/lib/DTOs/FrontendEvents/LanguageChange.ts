@@ -9,9 +9,7 @@ export class LanguageChange extends CoreEvent {
      * Creates an instance of language change.
      * @param NewLanguage new language
      */
-    public constructor(
-        public NewLanguage: string
-    ) {
+    public constructor(public NewLanguage: string) {
       super();
       this.EventId = EventIds.LanguageChange;
     }

@@ -5,10 +5,7 @@ import { CoreEvent } from '../CoreEvent';
  * reach other micro frontends
  */
 export class EventButtonPressed extends CoreEvent {
-    public constructor(
-        buttonPressedEventId: number,
-        public UniqueElementId: string
-    ) {
+    public constructor(buttonPressedEventId: number, public UniqueElementId: string) {
         super();
         this.EventId = buttonPressedEventId;
     }
