@@ -16,31 +16,29 @@ export class EventBusService {
   public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
   public LastScanDataAggregateList: ScanTableAggregate[];
 
-  /**
-   * Event bus for inter component/service communication in current module
-   */
+  /** Event bus for inter component/service communication in current module */
   public EventBus = new Subject<CoreEvent>();
 
-  /**
-   * Invoked by MaterialsReceiptsList component when a record is selected
-   * passed to parent to active tab MaterialsReceiptsTable
+  /** Invoked by MaterialsReceiptsList component when a record is selected passed to parent to active tab MaterialsReceiptsTable
    */
   public OnMaterialReceiptSelected = new Subject<void>();
 
-  /**
-   * Invoked by Scan Table when row is selected so MaterialsReceiptsTable
-   * can highlight matching row with Scan Table
+  /** Invoked by Scan Table when row is selected so MaterialsReceiptsTable can highlight matching row with Scan Table
    */
   public OnScanTableRowSelected = new Subject<number>();
 
-  /**
-   * Invoked by Scan Table when entries are updated
-   */
+  /** Invoked by Scan Table when entries are updated */
   public OnScanTableChanged = new Subject<void>();
 
-  /**
-   * Event called when Scan Table is updated
-   */
+  /** Invoked by Scan Table when user tries to Sign */
+  public OnScanTableSignButtonClicked = new Subject<void>();
+
+  /** Event called when Scan Table button is pressed */
+  public ScanTableSignButtonClicked(): void {
+    this.OnScanTableSignButtonClicked.next();
+  }
+
+  /** Event called when Scan Table is updated */
   public ScanTableChanged(): void {
     this.OnScanTableChanged.next();
   }
@@ -52,6 +50,7 @@ export class EventBusService {
   public ScanTableRowSelected(materialsReceiptsTableId?: number): void {
     this.OnScanTableRowSelected.next(materialsReceiptsTableId);
   }
+
 
   /**
    * Event called when in Material Receipt List a record is selected

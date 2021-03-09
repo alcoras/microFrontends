@@ -1,40 +1,38 @@
-<p-card>
-  <p-table
-    styleClass="p-datatable-sm p-datatable-striped"
-    #dt [value]="Data"
-    [lazy]=true (onLazyLoad)="LazyLoad($event)" [loading]="Loading" [totalRecords]="TotalRecords"
-    [paginator]=true [rows]="50" [rowsPerPageOptions]="[25, 50, 100]" [showCurrentPageReport]=true
-    currentPageReportTemplate="{first}/{last} total:{totalRecords}"
-    >
+<p-table
+  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+  #dt [value]="Data"
+  [lazy]=true (onLazyLoad)="LazyLoad($event)" [loading]="Loading" [totalRecords]="TotalRecords"
+  [paginator]=true [rows]="50" [rowsPerPageOptions]="[25, 50, 100]" [showCurrentPageReport]=true
+  currentPageReportTemplate="{first}/{last} total:{totalRecords}"
+  >
 
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex">
-        <button pButton (click)="RefreshTable()" class="p-button-rounded p-ml-auto" icon="pi pi-refresh"></button>
-      </div>
-    </ng-template>
+  <ng-template pTemplate="caption">
+    <div class="p-d-flex">
+      <button pButton (click)="RefreshTable()" class="p-button-rounded p-ml-auto" icon="pi pi-refresh"></button>
+    </div>
+  </ng-template>
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th *ngFor="let column of Columns">
-          {{column}}
-        </th>
-        <th style="width: 4rem"></th>
-      </tr>
-    </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let column of Columns">
+        {{column}}
+      </th>
+      <th style="width: 4rem"></th>
+    </tr>
+  </ng-template>
 
-    <ng-template pTemplate="body" let-data let-rowData>
-      <tr>
-        <td *ngFor="let column of Columns; let i = index;">
-          {{data[column]}}
-        </td>
-        <td>
-          <p-button
-            styleClass="p-button-rounded p-button-danger"
-            icon="pi pi-trash"
-            (click)="DeleteMaterial(rowData)"></p-button>
-        </td>
-      </tr>
-    </ng-template>
+  <ng-template pTemplate="body" let-data let-rowData>
+    <tr>
+      <td *ngFor="let column of Columns; let i = index;">
+        {{data[column]}}
+      </td>
+      <td>
+        <p-button
+          styleClass="p-button-rounded p-button-danger"
+          icon="pi pi-trash"
+          (click)="DeleteMaterial(rowData)"></p-button>
+      </td>
+    </tr>
+  </ng-template>
 
-  </p-table>
-</p-card>
+</p-table>

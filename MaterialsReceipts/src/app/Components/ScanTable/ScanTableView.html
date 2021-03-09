@@ -7,21 +7,29 @@
   [totalRecords]="TotalRecords"
 >
   <ng-template pTemplate="caption">
-    <!-- Refresh button -->
-    <div style="margin-bottom: 1em">
-
-      <!-- New Button -->
-      <button pButton 
-        pRipple label="New" icon="pi pi-plus"
-        class="p-button-success p-mr-2" (click)="AddNewScan()">
-      </button>
-
-      <!-- Refresh -->
-      <button type="button" pButton icon="pi pi-refresh"
-        (click)="RefreshTable()" style="margin-right:.5em">
-      </button>
-
-    </div>
+    <p-toolbar>
+      <!-- Left Side -->
+      <ng-template pTemplate="left">          
+        <!-- New Button -->
+        <button label="New"  
+          pRipple pButton icon="pi pi-plus"
+          class="p-button-success p-mr-2" (click)="AddNewScan()">
+        </button>
+        
+        <!-- Sign button -->
+        <button label="Sign" 
+          type="button" pButton pRipple icon="pi pi-check"
+          (click)="OnSignButtonClicked()" class="p-button-success">
+        </button>
+      </ng-template>
+    
+      <ng-template pTemplate="right">
+        <!-- Refresh Button -->
+        <button type="button" pButton icon="pi pi-refresh"
+          (click)="RefreshTable()" style="margin-right:.5em" class="p-button-rounded"> 
+        </button>
+      </ng-template>
+    </p-toolbar>
   </ng-template>
   <!-- Headers -->
   <ng-template pTemplate="header">
@@ -75,7 +83,8 @@
       <div class="p-field">
         <label>Quantity</label>
         <div class="p-inputgroup">
-          <p-inputNumber [(ngModel)]="NewEntry.Quantity"></p-inputNumber>
+          <p-inputNumber [useGrouping]= false [minFractionDigits]="2" [maxFractionDigits]="2"
+            mode="decimal" [(ngModel)]="NewEntry.Quantity"></p-inputNumber>
           <span class="p-inputgroup-addon">{{NewEntry.Unit}}</span>
         </div>
       </div>

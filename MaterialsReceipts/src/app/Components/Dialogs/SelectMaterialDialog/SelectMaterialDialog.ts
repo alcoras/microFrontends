@@ -8,6 +8,9 @@ import { MaterialsData } from "event-proxy-lib-src";
   templateUrl: "SelectMaterialDialogView.html"
 }) export class SelectMaterialDialog {
 
+  public ButtonConfirmMaterialDisabled: boolean;
+  public SelectedMaterial: MaterialsData;
+
   public Data: MaterialsData[];
 
   public Loading: boolean;
@@ -15,11 +18,9 @@ import { MaterialsData } from "event-proxy-lib-src";
 
   public Columns = ["Name", "Comment", "BarCode"];
 
-  public constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    private materialsReceiptsAPI: MaterialsReceiptsAPI) {
+  public constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private materialsReceiptsAPI: MaterialsReceiptsAPI) {
     this.Loading = true;
+    this.ButtonConfirmMaterialDisabled = true;
   }
 
   public async LazyLoad(event: LazyLoadEvent): Promise<void> {
@@ -30,9 +31,26 @@ import { MaterialsData } from "event-proxy-lib-src";
     await this.queryMaterialsAsync(page, limit);
   }
 
+  public OnMaterialSelectionConfirmClicked() {
+    if (this.SelectMaterial)
+      this.ref.close(this.SelectedMaterial);
+    else
+      console.error("No material was selected");
+  }
+
+  public OnSelectMaterial(data: MaterialsData): void {
+    this.SelectedMaterial = data;
+    this.ButtonConfirmMaterialDisabled = false;
+  }
+
+  public OnUnSelectMaterial(): void {
+    this.ButtonConfirmMaterialDisabled = true;
+  }
+
   public SelectMaterial(data: MaterialsData): void{
     this.ref.close(data);
   }
+
   private async queryMaterialsAsync(page = 1, limit = 30): Promise<void> {
     this.Loading = true;
 

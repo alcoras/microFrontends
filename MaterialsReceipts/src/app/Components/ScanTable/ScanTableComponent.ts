@@ -223,6 +223,11 @@ export class ScanTableComponent {
     this.ButtonConfirmMaterialRelationDisabled = false;
   }
 
+  public OnSignButtonClicked() {
+    // required data is in materials receipt table component so we notify him to handle it
+    this.eventBus.ScanTableSignButtonClicked();
+  }
+
   /**
    * Called when when saving entry to ScanData
    */
@@ -342,6 +347,7 @@ export class ScanTableComponent {
     // we fill up name and comment as we go (probably should show loading data entries or something)
     const materialsResponse = await this.materialsReceiptsAPI.MaterialsQueryByListAsync(materialIdList);
 
+    if (materialsResponse)
     for (let i = 0; i < materialsResponse.Result.MaterialsDataList.length; i++) {
       const material = materialsResponse.Result.MaterialsDataList[i];
       for (let m = 0; m < this.ScanTableData.length; m++) {

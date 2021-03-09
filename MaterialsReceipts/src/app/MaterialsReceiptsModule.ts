@@ -26,6 +26,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ToolbarModule } from 'primeng/toolbar';
 
 import { ProductService } from './services/ProductService';
 import { CastorAPI } from '@shared/services/CastorAPI';
@@ -112,6 +114,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     InputTextModule,
     InputNumberModule,
     CardModule,
+    ToolbarModule,
+    ProgressBarModule,
     EventProxyLibModule,
   ],
   providers: [

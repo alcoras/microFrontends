@@ -5,119 +5,80 @@
     [paginator]="true" [rows]="50" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [totalRecords]="TotalRecords"
-    selectionMode="single" (onRowSelect)="OnRowSelect($event)" [(selection)]="SelectedRecord"
+    selectionMode="single" (onRowSelect)="OnRowSelect($event.data)" (onRowUnselect)="OnRowUnSelect()"
     [autoLayout]=true>
   <ng-template pTemplate="caption">
 
-    <!-- Refresh button -->
-    <div style="margin-bottom: 1em">
-      <button type="button" pButton icon="pi pi-refresh"
-        (click)="RefreshTable()" style="margin-right:.5em">
-      </button>
-    </div>
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <!-- All, Signed, Unsigned -->
+        <div class="p-formgroup-inline">
+          <div *ngFor="let category of Categories" class="p-field-checkbox">
+            <p-radioButton
+              (onClick)="RefreshTable()"
+              inputId="category.key"
+              name="category"
+              [value]="category"
+              [(ngModel)]="SelectedCategory"></p-radioButton>
+            <label [for]="category.key">{{category.name}}</label>
+          </div>
+          <!-- Date selection -->
+          <div class="p-field">
+            <label for="spanish">Select date range </label>
+            <p-calendar
+              (onClose)="RefreshTable()"
+              [showIcon]="true"
+              [(ngModel)]="DateRange"
+              [touchUI]="true"
+              showButtonBar="true"
+              selectionMode="range"
+              [locale]="UkrainianDate" dateFormat="yy-mm-dd"
+              inputId="ukrianian"></p-calendar>
+          </div>
+        </div>
+      </ng-template> 
 
-    <!-- All, Signed, Unsigned -->
-    <div class="p-formgroup-inline">
-      <div *ngFor="let category of Categories" class="p-field-checkbox">
-        <p-radioButton
-          (onClick)="RefreshTable()"
-          inputId="category.key"
-          name="category"
-          [value]="category"
-          [(ngModel)]="SelectedCategory"></p-radioButton>
-        <label [for]="category.key">{{category.name}}</label>
-      </div>
-    </div>
-
-    <!-- Date selection -->
-    <div class="p-field">
-      <label for="spanish">Select date range </label>
-      <p-calendar
-        (onClose)="RefreshTable()"
-        [showIcon]="true"
-        [(ngModel)]="DateRange"
-        [touchUI]="true"
-        showButtonBar="true"
-        selectionMode="range"
-        [locale]="UkrainianDate" dateFormat="yy-mm-dd"
-        inputId="ukrianian"></p-calendar>
-    </div>
-
+      <ng-template pTemplate="right">
+        <!-- Refresh button -->
+        <button type="button" pButton icon="pi pi-refresh" class="p-button-rounded"
+          (click)="RefreshTable()" style="margin-right:.5em">
+        </button>
+      </ng-template>    
+      
+    </p-toolbar>
   </ng-template>
   <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
-      <tr>
-          <th class="sticky-row" *ngFor="let col of columns">
-              {{col.header}}
-          </th>
-      </tr>
+    <tr>
+      <th class="sticky-row" *ngFor="let col of columns">
+          {{col.header}}
+      </th>
+      <th>Actions</th>
+    </tr>
   </ng-template>
 
   <!-- Fields -->
   <ng-template pTemplate="body" let-rowData let-columns="columns">
       <tr [pSelectableRow]="rowData">
           <td *ngFor="let col of columns">
-              {{rowData[col.field]}}
+            <div *ngIf="(col.field == 'SignMark'); else default">
+              <i class="pi" [ngClass]="{'true-icon pi-check-circle': rowData['SignMark'], 'false-icon pi-times-circle': !rowData['SignMark']}"></i>
+            </div>
+            <ng-template #default>{{rowData[col.field]}}</ng-template>
+          </td>
+          <td>
+            <!-- Arrival button -->
+            <button type="button" [disabled]="!MaterialReceiptSelected" pButton
+              label="Arrival" class="p-button-success"
+              (click)="OnArrivalClicked()" style="margin-right:.5em">
+            </button>
+
+            <!-- Location -->
+            <button type="button" pButton [disabled]="!MaterialReceiptSelected"
+            label="Location" class="p-button-success"
+            (click)="RefreshTable()">
+          </button>
           </td>
       </tr>
   </ng-template>
 </p-table>
-
-<!-- Dialog on click -->
-<p-dialog header="Material Receipt Details"
-  [(visible)]="DisplayDialog" [focusOnShow]="false" showEffect="fade" [modal]="true">
-  <br>
-  <p-tabView>
-    <br>
-    <p-tabPanel header="Item">
-
-      <div class="p-field">
-        <label for="username1">Product Bar Code</label>
-        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
-      </div>
-
-      <div class="p-field">
-        <label for="username1">Quantity</label>
-        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
-      </div>
-
-      <div class="p-field">
-        <label for="username1">Item placement</label>
-        <input id="username1" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="BarCode" />
-      </div>
-      <br>
-
-      <button pButton type="button" label="Update"></button>
-    </p-tabPanel>
-    <p-tabPanel header="Other">
-      <div class="p-grid ui-fluid" *ngIf="SelectedRecord">
-        <div class="p-col-4">
-            <label for="Number">Number</label>
-        </div>
-        <div class="p-col-8">
-            <input pInputText id="Number" [(ngModel)]="SelectedRecord.Number" autofocus />
-        </div>
-        <div class="p-col-4">
-            <label for="year">RegisterDateTime</label>
-        </div>
-        <div class="p-col-8">
-            <input pInputText id="RegisterDateTime" [(ngModel)]="SelectedRecord.RegisterDateTime" />
-        </div>
-        <div class="p-col-4">
-            <label for="brand">SignMark</label>
-        </div>
-        <div class="p-col-8">
-            <input pInputText id="SignMark" [(ngModel)]="SelectedRecord.SignMark" />
-        </div>
-        <div class="p-col-4">
-            <label for="color">Signee</label>
-        </div>
-        <div class="p-col-8">
-            <input pInputText id="SignPerson" [(ngModel)]="SelectedRecord.SignPerson" />
-        </div>
-    </div>
-    </p-tabPanel>
-  </p-tabView>
-
-
-</p-dialog>

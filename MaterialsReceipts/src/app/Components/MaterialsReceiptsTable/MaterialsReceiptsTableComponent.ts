@@ -14,7 +14,7 @@ import { ScanTableAggregate } from '@shared/Adds/ScanTableAggregate';
 export class MaterialsReceiptsTableComponent {
 
   public LastScanTableAggregateList: ScanTableAggregate[];
-  public LeftToScanDictionary: { [materialReceiptTableId: number]: number };
+  public ScannedDictionary: { [materialReceiptTableId: number]: number };
 
   public Loading: boolean;
   public TotalRecords: number;
@@ -48,12 +48,10 @@ export class MaterialsReceiptsTableComponent {
 
       this.subscriptions = [];
 
-      this.subscriptions.push(
-        this.eventBus.OnMaterialReceiptSelected.subscribe(async () => await this.requestAndUpdateTableAsync()));
-
+      this.subscriptions.push(this.eventBus.OnMaterialReceiptSelected.subscribe(async () => await this.requestAndUpdateTableAsync()));
       this.subscriptions.push(this.eventBus.OnScanTableRowSelected.subscribe((id: number) => this.ScanTableRowSelected(id)));
-
       this.subscriptions.push(this.eventBus.OnScanTableChanged.subscribe( () => this.handleScanTableDataChange()));
+      this.subscriptions.push(this.eventBus.OnScanTableSignButtonClicked.subscribe(()=> this.handleScanTableSignButtonClicked()));
   }
 
   public OnDestroy(): void {
@@ -86,13 +84,39 @@ export class MaterialsReceiptsTableComponent {
     await this.requestAndUpdateTableAsync(page, limit);
   }
 
+  private handleScanTableSignButtonClicked(): void {
+    // assuming ScannedDictionary is updated, because it should be updated after every Scan Table update
+    let success = true;
+    let currentId = 0;
+    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+      currentId = this.MaterialsListTableData[i].Id
+      if (!this.ScannedDictionary[currentId]) {
+        success = false;
+        break;
+      }
+      
+      if (this.ScannedDictionary[currentId] != this.MaterialsListTableData[i].Quantity) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) {
+      // send sign event and notify if sign was successful or not
+      console.log("Sending Sign event.")
+    } else {
+      // show some useful information
+      console.log("Missing items.");
+    }
+  }
+
   private handleScanTableDataChange(): void {
     this.LastScanTableAggregateList = this.eventBus.LastScanDataAggregateList;
 
-    this.LeftToScanDictionary = {};
+    this.ScannedDictionary = {};
 
     for (var i = 0; i < this.MaterialsListTableData.length; i++) {
-      this.LeftToScanDictionary[this.MaterialsListTableData[i].Id] = 0;
+      this.ScannedDictionary[this.MaterialsListTableData[i].Id] = 0;
     }
 
     let entry: ScanTableAggregate;
@@ -101,7 +125,7 @@ export class MaterialsReceiptsTableComponent {
       entry = this.LastScanTableAggregateList[i];
       id = entry.MaterialsReceiptsTableId;
 
-      this.LeftToScanDictionary[id] += entry.Quantity;
+      this.ScannedDictionary[id] += entry.Quantity;
     }
   }
 
@@ -127,7 +151,14 @@ export class MaterialsReceiptsTableComponent {
 
     this.MaterialsListTableData = response.Result.MaterialsDataTablePartList;
     this.TotalRecords = response.Result.TotalRecordsAmount;
-    this.Loading = false;
+    
+    this.ScannedDictionary = {};
+    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+      this.ScannedDictionary[this.MaterialsListTableData[i].Id] = 0;
+    }
+    
     this.eventBus.LastMaterialsListTableData = this.MaterialsListTableData;
+    
+    this.Loading = false;
   }
 }

@@ -4,6 +4,8 @@
     [lazy]=true (onLazyLoad)="LazyLoad($event)" [loading]="Loading" [totalRecords]="TotalRecords"
     [paginator]=true [rows]=50 [rowsPerPageOptions]="[25, 50, 100]" [showCurrentPageReport]=true
     currentPageReportTemplate="{first}/{last} total:{totalRecords}"
+    selectionMode="single" 
+    (onRowSelect)="OnSelectMaterial($event.data)" (onRowUnselect)="OnUnSelectMaterial()"
   >
 
     <ng-template pTemplate="header">
@@ -11,23 +13,24 @@
         <th *ngFor="let column of Columns">
           {{column}}
         </th>
-        <th style="width: 4rem"></th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-data let-rowData>
-      <tr>
+      <tr [pSelectableRow]="rowData">
         <td *ngFor="let column of Columns; let i = index;">
           {{data[column]}}
         </td>
-        <td>
-          <p-button
-            styleClass="p-button-rounded p-button-success"
-            icon="pi pi-check" label="Select"
-            (click)="SelectMaterial(rowData)"></p-button>
-        </td>
       </tr>
     </ng-template>
-
   </p-table>
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <button pButton
+      [disabled]="ButtonConfirmMaterialDisabled"
+      (click)="OnMaterialSelectionConfirmClicked()"
+      class="p-button-success"
+      label="Confirm" icon="pi pi-check">
+    </button>
+  </ng-template>
 </p-card>

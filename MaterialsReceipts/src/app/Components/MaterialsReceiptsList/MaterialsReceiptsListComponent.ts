@@ -6,13 +6,6 @@ import { MaterialsList } from 'event-proxy-lib-src';
 import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
 import { ReadListQueryParams } from '@shared/Adds/ReadListQueryParams';
 
-interface OnRowSelectedEvent {
-  originalEvent?: UIEvent,
-  data: MaterialsList,
-  type?: string,
-  index?: unknown,
-}
-
 interface IPrimeNgDate {
   firstDayOfWeek: number;
   dayNames: string[];
@@ -42,6 +35,8 @@ interface Category {
 })
 export class MaterialsReceiptsListComponent {
 
+  public MaterialReceiptSelected: boolean;
+
   public DateRange: Date[];
   public UkrainianDate: IPrimeNgDate;
 
@@ -51,11 +46,11 @@ export class MaterialsReceiptsListComponent {
     {name: Categories.Unsigned, key: 'U'}]
   public SelectedCategory: Category;
 
+  public SelectedMaterialData: MaterialsList;
+
   public Loading: boolean;
   public TotalRecords: number;
-  public DisplayDialog: boolean;
 
-  public SelectedRecord: MaterialsList;
   public SelectedMaterialReceiptId: number;
 
   public BarCode: string;
@@ -72,32 +67,45 @@ export class MaterialsReceiptsListComponent {
   private currentLimit = 0;
   private currentPage = 0;
 
-  public constructor(
-    private eventBus: EventBusService,
-    private materialsReceiptsAPI: MaterialsReceiptsAPI) {
+  public constructor(private eventBus: EventBusService, private materialsReceiptsAPI: MaterialsReceiptsAPI) {
+    this.MaterialReceiptSelected = false;
     this.Loading = true;
   }
 
   public ngOnInit(): void {
     this.UkrainianDate = {
       firstDayOfWeek: 1,
-      dayNames: [ "domingo","lunes","martes","miércoles","jueves","viernes","sábado" ],
-      dayNamesShort: [ "dom","lun","mar","mié","jue","vie","sáb" ],
-      dayNamesMin: [ "D","L","M","X","J","V","S" ],
-      monthNames: [ "enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre" ],
-      monthNamesShort: [ "ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic" ],
-      today: 'Hoy',
-      clear: 'Borrar'
+      dayNames: [ "понеділок","вівторок","середа","четвер","п’ятниця","субота","неділя" ],
+      dayNamesShort: ["пн", "вт", "ср", "чт", "пт", "сб", "нд"],
+      dayNamesMin: [ "П", "В", "С", "Ч", "Т", "Б", "Н"  ],
+      monthNames: [ "січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень" ],
+      monthNamesShort: [ "січ", "лют", "бер", "кв", "тр", "чер", "лип", "сер", "вер", "жовт", "лис", "гр" ],
+      today: 'Сьогодні',
+      clear: 'Відміна'
     };
 
     this.SelectedCategory = this.Categories[0];
   }
 
-  public OnRowSelect(event: OnRowSelectedEvent): void {
+  public OnRowSelect(data: MaterialsList): void {
+    this.SelectedMaterialData = data;
+    this.MaterialReceiptSelected = true;
+  }
+
+  public OnRowUnSelect(): void {
+    this.SelectedMaterialData = null;
+    this.MaterialReceiptSelected = false;
+  }
+
+  public OnArrivalClicked(): void {
+    if (!this.SelectedMaterialData) {
+      throw new Error("Material was not selected");
+    }
+
     const eventData: MaterialReceiptSelectedData = {
-      Id: event.data.Id,
-      ReceiptNumber: event.data.Number,
-      ReceiptDate: event.data.RegisterDateTime
+      Id: this.SelectedMaterialData.Id,
+      ReceiptNumber: this.SelectedMaterialData.Number,
+      ReceiptDate: this.SelectedMaterialData.RegisterDateTime
     };
 
     this.eventBus.MaterialReceiptSelected(eventData);
