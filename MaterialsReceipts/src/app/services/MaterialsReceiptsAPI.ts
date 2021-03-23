@@ -353,8 +353,11 @@ export class MaterialsReceiptsAPI {
     const uniqueId = request.Result.Ids[0];
 
     const responsePromise = new Promise<T>((resolve) => {
-      this.eventBusService.EventBus.subscribe((data: CoreEvent) => {
-        if (data.ParentId == uniqueId) resolve(<T>data);
+      let sub = this.eventBusService.EventBus.subscribe((data: CoreEvent) => {
+        if (data.ParentId == uniqueId) {
+          sub.unsubscribe();
+          resolve(<T>data);
+        }
       });
     })
 

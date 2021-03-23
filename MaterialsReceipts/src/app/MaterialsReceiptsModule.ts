@@ -43,6 +43,7 @@ import { LocationsTableComponent } from './Components/LocationsTable/LocationsTa
 import { MaterialsAtLocationComponent } from './Components/MaterialsAtLocation/MaterialsAtLocationComponent';
 import { MaterialsTableComponent } from './Components/MaterialsTable/MaterialsTableComponent';
 import { SelectMaterialDialog } from './Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog';
+import { StateScanTableComponent } from '@shared/Components/StateScanTable/StateScanTableComponent';
 
 import { environment } from 'src/environments/environment';
 
@@ -97,7 +98,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     LocationsTableComponent,
     MaterialsAtLocationComponent,
     MaterialsTableComponent,
-    SelectMaterialDialog
+    SelectMaterialDialog,
+    StateScanTableComponent
   ],
   imports: [
     BrowserModule,
