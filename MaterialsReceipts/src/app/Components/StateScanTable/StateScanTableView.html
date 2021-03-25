@@ -11,22 +11,31 @@
       <!-- Left Side -->
       <ng-template pTemplate="left">          
         <!-- New Button -->
-        <button label="New"  
-          pRipple pButton icon="pi pi-plus"
-          class="p-button-success p-mr-2" (click)="AddNewScan()">
+        <button pRipple pButton 
+          label="New"  
+          icon="pi pi-plus"
+          class="p-button-success p-mr-2" 
+          (click)=UIEventEmit(UIEventIds.waitForNewScanClick)>
         </button>
         
         <!-- Sign button -->
-        <button label="Sign" 
-          type="button" pButton pRipple icon="pi pi-check"
-          (click)="OnSignButtonClicked()" class="p-button-success">
+        <button pButton pRipple
+          label="Sign" 
+          type="button"  
+          icon="pi pi-check"
+          (click)="OnSignButtonClicked()" 
+          class="p-button-success">
         </button>
       </ng-template>
     
       <ng-template pTemplate="right">
         <!-- Refresh Button -->
-        <button type="button" pButton icon="pi pi-refresh"
-          (click)="RefreshTable()" style="margin-right:.5em" class="p-button-rounded"> 
+        <button pButton 
+          icon="pi pi-refresh"
+          type="button"
+          (click)="RefreshTable()" 
+          style="margin-right:.5em" 
+          class="p-button-rounded"> 
         </button>
       </ng-template>
     </p-toolbar>
@@ -43,7 +52,7 @@
 
   <!-- Fields -->
   <ng-template pTemplate="body" let-rowData>
-    <tr [pSelectableRow]="rowData" (click)="(rowData)">
+    <tr [pSelectableRow]="rowData">
       <td *ngFor="let col of Columns">
           <div *ngIf="(col.field == 'Quantity'); else default">
             {{rowData[col.field]}} {{rowData['Unit']}}
@@ -52,7 +61,9 @@
       </td>
       <!-- Actions -->
       <td>
-        <button pButton pRipple icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-danger"
+        <button pButton pRipple 
+          icon="pi pi-trash" 
+          class="p-button-sm p-button-rounded p-button-danger"
           (click)="OnDeleteScan(rowData)">
         </button>
       </td>
@@ -64,8 +75,10 @@
   [header]="NewScanHeader"
   baseZIndex=10002
   [style]="{width: '50%'}"
-  [(visible)]="NewScanDialogVisible" [modal]=true
-  [draggable]=false>
+  [(visible)]="NewScanDialogVisible" 
+  [modal]=true
+  [draggable]=false
+  (onHide)="UIEventEmit(UIEventIds.reset)">
   <p-card>
 
     <div class="p-fluid">
@@ -86,8 +99,12 @@
       <div class="p-field">
         <label>Quantity</label>
         <div class="p-inputgroup">
-          <p-inputNumber [useGrouping]= false [minFractionDigits]="2" [maxFractionDigits]="2"
-            mode="decimal" [(ngModel)]="NewEntry.Quantity"></p-inputNumber>
+          <p-inputNumber 
+            [useGrouping]=false 
+            [minFractionDigits]="2" [maxFractionDigits]="2"
+            mode="decimal" 
+            [(ngModel)]="NewEntry.Quantity">
+          </p-inputNumber>
           <span class="p-inputgroup-addon">{{NewEntry.Unit}}</span>
         </div>
       </div>
@@ -106,13 +123,15 @@
     <button pButton
       (click)="OnSaveDraft()"
       class="p-button-success"
-      label="Save Draft" icon="pi pi-angle-right">
+      label="Save Draft" 
+      icon="pi pi-angle-right">
     </button>
     <button pButton
       [disabled]="NewEntriesAddingDisabled"
-      (click)="OnSaveNewEntry()"
+      (click)=UIEventEmit(UIEventIds.saveScanButtonClicked)
       class="p-button-success"
-      label="Save&Next" icon="pi pi-angle-right">
+      label="Save&Next" 
+      icon="pi pi-angle-right">
     </button>
   </ng-template>
 </p-dialog>
@@ -126,7 +145,7 @@
     <p-table 
       [value]="MaterialsListTableData"
       styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
-      selectionMode="single" 
+      selectionMode="single"
       [(selection)]="SelectedMaterialForBarcode"
       (onRowSelect)="UIEventEmit(UIEventIds.materialRelationSelected)" 
       (onRowUnselect)="UIEventEmit(UIEventIds.materialRelationUnSelected)"
@@ -158,9 +177,10 @@
   <ng-template pTemplate="footer">
     <button pButton
       [disabled]="ButtonConfirmMaterialRelationDisabled"
-      (click)="UIEventEmit(UIEventIds.saveScanButtonClicked)"
+      (click)="UIEventEmit(UIEventIds.materialRelationConfirmed)"
       class="p-button-success"
-      label="Confirm" icon="pi pi-check">
+      label="Confirm" 
+      icon="pi pi-check">
     </button>
   </ng-template>
 </p-dialog>

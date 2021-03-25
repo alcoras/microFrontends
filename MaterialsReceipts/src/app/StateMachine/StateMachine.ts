@@ -2,7 +2,6 @@ import { FunctionStage } from "./FunctionStage";
 
 /** State machine for to retain transitions and data changes */
 export class StateMachine<T> {
-
   // Data which we will be saving after each passing function
   public StateData: T;
 
@@ -20,8 +19,9 @@ export class StateMachine<T> {
    * @param dataType data state type
    * @param functionStageList list of functions (first in list will be called first, and last will be considered last, otherwise order inconsequential)
    * @param context passing context from which a function should be called
+   * @param Debug If enabled will log stages
    */
-  constructor(private dataType: new () => T, private functionStageList: FunctionStage[], private context: any) {
+  constructor(private dataType: new () => T, private functionStageList: FunctionStage[], private context: any, public Debug = false, private resetFunction: FunctionStage = null) {
     if (functionStageList?.length == 0) {
       console.warn("Function stage list is empty");
       return;
@@ -43,28 +43,41 @@ export class StateMachine<T> {
 
   /** A function which is called after each stage, but can be called manually */
   public SaveStateData(): void {
-    this.data.push(Object.assign({}, this.StateData));
+    this.data.push(Object.assign<T, T>(new this.dataType(), this.StateData));
   }
 
   /** Get all data's states */
   public StateDataHistory(): T[] {
-    return Object.assign({}, this.data);
+    return Object.assign<T[], T[]>([], this.data);
   }
 
   /** start routine which is responsible for transitions; calls itself when it's finnished */
   private async startRecursiveRoutine(): Promise<void> {
-    let work = true, index: number; 
+    let work = true, index: number;
 
-    while (work) {
+    while (work) {      
+
       index = this.stageMap[this.currentIndex];
+      
+      if (this.Debug)
+        console.log(this.functionStageList[index].FunctionReference);
 
       if (this.currentIndex == this.endIndex)
         work = false;
 
-      this.currentIndex = await this.functionStageList[index].FunctionReference.bind(this.context)();
+      if (this.resetFunction) {
+        this.currentIndex = await Promise.race([
+          this.functionStageList[index].FunctionReference.bind(this.context)(),
+          this.resetFunction.FunctionReference.bind(this.context)()
+        ]);
+      } else {
+        this.currentIndex = await this.functionStageList[index].FunctionReference.bind(this.context)();
+      }
+
       this.SaveStateData();
     }
 
+    this.data = [];
     this.currentIndex = this.functionStageList[0].Index;
     this.startRecursiveRoutine();
   }
