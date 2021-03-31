@@ -36,8 +36,13 @@ Used for testing microfrontend alone but with connection to development backend/
 ### Solo
 Used for writing initial view which does not require anything else in the environment. In order for it to work, mock services should conditionally injected.
 
-### Developing regime
+### Development setup (all micro frontends):
 1. `cd launcher` and run `npm run watch` (assuming micro frontends were installed), which will start watch on: MaterialReceipts, Occupation, Personnel and Shell micro frontends.
 2. `cd ReverseProxy` and run `./nginx.exe` then control from other console using `./nginx.exe -s stop` or `./nginx.exe -s reload`
+
+### Development setup (one micro frotnend):
+1. `cd <desired project>` 
+2. `npm i` skip if you have already installed everything
+3. `ng serve` or `npm run start` if you don't have global angular
 
 ### Castor

@@ -168,5 +168,9 @@
     81. 2. Add to menu
 82. In all events add source info
 83. MaterialsReceiptsAPI.ts CreateDraft should placed somewhere globally
+84. write a guide on how to use template installer
 
-84.
+85. StateMachine: 
+    85. 1. it probably should be separated from component
+    85. 2. handling more than one state machine on same component
+    85. 3. should state machine be self-sufficient (component + view)

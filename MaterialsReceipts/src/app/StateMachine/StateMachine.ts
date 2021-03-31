@@ -15,11 +15,12 @@ export class StateMachine<T> {
   private stageMap: { [routineIndex: number]: number } = {};
 
   /**
-   * Starts recursive routine will call functions from provided list from passed context
+   * Starts recursive routine which will call functions from provided list from passed context (order is important, read parameter description)
    * @param dataType data state type
-   * @param functionStageList list of functions (first in list will be called first, and last will be considered last, otherwise order inconsequential)
+   * @param functionStageList list of functions (FIRST! in list will be called FIRST, and last will be considered last (it will reset to initial state), otherwise order inconsequential)
    * @param context passing context from which a function should be called
    * @param Debug If enabled will log stages
+   * @param resetFunction if not null this function will interrupt at any stage and start stage based on what it returns (you can reset to initial state)
    */
   constructor(private dataType: new () => T, private functionStageList: FunctionStage[], private context: any, public Debug = false, private resetFunction: FunctionStage = null) {
     if (functionStageList?.length == 0) {

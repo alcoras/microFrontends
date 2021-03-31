@@ -78,7 +78,7 @@
   [(visible)]="NewScanDialogVisible" 
   [modal]=true
   [draggable]=false
-  (onHide)="UIEventEmit(UIEventIds.reset)">
+  (onHide)=UIEventEmit(UIEventIds.reset)>
   <p-card>
 
     <div class="p-fluid">
@@ -91,7 +91,7 @@
           <input 
             [(ngModel)]="NewEntry.BarCode"
             pInputText 
-            (input)="UIEventEmit(UIEventIds.barcodeInputChanged)">
+            (input)=UIEventEmit(UIEventIds.barcodeInputChanged)>
           <label>Bar Code</label>
         </span>
       </div>
@@ -147,8 +147,8 @@
       styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
       selectionMode="single"
       [(selection)]="SelectedMaterialForBarcode"
-      (onRowSelect)="UIEventEmit(UIEventIds.materialRelationSelected)" 
-      (onRowUnselect)="UIEventEmit(UIEventIds.materialRelationUnSelected)"
+      (onRowSelect)=UIEventEmit(UIEventIds.materialRelationSelected)
+      (onRowUnselect)=UIEventEmit(UIEventIds.materialRelationUnSelected)
     > 
       <!-- Header -->
       <ng-template pTemplate="header">
@@ -177,7 +177,7 @@
   <ng-template pTemplate="footer">
     <button pButton
       [disabled]="ButtonConfirmMaterialRelationDisabled"
-      (click)="UIEventEmit(UIEventIds.materialRelationConfirmed)"
+      (click)=UIEventEmit(UIEventIds.materialRelationConfirmed)
       class="p-button-success"
       label="Confirm" 
       icon="pi pi-check">

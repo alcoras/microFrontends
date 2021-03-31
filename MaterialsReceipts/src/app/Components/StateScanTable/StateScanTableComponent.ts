@@ -92,7 +92,7 @@ export class StateScanTableComponent {
 
   // state 
   private localEventBus = new Subject<number>();
-  private newScanStateMachine: StateMachine<ScanTableAggregate>;
+  private addNewScanStateMachine: StateMachine<ScanTableAggregate>;
 
   public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService) {
 
@@ -111,20 +111,20 @@ export class StateScanTableComponent {
   }
 
   public ngOnInit(): void {
-    let stages: FunctionStage[] = [];
+    let stages: FunctionStage[] = [
+      { Index: StateRoutines.Initial, FunctionReference: this.addNewScan_newScanStarted },
 
-    stages.push({ Index: StateRoutines.Initial, FunctionReference: this.AddNewScan_newScanStarted });
+      { Index: StateRoutines.WaitForBarcodeInputChange, FunctionReference: this.addNewScan_waitForBarcodeInputChange },
+      { Index: StateRoutines.ValidateBarcode, FunctionReference: this.addNewScan_validateBarcode },
+      { Index: StateRoutines.WaitingForClickOnSaveAndSave, FunctionReference: this.addNewScan_waitForSaveAndSave },
+      { Index: StateRoutines.MaterialRelation_WaitForSelection, FunctionReference: this.addNewScan_materialSelection },
+      { Index: StateRoutines.MaterialRelation_Selected, FunctionReference: this.addNewScan_materialSelected },
+      { Index: StateRoutines.MaterialRelation_NewMaterial, FunctionReference: this.addNewScan_newMaterial },
+      
+      { Index: StateRoutines.End, FunctionReference: this.addNewScan_end },
+    ];
 
-    stages.push({ Index: StateRoutines.WaitForBarcodeInputChange, FunctionReference: this.AddNewScan_waitForBarcodeInputChange });
-    stages.push({ Index: StateRoutines.ValidateBarcode, FunctionReference: this.AddNewScan_validateBarcode });
-    stages.push({ Index: StateRoutines.WaitingForClickOnSaveAndSave, FunctionReference: this.AddNewScan_waitForSaveAndSave });
-    stages.push({ Index: StateRoutines.MaterialRelation_WaitForSelection, FunctionReference: this.AddNewScan_materialSelection });
-    stages.push({ Index: StateRoutines.MaterialRelation_Selected, FunctionReference: this.AddNewScan_materialSelected });
-    stages.push({ Index: StateRoutines.MaterialRelation_NewMaterial, FunctionReference: this.AddNewScan_newMaterial });
-
-    stages.push({ Index: StateRoutines.End, FunctionReference: this.AddNewScan_end });
-
-    this.newScanStateMachine = new StateMachine<ScanTableAggregate>(ScanTableAggregate, stages, this, true, { Index: UIEventIds.reset, FunctionReference: this.AddNewScan_reset });
+    this.addNewScanStateMachine = new StateMachine<ScanTableAggregate>(ScanTableAggregate, stages, this, true, { Index: UIEventIds.reset, FunctionReference: this.addNewScan_reset });
   }
 
   public OnDestroy(): void {
@@ -147,16 +147,18 @@ export class StateScanTableComponent {
     this.localEventBus.next(eventId);
   }
 
-  private async AddNewScan_reset(): Promise<number> {
+  private async addNewScan_reset(): Promise<number> {
     await WaitEventAsync(UIEventIds.reset, this.localEventBus);
 
     return StateRoutines.Initial;
   }
 
-  private async AddNewScan_newScanStarted(): Promise<number> {
+  private async addNewScan_newScanStarted(): Promise<number> {
     await WaitEventAsync(UIEventIds.waitForNewScanClick, this.localEventBus);
 
-    this.requestBarCodeRelationAsync();
+    // TODO: if I await barcode relatios then user will be waiting when he first clicks on Add Scan
+    this.requestBarCodeRelationAsync(); 
+
     this.resetNewScanDataEntry();
 
     return StateRoutines.WaitForBarcodeInputChange;
@@ -168,7 +170,7 @@ export class StateScanTableComponent {
 
     this.NewEntry = {};
     // I have to set reference because..?
-    this.newScanStateMachine.StateData = this.NewEntry;
+    this.addNewScanStateMachine.StateData = this.NewEntry;
 
     this.NewScanDialogVisible = true;
     this.NewEntry.Quantity = 1;
@@ -176,7 +178,7 @@ export class StateScanTableComponent {
     this.NewEntriesAddingDisabled = true;
   }
 
-  private async AddNewScan_waitForBarcodeInputChange(): Promise<number> {
+  private async addNewScan_waitForBarcodeInputChange(): Promise<number> {
     this.NewEntry.BarCode = this.NewEntry.BarCode?.trim();
 
     // wait till we stop typing after each change
@@ -186,7 +188,7 @@ export class StateScanTableComponent {
         delay(this.barCodeInputTimeout)
       ]);
 
-      if (res) // not delay
+      if (res) // barcode input changes, delay returns null
         continue;
   
       if (!this.NewEntry.BarCode || this.NewEntry.BarCode?.trim().length == 0) {
@@ -200,7 +202,7 @@ export class StateScanTableComponent {
     return StateRoutines.ValidateBarcode;
   }
 
-  private async AddNewScan_validateBarcode(): Promise<number> {
+  private async addNewScan_validateBarcode(): Promise<number> {
     this.MaterialsListTableData = this.eventBus.LastMaterialsListTableData;
         
     // 1. check if we already have barcode
@@ -269,7 +271,7 @@ export class StateScanTableComponent {
   }
 
   // wait for selection
-  private async AddNewScan_materialSelection(): Promise<number> {
+  private async addNewScan_materialSelection(): Promise<number> {
     let waitForOne = [
       WaitEventAsync(UIEventIds.materialRelationSelected, this.localEventBus),
       WaitEventAsync(UIEventIds.materialRelationUnSelected, this.localEventBus)
@@ -283,7 +285,7 @@ export class StateScanTableComponent {
       return StateRoutines.MaterialRelation_WaitForSelection;
   }
 
-  private async AddNewScan_materialSelected(): Promise<number> {
+  private async addNewScan_materialSelected(): Promise<number> {
     // allow to confirm material selection
     this.ButtonConfirmMaterialRelationDisabled = false;
 
@@ -302,7 +304,7 @@ export class StateScanTableComponent {
     throw Error("index was incorrect");
   }
 
-  private async AddNewScan_newMaterial(): Promise<number> {
+  private async addNewScan_newMaterial(): Promise<number> {
     if (this.SelectedMaterialForBarcode == null)
       return StateRoutines.MaterialRelation_WaitForSelection; 
   
@@ -331,7 +333,7 @@ export class StateScanTableComponent {
     return StateRoutines.WaitingForClickOnSaveAndSave;
   }
 
-  private async AddNewScan_waitForSaveAndSave(): Promise<number> {
+  private async addNewScan_waitForSaveAndSave(): Promise<number> {
     await WaitEventAsync(UIEventIds.saveScanButtonClicked, this.localEventBus);
 
     const scanTabledata: ScanTableData = {
@@ -362,7 +364,7 @@ export class StateScanTableComponent {
     return StateRoutines.WaitForBarcodeInputChange;
   }
 
-  public async AddNewScan_end(): Promise<number> {
+  public async addNewScan_end(): Promise<number> {
     // reset scan
     this.draftId = 0;
     this.NewScanHeader = "New Scan";
