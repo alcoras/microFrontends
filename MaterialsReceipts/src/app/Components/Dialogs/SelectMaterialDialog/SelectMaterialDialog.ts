@@ -31,7 +31,7 @@ import { MaterialsData } from "event-proxy-lib-src";
     await this.queryMaterialsAsync(page, limit);
   }
 
-  public OnMaterialSelectionConfirmClicked() {
+  public OnMaterialSelectionConfirmClicked(): void {
     if (this.SelectMaterial)
       this.ref.close(this.SelectedMaterial);
     else

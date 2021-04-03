@@ -1,9 +1,9 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { Translations } from '../../translations/Translations';
+import { Pipe, PipeTransform } from "@angular/core";
+import { environment } from "src/environments/environment";
+import { Translations } from "../../translations/Translations";
 
 @Pipe({
-  name: 'translate',
+  name: "translate",
   pure: false
 })
 export class TranslatePipe implements PipeTransform {

@@ -43,8 +43,8 @@ import {
 
   public SelectMaterialId(): void {
     this.dialogReference = this.dialogService.open(SelectMaterialDialog, {
-      header: 'Choose Material',
-      width: '100%',
+      header: "Choose Material",
+      width: "100%",
       contentStyle: {"max-height": "500px", "overflow": "auto"},
       baseZIndex: 10000
    });
@@ -53,7 +53,7 @@ import {
      if (data) {
        console.log(data);
      }
-   })
+   });
   }
 
   public ngOnDestroy(): void {

@@ -1,18 +1,18 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { environment } from '../environments/environment';
-import { EventBusService } from './services/EventBusService';
+import { Component, OnDestroy } from "@angular/core";
+import { Subscription } from "rxjs";
+import { environment } from "../environments/environment";
+import { EventBusService } from "./services/EventBusService";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './MaterialsReceiptsView.html',
-  styleUrls: ['./MaterialsReceiptsStyle.scss'],
+  selector: "app-root",
+  templateUrl: "./MaterialsReceiptsView.html",
+  styleUrls: ["./MaterialsReceiptsStyle.scss"],
 })
 export class MaterialsReceiptsComponent implements OnDestroy {
 
   public MaterialReceiptsDataTabDisabled = true;
   public ActiveTabIndex = 3;
-  public languages = ['en', 'lt', 'ru', 'ua'];
+  public languages = ["en", "lt", "ru", "ua"];
 
   private subscriptionList = new Subscription();
 

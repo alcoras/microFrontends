@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { LazyLoadEvent } from 'primeng/api';
-import { MaterialsReceiptsAPI  } from '../../services/MaterialsReceiptsAPI';
-import { EventBusService } from '../../services/EventBusService';
-import { MaterialsList } from 'event-proxy-lib-src';
-import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
-import { ReadListQueryParams } from '@shared/Adds/ReadListQueryParams';
+import { Component } from "@angular/core";
+import { LazyLoadEvent } from "primeng/api";
+import { MaterialsReceiptsAPI  } from "../../services/MaterialsReceiptsAPI";
+import { EventBusService } from "../../services/EventBusService";
+import { MaterialsList } from "event-proxy-lib-src";
+import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
+import { ReadListQueryParams } from "@shared/Adds/ReadListQueryParams";
 
 interface IPrimeNgDate {
   firstDayOfWeek: number;
@@ -18,9 +18,9 @@ interface IPrimeNgDate {
 }
 
 enum Categories {
-  Both = 'Both',
-  Signed = 'Signed',
-  Unsigned = 'Unsigned'
+  Both = "Both",
+  Signed = "Signed",
+  Unsigned = "Unsigned"
 }
 
 interface Category {
@@ -29,9 +29,9 @@ interface Category {
 }
 
 @Component({
-  selector: 'materials-receipts-list-table',
-  templateUrl: './MaterialsReceiptsListView.html',
-  styleUrls: ['./Styles.scss']
+  selector: "materials-receipts-list-table",
+  templateUrl: "./MaterialsReceiptsListView.html",
+  styleUrls: ["./Styles.scss"]
 })
 export class MaterialsReceiptsListComponent {
 
@@ -41,9 +41,9 @@ export class MaterialsReceiptsListComponent {
   public UkrainianDate: IPrimeNgDate;
 
   public Categories: Category[] = [
-    {name: Categories.Both, key:'B'},
-    {name: Categories.Signed, key: 'S'},
-    {name: Categories.Unsigned, key: 'U'}]
+    {name: Categories.Both, key:"B"},
+    {name: Categories.Signed, key: "S"},
+    {name: Categories.Unsigned, key: "U"}]
   public SelectedCategory: Category;
 
   public SelectedMaterialData: MaterialsList;
@@ -56,10 +56,10 @@ export class MaterialsReceiptsListComponent {
   public BarCode: string;
 
   public Cols = [
-    { field: 'Number', header: 'Number'},
-    { field: 'RegisterDateTime', header: 'RegisterDateTime'},
-    { field: 'SignMark', header: 'Signed?'},
-    { field: 'SignPerson', header: 'Signee'},
+    { field: "Number", header: "Number"},
+    { field: "RegisterDateTime", header: "RegisterDateTime"},
+    { field: "SignMark", header: "Signed?"},
+    { field: "SignPerson", header: "Signee"},
   ];
 
   public MaterialsListData: MaterialsList[];
@@ -80,8 +80,8 @@ export class MaterialsReceiptsListComponent {
       dayNamesMin: [ "П", "В", "С", "Ч", "Т", "Б", "Н"  ],
       monthNames: [ "січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень" ],
       monthNamesShort: [ "січ", "лют", "бер", "кв", "тр", "чер", "лип", "сер", "вер", "жовт", "лис", "гр" ],
-      today: 'Сьогодні',
-      clear: 'Відміна'
+      today: "Сьогодні",
+      clear: "Відміна"
     };
 
     this.SelectedCategory = this.Categories[0];

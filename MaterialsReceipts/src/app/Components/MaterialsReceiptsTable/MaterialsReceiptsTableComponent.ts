@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
-import { LazyLoadEvent } from 'primeng/api';
-import { MaterialsReceiptsAPI } from '../../services/MaterialsReceiptsAPI';
-import { EventBusService } from '../../services/EventBusService';
-import { Subscription } from 'rxjs';
-import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
-import { BarCodeCast, MaterialsListTablePart, ValidationStatus } from 'event-proxy-lib-src';
-import { ScanTableAggregate } from '@shared/Adds/ScanTableAggregate';
+import { Component } from "@angular/core";
+import { LazyLoadEvent } from "primeng/api";
+import { MaterialsReceiptsAPI } from "../../services/MaterialsReceiptsAPI";
+import { EventBusService } from "../../services/EventBusService";
+import { Subscription } from "rxjs";
+import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
+import { BarCodeCast, MaterialsListTablePart } from "event-proxy-lib-src";
+import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
 
 @Component({
-  selector: 'materials-receipts-list-table-table',
-  templateUrl: './MaterialsReceiptsTableView.html',
+  selector: "materials-receipts-list-table-table",
+  templateUrl: "./MaterialsReceiptsTableView.html",
 })
 export class MaterialsReceiptsTableComponent {
 
@@ -27,15 +27,15 @@ export class MaterialsReceiptsTableComponent {
 
   public Columns = [
     // skipping irrelevant information
-    { field: 'Id', header: 'Id'},
+    { field: "Id", header: "Id"},
     // { field: 'LineNumber', header: 'LineNumber'},
-    { field: 'CodeSOne', header: 'CodeSOne?'},
-    { field: 'Type', header: 'Type'},
+    { field: "CodeSOne", header: "CodeSOne?"},
+    { field: "Type", header: "Type"},
     // { field: 'Account', header: 'Account'},
     // { field: 'Unit', header: 'Units'},
-    { field: 'NameSOne', header: 'Name'},
-    { field: 'PersonMRP', header: 'Person MRP'},
-    { field: 'Quantity', header: 'Expected'},
+    { field: "NameSOne", header: "Name"},
+    { field: "PersonMRP", header: "Person MRP"},
+    { field: "Quantity", header: "Expected"},
   ];
 
   private subscriptions: Subscription[];
@@ -88,8 +88,8 @@ export class MaterialsReceiptsTableComponent {
     // assuming ScannedDictionary is updated, because it should be updated after every Scan Table update
     let success = true;
     let currentId = 0;
-    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
-      currentId = this.MaterialsListTableData[i].Id
+    for (let i = 0; i < this.MaterialsListTableData.length; i++) {
+      currentId = this.MaterialsListTableData[i].Id;
       if (!this.ScannedDictionary[currentId]) {
         success = false;
         break;
@@ -103,7 +103,7 @@ export class MaterialsReceiptsTableComponent {
 
     if (success) {
       // send sign event and notify if sign was successful or not
-      console.log("Sending Sign event.")
+      console.log("Sending Sign event.");
     } else {
       // show some useful information
       console.log("Missing items.");
@@ -115,13 +115,13 @@ export class MaterialsReceiptsTableComponent {
 
     this.ScannedDictionary = {};
 
-    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+    for (let i = 0; i < this.MaterialsListTableData.length; i++) {
       this.ScannedDictionary[this.MaterialsListTableData[i].Id] = 0;
     }
 
     let entry: ScanTableAggregate;
     let id: number;
-    for (var i = 0; i < this.LastScanTableAggregateList.length; i++) {
+    for (let i = 0; i < this.LastScanTableAggregateList.length; i++) {
       entry = this.LastScanTableAggregateList[i];
       id = entry.MaterialsReceiptsTableId;
 
@@ -153,7 +153,7 @@ export class MaterialsReceiptsTableComponent {
     this.TotalRecords = response.Result.TotalRecordsAmount;
     
     this.ScannedDictionary = {};
-    for (var i = 0; i < this.MaterialsListTableData.length; i++) {
+    for (let i = 0; i < this.MaterialsListTableData.length; i++) {
       this.ScannedDictionary[this.MaterialsListTableData[i].Id] = 0;
     }
     

@@ -1,51 +1,52 @@
-import { HttpClient } from '@angular/common/http';
-import { BrowserModule } from '@angular/platform-browser';
-import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { createCustomElement } from '@angular/elements';
+import { HttpClient } from "@angular/common/http";
+import { BrowserModule } from "@angular/platform-browser";
+import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FormsModule } from "@angular/forms";
+import { createCustomElement } from "@angular/elements";
 
 import {
   EnvironmentService,
   EnvironmentTypes,
   EventProxyLibModule,
-  EventProxyLibService } from 'event-proxy-lib-src';
+  EventProxyLibService } from "event-proxy-lib-src";
 
-import { MaterialsReceiptsComponent } from './MaterialsReceiptsComponent';
-import { TranslatePipe } from './Components/Pipes/TranslatePipe';
-import { ScanTableComponent } from './Components/ScanTable/ScanTableComponent';
+import { MaterialsReceiptsComponent } from "./MaterialsReceiptsComponent";
+import { TranslatePipe } from "./Components/Pipes/TranslatePipe";
+import { ScanTableComponent } from "./Components/ScanTable/ScanTableComponent";
 
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { TabViewModule } from 'primeng/tabview';
-import { CalendarModule } from 'primeng/calendar';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { CardModule } from 'primeng/card';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { ToolbarModule } from 'primeng/toolbar';
+import { ButtonModule } from "primeng/button";
+import { TableModule } from "primeng/table";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { TabViewModule } from "primeng/tabview";
+import { CalendarModule } from "primeng/calendar";
+import { CheckboxModule } from "primeng/checkbox";
+import { RadioButtonModule } from "primeng/radiobutton";
+import { CardModule } from "primeng/card";
+import { DynamicDialogModule } from "primeng/dynamicdialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { ProgressBarModule } from "primeng/progressbar";
+import { ToolbarModule } from "primeng/toolbar";
 
-import { ProductService } from './services/ProductService';
-import { CastorAPI } from '@shared/services/CastorAPI';
+import { ProductService } from "./services/ProductService";
+import { CastorAPI } from "@shared/services/CastorAPI";
 
-import { MaterialsReceiptsService } from './services/MaterialsReceiptsService';
-import { MaterialsReceiptsAPI } from './services/MaterialsReceiptsAPI';
-import { EventProxyLibServiceMock } from './services/mocks/EventProxyLibServiceMock';
-import { EventBusService } from './services/EventBusService';
+import { MaterialsReceiptsService } from "./services/MaterialsReceiptsService";
+import { MaterialsReceiptsAPI } from "./services/MaterialsReceiptsAPI";
+import { EventProxyLibServiceMock } from "./services/mocks/EventProxyLibServiceMock";
+import { EventBusService } from "./services/EventBusService";
 
-import { MaterialsReceiptsTableComponent } from './Components/MaterialsReceiptsTable/MaterialsReceiptsTableComponent';
-import { MaterialsReceiptsListComponent } from './Components/MaterialsReceiptsList/MaterialsReceiptsListComponent';
-import { LocationsTableComponent } from './Components/LocationsTable/LocationsTableComponent';
-import { MaterialsAtLocationComponent } from './Components/MaterialsAtLocation/MaterialsAtLocationComponent';
-import { MaterialsTableComponent } from './Components/MaterialsTable/MaterialsTableComponent';
-import { SelectMaterialDialog } from './Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog';
-import { StateScanTableComponent } from '@shared/Components/StateScanTable/StateScanTableComponent';
+import { MaterialsReceiptsTableComponent } from "./Components/MaterialsReceiptsTable/MaterialsReceiptsTableComponent";
+import { MaterialsReceiptsListComponent } from "./Components/MaterialsReceiptsList/MaterialsReceiptsListComponent";
+import { LocationsTableComponent } from "./Components/LocationsTable/LocationsTableComponent";
+import { MaterialsAtLocationComponent } from "./Components/MaterialsAtLocation/MaterialsAtLocationComponent";
+import { MaterialsTableComponent } from "./Components/MaterialsTable/MaterialsTableComponent";
+import { SelectMaterialDialog } from "./Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
+import { StateScanTableComponent } from "@shared/Components/StateScanTable/StateScanTableComponent";
+import { ActionScanTableComponent } from "@shared/Components/ActionScanTable/ActionScanTableComponent";
 
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 
 /**
  * Materials Receipts factory
@@ -69,7 +70,7 @@ const EventProxyLibFacotry = (envService: EnvironmentService, httpClient: HttpCl
   } else {
     return new EventProxyLibService(envService, httpClient);
   }
-}
+};
 
 /**
  * Service factory
@@ -99,7 +100,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
     MaterialsAtLocationComponent,
     MaterialsTableComponent,
     SelectMaterialDialog,
-    StateScanTableComponent
+		StateScanTableComponent,
+		ActionScanTableComponent
   ],
   imports: [
     BrowserModule,
@@ -152,8 +154,8 @@ export class MaterialsReceiptsModule {
 
     const ngCustomElement2 = createCustomElement(MaterialsReceiptsComponent, { injector });
 
-    if (!customElements.get('material-receipts')) {
-      customElements.define('material-receipts', ngCustomElement2);
+    if (!customElements.get("material-receipts")) {
+      customElements.define("material-receipts", ngCustomElement2);
     }
   }
 }

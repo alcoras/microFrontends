@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { CoreEvent, MaterialsListTablePart } from 'event-proxy-lib-src';
-import { ScanTableAggregate } from '@shared/Adds/ScanTableAggregate';
-import { MaterialReceiptSelectedData } from '@shared/Adds/MaterialReceiptSelectedData';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
+import { CoreEvent, MaterialsListTablePart } from "event-proxy-lib-src";
+import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
+import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 
 /**
  * Event bus for inter component/service communication in current module
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class EventBusService {
 
@@ -19,12 +19,10 @@ export class EventBusService {
   /** Event bus for inter component/service communication in current module */
   public EventBus = new Subject<CoreEvent>();
 
-  /** Invoked by MaterialsReceiptsList component when a record is selected passed to parent to active tab MaterialsReceiptsTable
-   */
+  /** Invoked by MaterialsReceiptsList component when a record is selected passed to parent to active tab MaterialsReceiptsTable */
   public OnMaterialReceiptSelected = new Subject<void>();
 
-  /** Invoked by Scan Table when row is selected so MaterialsReceiptsTable can highlight matching row with Scan Table
-   */
+  /** Invoked by Scan Table when row is selected so MaterialsReceiptsTable can highlight matching row with Scan Table */
   public OnScanTableRowSelected = new Subject<number>();
 
   /** Invoked by Scan Table when entries are updated */

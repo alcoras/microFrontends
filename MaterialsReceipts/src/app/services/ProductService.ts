@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Injectable } from '@angular/core';
-import { Product } from '../Adds/Product';
+import { Injectable } from "@angular/core";
+import { Product } from "../Adds/Product";
 
 @Injectable()
 export class ProductService {
 
-  public static status: string[] = ['OUTOFSTOCK', 'INSTOCK', 'LOWSTOCK'];
+  public static status: string[] = ["OUTOFSTOCK", "INSTOCK", "LOWSTOCK"];
 
     public static productNames: string[] = [
         "Bamboo Watch",
@@ -63,7 +63,7 @@ export class ProductService {
             rating: this.generateRating()
         };
 
-        product.image = product.name.toLocaleLowerCase().split(/[ ,]+/).join('-')+".jpg";
+        product.image = product.name.toLocaleLowerCase().split(/[ ,]+/).join("-")+".jpg";
         return product;
     }
 

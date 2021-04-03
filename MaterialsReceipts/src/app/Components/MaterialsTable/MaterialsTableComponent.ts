@@ -33,7 +33,7 @@ import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
   }
 
   public DeleteMaterial(): void {
-    console.log('gg');
+    console.log("gg");
   }
 
   private async queryMaterialsAsync(page = 1, limit = 30): Promise<void> {

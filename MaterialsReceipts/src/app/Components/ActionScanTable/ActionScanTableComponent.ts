@@ -8,6 +8,7 @@ import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelecte
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
 import { FunctionStage, StateMachine, WaitEventAsync } from "@shared/StateMachine";
+import { AddNewScanAction } from "./Actions/AddNewScanAction";
 
 /**
  * Returns promise after ms
@@ -40,20 +41,20 @@ enum UserInterfaceEventIds {
 }
 
 @Component({
-	selector: "materials-receipts-state-scan-table",
-	templateUrl: "./StateScanTableView.html",
+	selector: "materials-receipts-action-scan-table",
+	templateUrl: "./ActionScanTableView.html",
+	providers: [ AddNewScanAction ]
 })
-export class StateScanTableComponent {
+export class ActionScanTableComponent {
 
-  public RequestBarCodeRelation = true;
   public MaterialsListTableData: MaterialsListTablePart[];
-  public BarCodesOfMaterialReceipt: BarCodeCast[] = [];
 
   // Material relation dialog
   public SelectMaterialForBarcodeDialog: boolean;
   public SelectedMaterialForBarcode: MaterialsListTablePart;
   public ButtonConfirmMaterialRelationDisabled: boolean;
   public MaterialReceiptTableColumns = [
+  	// eslint-disable-next-line no-mixed-spaces-and-tabs
   	{ field: "Id", header: "Id"},
   	{ field: "NameSOne", header: "Name"},
   	{ field: "PersonMRP", header: "Person MRP"},
@@ -94,7 +95,7 @@ export class StateScanTableComponent {
   private localEventBus = new Subject<number>();
   private addNewScanStateMachine: StateMachine<ScanTableAggregate>;
 
-  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService) {
+  public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService, private addNewScanAction: AddNewScanAction) {
   	// TODO: hardcoding id for time being
   	this.keyString = this.materialsReceiptsAPI.CreateDraftKeyString("ScanTableData", "0", "MaterialElement");
   	this.Loading = true;

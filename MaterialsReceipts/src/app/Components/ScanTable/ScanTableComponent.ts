@@ -11,27 +11,27 @@ import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
 const inputTimeoutMs = 1000;
 
 @Component({
-  selector: 'materials-receipts-scan-table',
-  templateUrl: './ScanTableView.html',
+  selector: "materials-receipts-scan-table",
+  templateUrl: "./ScanTableView.html",
 })
 export class ScanTableComponent {
 
-  public RequestBarCodeRelation = true;
-  public MaterialsListTableData: MaterialsListTablePart[];
-  public BarCodesOfMaterialReceipt: BarCodeCast[];
+	public RequestBarCodeRelation = true;
+	public MaterialsListTableData: MaterialsListTablePart[];
+	public BarCodesOfMaterialReceipt: BarCodeCast[];
 
   // Material relation dialog
   public SelectMaterialForBarcodeDialog: boolean;
   public SelectedMaterialForBarcode: MaterialsListTablePart;
   public ButtonConfirmMaterialRelationDisabled: boolean;
   public MaterialReceiptTableColumns = [
-    { field: 'Id', header: 'Id'},
-    { field: 'NameSOne', header: 'Name'},
-    { field: 'PersonMRP', header: 'Person MRP'},
-    { field: 'Quantity', header: 'Expected'},
-    { field: 'ScannedQuantity', header: 'Left to scan'},
+    { field: "Id", header: "Id"},
+    { field: "NameSOne", header: "Name"},
+    { field: "PersonMRP", header: "Person MRP"},
+    { field: "Quantity", header: "Expected"},
+    { field: "ScannedQuantity", header: "Left to scan"},
   ];
-  
+
   // New Scan entry dialog
   private barCodeInputTimeout: number;
   public NewScanHeader = "New Scan";
@@ -39,13 +39,13 @@ export class ScanTableComponent {
   public NewScanDialogVisible: boolean;
   public NewEntry: ScanTableAggregate;
   public Submited: false;
-  
+
   // Scan Table
   public Columns = [
-    { field: 'Id', header: 'Id'},
-    { field: 'MaterialsId', header: 'MaterialsId'},
-    { field: 'MaterialsReceiptsListId', header: 'MaterialsReceiptsListId'},
-    { field: 'MaterialsReceiptsTableId', header: 'MaterialsReceiptsTableId'},
+    { field: "Id", header: "Id"},
+    { field: "MaterialsId", header: "MaterialsId"},
+    { field: "MaterialsReceiptsListId", header: "MaterialsReceiptsListId"},
+    { field: "MaterialsReceiptsTableId", header: "MaterialsReceiptsTableId"},
     // skipping unit because it goes along with quantity
     // { field: "Unit", header: "Unit"},
     { field: "BarCode", header: "BarCode" },
@@ -56,7 +56,7 @@ export class ScanTableComponent {
   public TotalRecords: number;
   public ScanTableData: ScanTableAggregate[];
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
-  
+
   private subscriptions: Subscription[] = [];
   private keyString: string;
   private draftId: number;
@@ -108,7 +108,7 @@ export class ScanTableComponent {
 
       this.barCodeInputTimeout = setTimeout(async () => {
         this.MaterialsListTableData = this.eventBus.LastMaterialsListTableData;
-        
+
         // 1. check if we already have barcode
         // look up relation between one s
         let barcodeRelationFound = false;
@@ -119,7 +119,7 @@ export class ScanTableComponent {
             barcodeRelationFound = true;
             const materialId = this.BarCodesOfMaterialReceipt[barCodeIndex].MaterialsId;
             const material = await this.materialsReceiptsAPI.MaterialsQueryAsync(materialId);
-            
+
             this.NewEntry.MaterialsId = materialId;
             this.NewEntry.Name = material.Result.MaterialsDataList[0].Name;
             this.NewEntry.Comment = material.Result.MaterialsDataList[0].Comment;
@@ -177,7 +177,7 @@ export class ScanTableComponent {
   public async OnClickConfirmMaterialRelation(): Promise<void> {
     if (this.SelectedMaterialForBarcode == null)
       return;
-  
+
     this.SelectMaterialForBarcodeDialog = false;
     this.NewEntry.Name = this.SelectedMaterialForBarcode.NameSOne;
     this.NewEntry.Unit = this.SelectedMaterialForBarcode.Unit;
@@ -187,7 +187,7 @@ export class ScanTableComponent {
     // creating new material entry and load draft if exists, currently we need draft just for a comment
     this.NewScanHeader = "New Scan > New Material";
     const resposne = await this.materialsReceiptsAPI.DraftsGetAsync(this.keyString);
-    
+
     if (resposne.HasErrors()) {
       console.error(resposne.ErrorList.toString());
       return;
@@ -215,13 +215,13 @@ export class ScanTableComponent {
     this.SelectedMaterialForBarcode = null;
     this.ButtonConfirmMaterialRelationDisabled = true;
   }
-  
+
   public OnSelectMaterialForBarcode(data: MaterialsListTablePart): void {
     this.SelectedMaterialForBarcode = data;
     this.ButtonConfirmMaterialRelationDisabled = false;
   }
 
-  public OnSignButtonClicked() {
+  public OnSignButtonClicked(): void {
     // required data is in materials receipt table component so we notify him to handle it
     this.eventBus.ScanTableSignButtonClicked();
   }
@@ -246,17 +246,17 @@ export class ScanTableComponent {
         Comment: this.NewEntry.Comment,
         BarCode: this.NewEntry.BarCode
       };
-  
+
       const materialCreateResponse = await this.materialsReceiptsAPI.MaterialCreateAsync(material);
       scanTabledata.MaterialsId = materialCreateResponse.Result.Id;
     }
-    
+
     this.AddNewScan();
-    await this.materialsReceiptsAPI.ScanTableCreateAsync(scanTabledata)
+    await this.materialsReceiptsAPI.ScanTableCreateAsync(scanTabledata);
     await this.refreshScanTableTableAsync();
   }
 
-  public async OnSaveDraft() {
+  public async OnSaveDraft(): Promise<void> {
     const materialDraft: MaterialsData = {
       Name: this.NewEntry.Name,
       Comment: this.NewEntry.Comment,
@@ -265,7 +265,7 @@ export class ScanTableComponent {
 
     // save or update MaterialElement draft
     if (this.draftId > 0) {
-      await this.materialsReceiptsAPI.DraftsUpdateAsync(this.draftId, this.keyString, JSON.stringify(materialDraft))
+      await this.materialsReceiptsAPI.DraftsUpdateAsync(this.draftId, this.keyString, JSON.stringify(materialDraft));
     } else {
       await this.materialsReceiptsAPI.DraftsCreateAsync(this.keyString, JSON.stringify(materialDraft));
     }
@@ -314,11 +314,11 @@ export class ScanTableComponent {
       Page: page,
       Limit: limit
     };
-    
+
     const response = await this.materialsReceiptsAPI.ScanTableQueryAsync(queryParams);
-    
+
     this.ScanTableData = [];
-    let materialIdList: number[] = [];
+    const materialIdList: number[] = [];
 
     // gather all material ids
     for (let i = 0; i < response.Result.ScanTableDataList.length; i++) {

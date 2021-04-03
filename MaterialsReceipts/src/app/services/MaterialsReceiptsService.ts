@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,12 +10,12 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class MaterialsReceiptsService implements IMicroFrontend {
 
@@ -59,7 +59,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
             await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
           } else {
             console.error(event);
-            throw new Error('Did not proccess after processButtonPressed');
+            throw new Error("Did not proccess after processButtonPressed");
           }
           break;
         case EventIds.MaterialsReceiptsScanTableReadListResults:
@@ -117,7 +117,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
    */
   private preparePlacements(): void {
     this.elToPlace[EventIds.MaterialsReceiptsButtonPressed] =
-      '<material-receipts></material-receipts>';
+      "<material-receipts></material-receipts>";
   }
 
   /**
@@ -139,7 +139,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

@@ -174,3 +174,7 @@
     85. 1. it probably should be separated from component
     85. 2. handling more than one state machine on same component
     85. 3. should state machine be self-sufficient (component + view)
+    85. 4. how do I inject?
+
+86.
+87.

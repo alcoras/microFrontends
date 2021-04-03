@@ -1,16 +1,16 @@
-import { EnvironmentTypes } from 'event-proxy-lib-src';
+import { EnvironmentTypes } from "event-proxy-lib-src";
 
 export const environment = {
   EnvironmentTypes: EnvironmentTypes.Production,
 
-  currentLanguage: 'en',
+  currentLanguage: "en",
 
   oneLanguage: false,
-  version: '1.0.0',
-  defaultLanguage: 'en',
-  url: 'http://localhost',
-  apiGatewayUrl : 'http://localhost',
-  apiGatewayPort : '8001',
+  version: "1.0.0",
+  defaultLanguage: "en",
+  url: "http://localhost",
+  apiGatewayUrl : "http://localhost",
+  apiGatewayPort : "8001",
 
   loggedIn : false,
   authToken : null,

@@ -22,6 +22,7 @@ export class StateMachine<T> {
    * @param Debug If enabled will log stages
    * @param resetFunction if not null this function will interrupt at any stage and start stage based on what it returns (you can reset to initial state)
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
   constructor(private dataType: new () => T, private functionStageList: FunctionStage[], private context: any, public Debug = false, private resetFunction: FunctionStage = null) {
     if (functionStageList?.length == 0) {
       console.warn("Function stage list is empty");
@@ -47,7 +48,10 @@ export class StateMachine<T> {
     this.data.push(Object.assign<T, T>(new this.dataType(), this.StateData));
   }
 
-  /** Get all data's states */
+  /**
+   * Retruns all states
+   * @returns array of data state
+   */
   public StateDataHistory(): T[] {
     return Object.assign<T[], T[]>([], this.data);
   }

@@ -10,7 +10,7 @@ import {
 import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class CastorAPI {
   private sourceInfo = MicroFrontendParts.MaterialsReceipts;
@@ -50,7 +50,7 @@ export class CastorAPI {
       this.eventBusService.EventBus.subscribe((data: CastorCreateAndOthers) => {
         if (data.ParentId === uniqueId) resolve(data);
       });
-    })
+    });
 
     return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
