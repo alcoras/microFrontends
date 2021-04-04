@@ -16,7 +16,7 @@ export class EventBusService {
   public LastSelectedMaterialsReceiptData: MaterialReceiptSelectedData;
   public LastScanDataAggregateList: ScanTableAggregate[];
 
-  /** Event bus for inter component/service communication in current module */
+  /** Event bus for inter component/service communication for passing events in current module */
   public EventBus = new Subject<CoreEvent>();
 
   /** Invoked by MaterialsReceiptsList component when a record is selected passed to parent to active tab MaterialsReceiptsTable */
@@ -29,8 +29,15 @@ export class EventBusService {
   public OnScanTableChanged = new Subject<void>();
 
   /** Invoked by Scan Table when user tries to Sign */
-  public OnScanTableSignButtonClicked = new Subject<void>();
+	public OnScanTableSignButtonClicked = new Subject<void>();
 
+	/** Invoked by Action in ScanTable */
+	public OnRequestScanTableRefresh = new Subject<void>();
+
+	/** Event called anyone wants to refresh scan table */
+	public RequestScanTableRefresh(): void {
+		this.OnRequestScanTableRefresh.next();
+	}
   /** Event called when Scan Table button is pressed */
   public ScanTableSignButtonClicked(): void {
     this.OnScanTableSignButtonClicked.next();
@@ -48,7 +55,6 @@ export class EventBusService {
   public ScanTableRowSelected(materialsReceiptsTableId?: number): void {
     this.OnScanTableRowSelected.next(materialsReceiptsTableId);
   }
-
 
   /**
    * Event called when in Material Receipt List a record is selected

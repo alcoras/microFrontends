@@ -9,33 +9,33 @@
   <ng-template pTemplate="caption">
     <p-toolbar>
       <!-- Left Side -->
-      <ng-template pTemplate="left">          
+      <ng-template pTemplate="left">
         <!-- New Button -->
-        <button pRipple pButton 
-          label="New"  
+        <button pRipple pButton
+          label="New"
           icon="pi pi-plus"
-          class="p-button-success p-mr-2" 
+          class="p-button-success p-mr-2"
           (click)=UIEventEmit(UIEventIds.waitForNewScanClick)>
         </button>
-        
+
         <!-- Sign button -->
         <button pButton pRipple
-          label="Sign" 
-          type="button"  
+          label="Sign"
+          type="button"
           icon="pi pi-check"
-          (click)="OnSignButtonClicked()" 
+          (click)="OnSignButtonClicked()"
           class="p-button-success">
         </button>
       </ng-template>
-    
+
       <ng-template pTemplate="right">
         <!-- Refresh Button -->
-        <button pButton 
+        <button pButton
           icon="pi pi-refresh"
           type="button"
-          (click)="RefreshTable()" 
-          style="margin-right:.5em" 
-          class="p-button-rounded"> 
+          (click)="RefreshTable()"
+          style="margin-right:.5em"
+          class="p-button-rounded">
         </button>
       </ng-template>
     </p-toolbar>
@@ -61,8 +61,8 @@
       </td>
       <!-- Actions -->
       <td>
-        <button pButton pRipple 
-          icon="pi pi-trash" 
+        <button pButton pRipple
+          icon="pi pi-trash"
           class="p-button-sm p-button-rounded p-button-danger"
           (click)="OnDeleteScan(rowData)">
         </button>
@@ -72,10 +72,10 @@
 </p-table>
 
 <p-dialog
-  [header]="NewScanHeader"
+  [header]="Action.NewScanHeader"
   baseZIndex=10002
   [style]="{width: '50%'}"
-  [(visible)]="NewScanDialogVisible" 
+  [(visible)]="Action.NewScanDialogVisible"
   [modal]=true
   [draggable]=false
   (onHide)=UIEventEmit(UIEventIds.reset)>
@@ -83,36 +83,36 @@
 
     <div class="p-fluid">
       <div class="p-field">
-        <label>Name: {{NewEntry.Name}}</label>
+        <label>Name: {{Action.NewEntry.Name}}</label>
       </div>
 
       <div class="p-field">
         <span class="p-float-label">
-          <input 
-            [(ngModel)]="NewEntry.BarCode"
-            pInputText 
+          <input
+            [(ngModel)]="Action.NewEntry.BarCode"
+            pInputText
             (input)=UIEventEmit(UIEventIds.barcodeInputChanged)>
           <label>Bar Code</label>
         </span>
       </div>
-      
+
       <div class="p-field">
         <label>Quantity</label>
         <div class="p-inputgroup">
-          <p-inputNumber 
-            [useGrouping]=false 
+          <p-inputNumber
+            [useGrouping]=false
             [minFractionDigits]="2" [maxFractionDigits]="2"
-            mode="decimal" 
-            [(ngModel)]="NewEntry.Quantity">
+            mode="decimal"
+            [(ngModel)]="Action.NewEntry.Quantity">
           </p-inputNumber>
-          <span class="p-inputgroup-addon">{{NewEntry.Unit}}</span>
+          <span class="p-inputgroup-addon">{{Action.NewEntry.Unit}}</span>
         </div>
       </div>
       <br>
 
       <div class="p-field">
         <span class="p-float-label">
-          <input pInputText [(ngModel)]="NewEntry.Comment">
+          <input pInputText [(ngModel)]="Action.NewEntry.Comment">
           <label>Comment</label>
         </span>
       </div>
@@ -123,33 +123,33 @@
     <button pButton
       (click)="OnSaveDraft()"
       class="p-button-success"
-      label="Save Draft" 
+      label="Save Draft"
       icon="pi pi-angle-right">
     </button>
     <button pButton
-      [disabled]="NewEntriesAddingDisabled"
+      [disabled]="Action.NewEntriesAddingDisabled"
       (click)=UIEventEmit(UIEventIds.saveScanButtonClicked)
       class="p-button-success"
-      label="Save&Next" 
+      label="Save&Next"
       icon="pi pi-angle-right">
     </button>
   </ng-template>
 </p-dialog>
 
-<p-dialog 
+<p-dialog
     header="Select relation"
-    [(visible)]="SelectMaterialForBarcodeDialog"
+    [(visible)]="Action.SelectMaterialForBarcodeDialog"
     [style]="{width: '100%'}"
     [modal]=true baseZIndex=10003 [draggable]="false">
   <p-card>
-    <p-table 
-      [value]="MaterialsListTableData"
+    <p-table
+      [value]="Action.MaterialsListTableData"
       styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
       selectionMode="single"
-      [(selection)]="SelectedMaterialForBarcode"
-      (onRowSelect)=UIEventEmit(UIEventIds.materialRelationSelected)
-      (onRowUnselect)=UIEventEmit(UIEventIds.materialRelationUnSelected)
-    > 
+      [(selection)]="Action.SelectedMaterialForBarcode"
+      (onRowSelect)=UIEventEmit(UIEventIds.materialRelation_Selected)
+      (onRowUnselect)=UIEventEmit(UIEventIds.materialRelation_UnSelected)
+    >
       <!-- Header -->
       <ng-template pTemplate="header">
         <tr>
@@ -176,10 +176,10 @@
   <!-- Footer -->
   <ng-template pTemplate="footer">
     <button pButton
-      [disabled]="ButtonConfirmMaterialRelationDisabled"
-      (click)=UIEventEmit(UIEventIds.materialRelationConfirmed)
+      [disabled]="Action.ButtonConfirmMaterialRelationDisabled"
+      (click)=UIEventEmit(UIEventIds.materialRelation_Confirmed)
       class="p-button-success"
-      label="Confirm" 
+      label="Confirm"
       icon="pi pi-check">
     </button>
   </ng-template>
