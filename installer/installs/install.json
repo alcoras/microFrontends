@@ -1,13 +1,37 @@
 {
-    "projectName": "NewProject",
+    "projectName": "aaa",
     "replace": [
-            { "replace": "new-project", "search": "$project_name_html$" },
-            { "replace": "NewProject", "search": "$project_name$" },
-            { "replace": "NewProject", "search": "$source_name$" },
-            { "replace": "NewProjectButtonPressed", "search": "$button_pressed_event$" },
-            { "replace": "1010", "search": "$button_pressed_id$" },
-            { "replace": "1010", "search": "$source_id$" },
-            { "replace": "8010", "search": "$prod_port$" },
-            { "replace": "7010", "search": "$dev_port$" }
+        {
+            "replace": "aaa",
+            "search": "$project_name_html$"
+        },
+        {
+            "replace": "aaa",
+            "search": "$project_name$"
+        },
+        {
+            "replace": "aaa",
+            "search": "$source_name$"
+        },
+        {
+            "replace": "aaaButtonPressed",
+            "search": "$button_pressed_event$"
+        },
+        {
+            "replace": "1011",
+            "search": "$button_pressed_id$"
+        },
+        {
+            "replace": "1011",
+            "search": "$source_id$"
+        },
+        {
+            "replace": "8011",
+            "search": "$prod_port$"
+        },
+        {
+            "replace": "7011",
+            "search": "$dev_port$"
+        }
     ]
 }

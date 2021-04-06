@@ -62,6 +62,9 @@ export class NewScanStateAggregate {
 	public MaterialsListTableData: MaterialsListTablePart[];
 }
 
+/**
+ * An action responsible for New Scan logic
+ */
 @Injectable({
   providedIn: "root"
 })
@@ -85,7 +88,7 @@ export class AddNewScanAction {
 
 	public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService ) { }
 
-	public Init(actionEventBus: Subject<number>) {
+	public Init(actionEventBus: Subject<number>): void {
 		this.actionEventBus = actionEventBus;
 
 		const stages: FunctionStage[] = [

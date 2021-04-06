@@ -3,7 +3,7 @@ import { LazyLoadEvent } from "primeng/api";
 import { Subject, Subscription } from "rxjs";
 import { EventBusService } from "@shared/services/EventBusService";
 import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
-import { MaterialsData, ScanTableData } from "event-proxy-lib-src";
+import { ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
@@ -29,7 +29,6 @@ export class ActionScanTableComponent {
   	{ field: "ScannedQuantity", header: "Left to scan"},
   ];
 
-  // Scan Table
   public Columns = [
 		{ field: "Id", header: "Id"},
   	{ field: "MaterialsId", header: "MaterialsId"},
@@ -52,6 +51,8 @@ export class ActionScanTableComponent {
 		this.scanTableData = value;
 		this.Action.ScanTableData = value;
 	}
+
+	public UIEventIds = UserInterfaceEventIds;
 
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
 
@@ -92,11 +93,6 @@ export class ActionScanTableComponent {
 
   public async RefreshTable(): Promise<void> {
   	await this.refreshScanTableTableAsync();
-  }
-
-  // wrapper for enums because you can't access enum from view
-  public get UIEventIds(): typeof UserInterfaceEventIds {
-  	return UserInterfaceEventIds;
   }
 
   // wrapper for UI events so we can send to correct event bus
