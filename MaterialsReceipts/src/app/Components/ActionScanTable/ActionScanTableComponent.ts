@@ -111,7 +111,11 @@ export class ActionScanTableComponent {
   public OnSignButtonClicked(): void {
   	// required data is in materials receipt table component so we notify him to handle it
   	this.eventBus.ScanTableSignButtonClicked();
-  }
+	}
+
+	public OnUnsignButtonClicked(): void {
+		this.eventBus.ScanTableUnsignButtonClicked();
+	}
 
   // public async OnSaveDraft(): Promise<void> {
   // 	const materialDraft: MaterialsData = {

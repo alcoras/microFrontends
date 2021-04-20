@@ -31,6 +31,9 @@ export class EventBusService {
   /** Invoked by Scan Table when user tries to Sign */
 	public OnScanTableSignButtonClicked = new Subject<void>();
 
+	/** Invoked by Scan Table when user tries to Unsign */
+	public OnScanTableUnsignButtonClicked = new Subject<void>();
+
 	/** Invoked by Action in ScanTable */
 	public OnRequestScanTableRefresh = new Subject<void>();
 
@@ -38,10 +41,16 @@ export class EventBusService {
 	public RequestScanTableRefresh(): void {
 		this.OnRequestScanTableRefresh.next();
 	}
-  /** Event called when Scan Table button is pressed */
+
+  /** Event called when Scan Table Sign button is pressed */
   public ScanTableSignButtonClicked(): void {
     this.OnScanTableSignButtonClicked.next();
-  }
+	}
+
+	/** Event called when Scan Table Unsign button is pressed */
+	public ScanTableUnsignButtonClicked(): void {
+		this.OnScanTableUnsignButtonClicked.next();
+	}
 
   /** Event called when Scan Table is updated */
   public ScanTableChanged(): void {

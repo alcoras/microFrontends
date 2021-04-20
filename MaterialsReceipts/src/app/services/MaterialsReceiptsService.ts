@@ -69,9 +69,10 @@ export class MaterialsReceiptsService implements IMicroFrontend {
         case EventIds.MaterialsReceiptsMaterialsAtLocationsReadListResults:
         case EventIds.MaterialsReceiptsMaterialsReadListResults:
         case EventIds.OrchestratorTeam1BarCodeDetailsResult:
+        case EventIds.OrchestratorTeam1OrchestrationSuccess:
         case EventIds.CastorFound:
         case EventIds.DraftsFound:
-        case EventIds.NewEntryCreatedSuccessfully:
+        case EventIds.NewEntryCreatedSuccessfully: {
           this.eventBus.EventBus.next(event);
 
           await Promise.all([
@@ -79,13 +80,17 @@ export class MaterialsReceiptsService implements IMicroFrontend {
             this.eventProxyService.DispatchEventAsync(new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]]))
           ]);
 
-          break;
-        case EventIds.EventProccessedSuccessfully:
+					break;
+				}
+				case EventIds.OrchestratorTeam1OrchestrationFailed:
+        case EventIds.EventProccessedSuccessfully: {
           await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
           break;
-        case EventIds.EventProccessedWithFails:
+				}
+        case EventIds.EventProccessedWithFails: {
           console.error(event);
-          throw new Error(`Event ${event.EventId} proccessed with error(s)`);
+					throw new Error(`Event ${event.EventId} proccessed with error(s)`);
+				}
         default:
           throw new Error(`Event ${event.EventId} is not implemented.`);
       }

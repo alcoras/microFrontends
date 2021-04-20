@@ -176,5 +176,8 @@
 	81. 3. update readme Adding new micro frontend
 82. In all events add source info
 83. MaterialsReceiptsAPI.ts CreateDraft should placed somewhere globally
+86. think about languages (static vs dynamic)
+87. add tooltips and start adding them
+88. remove all sub .eslintrc.js and make sure root one is being read
 
-86.
+89.

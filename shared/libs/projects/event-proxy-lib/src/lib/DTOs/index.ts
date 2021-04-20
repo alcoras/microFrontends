@@ -69,6 +69,7 @@ export * from './BackendEvents/Adds/BarCodeCast';
 export * from './BackendEvents/MaterialsReceiptsMaterials';
 export * from './BackendEvents/OrchestratorTeam1BarCodeDetailsQuery';
 export * from './BackendEvents/OrchestratorTeam1BarCodeDetailsResult';
+export * from './BackendEvents/OrchestratorTeam1MaterialsScanSignedUnsigned';
 
 export * from './BackendEvents/CastorCreateAndOthers';
 

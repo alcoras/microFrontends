@@ -34,7 +34,9 @@ import {
 	DraftsEventFlags,
 	DraftsCreateAndOthersResults,
 	DraftsDelete,
-	CommonId
+	CommonId,
+	OrchestratorTeam1MaterialsScanSignedUnsigned,
+	SingUnsignFlag
 } from "event-proxy-lib-src";
 import { EventBusService } from "./EventBusService";
 import { ReadListQueryParams } from "../Adds/ReadListQueryParams";
@@ -47,6 +49,38 @@ export class MaterialsReceiptsAPI {
 	private sourceInfo = MicroFrontendParts.MaterialsReceipts;
 
 	public constructor(private eventProxyService: EventProxyLibService, private eventBusService: EventBusService) { }
+
+	/**
+	 * Unsign scan data for specific material list
+	 * @param materialSignId Materials scan signed (set the id of Materials list in this event)
+	 */
+	public async MaterialScanUnsignAsync(materialSignId: number): Promise<ValidationStatus<CoreEvent>> {
+		const event = new OrchestratorTeam1MaterialsScanSignedUnsigned(this.sourceInfo, SingUnsignFlag.Unsign, materialSignId);
+		event.SubscribeToChildren = true;
+		event.SubscribeToChildrenEventIds = [
+			EventIds.OrchestratorTeam1OrchestrationFailed,
+			EventIds.OrchestratorTeam1OrchestrationSuccess ];
+
+		const request = await this.eventProxyService.DispatchEventAsync(event);
+
+		return this.waitForResults<CoreEvent>(request);
+	}
+
+	/**
+	 * Sign scan data for specific material list
+	 * @param materialSignId Materials scan signed (set the id of Materials list in this event)
+	 */
+	public async MaterialScanSignAsync(materialSignId: number): Promise<ValidationStatus<CoreEvent>> {
+		const event = new OrchestratorTeam1MaterialsScanSignedUnsigned(this.sourceInfo, SingUnsignFlag.Sign, materialSignId);
+		event.SubscribeToChildren = true;
+		event.SubscribeToChildrenEventIds = [
+			EventIds.OrchestratorTeam1OrchestrationFailed,
+			EventIds.OrchestratorTeam1OrchestrationSuccess ];
+
+		const request = await this.eventProxyService.DispatchEventAsync(event);
+
+		return this.waitForResults<CoreEvent>(request);
+	}
 
 	/**
 	 * Main purpose is to unify all draft creations, should be somewhere globally so all drafts maintain format
@@ -71,7 +105,7 @@ export class MaterialsReceiptsAPI {
 
 		return await this.eventProxyService.DispatchEventAsync(event);
 	}
-	
+
 	/**
 	 * Create new draft
 	 * @param keyString unique key string to identify draft
@@ -105,9 +139,9 @@ export class MaterialsReceiptsAPI {
 	public async DraftsDeleteAsync(ids: number[]): Promise<ValidationStatus<BackendToFrontendEvent>> {
 		return await this.eventProxyService.DispatchEventAsync(new DraftsDelete(this.sourceInfo, ids));
 	}
-	
+
 	/**
-	 * Gets existing barcodes from all entries in specified Materials Receipts 
+	 * Gets existing barcodes from all entries in specified Materials Receipts
 	 * @param materialReceiptId MaterialsReceiptsList Id
 	 * @returns ValidationStatus with OrchestratorTeam1BarCodeDetailsResult
 	 */
@@ -175,7 +209,7 @@ export class MaterialsReceiptsAPI {
 
 		return this.waitForResults<CommonId>(request);
 	}
-	
+
 	/**
 	 * Deletes a material by id
 	 * @param materialsData MaterialsElement representation
@@ -349,7 +383,7 @@ export class MaterialsReceiptsAPI {
 
 	/**
 	 * Experimental wrapper for requests, not sure if it's good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
-	 * @param request request which returns id (currently only one)
+	 * @param request request which returns id from backend (currently only one)
 	 * @returns Promise of ValidationStatus with T which is event that extends CoreEvent
 	 */
 	private async waitForResults<T extends CoreEvent>(request: ValidationStatus<BackendToFrontendEvent>): Promise<ValidationStatus<T>> {

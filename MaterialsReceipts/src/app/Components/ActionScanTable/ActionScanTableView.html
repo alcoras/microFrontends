@@ -23,9 +23,18 @@
           label="Sign"
           type="button"
           icon="pi pi-check"
-          (click)="OnSignButtonClicked()"
-          class="p-button-success">
-        </button>
+          class="p-button-success p-mr-2"
+          (click)="OnSignButtonClicked()">
+				</button>
+
+				<!-- Sign button -->
+				<button pButton pRipple
+					label="Unsign"
+					type="button"
+					icon="pi pi-check"
+					(click)="OnUnsignButtonClicked()"
+					class="p-button-danger">
+				</button>
       </ng-template>
 
       <ng-template pTemplate="right">

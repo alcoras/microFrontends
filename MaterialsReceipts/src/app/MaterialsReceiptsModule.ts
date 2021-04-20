@@ -66,9 +66,9 @@ const MaterialsReceiptsAPIFactory = (eventProxyLibService: EventProxyLibService,
  */
 const EventProxyLibFacotry = (envService: EnvironmentService, httpClient: HttpClient): unknown => {
   if (environment.EnvironmentTypes == EnvironmentTypes.Solo) {
-    return new EventProxyLibServiceMock();
+	return new EventProxyLibServiceMock();
   } else {
-    return new EventProxyLibService(envService, httpClient);
+	return new EventProxyLibService(envService, httpClient);
   }
 };
 
@@ -79,70 +79,70 @@ const EventProxyLibFacotry = (envService: EnvironmentService, httpClient: HttpCl
  */
 function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): Promise<void> {
   if (environment.EnvironmentTypes == EnvironmentTypes.Solo)
-    return Promise.resolve();
+	return Promise.resolve();
 
   return new Promise( (res) => {
-    provider.InitAsync().then( () => {
-      provider.InitializeConnectionWithBackend();
-      res();
-    });
+	provider.InitAsync().then( () => {
+	  provider.InitializeConnectionWithBackend();
+	  res();
+	});
   });
 }
 
 @NgModule({
   declarations: [
-    MaterialsReceiptsComponent,
-    MaterialsReceiptsListComponent,
-    TranslatePipe,
-    MaterialsReceiptsTableComponent,
-    ScanTableComponent,
-    LocationsTableComponent,
-    MaterialsAtLocationComponent,
-    MaterialsTableComponent,
-    SelectMaterialDialog,
+	MaterialsReceiptsComponent,
+	MaterialsReceiptsListComponent,
+	TranslatePipe,
+	MaterialsReceiptsTableComponent,
+	ScanTableComponent,
+	LocationsTableComponent,
+	MaterialsAtLocationComponent,
+	MaterialsTableComponent,
+	SelectMaterialDialog,
 		StateScanTableComponent,
 		ActionScanTableComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    DynamicDialogModule,
-    TableModule,
-    FormsModule,
-    DialogModule,
-    CalendarModule,
-    TabViewModule,
-    ButtonModule,
-    CheckboxModule,
-    RadioButtonModule,
-    InputTextModule,
-    InputNumberModule,
-    CardModule,
-    ToolbarModule,
-    ProgressBarModule,
-    EventProxyLibModule,
+	BrowserModule,
+	BrowserAnimationsModule,
+	DynamicDialogModule,
+	TableModule,
+	FormsModule,
+	DialogModule,
+	CalendarModule,
+	TabViewModule,
+	ButtonModule,
+	CheckboxModule,
+	RadioButtonModule,
+	InputTextModule,
+	InputNumberModule,
+	CardModule,
+	ToolbarModule,
+	ProgressBarModule,
+	EventProxyLibModule,
   ],
   providers: [
-    ProductService,
-    {
-      provide: EventProxyLibService,
-      useFactory: EventProxyLibFacotry,
-      deps: [ EnvironmentService, HttpClient],
-      multi: false
-    },
-    {
-      provide: MaterialsReceiptsAPI,
-      useFactory: MaterialsReceiptsAPIFactory,
-      deps: [ EventProxyLibService, EventBusService],
-      multi: false
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: MaterialReceiptsInitializeFactory,
-      deps: [MaterialsReceiptsService],
-      multi: false
-    },
-    CastorAPI
+	ProductService,
+	{
+	  provide: EventProxyLibService,
+	  useFactory: EventProxyLibFacotry,
+	  deps: [ EnvironmentService, HttpClient],
+	  multi: false
+	},
+	{
+	  provide: MaterialsReceiptsAPI,
+	  useFactory: MaterialsReceiptsAPIFactory,
+	  deps: [ EventProxyLibService, EventBusService],
+	  multi: false
+	},
+	{
+	  provide: APP_INITIALIZER,
+	  useFactory: MaterialReceiptsInitializeFactory,
+	  deps: [MaterialsReceiptsService],
+	  multi: false
+	},
+	CastorAPI
   ],
   entryComponents: [MaterialsReceiptsComponent]
 })
@@ -150,12 +150,12 @@ export class MaterialsReceiptsModule {
   public constructor(private injector: Injector) { }
 
   public ngDoBootstrap(): void {
-    const { injector } = this;
+	const { injector } = this;
 
-    const ngCustomElement2 = createCustomElement(MaterialsReceiptsComponent, { injector });
+	const ngCustomElement2 = createCustomElement(MaterialsReceiptsComponent, { injector });
 
-    if (!customElements.get("material-receipts")) {
-      customElements.define("material-receipts", ngCustomElement2);
-    }
+	if (!customElements.get("material-receipts")) {
+	  customElements.define("material-receipts", ngCustomElement2);
+	}
   }
 }
