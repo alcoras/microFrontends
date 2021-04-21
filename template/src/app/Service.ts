@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,12 +10,12 @@ import {
   EventButtonPressed,
   MicroFrontendInfo,
   MicroFrontendParts,
-  BackendToFrontendEvent } from 'event-proxy-lib-src';
+  BackendToFrontendEvent } from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class $project_name$Service implements IMicroFrontend {
 
@@ -59,7 +59,7 @@ export class $project_name$Service implements IMicroFrontend {
             await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
           } else {
             console.error(element);
-            throw new Error('Did not proccess after processButtonPressed');
+            throw new Error("Did not proccess after processButtonPressed");
           }
           break;
         // case EventIds.<TemplateReadEventId>:
@@ -81,7 +81,7 @@ export class $project_name$Service implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[EventIds.$button_pressed_event$] = '<team-$project_name_html$></team-$project_name_html$>';
+    this.elToPlace[EventIds.$button_pressed_event$] = "<team-$project_name_html$></team-$project_name_html$>";
   }
 
   /**
@@ -122,7 +122,7 @@ export class $project_name$Service implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

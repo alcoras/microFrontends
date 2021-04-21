@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { PrimeNGConfig } from 'primeng/api';
+import { PrimeNGConfig } from "primeng/api";
 
 interface DropdownSelector {
   name: string,
@@ -15,11 +15,11 @@ interface DropdownSelector {
   public SelectedTheme: DropdownSelector;
 
   public constructor(private primeNgConfig: PrimeNGConfig) {
-    const path = "assets/themes/"
+    const path = "assets/themes/";
     this.Themes = [
-      { code: `${path}saga-blue/theme.css`, name: `Light` },
-      { code: `${path}bootstrap4-dark-blue/theme.css`, name: `Dark Blue` },
-      { code: `${path}arya-blue/theme.css`, name: `Dark` }
+      { code: `${path}saga-blue/theme.css`, name: "Light" },
+      { code: `${path}bootstrap4-dark-blue/theme.css`, name: "Dark Blue" },
+      { code: `${path}arya-blue/theme.css`, name: "Dark" }
     ];
 
     this.SelectedTheme = this.Themes[0];

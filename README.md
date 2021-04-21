@@ -40,10 +40,10 @@ Used for writing initial view which does not require anything else in the enviro
 1. `cd launcher` and run `npm run watch` (assuming micro frontends were installed), which will start watch on: MaterialReceipts, Occupation, Personnel and Shell micro frontends.
 2. `cd ReverseProxy` and run `./nginx.exe` then control from other console using `./nginx.exe -s stop` or `./nginx.exe -s reload`
 
-## Development setup (one micro frotnend):
+## Development setup (one by one micro frotnend):
 1. `cd <desired project>` 
 2. `npm i` skip if you have already installed everything
-3. `ng serve` or `npm run start` if you don't have global angular
+3. `npm run start` (it does `ng serve` but with unique port)
 
 ## Adding new micro frontend
 1. `cd installer`

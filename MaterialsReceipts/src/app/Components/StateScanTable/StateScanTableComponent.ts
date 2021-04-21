@@ -136,7 +136,7 @@ export class StateScanTableComponent {
   	await this.refreshScanTableTableAsync();
   }
 
-  // wrapper for enums because you can't access enum from view
+  // wrapper for enums because you can"t access enum from view
   public get UIEventIds(): typeof UserInterfaceEventIds {
   	return UserInterfaceEventIds;
   }

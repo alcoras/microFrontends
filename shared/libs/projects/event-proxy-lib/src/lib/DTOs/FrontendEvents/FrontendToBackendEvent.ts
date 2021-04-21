@@ -1,4 +1,4 @@
-import { CoreEvent } from '../index';
+import { CoreEvent } from "../index";
 
 /**
  * General event to backend

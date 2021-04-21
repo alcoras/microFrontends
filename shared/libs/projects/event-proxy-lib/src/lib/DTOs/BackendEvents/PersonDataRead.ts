@@ -1,5 +1,5 @@
-import { CoreEvent } from '../CoreEvent';
-import { PersonData } from './Adds/PersonData';
+import { CoreEvent } from "../CoreEvent";
+import { PersonData } from "./Adds/PersonData";
 
 /**
  * Event for reading Person Data

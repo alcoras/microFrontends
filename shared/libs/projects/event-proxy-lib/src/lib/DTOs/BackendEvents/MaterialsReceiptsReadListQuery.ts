@@ -8,7 +8,7 @@ import { MicroFrontendInfo } from "../MicroFrontendInfo";
 export class MaterialsReceiptsReadListQuery extends CoreEvent {
 
   /**
-   * @param sourceInfo microfrontend's source info
+   * @param sourceInfo microfrontend"s source info
    * @param IntervalFrom First receipt datetime or empty if any
    * @param IntervalUntil Last receipt datetime or empty if any
    * @param Signed Sign state (true if signed)
@@ -24,7 +24,7 @@ export class MaterialsReceiptsReadListQuery extends CoreEvent {
     public Limit?: number) {
       super();
       if (Page <= 0 || Limit <= 0)
-        throw new Error('Page or Limit cannot be 0 or below');
+        throw new Error("Page or Limit cannot be 0 or below");
 
       this.SourceId = sourceInfo.SourceId;
       this.SourceName = sourceInfo.SourceName;

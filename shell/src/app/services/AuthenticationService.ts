@@ -1,20 +1,18 @@
-import { Injectable } from '@angular/core';
-import Web3 from 'web3';
-import * as Eth from 'ethjs';
+import { Injectable } from "@angular/core";
+import Web3 from "web3";
+import * as Eth from "ethjs";
 import {
   CoreEvent,
   EnvironmentService,
   EventIds,
   EventProxyLibService,
   LoginSuccess,
-  ValidationStatus,
-  LoginRequest } from 'event-proxy-lib-src';
-import { rejects } from 'assert';
+  LoginRequest } from "event-proxy-lib-src";
 
-const WindowWeb3Context = window['web3'] as Web3;
-const MetamaskEthereumHandle = window['ethereum'];
+const WindowWeb3Context = window["web3"] as Web3;
+const MetamaskEthereumHandle = window["ethereum"];
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AuthenticationService {
 
   /**
@@ -39,9 +37,9 @@ export class AuthenticationService {
    * Passive Logout
    */
   public Logout(): void {
-    this.environmentService.AuthorizationToken = '';
-    this.environmentService.TokenBeginDate = '';
-    this.environmentService.TokenExpirationDate = '';
+    this.environmentService.AuthorizationToken = "";
+    this.environmentService.TokenBeginDate = "";
+    this.environmentService.TokenExpirationDate = "";
   }
 
 
@@ -115,22 +113,22 @@ export class AuthenticationService {
     try {
       this.checkContextProviders();
     } catch (err) {
-      logRequest.Error = 'Setup Metamask';
+      logRequest.Error = "Setup Metamask";
       logRequest.FullError = err;
       return Promise.reject(logRequest);
     }
 
     // https://docs.metamask.io/guide/getting-started.html#basic-considerations
-    await MetamaskEthereumHandle.request({ method: 'eth_requestAccounts' });
+    await MetamaskEthereumHandle.request({ method: "eth_requestAccounts" });
     const account = MetamaskEthereumHandle.selectedAddress;
 
     if (!account) {
-      logRequest.Error = 'Please try to login to Metamask to resolve.';
+      logRequest.Error = "Please try to login to Metamask to resolve.";
       return Promise.reject(logRequest);
     }
 
     if (account.length === 0) {
-      logRequest.Error = 'Could not get sender address. Probably no wallets are connected.';
+      logRequest.Error = "Could not get sender address. Probably no wallets are connected.";
       return Promise.reject(logRequest);
     }
 
@@ -141,15 +139,15 @@ export class AuthenticationService {
         (signed: string) => {
           logRequest.Timestamp = timeNow;
           logRequest.Signature = signed;
-          logRequest.Error = '';
+          logRequest.Error = "";
           resolve(logRequest);
         },
         (error: string) => {
-          logRequest.Error = 'Failed to login. Try again by refreshing website.';
+          logRequest.Error = "Failed to login. Try again by refreshing website.";
           logRequest.FullError = error;
           reject(logRequest);
         }
-      )
+      );
     });
 
     return Promise.resolve(ret);
@@ -198,16 +196,16 @@ export class AuthenticationService {
    */
   private checkContextProviders(): boolean {
 
-    if (typeof WindowWeb3Context.currentProvider === 'undefined')
+    if (typeof WindowWeb3Context.currentProvider === "undefined")
       return false;
 
     this.web3 = new Web3(WindowWeb3Context.currentProvider); // Web3 should be provided by metamask or maybe no logner
     // https://medium.com/metamask/no-longer-injecting-web3-js-4a899ad6e59e
 
-    if (typeof this.web3 === 'undefined')
+    if (typeof this.web3 === "undefined")
       return false;
 
-    if (typeof this.web3.currentProvider === 'undefined')
+    if (typeof this.web3.currentProvider === "undefined")
       return false;
 
     this.eth = new Eth(this.web3.currentProvider);
@@ -215,7 +213,7 @@ export class AuthenticationService {
     if (!this.eth)
       return false;
 
-    if (typeof window['ethereum'] === 'undefined') {
+    if (typeof window["ethereum"] === "undefined") {
         return false;
     }
 

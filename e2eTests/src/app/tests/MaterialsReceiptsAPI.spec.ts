@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 import {
   EventIds,
   EventProxyLibModule,
@@ -8,12 +8,12 @@ import {
   ValidationStatus,
   ScanTableData,
   BackendToFrontendEvent,
-  MicroFrontendParts} from 'event-proxy-lib-src';
-import { BackendPort, BackendURL, delay, genRandomNumber } from './Adds/helpers';
-import { MaterialsReceiptsAPI } from 'materialsReceipts-uf/services/MaterialsReceiptsAPI';
-import { EventBusService } from 'materialsReceipts-uf/services/EventBusService';
-import { ReadListQueryParams } from 'materialsReceipts-uf/Adds/ReadListQueryParams';
-import { ScanTableQueryParams } from 'materialsReceipts-uf/Adds/ScanTableQueryParams';
+  MicroFrontendParts} from "event-proxy-lib-src";
+import { BackendPort, BackendURL, delay, genRandomNumber } from "./Adds/helpers";
+import { MaterialsReceiptsAPI } from "materialsReceipts-uf/services/MaterialsReceiptsAPI";
+import { EventBusService } from "materialsReceipts-uf/services/EventBusService";
+import { ReadListQueryParams } from "materialsReceipts-uf/Adds/ReadListQueryParams";
+import { ScanTableQueryParams } from "materialsReceipts-uf/Adds/ScanTableQueryParams";
 
 const tempMaterialList: MaterialsList = {
   Id: 0,
@@ -22,7 +22,7 @@ const tempMaterialList: MaterialsList = {
   SignMark: true,
   SignPerson: "asdf",
   Blocked: false
-}
+};
 
 const tempMaterialListTable: MaterialsListTablePart = {
   LineNumber: 0,
@@ -34,7 +34,7 @@ const tempMaterialListTable: MaterialsListTablePart = {
   Unit: "0",
   Account: "0",
   MaterialsReceiptsListId: 0
-}
+};
 
 const tempScanDataTable: ScanTableData = {
   MaterialsId: 0,
@@ -49,7 +49,7 @@ const readingResultIds = [
   EventIds.MaterialsReceiptsTablePartReadListResults,
   EventIds.MaterialsReceiptsScanTableReadListResults];
 
-describe('MaterialsReceipts API service', () => {
+describe("MaterialsReceipts API service", () => {
   let service: MaterialsReceiptsAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -58,14 +58,14 @@ describe('MaterialsReceipts API service', () => {
   const backendPort = BackendPort;
 
   beforeEach(async () => {
-    window['__env'] = window['__env'] || {};
+    window["__env"] = window["__env"] || {};
 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    window['__env'].one_language = false;
+    window["__env"].one_language = false;
     // API url
-    window['__env'].url = 'http://' + backendURL;
-    window['__env'].apiGatewayUrl = window['__env'].url;
-    window['__env'].apiGatewayPort = backendPort;
+    window["__env"].url = "http://" + backendURL;
+    window["__env"].apiGatewayUrl = window["__env"].url;
+    window["__env"].apiGatewayPort = backendPort;
 
     TestBed.configureTestingModule({
       imports: [EventProxyLibModule],
@@ -105,15 +105,15 @@ describe('MaterialsReceipts API service', () => {
     await eventProxyService.ConfirmEventsAsync(sourceId, [], true);
   });
 
-  it('test service creation', () => {
+  it("test service creation", () => {
     expect(service).toBeTruthy();
     expect(eventProxyService).toBeTruthy();
     expect(eventBusService).toBeTruthy();
   });
 
-  describe('Material Receipt List Table', () => {
+  describe("Material Receipt List Table", () => {
 
-    it('Getting some data', async () => {
+    it("Getting some data", async () => {
       // Start listenting to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
@@ -139,9 +139,9 @@ describe('MaterialsReceipts API service', () => {
     });
   });
 
-  describe('Material Receipt ScanTable', () => {
+  describe("Material Receipt ScanTable", () => {
 
-    it('Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)', async () => {
+    it("Creating/Deleting scan, event: MaterialsReceiptsScanTable(Add/Remove)", async () => {
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
@@ -190,7 +190,7 @@ describe('MaterialsReceipts API service', () => {
       expect(response.Result.ScanTableDataList.length).toBe(0);
     });
 
-    it('Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)', async () => {
+    it("Getting some data, event: MaterialsReceiptsScanTableReadList(Query/Results)", async () => {
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
@@ -217,9 +217,9 @@ describe('MaterialsReceipts API service', () => {
     });
   });
 
-  describe('Material Receipt List', () => {
+  describe("Material Receipt List", () => {
 
-    it('Getting some data', async () => {
+    it("Getting some data", async () => {
       // 1. Subscription happens before tests
 
       // 2. Start listenting to events
@@ -246,6 +246,6 @@ describe('MaterialsReceipts API service', () => {
 
     });
 
-  })
+  });
 
-})
+});

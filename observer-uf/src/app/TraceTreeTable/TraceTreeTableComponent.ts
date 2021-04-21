@@ -6,7 +6,7 @@ import { ObserverAPI } from "../services/ObserverAPI";
 @Component({
   templateUrl: "TraceTreeTableView.html",
   selector: "observer-trace-table-comp",
-  styleUrls: ['TraceTreeTableStyle.css']
+  styleUrls: ["TraceTreeTableStyle.css"]
 }) export class TraceTreeTableComponent {
 
   public Loading: boolean;
@@ -17,14 +17,14 @@ import { ObserverAPI } from "../services/ObserverAPI";
   public CurrentJsonBody: string;
 
   public Cols = [
-    { field: 'EventId', header: 'EventId'},
-    { field: 'DestinationId', header: 'DestinationId'},
-    { field: 'ParentId', header: 'ParentId'},
-    { field: 'EventInfo', header: 'EventInfo'},
-    { field: 'AggregateId', header: 'AggregateId'},
-    { field: 'SourceId', header: 'SourceId'},
-    { field: 'SourceName', header: 'SourceName'},
-    { field: 'Timestamp', header: 'Timestamp'},
+    { field: "EventId", header: "EventId"},
+    { field: "DestinationId", header: "DestinationId"},
+    { field: "ParentId", header: "ParentId"},
+    { field: "EventInfo", header: "EventInfo"},
+    { field: "AggregateId", header: "AggregateId"},
+    { field: "SourceId", header: "SourceId"},
+    { field: "SourceName", header: "SourceName"},
+    { field: "Timestamp", header: "Timestamp"},
   ];
 
   public constructor(private observerService: ObserverAPI) {}

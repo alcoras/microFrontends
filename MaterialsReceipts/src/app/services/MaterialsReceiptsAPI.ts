@@ -53,6 +53,7 @@ export class MaterialsReceiptsAPI {
 	/**
 	 * Unsign scan data for specific material list
 	 * @param materialSignId Materials scan signed (set the id of Materials list in this event)
+	 * @returns Promise with timeout or response from backend with results
 	 */
 	public async MaterialScanUnsignAsync(materialSignId: number): Promise<ValidationStatus<CoreEvent>> {
 		const event = new OrchestratorTeam1MaterialsScanSignedUnsigned(this.sourceInfo, SingUnsignFlag.Unsign, materialSignId);
@@ -69,6 +70,7 @@ export class MaterialsReceiptsAPI {
 	/**
 	 * Sign scan data for specific material list
 	 * @param materialSignId Materials scan signed (set the id of Materials list in this event)
+	 * @returns Promise with timeout or response from backend with results
 	 */
 	public async MaterialScanSignAsync(materialSignId: number): Promise<ValidationStatus<CoreEvent>> {
 		const event = new OrchestratorTeam1MaterialsScanSignedUnsigned(this.sourceInfo, SingUnsignFlag.Sign, materialSignId);
@@ -84,10 +86,10 @@ export class MaterialsReceiptsAPI {
 
 	/**
 	 * Main purpose is to unify all draft creations, should be somewhere globally so all drafts maintain format
-	 * @param firstTypeName name for data type which needs a reference to second's type (example: ScanTableData needs a material draft)
+	 * @param firstTypeName name for data type which needs a reference to second"s type (example: ScanTableData needs a material draft)
 	 * @param firstTypeId id used to find right draft based on context (Example: ScanTableData where id 10) (string because at somepoint id can be GUID or something)
 	 * @param secondTypeName name for data type which we creating reference to (Example: for ScanTableData id 10 we need MaterialElement)
-	 * @returns string which is basically concat of previous values and microfrontend's name
+	 * @returns string which is basically concat of previous values and microfrontend"s name
 	 */
 	public CreateDraftKeyString(firstTypeName: string, firstTypeId: string, secondTypeName: string): string {
 		return `${this.sourceInfo.SourceName}${firstTypeName}${firstTypeId}${secondTypeName}`;
@@ -95,7 +97,7 @@ export class MaterialsReceiptsAPI {
 
 	/**
 	 * Update existing draft
-	 * @param id draft's id which we want to update
+	 * @param id draft"s id which we want to update
 	 * @param keyString filter key
 	 * @param draft new draft
 	 * @returns ValidationStatus with BackendToFrontendEvent
@@ -109,7 +111,7 @@ export class MaterialsReceiptsAPI {
 	/**
 	 * Create new draft
 	 * @param keyString unique key string to identify draft
-	 * @param draft draft's body in json
+	 * @param draft draft"s body in json
 	 * @returns ValidationStatus with BackendToFrontendEvent
 	 */
 	public async DraftsCreateAsync(keyString: string, draft: string): Promise<ValidationStatus<BackendToFrontendEvent>> {
@@ -172,7 +174,7 @@ export class MaterialsReceiptsAPI {
 	/**
 	 * Query materials
 	 * @param materialId id
-	 * @param barCode material's barcode
+	 * @param barCode material"s barcode
 	 * @param page which page to query
 	 * @param limit limit of entries per page
 	 * @returns ValidationStatus with MaterialsReceiptsMaterialsReadListResults
@@ -283,8 +285,8 @@ export class MaterialsReceiptsAPI {
 	 *
 	 * @param page which page to query
 	 * @param limit limit of entries per page
-	 * @param materialsId material's id
-	 * @param locationId location's id
+	 * @param materialsId material"s id
+	 * @param locationId location"s id
 	 * @returns ValidationStatus
 	 */
 	public async MaterialsAtLocationQueryAsync(page: number, limit: number, materialsId?: number, locationId?: number): Promise<ValidationStatus<MaterialsReceiptsMaterialsAtLocationsReadListResults>> {
@@ -382,7 +384,7 @@ export class MaterialsReceiptsAPI {
 	}
 
 	/**
-	 * Experimental wrapper for requests, not sure if it's good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
+	 * Experimental wrapper for requests, not sure if it"s good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
 	 * @param request request which returns id from backend (currently only one)
 	 * @returns Promise of ValidationStatus with T which is event that extends CoreEvent
 	 */

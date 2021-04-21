@@ -1,17 +1,17 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from "@angular/platform-browser";
+import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
+import { EventProxyLibModule, EventProxyLibService } from "event-proxy-lib-src";
 
-import { ObserverComponent } from './ObserverComponent';
-import { createCustomElement } from '@angular/elements';
+import { ObserverComponent } from "./ObserverComponent";
+import { createCustomElement } from "@angular/elements";
 
-import { OccupationServiceFactory } from './services/ObserverFactory';
-import { ObserverService } from './services/ObserverService';
-import { ObserverAPI } from './services/ObserverAPI';
-import { PrimeNgModules } from './PrimeNgModules';
-import { TraceTreeTableComponent } from './TraceTreeTable/TraceTreeTableComponent';
+import { OccupationServiceFactory } from "./services/ObserverFactory";
+import { ObserverService } from "./services/ObserverService";
+import { ObserverAPI } from "./services/ObserverAPI";
+import { PrimeNgModules } from "./PrimeNgModules";
+import { TraceTreeTableComponent } from "./TraceTreeTable/TraceTreeTableComponent";
 
 @NgModule({
   declarations: [
@@ -44,7 +44,7 @@ export class ObserverModule {
 
     const ngCustomElement2 = createCustomElement(ObserverComponent, { injector });
 
-    if (!customElements.get('team-observer')) {
-      customElements.define('team-observer', ngCustomElement2); }
+    if (!customElements.get("team-observer")) {
+      customElements.define("team-observer", ngCustomElement2); }
   }
 }

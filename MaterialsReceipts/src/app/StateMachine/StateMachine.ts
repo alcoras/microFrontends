@@ -5,13 +5,13 @@ export class StateMachine<T> {
   // Data which we will be saving after each passing function
   public StateData: T;
 
-  // hiding so last routine's index can't be messed up
+  // hiding so last routine"s index can"t be messed up
   private endIndex = 0;
-  // hiding so routine's index can't be messed up
+  // hiding so routine"s index can"t be messed up
   private currentIndex = 0;
   // hiding to have immutable history data
   private data: T[] = [];
-  // map between routine index and function stage list's array index
+  // map between routine index and function stage list"s array index
   private stageMap: { [routineIndex: number]: number } = {};
 
   /**
@@ -32,7 +32,7 @@ export class StateMachine<T> {
     // taking first function as starting point
     this.currentIndex = this.functionStageList[0].Index;
     this.endIndex = this.functionStageList[this.functionStageList.length - 1].Index;
-    
+
     // prepare map once
     for (let i = 0; i < this.functionStageList.length; i++) {
       this.stageMap[this.functionStageList[i].Index] = i;
@@ -56,14 +56,14 @@ export class StateMachine<T> {
     return Object.assign<T[], T[]>([], this.data);
   }
 
-  /** start routine which is responsible for transitions; calls itself when it's finnished */
+  /** start routine which is responsible for transitions; calls itself when it"s finnished */
   private async startRecursiveRoutine(): Promise<void> {
     let work = true, index: number;
 
-    while (work) {      
+    while (work) {
 
       index = this.stageMap[this.currentIndex];
-      
+
       if (this.Debug)
         console.log(this.functionStageList[index].FunctionReference);
 

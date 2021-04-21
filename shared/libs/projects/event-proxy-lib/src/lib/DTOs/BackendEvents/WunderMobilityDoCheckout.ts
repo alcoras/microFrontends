@@ -1,7 +1,7 @@
 import { CoreEvent } from "../CoreEvent";
 import { EventIds } from "../EventIds";
 import { MicroFrontendInfo } from "../MicroFrontendInfo";
-import { WunderMobilityScannedProduct } from "./Adds/WunderMobilityScannedProduct"
+import { WunderMobilityScannedProduct } from "./Adds/WunderMobilityScannedProduct";
 
 /**
  * Event for reading MaterialsReceipts Scan table

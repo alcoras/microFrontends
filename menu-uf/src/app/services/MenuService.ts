@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -8,10 +8,10 @@ import {
   MicroFrontendInfo,
   MicroFrontendParts,
   EventIds,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class MenuService implements IMicroFrontend {
 
@@ -48,10 +48,10 @@ export class MenuService implements IMicroFrontend {
        * Init menu event
        */
       if (element.EventId === EventIds.InitMenu) {
-        this.putToElement('menu-team', '<menu-team></menu-team>');
+        this.putToElement("menu-team", "<menu-team></menu-team>");
         await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
       } else {
-        throw new Error('Event not implemented.');
+        throw new Error("Event not implemented.");
       }
     }
   }

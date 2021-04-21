@@ -18,7 +18,7 @@ export class DraftsCreateAndOthers extends CoreEvent {
      * @param sourceInfo source information
      * @param eventFlag flag to indicate type of event
      * @param KeyString a unique key string to find draft (for update/get/create)
-     * @param Draft draft's body in json (for update/create)
+     * @param Draft draft"s body in json (for update/create)
      * @param UpdateId provide if we want to update existing draft
      */
     public constructor(sourceInfo: MicroFrontendInfo, eventFlag: DraftsEventFlags, public KeyString: string, public Draft?: string, public UpdateId?: number) {

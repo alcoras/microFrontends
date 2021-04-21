@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 import {
   BackendToFrontendEvent,
   EventIds,
@@ -7,12 +7,12 @@ import {
   MicroFrontendParts,
   PersonData,
   PersonDataRead,
-  ValidationStatus } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL, delay, genRandomNumber } from './Adds/helpers';
-import { PersonnelAPI } from 'personnel-uf/services/PersonnelAPI';
-import { EventBusService } from 'personnel-uf/services/EventBus.service';
+  ValidationStatus } from "event-proxy-lib-src";
+import { BackendPort, BackendURL, delay, genRandomNumber } from "./Adds/helpers";
+import { PersonnelAPI } from "personnel-uf/services/PersonnelAPI";
+import { EventBusService } from "personnel-uf/services/EventBus.service";
 
-describe('PersonnelAPI service', () => {
+describe("PersonnelAPI service", () => {
   let service: PersonnelAPI;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -25,14 +25,14 @@ describe('PersonnelAPI service', () => {
   ];
 
   beforeEach(async () => {
-    window['__env'] = window['__env'] || {};
+    window["__env"] = window["__env"] || {};
 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    window['__env'].one_language = false;
+    window["__env"].one_language = false;
     // API url
-    window['__env'].url = 'http://' + backendURL;
-    window['__env'].apiGatewayUrl = window['__env'].url;
-    window['__env'].apiGatewayPort = backendPort;
+    window["__env"].url = "http://" + backendURL;
+    window["__env"].apiGatewayUrl = window["__env"].url;
+    window["__env"].apiGatewayPort = backendPort;
 
     TestBed.configureTestingModule({
       imports: [EventProxyLibModule],
@@ -90,8 +90,8 @@ describe('PersonnelAPI service', () => {
     };
   }
 
-  describe('Update', () => {
-    it('should update existing PersonData entry', async () => {
+  describe("Update", () => {
+    it("should update existing PersonData entry", async () => {
       // Sub to ReadPersonData
 
       // Start listenting to events
@@ -121,7 +121,7 @@ describe('PersonnelAPI service', () => {
     });
   });
 
-  it('should create and delete Person data entry', async () => {
+  it("should create and delete Person data entry", async () => {
     const newPersonnelData = createPersonnelEntry();
     // 1. Subscription is happening before tests in beforeAll
 
@@ -152,7 +152,7 @@ describe('PersonnelAPI service', () => {
 
 
   for (let index = 0; index < 1; index++) {
-    it('should create new PersonData entry', async () => {
+    it("should create new PersonData entry", async () => {
       const newPersonnelData = createPersonnelEntry();
 
       // Start listenting to events
@@ -175,7 +175,7 @@ describe('PersonnelAPI service', () => {
     });
   }
 
-  it('should get events after ReadPersonDataQuery', async () => {
+  it("should get events after ReadPersonDataQuery", async () => {
     // Start listenting to events
     eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
       (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)

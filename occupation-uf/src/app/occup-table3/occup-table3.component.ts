@@ -1,24 +1,24 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { trigger, state, transition, style, animate } from '@angular/animations';
-import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
-import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { OccupationAPIService } from '../services/OccupationAPI';
-import { EventBusService } from '../services/EventBusService';
-import { OccupationData, OccupationsReadResults, ValidationStatus } from 'event-proxy-lib-src';
+import { Component, OnInit, ViewChild, AfterViewInit, Input } from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { trigger, state, transition, style, animate } from "@angular/animations";
+import { merge, Observable, of as observableOf, Subscription} from "rxjs";
+import { catchError, map, startWith, switchMap} from "rxjs/operators";
+import { OccupationAPIService } from "../services/OccupationAPI";
+import { EventBusService } from "../services/EventBusService";
+import { OccupationData, OccupationsReadResults, ValidationStatus } from "event-proxy-lib-src";
 
 @Component({
-  selector: 'app-occup-table3',
-  templateUrl: './occup-table3.component.html',
-  styleUrls: ['./occup-table3.component.css'],
+  selector: "app-occup-table3",
+  templateUrl: "./occup-table3.component.html",
+  styleUrls: ["./occup-table3.component.css"],
   animations: [
-    trigger('detailExpand', [
-      state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-      transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+    trigger("detailExpand", [
+      state("collapsed, void", style({ height: "0px", minHeight: "0", display: "none" })),
+      state("expanded", style({ height: "*" })),
+      transition("expanded <=> collapsed", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")),
+      transition("expanded <=> void", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)"))
     ])
   ],
 })
@@ -37,9 +37,9 @@ export class OccupTable3Component implements OnInit, AfterViewInit {
    * List of Collumns to be displayed
    */
   public ColumnsToDisplay: string[] = [
-    'OccupationAggregateIdHolderId',
-    'Name',
-    'TariffCategory'
+    "OccupationAggregateIdHolderId",
+    "Name",
+    "TariffCategory"
   ];
 
   public ResultsLength = 0;

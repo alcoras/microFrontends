@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 import {
   CoreEvent,
   EventIds,
@@ -6,8 +6,8 @@ import {
   EventProxyLibService,
   ValidationStatus,
   SubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
-import { BackendPort, BackendURL } from './Adds/helpers';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
+import { BackendPort, BackendURL } from "./Adds/helpers";
 
 /**
  * generates random number
@@ -35,31 +35,31 @@ class TestEvent extends CoreEvent {
 }
 
 for (let i = 0; i < 1; i++) {
-describe('EventProxyLibService', () => {
+describe("EventProxyLibService", () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
-    const httpErrorMsg = 'HTTP response with failure.';
+    const httpErrorMsg = "HTTP response with failure.";
     const defaultEventsTimeoutMs = 6000;
     const awaitAfterSendingEvent = 500;
     const backendURL = BackendURL;
     const backendPort = BackendPort;
     const tEvent = new TestEvent();
     tEvent.EventId = 1000;
-    const testinName = 'testing';
-    const testinID = '10';
+    const testinName = "testing";
+    const testinID = "10";
     tEvent.SourceName = testinName;
     let service: EventProxyLibService;
     const serviceList: EventProxyLibService[] = new Array(3);
 
     beforeEach(
       async () => {
-        window['__env'] = window['__env'] || {};
+        window["__env"] = window["__env"] || {};
 
         // eslint-disable-next-line @typescript-eslint/camelcase
-        window['__env'].one_language = false;
+        window["__env"].one_language = false;
         // API url
-        window['__env'].url = 'http://' + backendURL;
-        window['__env'].apiGatewayUrl = window['__env'].url;
-        window['__env'].apiGatewayPort = backendPort;
+        window["__env"].url = "http://" + backendURL;
+        window["__env"].apiGatewayUrl = window["__env"].url;
+        window["__env"].apiGatewayPort = backendPort;
 
         TestBed.configureTestingModule({
           providers: [EventProxyLibService],
@@ -93,7 +93,7 @@ describe('EventProxyLibService', () => {
       }
     );
 
-    it('should init', () => {
+    it("should init", () => {
       expect(service).toBeTruthy();
     });
 
@@ -138,10 +138,10 @@ describe('EventProxyLibService', () => {
           }
         );
 
-      })
+      });
     });
 
-    it('should respond with empty response', async (done) => {
+    it("should respond with empty response", async (done) => {
       service.InitializeConnectionToBackend(testinID).subscribe(
         (res: ValidationStatus<BackendToFrontendEvent>) => {
           expect(res.HasErrors()).toBeFalse();
@@ -151,7 +151,7 @@ describe('EventProxyLibService', () => {
       );
     }, defaultEventsTimeoutMs);
 
-    it('should DispatchEventAsync and return list of ids with one element', async () => {
+    it("should DispatchEventAsync and return list of ids with one element", async () => {
       const resposne = await service.DispatchEventAsync([tEvent]);
       expect(resposne.HasErrors()).toBeFalse();
 
@@ -159,7 +159,7 @@ describe('EventProxyLibService', () => {
       expect(resposne.Result.Ids.length).toEqual(1);
     });
 
-    it('should DispatchEventAsync random amount and return list of id with random amount of elements', async () => {
+    it("should DispatchEventAsync random amount and return list of id with random amount of elements", async () => {
       const random = getRandomInt(10) + 1;
 
       const array = [];
@@ -177,7 +177,7 @@ describe('EventProxyLibService', () => {
     });
 
     for (let index = 0; index < 5; index++) {
-      it('subscribe to one event, fire it, start listening and receive it', async (done) => {
+      it("subscribe to one event, fire it, start listening and receive it", async (done) => {
         const waitForEventId = getRandomInt(500);
 
         // 1. Subscribe to event
@@ -186,7 +186,7 @@ describe('EventProxyLibService', () => {
         await service.DispatchEventAsync(subEvent);
 
         // TODO: eventually it should wait till someone subscribed to it.
-        // it does and it's 2003 event
+        // it does and it"s 2003 event
         // 2. Fire event
         await delay(awaitAfterSendingEvent);
         tEvent.EventId = waitForEventId;
@@ -200,11 +200,11 @@ describe('EventProxyLibService', () => {
 
             const responseBody = res.Result;
 
-            expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
+            expect(responseBody.EventId).toBe(EventIds.GetNewEvents, "EventId incorrect");
 
-            expect(responseBody.Events.length).toBe(1, 'Incorrect length');
+            expect(responseBody.Events.length).toBe(1, "Incorrect length");
 
-            expect(responseBody.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+            expect(responseBody.Events[0].EventId).toBe(waitForEventId, "Incorrect expected eventid");
 
             service.DispatchEventAsync(new SubscibeToEvent(testinID, [], true));
 
@@ -214,7 +214,7 @@ describe('EventProxyLibService', () => {
       });
     }
 
-    it('start listening, then should subscribe to one event, fire it, and receive it', async (done) => {
+    it("start listening, then should subscribe to one event, fire it, and receive it", async (done) => {
       const waitForEventId = getRandomInt(99999);
 
       // 1. Listening to events
@@ -224,11 +224,11 @@ describe('EventProxyLibService', () => {
 
           const responseBody = res.Result;
 
-          expect(responseBody.EventId).toBe(EventIds.GetNewEvents, 'EventId incorrect');
+          expect(responseBody.EventId).toBe(EventIds.GetNewEvents, "EventId incorrect");
 
-          expect(responseBody.Events.length).toBe(1, 'Incorrect lenght');
+          expect(responseBody.Events.length).toBe(1, "Incorrect lenght");
 
-          expect(responseBody.Events[0].EventId).toBe(waitForEventId, 'Incorrect expected eventid');
+          expect(responseBody.Events[0].EventId).toBe(waitForEventId, "Incorrect expected eventid");
 
           service.DispatchEventAsync(new SubscibeToEvent(testinID, [], true));
 
@@ -248,7 +248,7 @@ describe('EventProxyLibService', () => {
       await service.DispatchEventAsync(tEvent);
     });
 
-    it('should subscribe to many events, fire them, and receive them', async (done) => {
+    it("should subscribe to many events, fire them, and receive them", async (done) => {
       const randomAmount = 8;
 
       const eventArray = [];
@@ -288,7 +288,7 @@ describe('EventProxyLibService', () => {
       );
     });
 
-   it('few sources subscribe to same event and they receive them', async (done) => {
+   it("few sources subscribe to same event and they receive them", async (done) => {
       const sourceIdBegin = 41;
       const rndEventId = getRandomInt(500) + 1;
       const sourceAmount = 2;

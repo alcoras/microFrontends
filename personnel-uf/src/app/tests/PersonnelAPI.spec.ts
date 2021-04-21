@@ -1,15 +1,15 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { BackendToFrontendEvent, CreateUpdatePersonData, EnvironmentService, EventIds, EventProxyLibService, PersonData, ReadPersonDataQuery, RemoveEnterpisePersonData } from 'event-proxy-lib-src';
-import { EventBusService } from '../services/EventBus.service';
-import { PersonnelAPI } from '../services/PersonnelAPI';
-import { HttpResponse } from '@angular/common/http';
-import { delay, genRandomNumber, TestEvent } from './Adds/helpers';
+import { TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import { BackendToFrontendEvent, CreateUpdatePersonData, EnvironmentService, EventIds, EventProxyLibService, PersonData, ReadPersonDataQuery, RemoveEnterpisePersonData } from "event-proxy-lib-src";
+import { EventBusService } from "../services/EventBus.service";
+import { PersonnelAPI } from "../services/PersonnelAPI";
+import { HttpResponse } from "@angular/common/http";
+import { delay, genRandomNumber, TestEvent } from "./Adds/helpers";
 
-const envPrefix = '__env';
-const backendURL = 'localhost';
-const backendPath = '/newEvents';
-const backendPort = '54366';
+const envPrefix = "__env";
+const backendURL = "localhost";
+const backendPath = "/newEvents";
+const backendPort = "54366";
 const URL = `http://${backendURL}:${backendPort}${backendPath}`;
 
 /**
@@ -21,7 +21,7 @@ window[envPrefix] = window[envPrefix] || {};
 // eslint-disable-next-line @typescript-eslint/camelcase
 window[envPrefix].one_language = false;
 // API url
-window[envPrefix].url = 'http://' + backendURL;
+window[envPrefix].url = "http://" + backendURL;
 window[envPrefix].apiGatewayUrl = window[envPrefix].url;
 window[envPrefix].apiGatewayPort = backendPort;
 
@@ -41,7 +41,7 @@ const newPersonnelData: PersonData = {
   PodatkovaPilga: genRandomNumber(100),
 };
 
-describe('PersonnelAPI service', () => {
+describe("PersonnelAPI service", () => {
   let service: PersonnelAPI;
   let eventBus: EventBusService;
   let httpTestingController: HttpTestingController;
@@ -57,7 +57,7 @@ describe('PersonnelAPI service', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
-  describe('Delete', () => {
+  describe("Delete", () => {
 
     it("testing content", () => {
       const id = genRandomNumber(200);
@@ -72,7 +72,7 @@ describe('PersonnelAPI service', () => {
     });
   });
 
-  describe('Create', () => {
+  describe("Create", () => {
 
     it("testing content", () => {
       service.CreateAsync(newPersonnelData);
@@ -86,9 +86,9 @@ describe('PersonnelAPI service', () => {
       req.flush("");
     });
   });
-  describe('Update', () => {
+  describe("Update", () => {
 
-    it('testing response', () => {
+    it("testing response", () => {
       service.UpdateAsync(newPersonnelData);
 
       const req = httpTestingController.expectOne(URL);
@@ -102,9 +102,9 @@ describe('PersonnelAPI service', () => {
 
   });
 
-  describe('Get', () => {
+  describe("Get", () => {
 
-    it('testing content', () => {
+    it("testing content", () => {
       service.GetAsync(null, 1, 2);
 
       const req = httpTestingController.expectOne(URL);

@@ -1,4 +1,4 @@
-import { CoreEvent } from "../CoreEvent"
+import { CoreEvent } from "../CoreEvent";
 import { EventIds } from "../EventIds";
 import { MicroFrontendInfo } from "../MicroFrontendInfo";
 
@@ -10,7 +10,8 @@ export enum SingUnsignFlag {
 export class OrchestratorTeam1MaterialsScanSignedUnsigned extends CoreEvent {
 
 	/**
-	 * @param sourceInfo microfrontend's source info
+	 * @param sourceInfo microfrontend"s source info
+	 * @param signUnsignFlag
 	 * @param Id Materials scan signed (set the id of Materials list in this event)
 	 */
 	public constructor(sourceInfo: MicroFrontendInfo, signUnsignFlag: SingUnsignFlag, public Id: number,) {

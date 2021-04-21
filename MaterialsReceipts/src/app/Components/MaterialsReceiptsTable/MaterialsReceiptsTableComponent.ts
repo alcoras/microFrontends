@@ -28,11 +28,11 @@ export class MaterialsReceiptsTableComponent {
   public Columns = [
     // skipping irrelevant information
     { field: "Id", header: "Id"},
-    // { field: 'LineNumber', header: 'LineNumber'},
+    // { field: "LineNumber", header: "LineNumber"},
     { field: "CodeSOne", header: "CodeSOne?"},
     { field: "Type", header: "Type"},
-    // { field: 'Account', header: 'Account'},
-    // { field: 'Unit', header: 'Units'},
+    // { field: "Account", header: "Account"},
+    // { field: "Unit", header: "Units"},
     { field: "NameSOne", header: "Name"},
     { field: "PersonMRP", header: "Person MRP"},
     { field: "Quantity", header: "Expected"},
@@ -85,7 +85,7 @@ export class MaterialsReceiptsTableComponent {
 	}
 
 	private async handleScanTableUnsignButtonClicked(): Promise<void> {
-		let unsignRequest = await this.materialsReceiptsAPI.MaterialScanUnsignAsync(this.CurrentMaterialsReceiptData.Id);
+		const unsignRequest = await this.materialsReceiptsAPI.MaterialScanUnsignAsync(this.CurrentMaterialsReceiptData.Id);
 
 		if (unsignRequest.HasErrors()) {
 			throw new Error(unsignRequest.ErrorList.toString());
@@ -113,7 +113,7 @@ export class MaterialsReceiptsTableComponent {
 
     if (success) {
       // send sign event and notify if sign was successful or not
-			let signRequest = await this.materialsReceiptsAPI.MaterialScanSignAsync(this.CurrentMaterialsReceiptData.Id);
+			const signRequest = await this.materialsReceiptsAPI.MaterialScanSignAsync(this.CurrentMaterialsReceiptData.Id);
 
 			if (signRequest.HasErrors()) {
 				throw new Error(signRequest.ErrorList.toString());

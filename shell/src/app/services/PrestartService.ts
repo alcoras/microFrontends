@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { ResourceLoaderService } from './ResourceLoaderService';
-import { EnvironmentService, ResourceSheme } from 'event-proxy-lib-src';
+import { Injectable } from "@angular/core";
+import { ResourceLoaderService } from "./ResourceLoaderService";
+import { EnvironmentService, ResourceSheme } from "event-proxy-lib-src";
 
 /**
  * Preloads default language and scripts
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PrestartService {
   public constructor(
@@ -17,8 +17,7 @@ export class PrestartService {
   /**
    * Initialize language (DEMO)
    *
-   * @returns {Promise<void>}
-   * @memberof PrestartService
+   * @returns Promise<void>
    */
   public async InitLanguage(): Promise<void> {
     throw new Error("Not implemented");
@@ -27,9 +26,8 @@ export class PrestartService {
   /**
    * Inits scripts
    *
-   * @param {string[]} urls list of scripts
-   * @returns {Promise<void[]>} Promises
-   * @memberof PrestartService
+   * @param urls - list of scripts
+   * @returns - Promises
    */
   public InitScripts(urls: string[]): Promise<void[][]> {
     return this.preloadScripts(urls);
@@ -45,18 +43,16 @@ export class PrestartService {
   /**
    * Preloads scripts for every microservice
    *
-   * @private
-   * @param {string[]} urlList list of scripts
+   * @param urlList - list of scripts
    * @returns Promises for every script
-   * @memberof PrestartService
    */
   private async preloadScripts(urlList: string[]): Promise<void[][]> {
     const promises: Promise<void[]>[] = [];
 
     urlList.forEach(url => {
       const resource = new ResourceSheme();
-      resource.Element = 'script';
-      resource.setAttribute('src', url);
+      resource.Element = "script";
+      resource.setAttribute("src", url);
 
       promises.push(this.resourceLoader.LoadResources(resource));
     });

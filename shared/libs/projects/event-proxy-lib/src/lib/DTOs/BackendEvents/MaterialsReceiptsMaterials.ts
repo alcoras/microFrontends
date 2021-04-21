@@ -24,9 +24,9 @@ export class MaterialsReceiptsMaterials extends CoreEvent {
    * Comment about material
    */
   public CommentMaterials: string;
-  
+
   /**
-   * Material's BarCode
+   * Material"s BarCode
    */
   public BarCode: string;
 

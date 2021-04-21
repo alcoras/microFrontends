@@ -18,7 +18,7 @@ export class MaterialsReceiptsScanTableReadListQuery extends CoreEvent {
 
       super();
       if (Page <= 0 || Limit <= 0)
-        throw new Error('Page or Limit cannot be 0 or below');
+        throw new Error("Page or Limit cannot be 0 or below");
 
       this.SourceId = sourceInfo.SourceId;
       this.SourceName = sourceInfo.SourceName;

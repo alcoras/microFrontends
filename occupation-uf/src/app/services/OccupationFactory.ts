@@ -1,4 +1,4 @@
-import { OccupationService } from './OccupationService';
+import { OccupationService } from "./OccupationService";
 
 /**
  * Service factory

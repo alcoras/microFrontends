@@ -1,4 +1,4 @@
-import { EventIds } from '../../EventIds';
+import { EventIds } from "../../EventIds";
 
 export enum ButtonIds {
   PersonnelButtonPressed = EventIds.PersonnelButtonPressed,

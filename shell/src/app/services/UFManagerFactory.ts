@@ -1,4 +1,4 @@
-import { UFManagerService } from './UFManagerService';
+import { UFManagerService } from "./UFManagerService";
 
 /**
  * Ufmanagers factory for UFManagerComponent to ensure Init is launched
@@ -10,6 +10,6 @@ export function UFManagerServiceFactory(provider: UFManagerService): Promise<voi
     provider.InitAsync().then( () => {
       provider.InitializeConnectionWithBackend();
       resolve();
-    })
-  })
+    });
+  });
 }

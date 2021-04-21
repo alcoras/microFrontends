@@ -173,11 +173,14 @@
 81. INSTALLER:
 	81. 1. Add to shell
 	81. 2. Add to menu
-	81. 3. update readme Adding new micro frontend
+	81. 3. DONE add to readme how to add new micro frontend
 82. In all events add source info
 83. MaterialsReceiptsAPI.ts CreateDraft should placed somewhere globally
 86. think about languages (static vs dynamic)
+	86. 1. UPDATE make dynamic loading, one language loads another unloads
 87. add tooltips and start adding them
 88. remove all sub .eslintrc.js and make sure root one is being read
+89. fix all linting
+90. force comments for all functions
 
-89.
+91.

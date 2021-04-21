@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,13 +10,13 @@ import {
   MicroFrontendInfo,
   MicroFrontendParts,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class WunderMobilityService implements IMicroFrontend {
 
@@ -60,7 +60,7 @@ export class WunderMobilityService implements IMicroFrontend {
               await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
             } else {
               console.error(element);
-              throw new Error('Did not proccess after processButtonPressed');
+              throw new Error("Did not proccess after processButtonPressed");
             }
             break;
         case EventIds.TestWunderMobilityProductsQueryResults:
@@ -89,7 +89,7 @@ export class WunderMobilityService implements IMicroFrontend {
    * Prepares placements for components
    */
   private preparePlacements(): void {
-    this.elToPlace[EventIds.WunderMobilityButtonPressed] = '<team-wunder-mobility></team-wunder-mobility>';
+    this.elToPlace[EventIds.WunderMobilityButtonPressed] = "<team-wunder-mobility></team-wunder-mobility>";
   }
 
   /**
@@ -130,7 +130,7 @@ export class WunderMobilityService implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

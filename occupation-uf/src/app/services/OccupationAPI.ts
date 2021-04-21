@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -11,15 +11,15 @@ import {
   OccupationsReadQuery,
   OccupationsReadResults,
   BackendToFrontendEvent
-} from 'event-proxy-lib-src';
+} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 /**
  * Occupation API service for CRUD operations
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class OccupationAPIService {
 
@@ -80,7 +80,7 @@ export class OccupationAPIService {
    * Queries for occupation data
    *
    * @param page page to get
-   * @param pageSize entries' limit
+   * @param pageSize entries" limit
    * @returns Promise with response
    */
   public async GetAsync(page: number, pageSize: number): Promise<ValidationStatus<OccupationsReadResults>> {

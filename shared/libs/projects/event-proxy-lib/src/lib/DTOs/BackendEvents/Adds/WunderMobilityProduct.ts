@@ -1,7 +1,7 @@
 export class WunderMobilityProduct {
 
   /**
-   * Product's internal id
+   * Product"s internal id
    */
   public Id: number;
 

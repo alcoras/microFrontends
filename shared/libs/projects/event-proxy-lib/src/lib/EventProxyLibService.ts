@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { catchError, timeout } from 'rxjs/operators';
-import { Observable, Observer, Subscriber, of } from 'rxjs';
-import { CoreEvent, EventIds, ErrorMessage, ValidationStatus, MicroFrontendParts } from './DTOs/index';
-import { EnvironmentService } from './services/EnvironmentService';
-import { RetryWithBackoff } from './retry/RetryWithBackoff';
-import { BackendToFrontendEvent } from './DTOs/BackendEvents/BackendToFrontendEvent';
-import { FrontendToBackendEvent } from './DTOs/FrontendEvents/FrontendToBackendEvent';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
+import { catchError, timeout } from "rxjs/operators";
+import { Observable, Observer, Subscriber, of } from "rxjs";
+import { CoreEvent, EventIds, ErrorMessage, ValidationStatus, MicroFrontendParts } from "./DTOs/index";
+import { EnvironmentService } from "./services/EnvironmentService";
+import { RetryWithBackoff } from "./retry/RetryWithBackoff";
+import { BackendToFrontendEvent } from "./DTOs/BackendEvents/BackendToFrontendEvent";
+import { FrontendToBackendEvent } from "./DTOs/FrontendEvents/FrontendToBackendEvent";
 
 /**
  * Event Proxy service for communication with API gateway
  * micro service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class EventProxyLibService {
 
@@ -52,17 +52,17 @@ export class EventProxyLibService {
   /**
    * API gateway to which all http requests will be sent
    */
-  private readonly endpoint = '/newEvents';
+  private readonly endpoint = "/newEvents";
 
   /**
    * Header which which will be used in all requests
    */
-  private readonly jsonHeaders = new HttpHeaders({'Content-Type': 'application/json'});
+  private readonly jsonHeaders = new HttpHeaders({"Content-Type": "application/json"});
 
   /**
    * Source id
    */
-  private sourceID = '';
+  private sourceID = "";
 
   /**
    * Creates an instance of event proxy lib service.
@@ -89,7 +89,7 @@ export class EventProxyLibService {
         clearTimeout(id);
         reject("Timeout in " + timeoutMS);
       }, timeoutMS);
-    })
+    });
 
     const raceResult = Promise.race([promise, timeout]);
 
@@ -108,7 +108,7 @@ export class EventProxyLibService {
   public InitializeConnectionToBackend(sourceId: string): Observable<ValidationStatus<BackendToFrontendEvent>> {
 
     if (!sourceId) {
-      throw new Error('SourceID was not provided in StartListeningToBackend');
+      throw new Error("SourceID was not provided in StartListeningToBackend");
     }
 
     this.sourceID = sourceId;
@@ -132,12 +132,12 @@ export class EventProxyLibService {
       return false;
     }
 
-    if (!Object.prototype.hasOwnProperty.call(responseStatus.Result, 'EventId')) {
+    if (!Object.prototype.hasOwnProperty.call(responseStatus.Result, "EventId")) {
       this.EndListeningToBackend();
       throw new Error(ErrorMessage.NoEventId);
     }
 
-    switch (+responseStatus.Result['EventId']) {
+    switch (+responseStatus.Result["EventId"]) {
       case EventIds.GetNewEvents:
         return true;
       case EventIds.TokenFailure:
@@ -177,7 +177,7 @@ export class EventProxyLibService {
       MarkAllReceived: confirmAll,
     };
 
-    return this.sendMessageAsync('ConfirmEventsAsync', body);
+    return this.sendMessageAsync("ConfirmEventsAsync", body);
   }
 
   /**
@@ -192,7 +192,7 @@ export class EventProxyLibService {
       Events: eventList
     };
 
-    return this.sendMessageAsync('DispatchEventAsync', body);
+    return this.sendMessageAsync("DispatchEventAsync", body);
   }
 
   /**
@@ -207,7 +207,7 @@ export class EventProxyLibService {
       SourceId: sourceId,
     };
 
-    return this.sendMessageAsync('GetLastEventsAsync', body);
+    return this.sendMessageAsync("GetLastEventsAsync", body);
   }
 
   /**
@@ -222,9 +222,9 @@ export class EventProxyLibService {
       EventId: EventIds.LoginRequested,
       LoginTimestamp: timestamp,
       LoginSignature: signature
-    }
+    };
 
-    return this.sendMessageAsync('LogInAsync', body, true);
+    return this.sendMessageAsync("LogInAsync", body, true);
   }
 
   /**
@@ -235,9 +235,9 @@ export class EventProxyLibService {
 
     const body = {
       EventId: EventIds.RenewToken
-    }
+    };
 
-    return this.sendMessageAsync('RenewTokenAsync', body);
+    return this.sendMessageAsync("RenewTokenAsync", body);
   }
 
   /**
@@ -252,14 +252,14 @@ export class EventProxyLibService {
     const result = new ValidationStatus<BackendToFrontendEvent>();
 
     if (!this.ApiGatewayURL) {
-      throw Error('ApiGateway URL is undefined');
+      throw Error("ApiGateway URL is undefined");
     }
 
     const headers = this.jsonHeaders;
     const url = this.ApiGatewayURL + this.endpoint;
 
     if (!anonymous) {
-      body['Token'] = this.environmentService.AuthorizationToken;
+      body["Token"] = this.environmentService.AuthorizationToken;
     }
 
     const sourceName = MicroFrontendParts.TryGetSourceNameFromSourceID(this.sourceID);
@@ -270,7 +270,7 @@ export class EventProxyLibService {
       .post(
         url,
         body,
-        { headers, observe: 'response' }
+        { headers, observe: "response" }
       )
       .pipe(
         // if no repsonse within Timeout, retryWithBackoff will kick in and will try
@@ -290,7 +290,7 @@ export class EventProxyLibService {
           res.next(result);
           res.complete();
         }
-      })
+      });
 
     }).toPromise();
   }

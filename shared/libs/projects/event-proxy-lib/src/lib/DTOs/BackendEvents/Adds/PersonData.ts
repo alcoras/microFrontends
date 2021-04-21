@@ -8,7 +8,7 @@ export class PersonData {
   public PersonDataID: number;
 
   /**
-   * Date of parameter's setting
+   * Date of parameter"s setting
    */
   public DateValue: string;
 

@@ -1,13 +1,13 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PersonnelAPI } from '../services/PersonnelAPI';
-import { EventBusService } from '../services/EventBus.service';
-import { PersonData } from 'event-proxy-lib-src';
+import { Component, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { PersonnelAPI } from "../services/PersonnelAPI";
+import { EventBusService } from "../services/EventBus.service";
+import { PersonData } from "event-proxy-lib-src";
 
 @Component({
-  selector: 'app-new-personnel',
-  templateUrl: './new-personnel.component.html',
-  styleUrls: ['./new-personnel.component.css']
+  selector: "app-new-personnel",
+  templateUrl: "./new-personnel.component.html",
+  styleUrls: ["./new-personnel.component.css"]
 })
 export class NewPersonnelComponent {
 
@@ -27,7 +27,7 @@ export class NewPersonnelComponent {
   }
 
   /**
-   * Handles dialog's save
+   * Handles dialog"s save
    */
   public Save(): void {
     this.dialogRef.close();

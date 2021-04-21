@@ -1,5 +1,5 @@
-import { CoreEvent } from '../CoreEvent';
-import { EventIds } from '../EventIds';
+import { CoreEvent } from "../CoreEvent";
+import { EventIds } from "../EventIds";
 
 /**
  * Unsubscrube to event model, used to unsubscribe to other events

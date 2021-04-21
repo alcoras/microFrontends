@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Observable, throwError, of } from 'rxjs';
-import { retryWhen, mergeMap, delay } from 'rxjs/operators';
+import { Observable, throwError, of } from "rxjs";
+import { retryWhen, mergeMap, delay } from "rxjs/operators";
 
 export const errorMsg = (maxRetry: number): string => `Failed to connect after ${maxRetry} try(ies).`;
 

@@ -1,15 +1,19 @@
-import { writeFileSync, existsSync, readFileSync, readdirSync, statSync, renameSync, copyFileSync, unlinkSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, readdirSync, statSync, renameSync, unlinkSync } from "fs";
 import { join } from "path";
 import { ncp } from "ncp";
 
 const installPath = `${process.cwd()}\\installs\\install.json`;
 
-const readline = require('readline').createInterface({
+const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout
 });
 readline.pause();
 
+/**
+ * @param question
+ * @param cb
+ */
 function askAsync(question: string, cb = () => void 0): Promise<string> {
   return new Promise(resolve => {
     readline.question(question, (answer: string) => {
@@ -31,30 +35,39 @@ interface installFile {
 }
 
 // https://github.com/zellwk/javascript/blob/master/convert-case/convert-case.js
+/**
+ * @param string
+ */
 function toKebabCase(string: string) {
   return string
-    .split('')
+    .split("")
     .map((letter, _) => {
       if (/[A-Z]/.test(letter)) {
-        return ` ${letter.toLowerCase()}`
+        return ` ${letter.toLowerCase()}`;
       }
       return letter;
     })
-    .join('')
+    .join("")
     .trim()
-    .replace(/[_\s]+/g, '-');
+    .replace(/[_\s]+/g, "-");
 }
 
+/**
+ * @param path
+ */
 function getFilesFromPath(path: string) {
-	var result: string[] = [];
+	const result: string[] = [];
 
+	/**
+	 * @param currentPath
+	 */
 	function walk(currentPath: string) {
-		var fileList = readdirSync(currentPath);
+		const fileList = readdirSync(currentPath);
 
-		for (var i in fileList) {
-			var currentFile = join(currentPath, fileList[i]);
+		for (const i in fileList) {
+			const currentFile = join(currentPath, fileList[i]);
 			if (statSync(currentFile).isFile()) {
-				result.push(currentFile.replace(path, ''));
+				result.push(currentFile.replace(path, ""));
 			} else {
 				walk(currentFile);
 			}
@@ -64,6 +77,10 @@ function getFilesFromPath(path: string) {
 	return result;
 }
 
+/**
+ * @param sourcePath
+ * @param desitnatioPath
+ */
 async function copyFoldersAsync(sourcePath: string, desitnatioPath: string): Promise<void> {
 	return new Promise<void>(resolve => {
 		ncp(sourcePath, desitnatioPath, (error) => {
@@ -74,21 +91,26 @@ async function copyFoldersAsync(sourcePath: string, desitnatioPath: string): Pro
 			}
 			resolve();
 		});
-	})
+	});
 }
 
+/**
+ * @param buffer
+ * @param search
+ * @param replace
+ */
 function replaceAll(buffer: string, search: string, replace: string) {
 	return buffer.replace(
-		new RegExp(search.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'), 'g'), replace);
+		new RegExp(search.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"), "g"), replace);
 }
 
 // Entry point
 (async(): Promise<void> => {
-	var projectName: string;
-	var newInstallFileName: string;
-	var newInstallFilePath: string;
-	var configuration: installFile;
-	var answer: string;
+	let projectName: string;
+	let newInstallFileName: string;
+	let newInstallFilePath: string;
+	let configuration: installFile;
+	let answer: string;
 
 	answer = await askAsync("Provide a name for project (use PascalCase):");
 	projectName = answer.trim();
@@ -101,12 +123,12 @@ function replaceAll(buffer: string, search: string, replace: string) {
 	}
 
 	// read install template
-	configuration = JSON.parse(readFileSync(installPath, 'utf-8'));
+	configuration = JSON.parse(readFileSync(installPath, "utf-8"));
 
 	// changing config
 	{
 		configuration.projectName = projectName;
-		for (var i = 0; i < configuration.replace.length; i++) {
+		for (let i = 0; i < configuration.replace.length; i++) {
 			const entry = configuration.replace[i];
 
 			switch (entry.search) {
@@ -143,7 +165,7 @@ function replaceAll(buffer: string, search: string, replace: string) {
 
 		answer = await askAsync(`Check ${newInstallFileName}. To proceed type: y, otherwise cancel:`);
 
-		if (answer[0].toLowerCase() != 'y') {
+		if (answer[0].toLowerCase() != "y") {
 			console.log("Deleting configuraiton and exiting..");
 			unlinkSync(newInstallFilePath);
 			process.exit(-1);
@@ -170,7 +192,7 @@ function replaceAll(buffer: string, search: string, replace: string) {
 		}
 
 		for (let i = 0; i < newProjectFiles.length; i++) {
-			let fileBuffer = readFileSync(newProjectFiles[i], 'utf-8');
+			let fileBuffer = readFileSync(newProjectFiles[i], "utf-8");
 
 			for (let c = 0; c < configuration.replace.length; c++) {
 				fileBuffer = replaceAll(fileBuffer, configuration.replace[c].search, configuration.replace[c].replace);
@@ -194,12 +216,12 @@ function replaceAll(buffer: string, search: string, replace: string) {
 		const pathToMicroFrontendParts = "../shared/libs/projects/event-proxy-lib/src/lib/DTOs/MicroFrontendParts.ts";
 		const templateString =
 `	public static $project_name$: MicroFrontendInfo = {
-		SourceId: '$source_id$',
-		SourceName: '$project_name$'
+		SourceId: "$source_id$",
+		SourceName: "$project_name$"
 	};
 
 `;
-		let fileBuffer = readFileSync(pathToMicroFrontendParts, 'utf-8');
+		let fileBuffer = readFileSync(pathToMicroFrontendParts, "utf-8");
 
 		// this check probably should happen before everything else
 		if (fileBuffer.includes(configuration.projectName)) {
@@ -210,7 +232,7 @@ function replaceAll(buffer: string, search: string, replace: string) {
 		for (let c = 0; c < configuration.replace.length; c++)
 			fileBuffer = replaceAll(fileBuffer, configuration.replace[c].search, configuration.replace[c].replace);
 
-		let postion = fileBuffer.indexOf("  /** PLACEHOLDER USED BY INSTALLER */");
+		const postion = fileBuffer.indexOf("  /** PLACEHOLDER USED BY INSTALLER */");
 
 		fileBuffer = fileBuffer.slice(0, postion) + templateString + fileBuffer.slice(postion);
 
@@ -235,7 +257,7 @@ function replaceAll(buffer: string, search: string, replace: string) {
 
 		const templateString =`	${configuration.projectName}ButtonPressed = ${pressed_id},\n`;
 
-		let fileBuffer = readFileSync(pathToMicroEventIds, 'utf-8');
+		let fileBuffer = readFileSync(pathToMicroEventIds, "utf-8");
 
 		// this check should happen before everything
 		if (fileBuffer.includes(pressed_id.toString())) {
@@ -243,7 +265,7 @@ function replaceAll(buffer: string, search: string, replace: string) {
 			process.exit(-1);
 		}
 
-		let postion = fileBuffer.indexOf("  /** PLACEHOLDER USED BY INSTALLER */");
+		const postion = fileBuffer.indexOf("  /** PLACEHOLDER USED BY INSTALLER */");
 
 		fileBuffer = fileBuffer.slice(0, postion) + templateString + fileBuffer.slice(postion);
 		writeFileSync(pathToMicroEventIds, fileBuffer);

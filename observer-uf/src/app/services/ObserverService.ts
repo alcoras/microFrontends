@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,12 +10,12 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class ObserverService implements IMicroFrontend {
 
@@ -61,12 +61,12 @@ export class ObserverService implements IMicroFrontend {
               await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
             } else {
               console.error(element);
-              throw new Error('Did not proccess after processButtonPressed');
+              throw new Error("Did not proccess after processButtonPressed");
             }
             break;
         case EventIds.ObserverSnapshotResult:
             this.eventBus.EventBus.next(element);
-            
+
             await this.eventProxyService.ConfirmEventsAsync(
               this.SourceInfo.SourceId, [element.AggregateId]);
 
@@ -80,7 +80,7 @@ export class ObserverService implements IMicroFrontend {
           break;
         case EventIds.EventProccessedWithFails:
           console.error(element);
-          throw new Error(`Event sroccessed with error(s)`);
+          throw new Error("Event sroccessed with error(s)");
         default:
             throw new Error(`Event ${element.EventId} not implemented.`);
       }
@@ -92,7 +92,7 @@ export class ObserverService implements IMicroFrontend {
    */
   private preparePlacements(): void {
     this.elToPlace[EventIds.ObserverButtonPressed]
-      = '<team-observer></team-observer>';
+      = "<team-observer></team-observer>";
   }
 
   /**
@@ -133,7 +133,7 @@ export class ObserverService implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

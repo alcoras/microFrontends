@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   BackendToFrontendEvent,
   EventProxyLibService,
@@ -11,11 +11,11 @@ import {
   WunderMobilityProductDelete,
   WunderMobilityProductQuery,
   WunderMobilityProductQueryResults,
-  WunderMobilityScannedProduct} from 'event-proxy-lib-src';
-import { EventBusService } from './EventBusService';
+  WunderMobilityScannedProduct} from "event-proxy-lib-src";
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 }) export class WunderMobilityAPI {
   private sourceInfo = MicroFrontendParts.WunderMobility;
 
@@ -44,7 +44,7 @@ import { EventBusService } from './EventBusService';
       this.eventBusService.EventBus.subscribe((data: WunderMobilityDoCheckoutResults) => {
         if (data.ParentId === uniqueId) resolve(data);
       });
-    })
+    });
 
     return this.eventProxyService.RacePromiseAsync(responsePromise);
   }
@@ -89,7 +89,7 @@ import { EventBusService } from './EventBusService';
       this.eventBusService.EventBus.subscribe((data: WunderMobilityProductQueryResults) => {
         if (data.ParentId === uniqueId) resolve(data);
       });
-    })
+    });
 
     return this.eventProxyService.RacePromiseAsync(responsePromise);
   }

@@ -1,5 +1,5 @@
 /**
- * Event's id list
+ * Event"s id list
  */
 export enum EventIds {
   // Frontend events

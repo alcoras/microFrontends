@@ -15,5 +15,5 @@ export function genRandomNumber(max: number): number {
 export function delay(ms: number): Promise<void> {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
-export const BackendURL = 'http://localhost:7001';
-export const BackendPort = '7001';
+export const BackendURL = "http://localhost:7001";
+export const BackendPort = "7001";

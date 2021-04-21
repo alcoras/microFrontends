@@ -1,7 +1,7 @@
-// disable lint because otherwise framework specific type is required (like angular's HttpResponse)
+// disable lint because otherwise framework specific type is required (like angular"s HttpResponse)
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { MicroFrontendInfo } from './MicroFrontendInfo';
+import { MicroFrontendInfo } from "./MicroFrontendInfo";
 
 export interface IMicroFrontend {
   /**
@@ -11,7 +11,7 @@ export interface IMicroFrontend {
 
   /**
    * Inits async is called by factory to assure its execution before
-   * Micro Frontend's launch
+   * Micro Frontend"s launch
    */
   InitAsync(): Promise<void>;
 

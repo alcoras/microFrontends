@@ -1,5 +1,5 @@
-import { CoreEvent } from '../CoreEvent';
-import { EventIds } from '../EventIds';
+import { CoreEvent } from "../CoreEvent";
+import { EventIds } from "../EventIds";
 
 /**
  * Subscibe to event model, used to subscribe to other events

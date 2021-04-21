@@ -1,15 +1,15 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { BrowserModule } from "@angular/platform-browser";
+import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FormsModule } from "@angular/forms";
 
-import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
+import { EventProxyLibModule, EventProxyLibService } from "event-proxy-lib-src";
 
-import { createCustomElement } from '@angular/elements';
+import { createCustomElement } from "@angular/elements";
 
-import { $project_name$Component } from './$project_name$Component';
-import { $project_name$Service } from './$project_name$Service';
+import { $project_name$Component } from "./$project_name$Component";
+import { $project_name$Service } from "./$project_name$Service";
 
 /**
  * Service factory used to prepare event-proxy-lib interface before connecting
@@ -55,7 +55,7 @@ export class $project_name$Module {
 
     const ngCustomElement2 = createCustomElement($project_name$Component, { injector });
 
-    if (!customElements.get('$project_name_html$')) {
-      customElements.define('$project_name_html$', ngCustomElement2); }
+    if (!customElements.get("$project_name_html$")) {
+      customElements.define("$project_name_html$", ngCustomElement2); }
   }
 }

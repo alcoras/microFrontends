@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,15 +10,15 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBus.service';
+import { EventBusService } from "./EventBus.service";
 
 /**
  * Component for personnel micro frontend to connect to backend
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class PersonnelService implements IMicroFrontend {
 
@@ -61,7 +61,7 @@ export class PersonnelService implements IMicroFrontend {
           if (this.processButtonPressed(element as EventButtonPressed)) {
             this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
           } else {
-            throw new Error('Did not proccess after processButtonPressed');
+            throw new Error("Did not proccess after processButtonPressed");
           }
           break;
         case EventIds.ReadPersonData:
@@ -77,10 +77,10 @@ export class PersonnelService implements IMicroFrontend {
             break;
         case EventIds.EventProccessedWithFails:
             console.error(element);
-            throw new Error(`Event sroccessed with error(s)`);
+            throw new Error("Event sroccessed with error(s)");
         default:
           console.error(element);
-          throw new Error('Event is not implemented.');
+          throw new Error("Event is not implemented.");
       }
     }
   }
@@ -90,7 +90,7 @@ export class PersonnelService implements IMicroFrontend {
    */
   private preparePlacements(): void {
     this.elToPlace[EventIds.PersonnelButtonPressed]
-      = '<team-personnel-2></team-personnel-2>';
+      = "<team-personnel-2></team-personnel-2>";
   }
 
   /**
@@ -131,7 +131,7 @@ export class PersonnelService implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

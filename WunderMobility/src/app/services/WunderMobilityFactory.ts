@@ -1,4 +1,4 @@
-import { WunderMobilityService } from './WunderMobilityService';
+import { WunderMobilityService } from "./WunderMobilityService";
 
 /**
  * Service factory used to prepare event-proxy-lib interface before connecting

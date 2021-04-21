@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { NewPersonnelComponent } from './new-personnel/new-personnel.component';
+import { Component } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { Subject } from "rxjs";
+import { NewPersonnelComponent } from "./new-personnel/new-personnel.component";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'PersonnelView.html',
+  selector: "app-root",
+  templateUrl: "PersonnelView.html",
 })
 export class PersonnelComponent {
 
@@ -21,8 +21,8 @@ export class PersonnelComponent {
 
   public openDialog(): void {
     this.dialog.open(NewPersonnelComponent, {
-      height: 'auto',
-      width: 'auto',
+      height: "auto",
+      width: "auto",
       data: {}
     });
   }

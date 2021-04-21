@@ -11,7 +11,7 @@ export class OccupationsReadQuery extends CoreEvent {
    * @param sourceId source Id
    * @param DateTimeValue data time value (in DEMO just current time in ISO)
    * @param Page page to view
-   * @param Limit entries's limit
+   * @param Limit entries"s limit
    */
   public constructor(
     sourceId: string,
@@ -21,7 +21,7 @@ export class OccupationsReadQuery extends CoreEvent {
   ) {
     super();
     if (Page <= 0 || Limit <= 0)
-      throw new Error('Page or Limit cannot be 0 or below');
+      throw new Error("Page or Limit cannot be 0 or below");
 
     this.SourceId = sourceId;
     this.EventId = EventIds.OccupationsReadQuery;

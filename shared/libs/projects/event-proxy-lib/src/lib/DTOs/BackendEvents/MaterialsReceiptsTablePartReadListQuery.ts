@@ -7,7 +7,7 @@ import { MicroFrontendInfo } from "../MicroFrontendInfo";
  */
 export class MaterialsReceiptsTablePartReadListQuery extends CoreEvent {
   /**
-   * @param sourceInfo microfrontend's source info
+   * @param sourceInfo microfrontend"s source info
    * @param MaterialsReceiptsId Material receipt id you want to get assets of
    * @param Page Page number
    * @param Limit Number of records per page
@@ -20,7 +20,7 @@ export class MaterialsReceiptsTablePartReadListQuery extends CoreEvent {
   ) {
     super();
     if (Page <= 0 || Limit <= 0)
-      throw new Error('Page or Limit cannot be 0 or below');
+      throw new Error("Page or Limit cannot be 0 or below");
 
     this.SourceId = sourceInfo.SourceId;
     this.SourceName = sourceInfo.SourceName;

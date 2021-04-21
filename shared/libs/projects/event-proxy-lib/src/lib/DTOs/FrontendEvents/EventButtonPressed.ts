@@ -1,4 +1,4 @@
-import { CoreEvent } from '../CoreEvent';
+import { CoreEvent } from "../CoreEvent";
 
 /**
  * Event button pressed event model used for all buttons which are supposed to

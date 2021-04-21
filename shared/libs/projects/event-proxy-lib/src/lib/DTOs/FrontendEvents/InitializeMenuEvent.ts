@@ -1,5 +1,5 @@
-import { CoreEvent } from '../CoreEvent';
-import { EventIds } from '../EventIds';
+import { CoreEvent } from "../CoreEvent";
+import { EventIds } from "../EventIds";
 
 /**
  * Initialize menu event

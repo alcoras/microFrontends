@@ -1,4 +1,4 @@
-import { PersonnelService } from './PersonnelService';
+import { PersonnelService } from "./PersonnelService";
 
 /**
  * Personnels component factory

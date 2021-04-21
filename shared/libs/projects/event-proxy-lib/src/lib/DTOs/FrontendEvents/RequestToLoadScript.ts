@@ -1,6 +1,6 @@
-import { CoreEvent } from '../CoreEvent';
-import { EventIds } from '../EventIds';
-import { ResourceSheme } from './Adds/ResourceSheme';
+import { CoreEvent } from "../CoreEvent";
+import { EventIds } from "../EventIds";
+import { ResourceSheme } from "./Adds/ResourceSheme";
 
 /**
  * Request to load scripts class which is used as a model

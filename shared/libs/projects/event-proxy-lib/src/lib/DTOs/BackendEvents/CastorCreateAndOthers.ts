@@ -3,7 +3,7 @@ import { EventIds } from "../EventIds";
 import { MicroFrontendInfo } from "../MicroFrontendInfo";
 
 /**
- * Enum to indicate event's subtype
+ * Enum to indicate event"s subtype
  */
 export enum CastorCreateAndOthersType {
   Create = EventIds.CastorCreate,

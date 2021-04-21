@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   EventProxyLibService,
   EnvironmentService,
@@ -13,19 +13,18 @@ import {
   MicroFrontendInfo,
   EnvironmentTypes,
   EventIds,
-  LoginRequest,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
-import { ResourceLoaderService } from './ResourceLoaderService';
-import { PrestartService } from './PrestartService';
-import { AuthenticationService } from '../services/AuthenticationService';
-import { environment } from 'src/environments/environment';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
+import { ResourceLoaderService } from "./ResourceLoaderService";
+import { PrestartService } from "./PrestartService";
+import { AuthenticationService } from "../services/AuthenticationService";
+import { environment } from "src/environments/environment";
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
  * to their events which are loaded from JS configuration files.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class UFManagerService {
 
@@ -59,7 +58,7 @@ export class UFManagerService {
 
     // We confirm all events because otherwise upon errors from other microservices, we start to accumulate
     // unconfirmed events, because shell subscribe to them aswell
-    // It's fine because no one should call shell, as it's an entry point
+    // It"s fine because no one should call shell, as it"s an entry point
     await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [], true);
 
     // only in development and above (staging, prod)
@@ -69,21 +68,21 @@ export class UFManagerService {
     }
 
     await this.preloadScripts().then(
-      () => { console.log(`${this.SourceInfo.SourceName} preloadedScripts done. `)},
-      () => { throw new Error('Failed to load scripts'); }
+      () => { console.log(`${this.SourceInfo.SourceName} preloadedScripts done. `);},
+      () => { throw new Error("Failed to load scripts"); }
     );
 
     await this.subscribeToEventsAsync().then(
-      () => { console.log(`${this.SourceInfo.SourceName} subscribeToEventsAsync done.`)}
+      () => { console.log(`${this.SourceInfo.SourceName} subscribeToEventsAsync done.`);}
     );
 
     await this.subscribeMicroFrontends().then(
-      () => { console.log(`${this.SourceInfo.SourceName} subscribeMicroFrontends done.`)}
+      () => { console.log(`${this.SourceInfo.SourceName} subscribeMicroFrontends done.`);}
     );
 
     await this.preloadMenuMicroFrontend().then(
-      () => { console.log(`${this.SourceInfo.SourceName} preloadMenuMicroFrontend done.`)}
-    )
+      () => { console.log(`${this.SourceInfo.SourceName} preloadMenuMicroFrontend done.`);}
+    );
   }
 
   /**
@@ -112,7 +111,7 @@ export class UFManagerService {
     const url: string = this.environmentService.Url;
 
     if (!url) {
-      throw new Error('Url is not defined in environment');
+      throw new Error("Url is not defined in environment");
     }
 
     // only in development and above (staging, prod)
@@ -122,7 +121,7 @@ export class UFManagerService {
       urlList = this.environmentService.ConfigUrlList;
 
     if (urlList.length == 0) {
-      console.warn('Config list is not defined in environment');
+      console.warn("Config list is not defined in environment");
     }
 
     promises.push(this.prestartService.InitScripts(urlList));
@@ -167,7 +166,7 @@ export class UFManagerService {
 
       console.log(`${this.SourceInfo.SourceId} Parsing event:`, element);
 
-      const ufConfigs = window['__env']['uf'];
+      const ufConfigs = window["__env"]["uf"];
 
       // check if event is LoadedResource
       if (element.EventId === EventIds.LoadedResource) {
@@ -229,14 +228,14 @@ export class UFManagerService {
 
   /**
    * Subscribe micro frontends to their events and subs itself to them so it
-   * can load them if they're not yet laoded
+   * can load them if they"re not yet laoded
    * @returns Promise
    */
   private subscribeMicroFrontends(): Promise<ValidationStatus<BackendToFrontendEvent>> {
 
     const subscribeEventsList: SubscibeToEvent[] = [];
 
-    const dic = window['__env']['uf'];
+    const dic = window["__env"]["uf"];
     for (const key in dic) {
       // Traverse through all uFrontends
       if (Object.prototype.hasOwnProperty.call(dic, key)) {

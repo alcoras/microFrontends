@@ -14,7 +14,7 @@ import { EventBusService } from "./EventBusService";
  * Observer API service
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ObserverAPI {
   private sourceInfo = MicroFrontendParts.Observer;
@@ -45,7 +45,7 @@ export class ObserverAPI {
       this.eventBusService.EventBus.subscribe((data: ObserverSnapshotResult) => {
         if (data.ParentId === uniqueId) resolve(data);
       });
-    })
+    });
 
     return this.eventProxyService.RacePromiseAsync(responsePromise);
   }

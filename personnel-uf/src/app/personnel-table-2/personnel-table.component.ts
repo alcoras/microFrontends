@@ -1,27 +1,27 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { trigger, state, transition, style, animate } from '@angular/animations';
-import { merge, Observable, of as observableOf, Subscription} from 'rxjs';
-import { catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { PersonnelAPI } from '../services/PersonnelAPI';
-import { EventBusService } from '../services/EventBus.service';
-import { PersonData, PersonDataRead } from 'event-proxy-lib-src';
+import { Component, OnInit, ViewChild, AfterViewInit, Input } from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { trigger, state, transition, style, animate } from "@angular/animations";
+import { merge, Observable, of as observableOf, Subscription} from "rxjs";
+import { catchError, map, startWith, switchMap} from "rxjs/operators";
+import { PersonnelAPI } from "../services/PersonnelAPI";
+import { EventBusService } from "../services/EventBus.service";
+import { PersonData, PersonDataRead } from "event-proxy-lib-src";
 
 /**
  * Table component for Personnel micro frontend
  */
 @Component({
-  selector: 'app-personnel-table-2',
-  templateUrl: './personnel-table.component.html',
-  styleUrls: ['./personnel-table.component.css'],
+  selector: "app-personnel-table-2",
+  templateUrl: "./personnel-table.component.html",
+  styleUrls: ["./personnel-table.component.css"],
   animations: [
-    trigger('detailExpand', [
-      state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-      transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+    trigger("detailExpand", [
+      state("collapsed, void", style({ height: "0px", minHeight: "0", display: "none" })),
+      state("expanded", style({ height: "*" })),
+      transition("expanded <=> collapsed", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")),
+      transition("expanded <=> void", animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)"))
     ])
   ],
 })
@@ -41,16 +41,16 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
    * List of Collumns to be displayed
    */
   public ColumnsToDisplay: string[] = [
-    'PersonDataID',
-    'DateValue',
-    'DocReestratorID',
-    'Oklad',
-    'Stavka',
-    'PIP',
-    'KodDRFO',
-    'DataPriyomu',
-    'Posada',
-    'PodatkovaPilga',
+    "PersonDataID",
+    "DateValue",
+    "DocReestratorID",
+    "Oklad",
+    "Stavka",
+    "PIP",
+    "KodDRFO",
+    "DataPriyomu",
+    "Posada",
+    "PodatkovaPilga",
   ];
 
   public ResultsLength = 0;
@@ -96,7 +96,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
           // check if active sort is in a list of collums we provide
           if (this.ColumnsToDisplay.includes(this.sort.active)) {
             // add - char to the end if desc
-            const oneSort = this.sort.direction === 'desc' ? this.sort.active : `${this.sort.active}-`;
+            const oneSort = this.sort.direction === "desc" ? this.sort.active : `${this.sort.active}-`;
 
             sorts.push(oneSort);
           }
@@ -116,7 +116,7 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
         catchError((err) => {
           this.IsLoadingResults = false;
           this.BackendError = true;
-          console.error(err)
+          console.error(err);
           return observableOf([]);
         })
       ).subscribe((data) => this.data = data);
@@ -152,12 +152,12 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
 
     this.personnelApiService.UpdateAsync(up).then(
       () => {
-        console.log('update', id);
+        console.log("update", id);
         this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
-        throw new Error('Failed to update');
+        throw new Error("Failed to update");
       }
     );
   }
@@ -169,12 +169,12 @@ export class PersonnelTable2Component implements OnInit, AfterViewInit {
   public DeleteEntry(id: number): void {
     this.personnelApiService.DeleteAsync(id).then(
       () => {
-        console.log('delete', id);
+        console.log("delete", id);
         this.RefreshTable();
       },
       (rejected) => {
         console.error(rejected);
-        throw new Error('Failed to update');
+        throw new Error("Failed to update");
       }
     );
   }

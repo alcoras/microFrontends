@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 import {
   EventProxyLibService,
   EnvironmentService,
@@ -6,9 +6,9 @@ import {
   LanguageChange,
   EventButtonPressed,
   EnvironmentTypes,
-  EventIds} from 'event-proxy-lib-src';
+  EventIds} from "event-proxy-lib-src";
 
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 
 interface ISelector {
   value: string;
@@ -21,9 +21,9 @@ interface IUFState {
 }
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './MenuView.html',
-  styleUrls: ['./MenuStyle.css'],
+  selector: "app-root",
+  templateUrl: "./MenuView.html",
+  styleUrls: ["./MenuStyle.css"],
 })
 export class MenuComponent {
 
@@ -63,7 +63,7 @@ export class MenuComponent {
    * Change theme handler
    */
   public ChangeTheme(): void {
-    const el = document.getElementById('themeAsset') as HTMLLinkElement;
+    const el = document.getElementById("themeAsset") as HTMLLinkElement;
     el.href = this.selectedTheme;
   }
 
@@ -90,23 +90,23 @@ export class MenuComponent {
    *  Prepares theme and language
    */
   private prepareThemeAndLang(): void {
-    let url = '';
+    let url = "";
     // only in development and above (staging, prod) additional path needs to be added
     // so nginx can take care of redirections
     if (environment.EnvironmentTypes <= EnvironmentTypes.Development)
-      url = `menu/`;
+      url = "menu/";
 
     this.themes = [
-      { value: url + 'assets/deeppurple-amber.css', viewValue: 'Deep Purple & Amber' },
-      { value: url + 'assets/indigo-pink.css', viewValue: 'Indigo & Pink' },
-      { value: url + 'assets/pink-bluegrey.css', viewValue: 'Pink & Blue-grey' },
-      { value: url + 'assets/purple-green.css', viewValue: 'Purple & Green' }
+      { value: url + "assets/deeppurple-amber.css", viewValue: "Deep Purple & Amber" },
+      { value: url + "assets/indigo-pink.css", viewValue: "Indigo & Pink" },
+      { value: url + "assets/pink-bluegrey.css", viewValue: "Pink & Blue-grey" },
+      { value: url + "assets/purple-green.css", viewValue: "Purple & Green" }
     ];
     this.langs = [
-      { value: 'en', viewValue: 'EN' },
-      { value: 'uk', viewValue: 'UK' },
-      { value: 'ru', viewValue: 'RU' },
-      { value: 'lt', viewValue: 'LT' },
+      { value: "en", viewValue: "EN" },
+      { value: "uk", viewValue: "UK" },
+      { value: "ru", viewValue: "RU" },
+      { value: "lt", viewValue: "LT" },
     ];
     this.selectedTheme = this.themes[0].value;
     this.selectedLang = this.environmentService.Language;
@@ -118,25 +118,25 @@ export class MenuComponent {
    */
   private preparePlacements(): void {
     this.placement[EventIds.PersonnelButtonPressed] =
-      { elementId: 'personnel', loaded: false };
+      { elementId: "personnel", loaded: false };
 
     this.placement[EventIds.OccupationNg9ButtonPressed] =
-      { elementId: 'occupationsNg9', loaded: false };
+      { elementId: "occupationsNg9", loaded: false };
 
     this.placement[EventIds.ObserverButtonPressed] =
-      { elementId: 'observer', loaded: false };
+      { elementId: "observer", loaded: false };
 
     this.placement[EventIds.MaterialsReceiptsButtonPressed] =
-      { elementId: 'materialReceipts', loaded: false };
+      { elementId: "materialReceipts", loaded: false };
     // this.placement[EventIds.<project_name>ButtonPressed] =
-    // { elementId: '<project_name>', loaded: false };
+    // { elementId: "<project_name>", loaded: false };
   }
 
   private getElFromID(id: number): IUFState {
     const elId = this.placement[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;
@@ -170,18 +170,18 @@ export class MenuComponent {
   private openTab(evt, tabName: string): void {
     let i: number;
 
-    const tabcontent = document.getElementsByClassName('tabcontent') as HTMLCollectionOf<HTMLElement>;
+    const tabcontent = document.getElementsByClassName("tabcontent") as HTMLCollectionOf<HTMLElement>;
 
     for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = 'none';
+      tabcontent[i].style.display = "none";
     }
 
-    const tablinks = document.getElementsByClassName('tablinks');
+    const tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(' active', '');
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(tabName).style.display = 'block';
-    evt.currentTarget.className += ' active';
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
   }
 
 }

@@ -1,8 +1,8 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { OccupationAPIService } from '../services/OccupationAPI';
-import { EventBusService } from '../services/EventBusService';
-import { TestBed } from '@angular/core/testing';
-import { genRandomNumber } from './Adds/helpers';
+import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import { OccupationAPIService } from "../services/OccupationAPI";
+import { EventBusService } from "../services/EventBusService";
+import { TestBed } from "@angular/core/testing";
+import { genRandomNumber } from "./Adds/helpers";
 
 import {
   EventProxyLibService,
@@ -13,12 +13,12 @@ import {
   EnvironmentService,
   OccupationsDeleteEvent,
   OccupationsReadQuery
-} from 'event-proxy-lib-src';
+} from "event-proxy-lib-src";
 
-const envPrefix = '__env';
-const backendURL = 'localhost';
-const backendPath = '/newEvents';
-const backendPort = '54366';
+const envPrefix = "__env";
+const backendURL = "localhost";
+const backendPath = "/newEvents";
+const backendPort = "54366";
 const URL = `http://${backendURL}:${backendPort}${backendPath}`;
 
 /**
@@ -30,17 +30,17 @@ window[envPrefix] = window[envPrefix] || {};
 // eslint-disable-next-line @typescript-eslint/camelcase
 window[envPrefix].one_language = false;
 // API url
-window[envPrefix].url = 'http://' + backendURL;
+window[envPrefix].url = "http://" + backendURL;
 window[envPrefix].apiGatewayUrl = window[envPrefix].url;
 window[envPrefix].apiGatewayPort = backendPort;
 
 const newOccupationData = new OccupationData();
 newOccupationData.DocReestratorId = 24;
-newOccupationData.Name = 'testName';
+newOccupationData.Name = "testName";
 newOccupationData.OccupationAggregateIdHolderId = 0;
 newOccupationData.TariffCategory = genRandomNumber(100);
 
-describe('Occupation API service', () => {
+describe("Occupation API service", () => {
   let service: OccupationAPIService;
   let eventBus: EventBusService;
   let httpTestingController: HttpTestingController;
@@ -60,8 +60,8 @@ describe('Occupation API service', () => {
     httpTestingController.verify();
   });
 
-  describe('Delete', () => {
-    it('testing response', () => {
+  describe("Delete", () => {
+    it("testing response", () => {
 
       service.DeleteAsync(123);
 
@@ -85,9 +85,9 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Update', () => {
+  describe("Update", () => {
 
-    it('testing content', () => {
+    it("testing content", () => {
       service.UpdateAsync(newOccupationData);
 
       const req = httpTestingController.expectOne(URL);
@@ -101,9 +101,9 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Create', () => {
+  describe("Create", () => {
 
-    it('testing content', () => {
+    it("testing content", () => {
       service.CreateAsync(newOccupationData);
 
       const req = httpTestingController.expectOne(URL);
@@ -117,9 +117,9 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Testing Event Bus', () => {
+  describe("Testing Event Bus", () => {
 
-    it('passing to EventBus', () => {
+    it("passing to EventBus", () => {
       eventBus.EventBus.subscribe( (data: OccupationsReadResults) => {
         expect(data.OccupationDataList.length).toBe(1);
         expect(data.OccupationDataList[0]).toBe(newOccupationData);
@@ -133,9 +133,9 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Get', () => {
+  describe("Get", () => {
 
-    it('testing content', () => {
+    it("testing content", () => {
       service.GetAsync(1, 2);
 
       const req = httpTestingController.expectOne(URL);

@@ -1,4 +1,4 @@
-import { CoreEvent } from '../CoreEvent';
+import { CoreEvent } from "../CoreEvent";
 
 /**
  * Event for informing about successful login

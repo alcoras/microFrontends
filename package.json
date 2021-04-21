@@ -1,0 +1,29 @@
+{
+  "name": "microfrontend",
+  "version": "1.0.0",
+  "description": "Adding eslint",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "eslint-plugin-jsdoc": "^32.3.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+		"lint": "eslint . --ext .ts",
+		"lint-fix": "eslint . --ext .ts --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alcoras/microFrontends.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alcoras/microFrontends/issues"
+  },
+  "homepage": "https://github.com/alcoras/microFrontends#readme"
+}

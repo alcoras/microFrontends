@@ -1,21 +1,21 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
-import { createCustomElement } from '@angular/elements';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgModule, Injector, APP_INITIALIZER } from "@angular/core";
+import { createCustomElement } from "@angular/elements";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
+import { EventProxyLibModule, EventProxyLibService } from "event-proxy-lib-src";
 
-import { OccupationsComponent } from './OccupationsComponent';
+import { OccupationsComponent } from "./OccupationsComponent";
 
-import { NewOccupComponent } from './new-occup/new-occup.component';
-import { MaterialModule } from './meterial-module';
+import { NewOccupComponent } from "./new-occup/new-occup.component";
+import { MaterialModule } from "./meterial-module";
 
-import { OccupTable3Component } from './occup-table3/occup-table3.component';
-import { EventBusService } from './services/EventBusService';
-import { OccupationAPIService } from './services/OccupationAPI';
-import { OccupationServiceFactory } from './services/OccupationFactory';
-import { OccupationService } from './services/OccupationService';
+import { OccupTable3Component } from "./occup-table3/occup-table3.component";
+import { EventBusService } from "./services/EventBusService";
+import { OccupationAPIService } from "./services/OccupationAPI";
+import { OccupationServiceFactory } from "./services/OccupationFactory";
+import { OccupationService } from "./services/OccupationService";
 
 /**
  * Main entry component for occupation micro frontend
@@ -50,7 +50,7 @@ export class OccupationsModule {
 
     const ngCustomElement = createCustomElement(OccupationsComponent, { injector });
 
-    if (!customElements.get('team-occupation-ng9')) {
-      customElements.define('team-occupation-ng9', ngCustomElement); }
+    if (!customElements.get("team-occupation-ng9")) {
+      customElements.define("team-occupation-ng9", ngCustomElement); }
   }
 }

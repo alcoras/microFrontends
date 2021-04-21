@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 import {
   BackendToFrontendEvent,
   EventIds,
@@ -6,10 +6,10 @@ import {
   EventProxyLibService,
   MicroFrontendParts,
   OccupationData,
-  ValidationStatus } from 'event-proxy-lib-src';
-import { BackendPort, BackendURL, delay, genRandomNumber } from './Adds/helpers';
-import { OccupationAPIService } from 'occupation-uf/services/OccupationAPI';
-import { EventBusService } from 'occupation-uf/services/EventBusService';
+  ValidationStatus } from "event-proxy-lib-src";
+import { BackendPort, BackendURL, delay, genRandomNumber } from "./Adds/helpers";
+import { OccupationAPIService } from "occupation-uf/services/OccupationAPI";
+import { EventBusService } from "occupation-uf/services/EventBusService";
 
 /**
  * @returns new occupation entry for testing
@@ -26,7 +26,7 @@ const readingResultIds = [
   EventIds.OccupationsRead,
 ];
 
-describe('Occupation API service', () => {
+describe("Occupation API service", () => {
   let service: OccupationAPIService;
   let eventProxyService: EventProxyLibService;
   let eventBusService: EventBusService;
@@ -35,14 +35,14 @@ describe('Occupation API service', () => {
   const backendPort = BackendPort;
 
   beforeEach(async () => {
-    window['__env'] = window['__env'] || {};
+    window["__env"] = window["__env"] || {};
 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    window['__env'].one_language = false;
+    window["__env"].one_language = false;
     // API url
-    window['__env'].url = 'http://' + backendURL;
-    window['__env'].apiGatewayUrl = window['__env'].url;
-    window['__env'].apiGatewayPort = backendPort;
+    window["__env"].url = "http://" + backendURL;
+    window["__env"].apiGatewayUrl = window["__env"].url;
+    window["__env"].apiGatewayPort = backendPort;
 
     TestBed.configureTestingModule({
       imports: [EventProxyLibModule],
@@ -82,15 +82,15 @@ describe('Occupation API service', () => {
     });
   }
 
-  it('test service creation', () => {
+  it("test service creation", () => {
     expect(service).toBeTruthy();
     expect(eventProxyService).toBeTruthy();
     expect(eventBusService).toBeTruthy();
   });
 
-  describe('Get', () => {
+  describe("Get", () => {
 
-    it('should get events after Occupation query', async () => {
+    it("should get events after Occupation query", async () => {
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
         (res: ValidationStatus<BackendToFrontendEvent>) => propogateEvent(res)
@@ -113,8 +113,8 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Combination', () => {
-    it('should create and then delete entry', async () => {
+  describe("Combination", () => {
+    it("should create and then delete entry", async () => {
       const newEntry = createOccupationEntry();
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
@@ -142,9 +142,9 @@ describe('Occupation API service', () => {
     }, 6000);
   });
 
-  describe('Update', () => {
+  describe("Update", () => {
 
-    it('should update existing Occupation entry', async () => {
+    it("should update existing Occupation entry", async () => {
 
       // Start listening to events
       eventProxyService.InitializeConnectionToBackend(sourceId).subscribe(
@@ -175,10 +175,10 @@ describe('Occupation API service', () => {
     });
   });
 
-  describe('Create', () => {
+  describe("Create", () => {
 
     for (let index = 0; index < 1; index++) {
-    it('should create new Occupation entry', async () => {
+    it("should create new Occupation entry", async () => {
       const newOccupationData = createOccupationEntry();
 
       // Start listening to events

@@ -7,7 +7,7 @@ import { MicroFrontendInfo } from "../MicroFrontendInfo";
  */
 export class OrchestratorTeam1BarCodeDetailsQuery extends CoreEvent {
 	/**
-	 * @param soureInfo microfrontend's source info
+	 * @param soureInfo microfrontend"s source info
 	 * @param Id MaterialReceipt unique id
 	 */
 	public constructor(soureInfo: MicroFrontendInfo, public Id: number) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 import {
   EventProxyLibService,
@@ -10,12 +10,12 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from 'event-proxy-lib-src';
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
-import { EventBusService } from './EventBusService';
+import { EventBusService } from "./EventBusService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class OccupationService implements IMicroFrontend {
 
@@ -61,7 +61,7 @@ export class OccupationService implements IMicroFrontend {
               await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
             } else {
               console.error(element);
-              throw new Error('Did not proccess after processButtonPressed');
+              throw new Error("Did not proccess after processButtonPressed");
             }
             break;
         case EventIds.OccupationsRead:
@@ -78,7 +78,7 @@ export class OccupationService implements IMicroFrontend {
           break;
         case EventIds.EventProccessedWithFails:
           console.error(element);
-          throw new Error(`Event sroccessed with error(s)`);
+          throw new Error("Event sroccessed with error(s)");
         default:
           throw new Error(`Event ${element.EventId} not implemented.`);
       }
@@ -90,7 +90,7 @@ export class OccupationService implements IMicroFrontend {
    */
   private preparePlacements(): void {
     this.elToPlace[EventIds.OccupationNg9ButtonPressed]
-      = '<team-occupation-ng9></team-occupation-ng9>';
+      = "<team-occupation-ng9></team-occupation-ng9>";
   }
 
   /**
@@ -131,7 +131,7 @@ export class OccupationService implements IMicroFrontend {
     const elId = this.elToPlace[id];
 
     if (!elId) {
-      throw new Error('Unsupported ButtonPressed Id');
+      throw new Error("Unsupported ButtonPressed Id");
     }
 
     return elId;

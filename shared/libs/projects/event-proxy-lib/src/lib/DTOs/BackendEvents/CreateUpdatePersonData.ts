@@ -1,6 +1,6 @@
-import { CoreEvent } from '../CoreEvent';
-import { EventIds } from '../EventIds';
-import { PersonData } from './Adds/PersonData';
+import { CoreEvent } from "../CoreEvent";
+import { EventIds } from "../EventIds";
+import { PersonData } from "./Adds/PersonData";
 
 /**
  * Enum to indicate whether event is of type update or craete

@@ -1,22 +1,22 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { BrowserModule } from "@angular/platform-browser";
+import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FormsModule } from "@angular/forms";
 
-import { EventProxyLibModule, EventProxyLibService } from 'event-proxy-lib-src';
+import { EventProxyLibModule, EventProxyLibService } from "event-proxy-lib-src";
 
-import { PrimeNgModules } from './PrimeNgModules';
+import { PrimeNgModules } from "./PrimeNgModules";
 
-import { createCustomElement } from '@angular/elements';
+import { createCustomElement } from "@angular/elements";
 
-import { WunderMobilityFactory } from './Services/WunderMobilityFactory';
-import { WunderMobilityService } from './Services/WunderMobilityService';
+import { WunderMobilityFactory } from "./Services/WunderMobilityFactory";
+import { WunderMobilityService } from "./Services/WunderMobilityService";
 
-import { WunderMobilityComponent } from './Components/WunderMobilityComponent';
-import { ProductsTableComponent } from './Components/ProductsTable/ProductsTableComponent';
-import { WunderMobilityAPI } from './Services/WunderMobilityAPI';
-import { BuyTableComponent } from './Components/BuyTable/BuyTableComponent';
+import { WunderMobilityComponent } from "./Components/WunderMobilityComponent";
+import { ProductsTableComponent } from "./Components/ProductsTable/ProductsTableComponent";
+import { WunderMobilityAPI } from "./Services/WunderMobilityAPI";
+import { BuyTableComponent } from "./Components/BuyTable/BuyTableComponent";
 
 @NgModule({
   declarations: [
@@ -52,7 +52,7 @@ export class WunderMobilityModule {
 
     const ngCustomElement2 = createCustomElement(WunderMobilityComponent, { injector });
 
-    if (!customElements.get('wunder-mobility')) {
-      customElements.define('wunder-mobility', ngCustomElement2); }
+    if (!customElements.get("wunder-mobility")) {
+      customElements.define("wunder-mobility", ngCustomElement2); }
   }
 }

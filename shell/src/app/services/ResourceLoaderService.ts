@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ResourceSheme } from 'event-proxy-lib-src';
+import { Injectable } from "@angular/core";
+import { ResourceSheme } from "event-proxy-lib-src";
 
 /**
  * Script and link loader service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class ResourceLoaderService {
 
@@ -39,24 +39,24 @@ export class ResourceLoaderService {
     let el: HTMLElement;
 
     switch (resource.Element) {
-      case 'script':
+      case "script":
           domResources = Array
-            .from( document.querySelectorAll('script') )
+            .from( document.querySelectorAll("script") )
             .map( src => src.src );
-          attrToCheck = 'src';
-          el = document.createElement('script');
+          attrToCheck = "src";
+          el = document.createElement("script");
           break;
 
-      case 'link':
+      case "link":
           domResources = Array
-            .from( document.querySelectorAll('link') )
+            .from( document.querySelectorAll("link") )
             .map( src => src.href );
-          attrToCheck = 'href';
-          el = document.createElement('link');
+          attrToCheck = "href";
+          el = document.createElement("link");
           break;
     }
 
-    // check if it's loaded
+    // check if it"s loaded
     if (domResources.includes(resource.Attributes[attrToCheck])) {
       return Promise.resolve({ resource });
     }

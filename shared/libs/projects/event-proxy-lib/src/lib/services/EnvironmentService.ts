@@ -7,15 +7,15 @@ export class EnvironmentService {
   /**
    * Main prefix in window for enviromental variables
    */
-  private envPrefix = '__env';
+  private envPrefix = "__env";
 
 
   public get ConfigUrlList(): string[] {
-    return window[this.envPrefix]['microfrontendConfigPathList'];
+    return window[this.envPrefix]["microfrontendConfigPathList"];
   }
 
   public set ConfigUrlList(value: string[]) {
-    window[this.envPrefix]['microfrontendConfigPathList'] = value;
+    window[this.envPrefix]["microfrontendConfigPathList"] = value;
   }
 
   /**
@@ -33,11 +33,11 @@ export class EnvironmentService {
    * @returns array of strings to be loaded and parsed by shell
    */
   public get MicroFrontendConfigPathList(): string[] {
-    return window[this.envPrefix]['microfrontendConfigPathList'];
+    return window[this.envPrefix]["microfrontendConfigPathList"];
   }
 
   public set MicroFrontendConfigPathList(value: string[]) {
-    window[this.envPrefix]['microfrontendConfigPathList'] = value;
+    window[this.envPrefix]["microfrontendConfigPathList"] = value;
   }
 
   /**
@@ -45,24 +45,24 @@ export class EnvironmentService {
    * @returns true if one language
    */
   public get OneLangauge(): boolean {
-    return window[this.envPrefix]['oneLanguage'];
+    return window[this.envPrefix]["oneLanguage"];
   }
 
   public set OneLanguage(value: boolean) {
-    window[this.envPrefix]['oneLanguage'] = value;
+    window[this.envPrefix]["oneLanguage"] = value;
   }
 
   /**
    * Gets/Sets local/remote url which is used to preload
-   * micro frontends's scripts
+   * micro frontends"s scripts
    * @returns url (localhost)
    */
   public get Url(): string {
-    return window[this.envPrefix]['url'];
+    return window[this.envPrefix]["url"];
   }
 
   public set Url(value: string) {
-    window[this.envPrefix]['url'] = value;
+    window[this.envPrefix]["url"] = value;
   }
 
   /**
@@ -70,11 +70,11 @@ export class EnvironmentService {
    * @returns apigateway url
    */
   public get APIGatewayUrl(): string {
-    return window[this.envPrefix]['apiGatewayUrl'];
+    return window[this.envPrefix]["apiGatewayUrl"];
   }
 
   public set APIGatewayUrl(value: string) {
-    window[this.envPrefix]['apiGatewayUrl'] = value;
+    window[this.envPrefix]["apiGatewayUrl"] = value;
   }
 
   /**
@@ -82,11 +82,11 @@ export class EnvironmentService {
    * @returns apigateway url
    */
   public get APIGatewayPort(): string {
-    return window[this.envPrefix]['apiGatewayPort'];
+    return window[this.envPrefix]["apiGatewayPort"];
   }
 
   public set APIGatewayPort(value: string) {
-    window[this.envPrefix]['apiGatewayPort'] = value;
+    window[this.envPrefix]["apiGatewayPort"] = value;
   }
 
   /**
@@ -94,11 +94,11 @@ export class EnvironmentService {
    * @returns language abbreviation
    */
   public get Language(): string {
-    return window[this.envPrefix]['lang'];
+    return window[this.envPrefix]["lang"];
   }
 
   public set Language(value: string) {
-    window[this.envPrefix]['lang'] = value;
+    window[this.envPrefix]["lang"] = value;
   }
 
   /**
@@ -106,11 +106,11 @@ export class EnvironmentService {
    * @returns token
    */
   public get AuthorizationToken(): string {
-    return window[this.envPrefix]['authToken'];
+    return window[this.envPrefix]["authToken"];
   }
 
   public set AuthorizationToken(value: string) {
-    window[this.envPrefix]['authToken'] = value;
+    window[this.envPrefix]["authToken"] = value;
   }
 
   /**
@@ -118,11 +118,11 @@ export class EnvironmentService {
    * @returns date ISO string
    */
   public get TokenBeginDate(): string {
-    return window[this.envPrefix]['tokenBeginDate'];
+    return window[this.envPrefix]["tokenBeginDate"];
   }
 
   public set TokenBeginDate(value: string) {
-    window[this.envPrefix]['tokenBeginDate'] = value;
+    window[this.envPrefix]["tokenBeginDate"] = value;
   }
 
   /**
@@ -130,20 +130,20 @@ export class EnvironmentService {
    * @returns date ISO string
    */
   public get TokenExpirationDate(): string {
-    return window[this.envPrefix]['tokenExpirationDate'];
+    return window[this.envPrefix]["tokenExpirationDate"];
   }
 
   public set TokenExpirationDate(value: string) {
-    window[this.envPrefix]['tokenExpirationDate'] = value;
+    window[this.envPrefix]["tokenExpirationDate"] = value;
   }
 
   /**
-   * Gets micro frontend's settings preloaded by env.js
+   * Gets micro frontend"s settings preloaded by env.js
    * @returns Microfrontend list object
    */
   // TODO: enable when I figure out how to add external models to angular library
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public get UFList(): any {
-    return window[this.envPrefix]['uf'];
+    return window[this.envPrefix]["uf"];
   }
 }

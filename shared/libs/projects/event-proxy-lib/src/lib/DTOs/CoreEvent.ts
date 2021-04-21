@@ -65,7 +65,7 @@ export abstract class CoreEvent {
   public DateTimeStampEventBroker = "";
 
   /**
-   *  Subscribe microservice to receive children of current event if set to true (if false or null don't)
+   *  Subscribe microservice to receive children of current event if set to true (if false or null don"t)
    */
   public SubscribeToChildren = false;
 

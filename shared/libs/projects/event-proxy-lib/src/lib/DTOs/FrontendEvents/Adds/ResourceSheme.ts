@@ -14,8 +14,8 @@ export class ResourceSheme {
 
     /**
      * Sets (or adds) attribute to the attributes dictionary
-     * @param attr attribute's name
-     * @param value attribute's value
+     * @param attr attribute"s name
+     * @param value attribute"s value
      */
     public setAttribute(attr: string, value: string): void {
         this.Attributes[attr] = value;

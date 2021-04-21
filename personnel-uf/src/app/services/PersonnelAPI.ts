@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { EventBusService } from './EventBus.service';
+import { Injectable } from "@angular/core";
+import { EventBusService } from "./EventBus.service";
 import {
   BackendToFrontendEvent,
   CreateUpdatePersonData,
@@ -10,13 +10,13 @@ import {
   PersonDataRead,
   ReadPersonDataQuery,
   RemoveEnterpisePersonData,
-  ValidationStatus } from 'event-proxy-lib-src';
+  ValidationStatus } from "event-proxy-lib-src";
 
 /**
  * Personnel API service for CRUD operations
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PersonnelAPI {
 
@@ -99,7 +99,7 @@ export class PersonnelAPI {
       this.eventBusService.EventBus.subscribe((data: PersonDataRead) => {
         if (data.ParentId === uniqueId) resolve(data);
       });
-    })
+    });
 
     return this.eventProxyService.RacePromiseAsync(responsePromise);
   }

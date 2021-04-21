@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { NewOccupComponent } from './new-occup/new-occup.component';
+import { Component } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { Subject } from "rxjs";
+import { NewOccupComponent } from "./new-occup/new-occup.component";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './OccupationsView.html',
-  styleUrls: ['./OccupationsStyle.css']
+  selector: "app-root",
+  templateUrl: "./OccupationsView.html",
+  styleUrls: ["./OccupationsStyle.css"]
 })
 export class OccupationsComponent {
 
@@ -22,8 +22,8 @@ export class OccupationsComponent {
 
   public openDialog(): void {
     this.dialog.open(NewOccupComponent, {
-      height: 'auto',
-      width: 'auto',
+      height: "auto",
+      width: "auto",
       data: {}
     });
   }

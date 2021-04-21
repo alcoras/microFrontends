@@ -1,4 +1,4 @@
-import { ObserverEventDataForTracing } from './ObserverEventDataForTracing';
+import { ObserverEventDataForTracing } from "./ObserverEventDataForTracing";
 
 export class ObserverEventNode {
   public Id: number;
