@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { LanguageChange } from "event-proxy-lib";
 
 import {
   EventProxyLibService,
@@ -10,9 +11,11 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent} from "event-proxy-lib-src";
+  BackendToFrontendEvent,
+	EnvironmentService} from "event-proxy-lib-src";
 
 import { EventBusService } from "./EventBusService";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root"
@@ -28,7 +31,7 @@ export class MaterialsReceiptsService implements IMicroFrontend {
 
   public constructor(
     private eventBus: EventBusService,
-    private eventProxyService: EventProxyLibService) {}
+		private eventProxyService: EventProxyLibService) {}
 
   public async InitAsync(): Promise<void> {
     this.preparePlacements();
@@ -61,7 +64,8 @@ export class MaterialsReceiptsService implements IMicroFrontend {
             console.error(event);
             throw new Error("Did not proccess after processButtonPressed");
           }
-          break;
+					break;
+				case EventIds.InventoryManagerResults:
         case EventIds.MaterialsReceiptsScanTableReadListResults:
         case EventIds.MaterialsReceiptsReadListResults:
         case EventIds.MaterialsReceiptsTablePartReadListResults:
@@ -82,6 +86,10 @@ export class MaterialsReceiptsService implements IMicroFrontend {
 
 					break;
 				}
+				case EventIds.LanguageChange:
+					environment.currentLanguage = event['NewLanguage'];
+					await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
+					break;
 				case EventIds.OrchestratorTeam1OrchestrationFailed:
         case EventIds.EventProccessedSuccessfully: {
           await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);

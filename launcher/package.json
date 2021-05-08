@@ -46,10 +46,10 @@
     "start-prod": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run shell-start-prod\" \"npm run menu-start-prod\" \"npm run occupation-start-prod\" \"npm run personnel-start-prod\" \"npm run materialsReceipts-start-prod\"",
 
     "start-dev": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold, bgWhite.bold\" \"npm run shell-start-dev\" \"npm run menu-start-dev\" \"npm run occupation-start-dev\" \"npm run personnel-start-dev\" \"npm run materialsReceipts-start-dev\"",
-    
+
     "test": "npm run shell-test-once && npm run menu-test-once && npm run occupation-test-once && npm run personnel-test-once && npm run materialsReceipts-test-once",
 
-    "watch": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\" \"npm run materialsReceipts-watch\"",
+    "watch": "concurrently --kill-others --names \"SHELL,MENU,OCCUPATION,PERSONNEL,MATERIALRECEIPTS\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold,bgGreen.bold,bgMagenta.bold\" \"npm run shell-watch\" \"npm run menu-watch\" \"npm run occupation-watch\" \"npm run personnel-watch\" \"npm run materialsReceipts-watch\"",
     "start": "npm run backend-start && npm run start-prod"
   },
   "author": "",

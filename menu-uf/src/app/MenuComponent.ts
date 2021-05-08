@@ -103,10 +103,10 @@ export class MenuComponent {
       { value: url + "assets/purple-green.css", viewValue: "Purple & Green" }
     ];
     this.langs = [
-      { value: "en", viewValue: "EN" },
-      { value: "uk", viewValue: "UK" },
-      { value: "ru", viewValue: "RU" },
-      { value: "lt", viewValue: "LT" },
+      { value: "en", viewValue: "English" },
+      { value: "ua", viewValue: "Українська" },
+      // { value: "ru", viewValue: "RU" },
+      // { value: "lt", viewValue: "LT" },
     ];
     this.selectedTheme = this.themes[0].value;
     this.selectedLang = this.environmentService.Language;

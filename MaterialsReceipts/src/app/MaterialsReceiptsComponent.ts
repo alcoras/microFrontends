@@ -17,17 +17,17 @@ export class MaterialsReceiptsComponent implements OnDestroy {
   private subscriptionList = new Subscription();
 
   public constructor(private eventBus: EventBusService) {
-	this.subscriptionList.add(this.eventBus.OnMaterialReceiptSelected.subscribe(() => {
-	  this.ActiveTabIndex = 4;
-	  this.MaterialReceiptsDataTabDisabled = false;
-	}));
+		this.subscriptionList.add(this.eventBus.OnMaterialReceiptSelected.subscribe(() => {
+			this.ActiveTabIndex = 4;
+			this.MaterialReceiptsDataTabDisabled = false;
+		}));
   }
 
   public ngOnDestroy(): void {
-	this.subscriptionList.unsubscribe();
+		this.subscriptionList.unsubscribe();
   }
 
   public onLanguageSelected(languageSelected: string): void {
-	environment.currentLanguage = languageSelected;
+		environment.currentLanguage = languageSelected;
   }
 }

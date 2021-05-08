@@ -163,9 +163,6 @@ export class UFManagerService {
    */
   private async parseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
     for (const element of eventList) {
-
-      console.log(`${this.SourceInfo.SourceId} Parsing event:`, element);
-
       const ufConfigs = window["__env"]["uf"];
 
       // check if event is LoadedResource
@@ -214,8 +211,7 @@ export class UFManagerService {
    * @param event - Event model for language change event
    */
   private changeLanguageEvent(event: LanguageChange): void {
-    console.error(event);
-    throw new Error("Not implemented");
+		this.environmentService.Language = event.NewLanguage;
   }
 
   /**
@@ -246,7 +242,7 @@ export class UFManagerService {
 
         // Subscribe designated micro frontend
         let event = new SubscibeToEvent(key, subList);
-        event.SourceName = MicroFrontendParts.GetSourceNameFromSourceID(event.SourceId);
+        event.SourceName = MicroFrontendParts.TryGetSourceNameFromSourceID(event.SourceId);
         subscribeEventsList.push(event);
 
         // Subscribe to them for loading

@@ -1,0 +1,47 @@
+<p-table
+	styleClass="p-datatable-striped p-datatable-sm p-datatable-gridlines"
+	[lazy]="true" (onLazyLoad)="LazyDataLoad($event)" [loading]="Loading"
+	[value]="inventoryManagerData"
+	[totalRecords]="TotalRecords"
+>
+	<ng-template pTemplate="caption">
+		<!-- Toolbar -->
+		<p-toolbar>
+			<!-- Left Side -->
+			<ng-template pTemplate="left">
+			</ng-template>
+
+			<!-- Right Side -->
+			<ng-template pTemplate="right">
+				<!-- Refresh Button -->
+				<button pButton
+					icon="pi pi-refresh"
+					type="button"
+					(click)="RefreshTable()"
+					style="margin-right:.5em"
+					class="p-button-rounded">
+				</button>
+			</ng-template>
+
+		</p-toolbar>
+	</ng-template>
+
+	<!-- Headers -->
+	<ng-template pTemplate="header">
+		<tr>
+				<th *ngFor="let col of Columns">
+						{{'MaterialReceipts.InventoryManager.Table.Header.'+col.header | translate}}
+				</th>
+		</tr>
+	</ng-template>
+
+	<!-- Fields -->
+	<ng-template pTemplate="body" let-rowData>
+		<tr>
+			<td *ngFor="let col of Columns">
+				{{rowData[col.field]}}
+			</td>
+		</tr>
+	</ng-template>
+
+</p-table>

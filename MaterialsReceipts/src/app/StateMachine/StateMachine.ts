@@ -2,7 +2,7 @@ import { FunctionStage } from "./FunctionStage";
 
 /** State machine for to retain transitions and data changes */
 export class StateMachine<T> {
-  // Data which we will be saving after each passing function
+  // Data which we will be saved after each passing function
   public StateData: T;
 
   // hiding so last routine"s index can"t be messed up

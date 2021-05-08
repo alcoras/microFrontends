@@ -87,3 +87,7 @@ export * from "./BackendEvents/DraftsCreateAndOthers";
 export * from "./BackendEvents/DraftsDelete";
 export * from "./BackendEvents/DraftsCreateAndOthersResults";
 
+export * from "./BackendEvents/InventoryManagerQuery";
+export * from "./BackendEvents/Adds/InventoryManagerResult";
+export * from "./BackendEvents/InventoryManagerResults";
+

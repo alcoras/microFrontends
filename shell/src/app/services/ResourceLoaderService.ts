@@ -56,7 +56,7 @@ export class ResourceLoaderService {
           break;
     }
 
-    // check if it"s loaded
+    // check if it's loaded
     if (domResources.includes(resource.Attributes[attrToCheck])) {
       return Promise.resolve({ resource });
     }

@@ -36,7 +36,9 @@ import {
 	DraftsDelete,
 	CommonId,
 	OrchestratorTeam1MaterialsScanSignedUnsigned,
-	SingUnsignFlag
+	SingUnsignFlag,
+	InventoryManagerResults,
+	InventoryManagerQuery
 } from "event-proxy-lib-src";
 import { EventBusService } from "./EventBusService";
 import { ReadListQueryParams } from "../Adds/ReadListQueryParams";
@@ -48,7 +50,21 @@ import { ScanTableQueryParams } from "../Adds/ScanTableQueryParams";
 export class MaterialsReceiptsAPI {
 	private sourceInfo = MicroFrontendParts.MaterialsReceipts;
 
+	private readonly MaterialsInventoryName = "MaterialsInventoryQuantity";
+
 	public constructor(private eventProxyService: EventProxyLibService, private eventBusService: EventBusService) { }
+
+	/**
+	 * Quries inventory manager for MaterialsInventoryQuantity
+	 */
+	public async InventoryManagerQueryAsync(): Promise<ValidationStatus<InventoryManagerResults>> {
+		const event = new InventoryManagerQuery(this.sourceInfo, this.MaterialsInventoryName, new Date().toISOString());
+		event.SubscribeToChildren = true;
+
+		const request = await this.eventProxyService.DispatchEventAsync(event);
+
+		return this.waitForResults<InventoryManagerResults>(request);
+	}
 
 	/**
 	 * Unsign scan data for specific material list
