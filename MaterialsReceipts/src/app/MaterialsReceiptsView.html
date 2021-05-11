@@ -1,22 +1,30 @@
 <p-tabView [(activeIndex)]="ActiveTabIndex">
 
-  <p-tabPanel header="Materials">
-    <material-receipts-materials-table></material-receipts-materials-table>
+  <p-tabPanel header="{{ 'MaterialsReceipts.Materials.Tab.Header' | translate }}">
+		<ng-template pTemplate="content">
+			<material-receipts-materials-table></material-receipts-materials-table>
+		</ng-template>
   </p-tabPanel>
 
-  <p-tabPanel header="Materials At Locations">
-    <material-receipts-materials-at-location-table></material-receipts-materials-at-location-table>
+  <p-tabPanel header="{{ 'MaterialsReceipts.MaterialsAtLocation.Tab.Header' | translate }}">
+		<ng-template pTemplate="content">
+			<material-receipts-materials-at-location-table></material-receipts-materials-at-location-table>
+		</ng-template>
   </p-tabPanel>
 
-  <p-tabPanel header="{{'MaterialReceipts.LocationsTable.Tab.Header' | translate }}">
-    <material-receipts-locations-table></material-receipts-locations-table>
+  <p-tabPanel header="{{'MaterialsReceipts.LocationsTable.Tab.Header' | translate }}">
+		<ng-template pTemplate="content">
+			<material-receipts-locations-table></material-receipts-locations-table>
+		</ng-template>
   </p-tabPanel>
 
-  <p-tabPanel header="{{'MaterialReceipts.Table.Tab.Header' | translate }}">
-    <materials-receipts-list-table></materials-receipts-list-table>
+  <p-tabPanel header="{{'MaterialsReceipts.Table.Tab.Header' | translate }}">
+		<ng-template pTemplate="content">
+			<materials-receipts-list-table></materials-receipts-list-table>
+		</ng-template>
   </p-tabPanel>
 
-  <p-tabPanel [(disabled)]="MaterialReceiptsDataTabDisabled" header="{{'MaterialReceipts.List.Tab.Header' | translate }}">
+  <p-tabPanel [(disabled)]="MaterialsReceiptsDataTabDisabled" header="{{'MaterialsReceipts.List.Tab.Header' | translate }}">
 		<ng-template pTemplate="content">
 			<materials-receipts-list-table-table></materials-receipts-list-table-table>
 			<br>
@@ -26,8 +34,10 @@
 		</ng-template>
 	</p-tabPanel>
 
-	<p-tabPanel header="{{'MaterialReceipts.InventoryManager.Tab.Header' | translate }}">
-    <materials-receipts-inventory-manager></materials-receipts-inventory-manager>
+	<p-tabPanel header="{{'MaterialsReceipts.InventoryManager.Tab.Header' | translate }}">
+		<ng-template pTemplate="content">
+			<materials-receipts-inventory-manager></materials-receipts-inventory-manager>
+		</ng-template>
   </p-tabPanel>
 
 </p-tabView>

@@ -10,7 +10,7 @@ import { EventBusService } from "./services/EventBusService";
 })
 export class MaterialsReceiptsComponent implements OnDestroy {
 
-  public MaterialReceiptsDataTabDisabled = true;
+  public MaterialsReceiptsDataTabDisabled = true;
   public ActiveTabIndex = 3;
   public languages = ["en", "lt", "ru", "ua"];
 
@@ -19,7 +19,7 @@ export class MaterialsReceiptsComponent implements OnDestroy {
   public constructor(private eventBus: EventBusService) {
 		this.subscriptionList.add(this.eventBus.OnMaterialReceiptSelected.subscribe(() => {
 			this.ActiveTabIndex = 4;
-			this.MaterialReceiptsDataTabDisabled = false;
+			this.MaterialsReceiptsDataTabDisabled = false;
 		}));
   }
 
