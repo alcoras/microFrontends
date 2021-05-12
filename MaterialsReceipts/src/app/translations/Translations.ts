@@ -7,134 +7,134 @@ export const Translations = {
 	},
 	"Common.Id": {
 		"en": "Id",
-		"ua": ""
+		"ua": "Код"
 	},
 	"Common.Name": {
 		"en": "Name",
-		"ua": ""
+		"ua": "Назва"
 	},
 	"Common.Comment": {
 		"en": "Comment",
-		"ua": "",
+		"ua": "Коментар",
 	},
 	"Common.Barcode": {
 		"en": "Barcode",
-		"ua": ""
+		"ua": "Штрих код"
 	},
 	"Common.Quantity": {
 		"en": "Quantity",
-		"ua": ""
+		"ua": "Кількість"
 	},
 	"Common.Unit": {
 		"en": "Unit",
-		"ua": ""
+		"ua": "Одиниця виміру"
 	},
 	"Common.Description": {
 		"en": "Description",
-		"ua": ""
+		"ua": "Опис"
 	},
 	"Common.Button.AddNewEntry": {
 		"en": "Add",
-		"ua": ""
+		"ua": "Добавити"
 	},
 	"Common.SelectDataRange": {
 		"en": "Select date range",
-		"ua": "",
+		"ua": "Вибрати період",
 	},
 	"Common.TotalPages": {
 		"en": "Total",
-		"ua": "",
+		"ua": "Всього",
 	},
 	"MaterialsReceipts.MaterialsAtLocation.MaterialId.Header": {
 		"en": "Materials Id",
-		"ua": ""
+		"ua": "Код матеріалу"
 	},
 	"MaterialsReceipts.MaterialsAtLocation.LocationId.Header": {
 		"en": "Location Id",
-		"ua": ""
+		"ua": "Код локації"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.Both.Option": {
 		"en": "Both",
-		"ua": ""
+		"ua": "Обидва"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.Signed.Option": {
 		"en": "Signed",
-		"ua": ""
+		"ua": "Підписане"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.Unsigned.Option": {
 		"en": "Unsigned",
-		"ua": ""
+		"ua": "Не підписане"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.TableHeader.Number": {
 		"en": "Number",
-		"ua": ""
+		"ua": "Номер"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.TableHeader.RegisterDateTime": {
 		"en": "RegisterDateTime",
-		"ua": ""
+		"ua": "Дата та час реєстрації"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.TableHeader.Signed?": {
 		"en": "Signed?",
-		"ua": ""
+		"ua": "Підписане?"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.TableHeader.Signee": {
 		"en": "Signee",
-		"ua": ""
+		"ua": "Підписант"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.TableHeader.Actions": {
 		"en": "Actions",
-		"ua": ""
+		"ua": "Дії"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.Button.Arrival": {
 		"en": "Arrival",
-		"ua": ""
+		"ua": "Прибуття"
 	},
 	"MaterialsReceipts.MaterialsReceiptTable.Button.Location": {
 		"en": "Location",
-		"ua": ""
+		"ua": "Локація"
 	},
 	"MaterialReceipts.InventoryManager.TableHeader.ElementId": {
 		"en": "Element Id",
-		"ua": ""
+		"ua": "Код елемента"
 	},
 	"MaterialReceipts.InventoryManager.TableHeader.Name": {
 		"en": "Name",
-		"ua": ""
+		"ua": "Назва"
 	},
 	"MaterialReceipts.InventoryManager.TableHeader.Comment": {
 		"en": "Comment",
-		"ua": ""
+		"ua": "Коментар"
 	},
 	"MaterialReceipts.InventoryManager.TableHeader.Barcode": {
 		"en": "Barcode",
-		"ua": ""
+		"ua": "Штрих код"
 	},
 	"MaterialReceipts.InventoryManager.TableHeader.Sum": {
 		"en": "Sum",
-		"ua": ""
+		"ua": "Сума"
 	},
 	"MaterialsReceipts.List.Tab.Header": {
 		"en": "Material Receipts Data",
-		"ua": ""
+		"ua": "Дані приходу матеріалів"
 	},
 	"MaterialsReceipts.Table.Tab.Header": {
 		"en": "Material Receipts Table",
-		"ua": ""
+		"ua": "Таблична частина приходу матеріалів"
 	},
 	"MaterialsReceipts.LocationsTable.Tab.Header": {
 		"en": "Locations Table",
-		"ua": ""
+		"ua": "Таблиця локацій"
 	},
 	"MaterialsReceipts.InventoryManager.Tab.Header": {
 		"en": "Inventory Manager",
-		"ua": ""
+		"ua": "Менеджер залишків"
 	},
 	"MaterialsReceipts.MaterialsAtLocation.Tab.Header": {
 		"en": "Materials At Location",
-		"ua": ""
+		"ua": "Матеріали на локаціях"
 	},
 	"MaterialsReceipts.Materials.Tab.Header": {
 		"en": "Materials",
-		"ua": ""
+		"ua": "Матеріали"
 	},
 };
