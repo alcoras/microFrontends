@@ -147,15 +147,15 @@ export const Translations = {
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.Caption.MaterialReceiptId": {
 		"en": "Material Receipt Id",
-		"ua": ""
+		"ua": "Код приходу"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.Caption.MaterialReceiptNumber": {
 		"en": "Material Receipt Number",
-		"ua": ""
+		"ua": "Номер приходу"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.Caption.MaterialReceiptDate": {
 		"en": "Material Receipt Date",
-		"ua": ""
+		"ua": "Дата приходу"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.Id": {
 		"en": "Id",
@@ -163,11 +163,11 @@ export const Translations = {
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.CodeSOne": {
 		"en": "CodeSOne",
-		"ua": ""
+		"ua": "Код в 1с"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.Type": {
 		"en": "Type",
-		"ua": ""
+		"ua": "Тип"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.Name": {
 		"en": "Name",
@@ -175,27 +175,27 @@ export const Translations = {
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.PersonMRP": {
 		"en": "PersonMRP",
-		"ua": ""
+		"ua": "МВО"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.Expected": {
 		"en": "Expected",
-		"ua": ""
+		"ua": "Очікуванне"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.LeftToScan": {
 		"en": "Left to scan",
-		"ua": ""
+		"ua": "Залишилося відсканувати"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.GeneralData.Left": { // Items left
 		"en": "Left",
-		"ua": ""
+		"ua": "Залишилося"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Sign": {
 		"en": "Sign",
-		"ua": ""
+		"ua": "Підписати"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Unsign": {
 		"en": "Unsign",
-		"ua": ""
+		"ua": "Відмінити підписання"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.Id": {
 		"en": "Id",
@@ -207,11 +207,11 @@ export const Translations = {
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.MaterialsReceiptsListId": {
 		"en": "Materials Receipts List Id",
-		"ua": ""
+		"ua": "Код приходу"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.MaterialsReceiptsTableId": {
 		"en": "Materials Receipts Table Id",
-		"ua": ""
+		"ua": "Код табличної частини приходу"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.BarCode": {
 		"en": "BarCode",
@@ -231,18 +231,18 @@ export const Translations = {
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.NewScanDialog.Button.SaveDraft": {
 		"en": "Save Draft",
-		"ua": ""
+		"ua": "Зберегти чернетку"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.NewScanDialog.Button.Save&Next": {
 		"en": "Save & Next",
-		"ua": ""
+		"ua": "Зберегти та продовжити"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.SelectRelationDialog.Caption.SelectRelation": {
 		"en": "Select Relation",
-		"ua": ""
+		"ua": "Вибрати посилання"
 	},
 	"MaterialsReceipts.MaterialsReceiptsTable.SelectRelationDialog.Button.Confirm": {
 		"en": "Confirm",
-		"ua": ""
+		"ua": "Підтвердити"
 	},
 };
