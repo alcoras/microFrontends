@@ -3,7 +3,7 @@
     [lazy]="true" (onLazyLoad)="LoadDataLazy($event)" [loading]="Loading"
     [columns]="Cols" [value]="MaterialsListData"
     [paginator]="true" [rows]="50" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      currentPageReportTemplate="{first}/{last} {{ 'Common.TotalPages' | translate }}: {totalRecords}"
     [totalRecords]="TotalRecords"
     selectionMode="single" (onRowSelect)="OnRowSelect($event.data)" (onRowUnselect)="OnRowUnSelect()"
     [autoLayout]=true>
@@ -20,11 +20,11 @@
               name="category"
               [value]="category"
               [(ngModel)]="SelectedCategory"></p-radioButton>
-            <label [for]="category.key">{{category.name}}</label>
+            <label [for]="category.key">{{ 'MaterialsReceipts.MaterialsReceiptList.' + category.name +'.Option' | translate }}</label>
           </div>
           <!-- Date selection -->
           <div class="p-field">
-            <label for="spanish">Select date range </label>
+            <label for="spanish">{{ 'Common.SelectDataRange' | translate }} </label>
             <p-calendar
               (onClose)="RefreshTable()"
               [showIcon]="true"
@@ -36,24 +36,24 @@
               inputId="ukrianian"></p-calendar>
           </div>
         </div>
-      </ng-template> 
+      </ng-template>
 
       <ng-template pTemplate="right">
         <!-- Refresh button -->
         <button type="button" pButton icon="pi pi-refresh" class="p-button-rounded"
           (click)="RefreshTable()" style="margin-right:.5em">
         </button>
-      </ng-template>    
-      
+      </ng-template>
+
     </p-toolbar>
   </ng-template>
   <!-- Headers -->
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th class="sticky-row" *ngFor="let col of columns">
-          {{col.header}}
+          {{ 'MaterialsReceipts.MaterialsReceiptList.TableHeader.' + col.header | translate }}
       </th>
-      <th>Actions</th>
+      <th>{{ 'MaterialsReceipts.MaterialsReceiptList.TableHeader.Actions' | translate }}</th>
     </tr>
   </ng-template>
 
@@ -69,13 +69,13 @@
           <td>
             <!-- Arrival button -->
             <button type="button" [disabled]="!MaterialReceiptSelected" pButton
-              label="Arrival" class="p-button-success"
+              label="{{ 'MaterialsReceipts.MaterialsReceiptList.Button.Arrival' | translate }}" class="p-button-success"
               (click)="OnArrivalClicked()" style="margin-right:.5em">
             </button>
 
             <!-- Location -->
             <button type="button" pButton [disabled]="!MaterialReceiptSelected"
-            label="Location" class="p-button-success"
+            label="{{ 'MaterialsReceipts.MaterialsReceiptList.Button.Location' | translate }}" class="p-button-success"
             (click)="RefreshTable()">
           </button>
           </td>

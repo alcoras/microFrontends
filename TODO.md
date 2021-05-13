@@ -182,5 +182,7 @@
 88. remove all sub .eslintrc.js and make sure root one is being read
 89. fix all linting
 90. force comments for all functions
-
 91. bug: when in MaterialReceipts language is changed tabs do not reflect it
+92. rename ActionScanTable to just ScanTable
+
+93.

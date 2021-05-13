@@ -12,7 +12,7 @@
       <ng-template pTemplate="left">
         <!-- New Button -->
         <button pRipple pButton
-          label="New"
+          label="{{ 'Common.Button.AddNewEntry' | translate }}"
           icon="pi pi-plus"
           class="p-button-success p-mr-2"
           (click)=UIEventEmit(UIEventIds.waitForNewScanClick)>
@@ -20,7 +20,7 @@
 
         <!-- Sign button -->
         <button pButton pRipple
-          label="Sign"
+          label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Sign' | translate }}"
           type="button"
           icon="pi pi-check"
           class="p-button-success p-mr-2"
@@ -29,7 +29,7 @@
 
 				<!-- Sign button -->
 				<button pButton pRipple
-					label="Unsign"
+					label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Unsign' | translate }}"
 					type="button"
 					icon="pi pi-check"
 					(click)="OnUnsignButtonClicked()"
@@ -53,9 +53,9 @@
   <ng-template pTemplate="header">
     <tr>
         <th *ngFor="let col of Columns">
-            {{col.header}}
+					{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.' + col.header | translate}}
         </th>
-        <th style="width: 4rem">Actions</th>
+        <th style="width: 4rem">{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.TableHeader.Actions' | translate}}</th>
     </tr>
   </ng-template>
 
@@ -93,7 +93,7 @@
 
     <div class="p-fluid">
       <div class="p-field">
-        <label>Name: {{Action.NewEntry.Name}}</label>
+        <label>{{ 'Common.Name' | translate }}: {{Action.NewEntry.Name}}</label>
       </div>
 
       <div class="p-field">
@@ -102,12 +102,12 @@
             [(ngModel)]="Action.NewEntry.BarCode"
             pInputText
             (input)=UIEventEmit(UIEventIds.barcodeInputChanged)>
-          <label>Bar Code</label>
+          <label>{{ 'Common.BarCode' | translate }}</label>
         </span>
       </div>
 
       <div class="p-field">
-        <label>Quantity</label>
+        <label>{{ 'Common.Quantity' | translate }}</label>
         <div class="p-inputgroup">
           <p-inputNumber
             [useGrouping]=false
@@ -123,7 +123,7 @@
       <div class="p-field">
         <span class="p-float-label">
           <input pInputText [(ngModel)]="Action.NewEntry.Comment">
-          <label>Comment</label>
+          <label>{{ 'Common.Comment' | translate }}</label>
         </span>
       </div>
 
@@ -133,14 +133,14 @@
     <button pButton
       (click)="OnSaveDraft()"
       class="p-button-success"
-      label="Save Draft"
+      label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.NewScanDialog.Button.SaveDraft' | translate }}"
       icon="pi pi-angle-right">
     </button>
     <button pButton
       [disabled]="Action.NewEntriesAddingDisabled"
       (click)=UIEventEmit(UIEventIds.saveScanButtonClicked)
       class="p-button-success"
-      label="Save&Next"
+      label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.NewScanDialog.Button.Save&Next' | translate }}"
       icon="pi pi-angle-right">
     </button>
   </ng-template>
@@ -148,7 +148,7 @@
 
 <!-- Select material relation dialog -->
 <p-dialog
-    header="Select relation"
+    header="{{ 'MaterialsReceipts.MaterialsReceiptsTable.SelectRelationDialog.Caption.SelectRelation' | translate }}"
     [(visible)]="Action.SelectMaterialForBarcodeDialog"
     [style]="{width: '100%'}"
     [modal]=true baseZIndex=10003 [draggable]="false">
@@ -165,7 +165,7 @@
       <ng-template pTemplate="header">
         <tr>
           <th *ngFor="let col of MaterialReceiptTableColumns">
-            {{col.header}}
+            {{ 'MaterialsReceipts.MaterialsReceiptsTable.GeneralData.TableHeader.' + col.header | translate}}
           </th>
         </tr>
       </ng-template>
@@ -190,7 +190,7 @@
       [disabled]="Action.ButtonConfirmMaterialRelationDisabled"
       (click)=UIEventEmit(UIEventIds.materialRelation_Confirmed)
       class="p-button-success"
-      label="Confirm"
+      label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.SelectRelationDialog.Button.Confirm' | translate}}"
       icon="pi pi-check">
     </button>
   </ng-template>

@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { LanguageChange } from "event-proxy-lib";
 
 import {
   EventProxyLibService,
@@ -11,8 +10,7 @@ import {
   MicroFrontendParts,
   EventIds,
   UnsubscibeToEvent,
-  BackendToFrontendEvent,
-	EnvironmentService} from "event-proxy-lib-src";
+  BackendToFrontendEvent} from "event-proxy-lib-src";
 
 import { EventBusService } from "./EventBusService";
 import { environment } from "../../environments/environment";

@@ -24,9 +24,9 @@ export class ActionScanTableComponent {
   	// eslint-disable-next-line no-mixed-spaces-and-tabs
   	{ field: "Id", header: "Id"},
   	{ field: "NameSOne", header: "Name"},
-  	{ field: "PersonMRP", header: "Person MRP"},
+  	{ field: "PersonMRP", header: "PersonMRP"},
   	{ field: "Quantity", header: "Expected"},
-  	{ field: "ScannedQuantity", header: "Left to scan"},
+  	{ field: "ScannedQuantity", header: "LeftToScan"},
   ];
 
   public Columns = [

@@ -41,9 +41,9 @@ export class MaterialsReceiptsListComponent {
   public UkrainianDate: IPrimeNgDate;
 
   public Categories: Category[] = [
-    {name: Categories.Both, key:"B"},
-    {name: Categories.Signed, key: "S"},
-    {name: Categories.Unsigned, key: "U"}]
+    { name: Categories.Both, key: "B"},
+    { name: Categories.Signed, key: "S"},
+    { name: Categories.Unsigned, key: "U"}]
   public SelectedCategory: Category;
 
   public SelectedMaterialData: MaterialsList;

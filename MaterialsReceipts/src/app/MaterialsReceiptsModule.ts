@@ -13,7 +13,6 @@ import {
 
 import { MaterialsReceiptsComponent } from "./MaterialsReceiptsComponent";
 import { TranslatePipe } from "./Pipes/TranslatePipe";
-import { ScanTableComponent } from "./Components/ScanTable/ScanTableComponent";
 
 import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
@@ -43,7 +42,6 @@ import { LocationsTableComponent } from "./Components/LocationsTable/LocationsTa
 import { MaterialsAtLocationComponent } from "./Components/MaterialsAtLocation/MaterialsAtLocationComponent";
 import { MaterialsTableComponent } from "./Components/MaterialsTable/MaterialsTableComponent";
 import { SelectMaterialDialog } from "./Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
-import { StateScanTableComponent } from "@shared/Components/StateScanTable/StateScanTableComponent";
 import { ActionScanTableComponent } from "@shared/Components/ActionScanTable/ActionScanTableComponent";
 import { InventoryManagerComponent } from "@shared/Components/InventoryManager/InventoryManagerComponent";
 
@@ -96,12 +94,10 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
 		MaterialsReceiptsListComponent,
 		TranslatePipe,
 		MaterialsReceiptsTableComponent,
-		ScanTableComponent,
 		LocationsTableComponent,
 		MaterialsAtLocationComponent,
 		MaterialsTableComponent,
 		SelectMaterialDialog,
-		StateScanTableComponent,
 		ActionScanTableComponent,
 		InventoryManagerComponent,
 		TranslatePipe

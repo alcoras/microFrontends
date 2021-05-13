@@ -29,12 +29,12 @@ export class MaterialsReceiptsTableComponent {
     // skipping irrelevant information
     { field: "Id", header: "Id"},
     // { field: "LineNumber", header: "LineNumber"},
-    { field: "CodeSOne", header: "CodeSOne?"},
+    { field: "CodeSOne", header: "CodeSOne"},
     { field: "Type", header: "Type"},
     // { field: "Account", header: "Account"},
     // { field: "Unit", header: "Units"},
     { field: "NameSOne", header: "Name"},
-    { field: "PersonMRP", header: "Person MRP"},
+    { field: "PersonMRP", header: "PersonMRP"},
     { field: "Quantity", header: "Expected"},
   ];
 
