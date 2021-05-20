@@ -24,16 +24,27 @@
           </div>
           <!-- Date selection -->
           <div class="p-field">
-            <label for="spanish">{{ 'Common.SelectDataRange' | translate }} </label>
-            <p-calendar
+						<label>{{ 'Common.SelectDataRange' | translate }} </label>
+						<p-calendar
+							*ngIf="CalendarLocale != null"
               (onClose)="RefreshTable()"
               [showIcon]="true"
               [(ngModel)]="DateRange"
               [touchUI]="true"
               showButtonBar="true"
               selectionMode="range"
-              [locale]="UkrainianDate" dateFormat="yy-mm-dd"
-              inputId="ukrianian"></p-calendar>
+              [locale]="CalendarLocale" dateFormat="yy-mm-dd">
+						</p-calendar>
+						<p-calendar
+							*ngIf="!CalendarLocale"
+							(onClose)="RefreshTable()"
+							[showIcon]="true"
+							[(ngModel)]="DateRange"
+							[touchUI]="true"
+							showButtonBar="true"
+							selectionMode="range"
+							dateFormat="yy-mm-dd">
+						</p-calendar>
           </div>
         </div>
       </ng-template>
@@ -53,7 +64,7 @@
       <th class="sticky-row" *ngFor="let col of columns">
           {{ 'MaterialsReceipts.MaterialsReceiptList.TableHeader.' + col.header | translate }}
       </th>
-      <th>{{ 'MaterialsReceipts.MaterialsReceiptList.TableHeader.Actions' | translate }}</th>
+      <th style="width: 8rem">{{ 'MaterialsReceipts.MaterialsReceiptList.TableHeader.Actions' | translate }}</th>
     </tr>
   </ng-template>
 
@@ -73,11 +84,12 @@
               (click)="OnArrivalClicked()" style="margin-right:.5em">
             </button>
 
-            <!-- Location -->
-            <button type="button" pButton [disabled]="!MaterialReceiptSelected"
+						<!-- Location -->
+						<!-- TODO: enable when location is implemented -->
+            <!-- <button type="button" pButton [disabled]="!MaterialReceiptSelected"
             label="{{ 'MaterialsReceipts.MaterialsReceiptList.Button.Location' | translate }}" class="p-button-success"
             (click)="RefreshTable()">
-          </button>
+          	</button>-->
           </td>
       </tr>
   </ng-template>

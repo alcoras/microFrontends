@@ -1,4 +1,6 @@
 @ECHO OFF
+set DOTNET_ENVIRONMENT=Development
+set ASPNETCORE_ENVIRONMENT=Development
 cd C:\Users\MTX\source\repos\AcS\EventBroker\bin\Release\netcoreapp3.0
 start EventBroker.exe
 cd C:\Users\MTX\source\repos\AcS\APIGateway\bin\Release\netcoreapp3.0

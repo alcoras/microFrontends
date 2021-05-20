@@ -144,6 +144,7 @@
 	85. 4. UPDATE: how do I inject? As of now angular will, but it probably should be injected/provided the way everything is provided in that system
 84. DONE Write a guide on how to use template installer
 	84. 1. UPDATE: write questionaire to create json file
+92. DONE rename ActionScanTable to just ScanTable
 
 ## NOT DEMO
 22. Do conditional logging.
@@ -183,6 +184,7 @@
 89. fix all linting
 90. force comments for all functions
 91. bug: when in MaterialReceipts language is changed tabs do not reflect it
-92. rename ActionScanTable to just ScanTable
+93. change Subscription[] to Subscription
+94. only angular related, but consider changing change detection to Push.
 
-93.
+95.

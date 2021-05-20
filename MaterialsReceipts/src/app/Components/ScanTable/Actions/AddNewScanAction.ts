@@ -40,6 +40,10 @@ export enum UserInterfaceEventIds {
  * Aggregate which will contain everything data which needs to be communicated between Action and Component(s)
  */
 export class NewScanStateAggregate {
+	/** Unique identifier for draft */
+	public ScanTableToMaterialElementKeyString: string;
+	/** Draft Id */
+	public DraftId: number;
 	/** header for new scan dialog */
 	public NewScanHeader: string;
 	/** our output */
@@ -74,10 +78,6 @@ export class AddNewScanAction {
 	public StateData: NewScanStateAggregate;
 
 	private stateMachine: StateMachine<NewScanStateAggregate>;
-
-	/** unique identifier for draft */
-	private keyString: string;
-	private draftId: number;
 
 	private actionEventBus: Subject<number>;
 
@@ -262,7 +262,7 @@ export class AddNewScanAction {
 
   	// creating new material entry and load draft if exists, currently we need draft just for a comment
   	this.StateData.NewScanHeader = "New Scan > New Material";
-  	const resposne = await this.materialsReceiptsAPI.DraftsGetAsync(this.keyString);
+  	const resposne = await this.materialsReceiptsAPI.DraftsGetAsync(this.StateData.ScanTableToMaterialElementKeyString);
 
   	if (resposne.HasErrors()) {
   		throw Error(resposne.ErrorList.toString());
@@ -271,7 +271,7 @@ export class AddNewScanAction {
   	if (resposne.Result.DraftDataList.length > 0) {
   		this.StateData.NewScanHeader = "New Scan > New Material (draft)";
   		const material: MaterialsData = JSON.parse(resposne.Result.DraftDataList[0].Draft);
-  		this.draftId = resposne.Result.DraftDataList[0].Id;
+  		this.StateData.DraftId = resposne.Result.DraftDataList[0].Id;
   		this.StateData.NewEntry.Comment = material.Comment;
   	}
   	// allow to save new ScanDataTable
@@ -312,7 +312,7 @@ export class AddNewScanAction {
 
 	private async end(): Promise<number> {
   	// reset scan
-  	this.draftId = 0;
+  	this.StateData.DraftId = 0;
   	this.StateData.NewScanHeader = "New Scan";
   	this.StateData.NewEntry = new ScanTableAggregate();
   	this.StateData.NewScanDialogVisible = true;
@@ -323,7 +323,7 @@ export class AddNewScanAction {
   }
 
 	private resetNewScanDataEntry(): void {
-  	this.draftId = 0;
+  	this.StateData.DraftId = 0;
   	this.StateData.NewScanHeader = "New Scan";
 
 		this.StateData.NewEntry = {};

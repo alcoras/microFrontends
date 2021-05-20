@@ -42,7 +42,7 @@ import { LocationsTableComponent } from "./Components/LocationsTable/LocationsTa
 import { MaterialsAtLocationComponent } from "./Components/MaterialsAtLocation/MaterialsAtLocationComponent";
 import { MaterialsTableComponent } from "./Components/MaterialsTable/MaterialsTableComponent";
 import { SelectMaterialDialog } from "./Components/Dialogs/SelectMaterialDialog/SelectMaterialDialog";
-import { ActionScanTableComponent } from "@shared/Components/ActionScanTable/ActionScanTableComponent";
+import { ScanTableComponent } from "@shared/Components/ScanTable/ScanTableComponent";
 import { InventoryManagerComponent } from "@shared/Components/InventoryManager/InventoryManagerComponent";
 
 import { environment } from "src/environments/environment";
@@ -98,7 +98,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
 		MaterialsAtLocationComponent,
 		MaterialsTableComponent,
 		SelectMaterialDialog,
-		ActionScanTableComponent,
+		ScanTableComponent,
 		InventoryManagerComponent,
 		TranslatePipe
   ],

@@ -3,7 +3,7 @@ import { LazyLoadEvent } from "primeng/api";
 import { Subject, Subscription } from "rxjs";
 import { EventBusService } from "@shared/services/EventBusService";
 import { MaterialsReceiptsAPI } from "@shared/services/MaterialsReceiptsAPI";
-import { ScanTableData } from "event-proxy-lib-src";
+import { MaterialsData, ScanTableData } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ScanTableQueryParams } from "@shared/Adds/ScanTableQueryParams";
 import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
@@ -11,10 +11,10 @@ import { AddNewScanAction, NewScanStateAggregate, UserInterfaceEventIds } from "
 
 @Component({
 	selector: "materials-receipts-action-scan-table",
-	templateUrl: "./ActionScanTableView.html",
+	templateUrl: "./ScanTableView.html",
 	providers: [ AddNewScanAction ]
 })
-export class ActionScanTableComponent {
+export class ScanTableComponent {
 
 	// Reference to state data for View
 	public Action: NewScanStateAggregate;
@@ -57,18 +57,15 @@ export class ActionScanTableComponent {
   public CurrentMaterialsReceiptData: MaterialReceiptSelectedData;
 
 	private scanTableData: ScanTableAggregate[];
-	private subscriptions: Subscription[] = [];
+	private subscriptions = new Subscription()
 	private actionEventBus = new Subject<number>();
 
   public constructor(private materialsReceiptsAPI: MaterialsReceiptsAPI, private eventBus: EventBusService, private addNewScanAction: AddNewScanAction) {
-		// TODO: hardcoding id for time being
-  	//this.keyString = this.materialsReceiptsAPI.CreateDraftKeyString("ScanTableData", "0", "MaterialElement");
   	this.Loading = true;
-  	//this.NewEntry = new ScanTableAggregate();
 
 		this.actionConfiguration();
 
-		this.subscriptions.push(this.eventBus.OnMaterialReceiptSelected.subscribe(async () => {
+		this.subscriptions.add(this.eventBus.OnMaterialReceiptSelected.subscribe(async () => {
   		this.addNewScanAction.StateData.RequestBarCodeRelation = true;
   		await this.refreshScanTableTableAsync();
 
@@ -79,16 +76,15 @@ export class ActionScanTableComponent {
 	}
 
 	private actionConfiguration(): void {
-		// action configuration
 		this.addNewScanAction.Init(this.actionEventBus);
 		this.Action = this.addNewScanAction.StateData;
-		this.subscriptions.push(this.eventBus.OnRequestScanTableRefresh.subscribe(async () => await this.refreshScanTableTableAsync()));
+		this.subscriptions.add(this.eventBus.OnRequestScanTableRefresh.subscribe(async () => await this.refreshScanTableTableAsync()));
+		// TODO: hardcoding id for time being
+		this.Action.ScanTableToMaterialElementKeyString = this.materialsReceiptsAPI.CreateDraftKeyString("ScanTableData", "0", "MaterialElement");
 	}
 
   public OnDestroy(): void {
-  	this.subscriptions.forEach(element => {
-  		element?.unsubscribe();
-  	});
+		this.subscriptions.unsubscribe();
   }
 
   public async RefreshTable(): Promise<void> {
@@ -117,20 +113,20 @@ export class ActionScanTableComponent {
 		this.eventBus.ScanTableUnsignButtonClicked();
 	}
 
-  // public async OnSaveDraft(): Promise<void> {
-  // 	const materialDraft: MaterialsData = {
-  // 		Name: this.NewEntry.Name,
-  // 		Comment: this.NewEntry.Comment,
-  // 		BarCode: this.NewEntry.BarCode
-  // 	};
+  public async OnSaveDraft(): Promise<void> {
+  	const materialDraft: MaterialsData = {
+  		Name: this.addNewScanAction.StateData.NewEntry.Name,
+  		Comment: this.addNewScanAction.StateData.NewEntry.Comment,
+  		BarCode: this.addNewScanAction.StateData.NewEntry.BarCode
+  	};
 
-  // 	// save or update MaterialElement draft
-  // 	if (this.draftId > 0) {
-  // 		await this.materialsReceiptsAPI.DraftsUpdateAsync(this.draftId, this.keyString, JSON.stringify(materialDraft));
-  // 	} else {
-  // 		await this.materialsReceiptsAPI.DraftsCreateAsync(this.keyString, JSON.stringify(materialDraft));
-  // 	}
-  // }
+  	// save or update MaterialElement draft
+  	if (this.addNewScanAction.StateData.DraftId > 0) {
+  		await this.materialsReceiptsAPI.DraftsUpdateAsync(this.Action.DraftId, this.Action.ScanTableToMaterialElementKeyString, JSON.stringify(materialDraft));
+  	} else {
+  		await this.materialsReceiptsAPI.DraftsCreateAsync(this.Action.ScanTableToMaterialElementKeyString, JSON.stringify(materialDraft));
+  	}
+  }
 
   public async OnDeleteScan(data: ScanTableAggregate): Promise<void> {
   	const scanTabledata: ScanTableData = { Id: data.Id };

@@ -5,6 +5,7 @@ import { EventBusService } from "../../services/EventBusService";
 import { MaterialsList } from "event-proxy-lib-src";
 import { MaterialReceiptSelectedData } from "@shared/Adds/MaterialReceiptSelectedData";
 import { ReadListQueryParams } from "@shared/Adds/ReadListQueryParams";
+import { environment } from "src/environments/environment";
 
 interface IPrimeNgDate {
   firstDayOfWeek: number;
@@ -38,7 +39,7 @@ export class MaterialsReceiptsListComponent {
   public MaterialReceiptSelected: boolean;
 
   public DateRange: Date[];
-  public UkrainianDate: IPrimeNgDate;
+  public CalendarLocale: IPrimeNgDate = null;
 
   public Categories: Category[] = [
     { name: Categories.Both, key: "B"},
@@ -73,16 +74,20 @@ export class MaterialsReceiptsListComponent {
   }
 
   public ngOnInit(): void {
-    this.UkrainianDate = {
-      firstDayOfWeek: 1,
-      dayNames: [ "понеділок","вівторок","середа","четвер","п’ятниця","субота","неділя" ],
-      dayNamesShort: ["пн", "вт", "ср", "чт", "пт", "сб", "нд"],
-      dayNamesMin: [ "П", "В", "С", "Ч", "Т", "Б", "Н"  ],
-      monthNames: [ "січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень" ],
-      monthNamesShort: [ "січ", "лют", "бер", "кв", "тр", "чер", "лип", "сер", "вер", "жовт", "лис", "гр" ],
-      today: "Сьогодні",
-      clear: "Відміна"
-    };
+		if (environment.currentLanguage == "en") {
+			this.CalendarLocale = null;
+		} else {
+			this.CalendarLocale = {
+				firstDayOfWeek: 1,
+				dayNames: [ "понеділок","вівторок","середа","четвер","п’ятниця","субота","неділя" ],
+				dayNamesShort: ["пн", "вт", "ср", "чт", "пт", "сб", "нд"],
+				dayNamesMin: [ "П", "В", "С", "Ч", "Т", "Б", "Н"  ],
+				monthNames: [ "січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень" ],
+				monthNamesShort: [ "січ", "лют", "бер", "кв", "тр", "чер", "лип", "сер", "вер", "жовт", "лис", "гр" ],
+				today: "Сьогодні",
+				clear: "Відміна"
+			};
+		}
 
     this.SelectedCategory = this.Categories[0];
   }

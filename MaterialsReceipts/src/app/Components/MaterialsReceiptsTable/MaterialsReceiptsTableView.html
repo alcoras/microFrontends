@@ -34,7 +34,7 @@
           <td *ngFor="let col of Columns">
 
               <div *ngIf="(col.field == 'Quantity'); else default">
-                {{rowData[col.field]}} {{rowData['Unit']}} ( {{ 'MaterialsReceipts.MaterialsReceiptsTable.GeneralData.Left' | translate }}: {{ rowData['Quantity'] - ScannedDictionary[+rowData['Id']] }})
+                {{rowData[col.field]}} {{rowData['Unit']}} ({{ 'MaterialsReceipts.MaterialsReceiptsTable.GeneralData.Left' | translate }}: {{ rowData['Quantity'] - ScannedDictionary[+rowData['Id']] }})
                 <p-progressBar
                   [showValue]=false
                   [value]="ScannedDictionary[+rowData['Id']] * 100 / rowData['Quantity']">
