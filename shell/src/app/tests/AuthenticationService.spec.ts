@@ -24,7 +24,7 @@ describe("AuthenticationService", () =>{
     expect(service).toBeTruthy();
   });
 
-  xit("LoginAsync emulation", async (done) => {
+  it("LoginAsync emulation", async (done) => {
     const loginRequest = new LoginRequest();
     loginRequest.Timestamp = new Date().toISOString();
     loginRequest.Signature = "0x123123123";

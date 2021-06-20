@@ -57,9 +57,9 @@ export class AuthenticationService {
 
     if (request.HasErrors()) {
       return Promise.reject(request);
-    }
+		}
 
-    const response = request.Result.Events[0] as LoginSuccess;
+    const response = request.Result as LoginSuccess;
 
     if (response.EventId == EventIds.LoginFailed) {
       request.ErrorList.push("Failed to Login");
@@ -89,11 +89,11 @@ export class AuthenticationService {
       return Promise.reject(request.ErrorList.toString());
     }
 
-    const response = request.Result.Events[0] as CoreEvent;
+    const response = request.Result as CoreEvent;
 
     if (response.EventId == EventIds.LoginFailed) {
       return Promise.reject("Failed to login");
-    } else if (response.EventId == EventIds.LoginSuccessWithTokenInformation) {
+    } else if (response.EventId == EventIds.TokenRenewSuccessWithTokenInformation) {
       const login = response as LoginSuccess;
       this.setUpcomingSession(login);
       return Promise.resolve("");
@@ -132,7 +132,8 @@ export class AuthenticationService {
       return Promise.reject(logRequest);
     }
 
-    const timeNow =  new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString();
+		// I should've explained why getTimezoneOffset is used..
+    const timeNow = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString();
 
     const ret = new Promise<LoginRequest>((resolve, reject) => {
       this.eth.personal_sign(timeNow, account).then(

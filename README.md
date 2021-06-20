@@ -51,3 +51,11 @@ Used for writing initial view which does not require anything else in the enviro
 3. `npm run build` will build
 4. `npm run start` will start script, follow instructions
 5. currently shell and menu integration is not implemented
+
+## Enable/Disable authentication
+# Enable
+1. In backend database ApiGateway -> UserValidTokens -> set ALL entries' field IsDeleted to false
+2. In every frontend enable in environments/environment.ts change EnvironmentTypes enum to Development or higher (prod, stage)
+# Disable
+1. In backend database ApiGateway -> UserValidTokens -> set ALL entries' field IsDeleted to true
+2. In every frontend enable in environments/environment.ts change EnvironmentTypes enum to Isolated or lower

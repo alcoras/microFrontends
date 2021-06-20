@@ -17,7 +17,7 @@
     "ng_serve_dev": "serve -l tcp://0.0.0.0:3002 dist/",
     "ng_build_dev": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false",
     "ng_watch": "ng build --commonChunk=false --outputHashing=none --vendorChunk=false --watch",
-    "ng_con": "npm run build-config && concurrently --kill-others -n \"ANGULAR,SERVER\" \"npm run ng_watch\"  \"npm run ng_serve_dev\" "
+    "ng_con": "concurrently --kill-others -n \"ANGULAR,SERVER\" \"npm run ng_watch\"  \"npm run ng_serve_dev\" "
   },
   "private": true,
   "dependencies": {

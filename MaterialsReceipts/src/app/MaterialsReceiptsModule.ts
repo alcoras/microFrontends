@@ -126,7 +126,7 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
 		{
 			provide: EventProxyLibService,
 			useFactory: EventProxyLibFacotry,
-			deps: [ EnvironmentService, HttpClient],
+			deps: [ EnvironmentService, HttpClient ],
 			multi: false
 		},
 		{
@@ -138,12 +138,12 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
 		{
 			provide: APP_INITIALIZER,
 			useFactory: MaterialReceiptsInitializeFactory,
-			deps: [MaterialsReceiptsService],
+			deps: [ MaterialsReceiptsService ],
 			multi: false
 		},
 		CastorAPI
   ],
-  entryComponents: [MaterialsReceiptsComponent]
+  entryComponents: [ MaterialsReceiptsComponent ]
 })
 export class MaterialsReceiptsModule {
   public constructor(private injector: Injector) { }
