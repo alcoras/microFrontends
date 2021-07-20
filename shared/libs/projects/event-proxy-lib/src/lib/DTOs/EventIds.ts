@@ -100,5 +100,11 @@ export enum EventIds {
   DraftsGet = 2083,
   DraftsFound = 2084,
   DraftsUpdate = 2085,
-  NewEntryCreatedSuccessfully = 2086
+	NewEntryCreatedSuccessfully = 2086,
+	GiveMeQRCode = 2098,
+	YourQRCode = 2099,
+	QRCodeLogin = 2100,
+	NewQRCodeReturned = 2101,
+	QRCodeLoginRegistered = 2102,
+	LoginQRCodeRequested = 2103,
 }

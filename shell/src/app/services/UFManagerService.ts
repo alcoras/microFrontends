@@ -13,11 +13,13 @@ import {
   MicroFrontendInfo,
   EnvironmentTypes,
   EventIds,
-  BackendToFrontendEvent} from "event-proxy-lib-src";
+  BackendToFrontendEvent,
+	UnsubscibeToEvent} from "event-proxy-lib-src";
 import { ResourceLoaderService } from "./ResourceLoaderService";
 import { PrestartService } from "./PrestartService";
 import { AuthenticationService } from "../services/AuthenticationService";
 import { environment } from "src/environments/environment";
+import { EventBusService } from "./EventBusService";
 
 /**
  * Micro Frontend Manager is responsible for presubscribing all micro frontends
@@ -48,7 +50,8 @@ export class UFManagerService {
     private eventProxyService: EventProxyLibService,
     private environmentService: EnvironmentService,
     private resourceLoader: ResourceLoaderService,
-    private prestartService: PrestartService
+		private prestartService: PrestartService,
+		private eventBusService: EventBusService
   ) { }
 
   /**
@@ -58,7 +61,7 @@ export class UFManagerService {
 
     // We confirm all events because otherwise upon errors from other microservices, we start to accumulate
     // unconfirmed events, because shell subscribe to them aswell
-    // It"s fine because no one should call shell, as it"s an entry point
+    // It's fine because no one should call shell, as it's an entry point
     await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [], true);
 
     // only in development and above (staging, prod)
@@ -162,35 +165,43 @@ export class UFManagerService {
    * @param eventList - Event array
    */
   private async parseNewEventAsync(eventList: CoreEvent[]): Promise<void> {
-    for (const element of eventList) {
+    for (const event of eventList) {
       const ufConfigs = window["__env"]["uf"];
 
       // check if event is LoadedResource
-      if (element.EventId === EventIds.LoadedResource) {
-        const el: LoadedResource = element as LoadedResource;
+      if (event.EventId === EventIds.LoadedResource) {
+        const el: LoadedResource = event as LoadedResource;
 
         for (const config in ufConfigs) {
           if (Object.prototype.hasOwnProperty.call(ufConfigs, config)
             && ufConfigs[config].events.includes(el.ResourceEventId)) {
             this.resources[+config] = true;
-            await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
+            await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
           }
         }
+			}
+			else if (event.EventId === EventIds.YourQRCode) {
+				this.eventBusService.EventBus.next(event);
+
+				await Promise.all([
+					this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]),
+					this.eventProxyService.DispatchEventAsync(new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]]))
+				]);
+			}
+      else if (event.EventId === EventIds.RequestToLoadScript) {
+        const newEvent: RequestToLoadScripts = event as RequestToLoadScripts;
+        this.loadResourcesEvent(newEvent);
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [newEvent.AggregateId]);
       }
-      else if (element.EventId === EventIds.RequestToLoadScript) {
-        const event: RequestToLoadScripts = element as RequestToLoadScripts;
-        this.loadResourcesEvent(event);
-        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
-      }
-      else if (element.EventId === EventIds.LanguageChange) {
-        const event: LanguageChange = element as LanguageChange;
-        this.changeLanguageEvent(event);
-        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [element.AggregateId]);
+      else if (event.EventId === EventIds.LanguageChange) {
+        const newEvent: LanguageChange = event as LanguageChange;
+        this.changeLanguageEvent(newEvent);
+        await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
       }
       else {
         for (const config in ufConfigs) {
           if (Object.prototype.hasOwnProperty.call(ufConfigs, config) &&
-              ufConfigs[+config].events.includes(element.EventId)) {
+              ufConfigs[+config].events.includes(event.EventId)) {
             // check if loaded
             if (this.resources[+config]) {
               break;
@@ -199,7 +210,7 @@ export class UFManagerService {
             // else load resources
             await this.resourceLoader.LoadResources(ufConfigs[+config].resources);
             await this.eventProxyService.ConfirmEventsAsync(
-              this.SourceInfo.SourceId, [element.AggregateId]);
+              this.SourceInfo.SourceId, [event.AggregateId]);
           }
         }
       }

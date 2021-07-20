@@ -9,23 +9,29 @@ import { ResourceLoaderService } from "./services/ResourceLoaderService";
 import { UFManagerServiceFactory } from "./services/UFManagerFactory";
 import { AppComponent } from "./app.component";
 import { AuthenticationService } from "./services/AuthenticationService";
+import { QrLoginComponent } from "./components/QrLoginComponent";
+import { QRAuthenticationService } from "./services/QRAuthenticationService";
+import { EventBusService } from "./services/EventBusService";
 
 /**
  * Entry point module
  */
 @NgModule({
   declarations: [
-    AppComponent
+		AppComponent,
+		QrLoginComponent
   ],
   imports: [
     BrowserModule,
     EventProxyLibModule
   ],
   providers: [
+		EventBusService,
     PrestartService,
     ResourceLoaderService,
     UFManagerService,
-    AuthenticationService,
+		AuthenticationService,
+		QRAuthenticationService,
     {
       provide: APP_INITIALIZER,
       useFactory: UFManagerServiceFactory,

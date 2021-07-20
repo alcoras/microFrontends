@@ -400,7 +400,7 @@ export class MaterialsReceiptsAPI {
 	}
 
 	/**
-	 * Experimental wrapper for requests, not sure if it"s good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
+	 * Experimental wrapper for requests, not sure if it's good idea to use it as it adds layer of complexity and it is easier to read simple longer code than complex few-liners
 	 * @param request request which returns id from backend (currently only one)
 	 * @returns Promise of ValidationStatus with T which is event that extends CoreEvent
 	 */

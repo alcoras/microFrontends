@@ -56,7 +56,7 @@ export class StateMachine<T> {
     return Object.assign<T[], T[]>([], this.data);
   }
 
-  /** start routine which is responsible for transitions; calls itself when it"s finnished */
+  /** start routine which is responsible for transitions; calls itself when it's finnished */
   private async startRecursiveRoutine(): Promise<void> {
     let work = true, index: number;
 

@@ -186,5 +186,6 @@
 91. bug: when in MaterialReceipts language is changed tabs do not reflect it
 93. change Subscription[] to Subscription
 94. only angular related, but consider changing change detection to Push.
+95. think of place to put waitForResultsd function (currently in shell and material receipts)
 
-95.
+96. update parseNewEventsAsync in UFManagerService.ts

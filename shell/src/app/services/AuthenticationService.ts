@@ -27,11 +27,7 @@ export class AuthenticationService {
 
   private upcomingToken: LoginSuccess;
 
-  public constructor(
-    private environmentService: EnvironmentService,
-    private eventProxyService: EventProxyLibService
-  ) {}
-
+  public constructor(private environmentService: EnvironmentService, private eventProxyService: EventProxyLibService) { }
 
   /**
    * Passive Logout
@@ -41,7 +37,6 @@ export class AuthenticationService {
     this.environmentService.TokenBeginDate = "";
     this.environmentService.TokenExpirationDate = "";
   }
-
 
   /**
    * Login through Metamask

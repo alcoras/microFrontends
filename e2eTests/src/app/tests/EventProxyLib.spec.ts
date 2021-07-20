@@ -186,7 +186,7 @@ describe("EventProxyLibService", () => {
         await service.DispatchEventAsync(subEvent);
 
         // TODO: eventually it should wait till someone subscribed to it.
-        // it does and it"s 2003 event
+        // it does and it's 2003 event
         // 2. Fire event
         await delay(awaitAfterSendingEvent);
         tEvent.EventId = waitForEventId;

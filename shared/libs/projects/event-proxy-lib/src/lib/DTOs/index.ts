@@ -91,3 +91,7 @@ export * from "./BackendEvents/InventoryManagerQuery";
 export * from "./BackendEvents/Adds/InventoryManagerResult";
 export * from "./BackendEvents/InventoryManagerResults";
 
+export * from "./BackendEvents/QrLoginRequest";
+export * from "./BackendEvents/QRCodeInformation";
+
+

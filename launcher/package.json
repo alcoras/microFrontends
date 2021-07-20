@@ -40,8 +40,9 @@
 		"backend-Drafts": 										"cd .\\backends && Drafts.bat",
 		"backend-InventoryManager": 					"cd .\\backends && InventoryManager.bat",
 		"backend-OrchestratorTeam1": 					"cd .\\backends && OrchestratorTeam1.bat",
+		"backend-Observer":										"cd .\\backends && Observer.bat",
 
-		"backend-start-config0" : "concurrently --kill-others \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\" \"npm run backend-PersonData\" \"npm run backend-Occupations\" \"npm run backend-Castor\" \"npm run backend-Drafts\" \"npm run backend-InventoryManager\" \"npm run backend-OrchestratorTeam1\"",
+		"backend-start-config0" : "concurrently --kill-others \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\" \"npm run backend-PersonData\" \"npm run backend-Occupations\" \"npm run backend-Castor\" \"npm run backend-Drafts\" \"npm run backend-InventoryManager\" \"npm run backend-OrchestratorTeam1\" \"npm run backend-Observer\"",
     "backend-start-mat-rcp" : "concurrently --kill-others --names \"APIGateway,EventBroker,MaterialsReceipts\" -c \"bgBlue.bold,bgRed.bold,bgCyan.bold\" \"npm run backend-APIGateway\" \"npm run backend-EventBroker\" \"npm run backend-MaterialsReceipts\"",
 
     "build-prod": "npm run shell-build-prod && npm run menu-build-prod && npm run occupation-build-prod && npm run personnel-build-prod && npm run materialsReceipts-build-prod",

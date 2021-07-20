@@ -225,7 +225,7 @@ export class EventProxyLibService {
     };
 
     return this.sendMessageAsync("LogInAsync", body, true);
-  }
+	}
 
   /**
    * Sends existing token to get new token
@@ -238,7 +238,18 @@ export class EventProxyLibService {
     };
 
     return this.sendMessageAsync("RenewTokenAsync", body);
-  }
+	}
+
+	/**
+	 * Request Qr code for authentication
+	 */
+	public async QrRequestAsync(): Promise<ValidationStatus<BackendToFrontendEvent>> {
+		const body = {
+			EventId: EventIds.GiveMeQRCode
+		};
+
+		return this.sendMessageAsync("QrRequestAsync", body, true);
+	}
 
   /**
    * Sends http message to backend (APIGateway microservice)
@@ -263,7 +274,7 @@ export class EventProxyLibService {
     }
 
     const sourceName = MicroFrontendParts.TryGetSourceNameFromSourceID(this.sourceID);
-    console.log(`${caller}, source: id: ${this.sourceID} name: ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
+    console.log(`${caller}, source id: ${this.sourceID}; name: ${sourceName} sends to ${url} body: ${JSON.stringify(body)}`);
 
     return await new Observable( (res: Subscriber<ValidationStatus<BackendToFrontendEvent>>) => {
       this.httpClient
