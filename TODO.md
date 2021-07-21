@@ -187,5 +187,5 @@
 93. change Subscription[] to Subscription
 94. only angular related, but consider changing change detection to Push.
 95. think of place to put waitForResultsd function (currently in shell and material receipts)
-
 96. update parseNewEventsAsync in UFManagerService.ts
+97. add delay somewhere globally

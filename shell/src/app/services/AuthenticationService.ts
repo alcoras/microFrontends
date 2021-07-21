@@ -60,7 +60,7 @@ export class AuthenticationService {
       request.ErrorList.push("Failed to Login");
       return Promise.reject(request);
     } else if (response.EventId == EventIds.LoginSuccessWithTokenInformation) {
-      this.setSession(response);
+      this.SetSession(response);
       return Promise.resolve(loginRequest);
     } else {
       loginRequest.Error = `EventID ${response.EventId} was not recognized`;
@@ -153,7 +153,7 @@ export class AuthenticationService {
    * Sets session
    * @param login LoginSuccess data
    */
-  private setSession(login: LoginSuccess): void {
+  public SetSession(login: LoginSuccess): void {
     this.updateToken(login);
 
     const expires = new Date(login.TokenExpires);
@@ -182,7 +182,7 @@ export class AuthenticationService {
     const timeout = tokenBeginDate.getTime() - timeNowInMiliSeconds;
 
     setTimeout(() => {
-      this.setSession(this.upcomingToken);
+      this.SetSession(this.upcomingToken);
     }, timeout);
   }
 

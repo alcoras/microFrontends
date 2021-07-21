@@ -93,5 +93,6 @@ export * from "./BackendEvents/InventoryManagerResults";
 
 export * from "./BackendEvents/QrLoginRequest";
 export * from "./BackendEvents/QRCodeInformation";
+export * from "./BackendEvents/QrLoginCheckStatus";
 
 

@@ -10,7 +10,6 @@ import { UFManagerServiceFactory } from "./services/UFManagerFactory";
 import { AppComponent } from "./app.component";
 import { AuthenticationService } from "./services/AuthenticationService";
 import { QrLoginComponent } from "./components/QrLoginComponent";
-import { QRAuthenticationService } from "./services/QRAuthenticationService";
 import { EventBusService } from "./services/EventBusService";
 
 /**
@@ -31,7 +30,6 @@ import { EventBusService } from "./services/EventBusService";
     ResourceLoaderService,
     UFManagerService,
 		AuthenticationService,
-		QRAuthenticationService,
     {
       provide: APP_INITIALIZER,
       useFactory: UFManagerServiceFactory,

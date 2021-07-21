@@ -251,6 +251,19 @@ export class EventProxyLibService {
 		return this.sendMessageAsync("QrRequestAsync", body, true);
 	}
 
+	/**
+	 * Checks if logged in (with QR)
+	 * @param qrCodeMessage message we used to login
+	 */
+	public async QrCheckAsync(qrCodeMessage: string): Promise<ValidationStatus<BackendToFrontendEvent>> {
+		const body = {
+			EventId: EventIds.LoginQRCodeRequested,
+			QRCodeMessage: qrCodeMessage
+		};
+
+		return this.sendMessageAsync("QrCheckAsync", body, true);
+	}
+
   /**
    * Sends http message to backend (APIGateway microservice)
    * @param caller function which called (for tracing purposes)
