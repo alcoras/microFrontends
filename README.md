@@ -38,7 +38,7 @@ Used for writing initial view which does not require anything else in the enviro
 
 ## Development setup (all micro frontends):
 1. `cd launcher` and run `npm run watch` (assuming micro frontends were installed), which will start watch on: MaterialReceipts, Occupation, Personnel and Shell micro frontends.
-2. `cd ReverseProxy` and run `./nginx.exe` then control from other console using `./nginx.exe -s stop` or `./nginx.exe -s reload`
+2. `cd ReverseProxy` and run `./nginx.exe` (which will start server on localhost:80) then control from other console using `./nginx.exe -s stop` or `./nginx.exe -s reload`
 
 ## Development setup (one by one micro frotnend):
 1. `cd <desired project>` 
@@ -50,9 +50,9 @@ Used for writing initial view which does not require anything else in the enviro
 2. `npm ci` to install same dependecy tree, without modifying anything
 3. `npm run build` will build
 4. `npm run start` will start script, follow instructions
-5. currently shell and menu integration is not implemented
+5. currently shell and menu integration is not implemented (you have to manually ad to shell and menu)
 
-## Enable/Disable authentication
+## Authentication
 # Enable
 1. In backend database ApiGateway -> UserValidTokens -> set ALL entries' field IsDeleted to false
 2. In every frontend enable in environments/environment.ts change EnvironmentTypes enum to Development or higher (prod, stage)

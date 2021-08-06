@@ -80,8 +80,8 @@ function MaterialReceiptsInitializeFactory(provider: MaterialsReceiptsService): 
   if (environment.EnvironmentTypes == EnvironmentTypes.Solo)
 		return Promise.resolve();
 
-  return new Promise( (res) => {
-		provider.InitAsync().then( () => {
+  return new Promise((res) => {
+		provider.InitAsync().then(() => {
 	  	provider.InitializeConnectionWithBackend();
 	  	res();
 		});

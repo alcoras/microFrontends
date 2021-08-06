@@ -4,37 +4,40 @@
   selectionMode="single"
   (onRowSelect)="OnScanTableRowSelected($event.data)" (onRowUnselect)="OnScanTableRowUnSelected()"
   [value]="ScanTableData"
-  [totalRecords]="TotalRecords"
+	[totalRecords]="TotalRecords"
+	styleClass="p-datatable-customers"
 >
   <ng-template pTemplate="caption">
     <p-toolbar>
       <!-- Left Side -->
       <ng-template pTemplate="left">
-        <!-- New Button -->
-        <button pRipple pButton
-          label="{{ 'Common.Button.AddNewEntry' | translate }}"
-          icon="pi pi-plus"
-          class="p-button-success p-mr-2"
-          (click)=UIEventEmit(UIEventIds.waitForNewScanClick)>
-        </button>
+				<span class="p-buttonset">
+					<!-- New Button -->
+					<button pRipple pButton
+						label="{{ 'Common.Button.AddNewEntry' | translate }}"
+						icon="pi pi-plus"
+						class="p-button-success p-mr-1"
+						(click)=UIEventEmit(UIEventIds.waitForNewScanClick)>
+					</button>
 
-        <!-- Sign button -->
-        <button pButton pRipple
-          label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Sign' | translate }}"
-          type="button"
-          icon="pi pi-check"
-          class="p-button-success p-mr-2"
-          (click)="OnSignButtonClicked()">
-				</button>
+					<!-- Sign button -->
+					<button pButton pRipple
+						label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Sign' | translate }}"
+						type="button"
+						icon="pi pi-check"
+						class="p-button-success p-mr-1"
+						(click)="OnSignButtonClicked()">
+					</button>
 
-				<!-- Sign button -->
-				<button pButton pRipple
-					label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Unsign' | translate }}"
-					type="button"
-					icon="pi pi-check"
-					(click)="OnUnsignButtonClicked()"
-					class="p-button-danger">
-				</button>
+					<!-- Unsign button -->
+					<button pButton pRipple
+						label="{{ 'MaterialsReceipts.MaterialsReceiptsTable.ScanTable.Button.Unsign' | translate }}"
+						type="button"
+						icon="pi pi-times"
+						(click)="OnUnsignButtonClicked()"
+						class="p-button-danger">
+					</button>
+				</span>
       </ng-template>
 
       <ng-template pTemplate="right">
@@ -63,6 +66,7 @@
   <ng-template pTemplate="body" let-rowData>
     <tr [pSelectableRow]="rowData">
       <td *ngFor="let col of Columns">
+					<span class="p-column-title">{{col.header}}</span>
           <div *ngIf="(col.field == 'Quantity'); else default">
             {{rowData[col.field]}} {{rowData['Unit']}}
           </div>

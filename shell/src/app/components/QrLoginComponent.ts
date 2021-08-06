@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { EventProxyLibService, LoginSuccess, QRCodeInformation } from 'event-proxy-lib-src';
 import { AuthenticationService } from '../services/AuthenticationService';
+import { EventBusService } from '../services/EventBusService';
 
 export function delay(ms: number): Promise<void> {
   return new Promise( resolve => setTimeout(resolve, ms) );
@@ -17,7 +17,8 @@ export class QrLoginComponent {
   constructor(
 		private sanitizer: DomSanitizer,
 		private eventProxyService: EventProxyLibService,
-		private authService: AuthenticationService) { }
+		private authService: AuthenticationService,
+		private eventBus: EventBusService) { }
 
   public async ngOnInit(): Promise<void> {
 		const qrRequest = await this.eventProxyService.QrRequestAsync();
@@ -30,12 +31,7 @@ export class QrLoginComponent {
 		const objectURL = 'data:image/jpeg;base64,' + qrEvent.QRCodeImage;
 		this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
 
-		console.log("Waiting");
-		await delay(20 * 1000);
-		console.log("Done waiting");
-
-		// wait?
-
+		console.log("Waiting for 1 minute for user to login using phone app...");
 		const checkRequest = await this.eventProxyService.QrCheckAsync(qrEvent.QRCodeMessage);
 
 		if (checkRequest.HasErrors()) {
@@ -45,5 +41,7 @@ export class QrLoginComponent {
 		const loginSuccess = checkRequest.Result as LoginSuccess;
 
 		this.authService.SetSession(loginSuccess);
+
+		this.eventBus.DoneQrLogin();
 	}
 }

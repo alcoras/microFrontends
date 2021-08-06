@@ -9,7 +9,7 @@ import { ScanTableAggregate } from "@shared/Adds/ScanTableAggregate";
 
 @Component({
   selector: "materials-receipts-list-table-table",
-  templateUrl: "./MaterialsReceiptsTableView.html",
+	templateUrl: "./MaterialsReceiptsTableView.html",
 })
 export class MaterialsReceiptsTableComponent {
 

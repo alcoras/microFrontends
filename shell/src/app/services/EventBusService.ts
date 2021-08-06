@@ -12,5 +12,13 @@ export class EventBusService {
   /**
    * Event bus for inter component/service communication in current module
    */
-  public EventBus = new Subject<CoreEvent>();
+	public EventBus = new Subject<CoreEvent>();
+
+	/** Internal Event for shell to register qr login*/
+	public OnDoneQrLogin = new Subject<void>();
+
+	/** Event called when user logins using QR code */
+	public DoneQrLogin(): void {
+		this.OnDoneQrLogin?.next();
+	}
 }

@@ -68,7 +68,16 @@ export class UFManagerService {
     // we should not login in isolated regimes
     if (environment.EnvironmentTypes <= EnvironmentTypes.Development && environment.enableLogin) {
       await this.authService.LoginAsync();
-    }
+		}
+
+		if (environment.EnvironmentTypes <= EnvironmentTypes.Development && environment.qrLoginEnable) {
+			await new Promise<void>((resolve) => {
+				const sub = this.eventBusService.OnDoneQrLogin.subscribe(() => {
+					sub.unsubscribe();
+					resolve();
+				});
+			});
+		}
 
     await this.preloadScripts().then(
       () => { console.log(`${this.SourceInfo.SourceName} preloadedScripts done. `);},
@@ -120,8 +129,9 @@ export class UFManagerService {
     // only in development and above (staging, prod)
     // we load other micro frontends
     let urlList = [];
-    if (environment.EnvironmentTypes <= EnvironmentTypes.Development)
+		if (environment.EnvironmentTypes <= EnvironmentTypes.Development) {
       urlList = this.environmentService.ConfigUrlList;
+		}
 
     if (urlList.length == 0) {
       console.warn("Config list is not defined in environment");
@@ -179,14 +189,6 @@ export class UFManagerService {
             await this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]);
           }
         }
-			}
-			else if (event.EventId === EventIds.YourQRCode) {
-				this.eventBusService.EventBus.next(event);
-
-				await Promise.all([
-					this.eventProxyService.ConfirmEventsAsync(this.SourceInfo.SourceId, [event.AggregateId]),
-					this.eventProxyService.DispatchEventAsync(new UnsubscibeToEvent(this.SourceInfo.SourceId, [[0, 0, event.ParentId]]))
-				]);
 			}
       else if (event.EventId === EventIds.RequestToLoadScript) {
         const newEvent: RequestToLoadScripts = event as RequestToLoadScripts;

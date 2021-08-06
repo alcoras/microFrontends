@@ -11,6 +11,7 @@ import { AppComponent } from "./app.component";
 import { AuthenticationService } from "./services/AuthenticationService";
 import { QrLoginComponent } from "./components/QrLoginComponent";
 import { EventBusService } from "./services/EventBusService";
+import { CommonModule } from "@angular/common";
 
 /**
  * Entry point module
@@ -21,6 +22,7 @@ import { EventBusService } from "./services/EventBusService";
 		QrLoginComponent
   ],
   imports: [
+		CommonModule,
     BrowserModule,
     EventProxyLibModule
   ],

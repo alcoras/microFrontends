@@ -188,4 +188,8 @@
 94. only angular related, but consider changing change detection to Push.
 95. think of place to put waitForResultsd function (currently in shell and material receipts)
 96. update parseNewEventsAsync in UFManagerService.ts
-97. add delay somewhere globally
+97. add delay function somewhere globally
+98. MAIN in shell I need to load qr login component and then unload it after login is done
+99. microfrontends should overtake environment variables from shell (looks like menu does load it, materialreceipts does not)
+
+100.
